@@ -17,6 +17,10 @@
   <div class="brand">
     <span class="brand-name">Celestial</span>
     <span class="brand-stage">Stage 1 · Sketch · example content</span>
+    <button id="view-toggle" class="view-toggle-btn" type="button" aria-expanded="false" aria-controls="view-panel">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="5.5" cy="12" r="1.6"/></svg>
+      View
+    </button>
   </div>
   <form id="prompt" class="prompt" autocomplete="off">
     <label for="prompt-input" class="visually-hidden">What do you want to understand?</label>
@@ -26,6 +30,11 @@
   <nav id="trail" class="trail" aria-label="Your path"></nav>
   <p id="about" class="about"></p>
 </header>
+
+<section id="view-panel" class="view-panel" hidden aria-label="View settings">
+  <div id="view-list" class="view-list"></div>
+  <button id="view-reset" class="view-reset" type="button">Reset to defaults</button>
+</section>
 
 <aside id="focus" class="focus" hidden aria-labelledby="focus-title">
   <button id="focus-close" class="focus-close" type="button" aria-label="Close focus panel">&times;</button>
@@ -52,18 +61,18 @@
 <details class="legend">
   <summary>How to read it</summary>
   <ul>
-    <li><span class="key key-dist"></span><span><b>Distance</b> = how strongly it's linked to the sun in general</span></li>
+    <li><span class="key key-dist"></span><span><b>Distance</b> = how strongly it's linked to the centre in general</span></li>
     <li><span class="key key-size"></span><span><b>Size</b> = how relevant it is to your line of reasoning</span></li>
-    <li><span class="key key-cause"></span><span><b>Violet</b> = cause: streams flow <b>in</b> to the centre</span></li>
-    <li><span class="key key-effect"></span><span><b>Cyan</b> = effect: streams flow <b>out</b> from the centre</span></li>
-    <li><span class="key key-pulse"></span><span><b>More frequent streams</b> = more relevant here</span></li>
-    <li><span class="key key-plain"></span><span><b>No colour</b> = related, neither cause nor effect</span></li>
+    <li><span class="key key-cause"></span><span><b>Violet outline</b> = cause: streams flow <b>in</b> to the centre</span></li>
+    <li><span class="key key-effect"></span><span><b>Cyan outline</b> = effect: streams flow <b>out</b> from the centre</span></li>
+    <li><span class="key key-plain"></span><span><b>Grey outline</b> = related, neither cause nor effect</span></li>
+    <li><span class="key key-stream"></span><span><b>Longer, thicker streams</b> = stronger link. <b>More frequent</b> = more relevant</span></li>
     <li><span class="key key-glow"></span><span><b>Glow</b> = hidden lead: loosely linked, but big here</span></li>
-    <li><span class="key key-plus"></span><span><b>Ring</b> = can be unfolded in this sketch</span></li>
+    <li><span class="key key-ring"></span><span><b>Double outline</b> = can be unfolded in this sketch</span></li>
   </ul>
 </details>
 
-<p class="hint">Drag to rotate · Scroll or pinch to zoom · Middle- or right-drag to pan · Click an orb to focus · Hover to see its link</p>
+<p class="hint">Drag to rotate · Scroll or pinch to zoom · Middle- or right-drag to pan · Hover to preview · Click to focus</p>
 <p id="toast" class="toast" role="status" hidden></p>
 <!-- APP:END -->
 

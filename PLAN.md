@@ -12,10 +12,11 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Main view | 3D solar system. The current topic is the **sun**, related topics are **orbs**, each with one line back to the sun. |
 | Distance from the sun | How strongly the topic is linked to the sun **in general**. |
 | Orb size | How relevant the topic is to **your current line of reasoning** (depends on the path you took). |
-| Placement | Orbs are spread evenly around the sun in every direction, like points on a globe. Position no longer encodes cause or effect. |
-| Cause and effect | Shown by colour and motion: violet streams flow **in** from causes, cyan streams flow **out** to effects. More relevant orbs stream more often. A small coloured dot sits beside each label. A line to the sun appears only on hover or focus. |
+| Placement | Orbs are spread evenly in all three dimensions around the sun, so spacing looks even from any angle. |
+| Cause and effect | Outline colour (violet = cause, cyan = effect, grey = related) plus streams: violet flows **in** from causes, cyan flows **out** to effects. **Stronger link = longer, thicker stream. More relevant = more frequent.** A line to the sun appears only on hover or focus. |
 | Screen use | The camera frames each system to fill the whole display. |
-| Hover | Orbs swell slightly. |
+| Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
+| View panel | Switches and sliders for how the view looks, remembered between visits: colour scheme (six options), streams, outline colours, hidden-lead glow, names, same size at any depth, depth fade, stretch to fill, sway, spin, stream speed, spacing, orb size. |
 | Navigation | Left-drag rotates, scroll or pinch zooms (sped up), middle- or right-drag pans. |
 | Hidden leads | Orbs that are far (loosely linked) but big (relevant here) glow. |
 | Breadth | Generalist, like Wikipedia. |
@@ -25,7 +26,7 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 
 | Action | Name | What happens |
 |---|---|---|
-| Hover | **Glance** | The one-liner appears. |
+| Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
 | Click | **Focus** | A panel with a visual, a longer explanation, and its sources. |
 | Unfold button | **Unfold** | The orb becomes the new sun and breaks into its own orbs. |
 
@@ -58,7 +59,7 @@ Every stage ends with a link to click and a short list of things to try.
 |---|---|---|---|---|
 | 1. Sketch | Foam model | 3D solar system with example content. Rotate, zoom, hover, click, unfold. | No | **Built** |
 | 2. Looks-like | Appearance model | Source colour rings, a full Focus panel with visuals and sources. | No | Next |
-| 3. Tuning rig | Test jig | On-screen sliders and switches to try options without code. | No | |
+| 3. Tuning rig | Test jig | On-screen sliders and switches to try options without code. | No | **Started** (View panel) |
 | 4. Works-like | Working prototype | Type any question and get real topics, sources and relationships. | Yes | |
 | 5. Memory | — | Saved sessions, built so they can merge into one growing map later. | Yes | |
 
