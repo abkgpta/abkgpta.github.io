@@ -29,6 +29,8 @@ const TUNING = {
   sunSize: 3.6,
   minDiameter: 76,        // pixels: orbs never shrink below this, so names fit
   hoverDiameter: 250,     // pixels: a hovered orb grows to this so its preview fits
+  focusDiameter: 400,     // pixels: a clicked orb opens to this to show its details
+  farthestFade: 0.35,     // opacity of the farthest orb when "fade with distance" is on
   gap: 1.4,               // minimum space between orbs
   widen: 1.8,             // most a system may stretch to fill a wide screen
   hiddenLead: { maxLink: 0.45, minRelevance: 0.65 },  // when an orb glows
@@ -75,7 +77,7 @@ const VIEW_SETTINGS = [
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Same size at any depth', hint: 'Off: farther orbs look smaller' },
-  { key: 'depthFade', label: 'Fade orbs further back' },
+  { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
   { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
   { group: 'Motion' },
   { key: 'sway', label: 'Gentle sway until you grab it' },
@@ -241,11 +243,31 @@ function makeOrbElement(o) {
   let tag = '';
   if (o.cameFrom) tag = 'Came from';
   else if (o.lead) tag = 'Hidden lead';
-  el.innerHTML = (tag ? `<span class="tag">${tag}</span>` : '') + '<span class="t"></span><span class="l"></span>';
+  const meter = (name, value, note) =>
+    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd><dd class="note">${note}</dd></div>`;
+  el.innerHTML = `
+    <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
+    ${tag ? `<span class="tag">${tag}</span>` : ''}
+    <span class="rel"></span>
+    <span class="t"></span>
+    <span class="l"></span>
+    <div class="more">
+      ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link, 'distance')}${meter('Relevance', o.relevance, 'size')}</dl>`}
+      <p class="slot">Picture, longer explanation and sources arrive in stage 2</p>
+      ${o.isSun ? '' : canUnfold(o.id)
+        ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
+        : '<p class="slot">Not unfoldable in this sketch</p>'}
+    </div>`;
+  el.querySelector('.rel').textContent = relationText(o);
   el.querySelector('.t').textContent = topic.title;
   el.querySelector('.l').textContent = topic.liner;
   el.addEventListener('pointerenter', () => setHover(o));
   el.addEventListener('pointerleave', () => { if (hovered === o) setHover(null); });
+  // Keyboard presses on the buttons (mouse clicks are handled on the stage)
+  el.addEventListener('click', (e) => {
+    const action = e.target.closest('[data-action]')?.dataset.action;
+    if (action && e.detail === 0) runAction(action, o);
+  });
   el._orb = o;
   return el;
 }
@@ -288,6 +310,7 @@ function makeOrb(spec) {
     start: new THREE.Vector3(),
     grow: 0,
     k: 0,          // 0 → 1 as the orb opens up on hover
+    f: 0,          // 0 → 1 as the orb opens fully on click
     surface: 1,    // circle radius in scene units, worked out each frame
   };
   o.lead = !o.isSun && isHiddenLead(o);
@@ -389,7 +412,7 @@ function setHover(o) {
   o?.el.classList.add('is-hover');
 }
 
-// ─── Focus panel (click) ─────────────────────────────────────
+// ─── Focus: a clicked orb opens up in place ─────────────────
 function relationText(o) {
   const sun = DATA.topics[trail[trail.length - 1]].title;
   if (o.isSun) return 'Centre of this system';
@@ -398,44 +421,21 @@ function relationText(o) {
 }
 
 function openFocus(o) {
+  if (selected === o) return;
   selected = o;
-  const topic = DATA.topics[o.id];
-  const rel = $('focus-rel');
-  rel.textContent = relationText(o);
-  rel.dataset.rel = o.rel || '';
-  if (o.lead) {
-    const lead = document.createElement('span');
-    lead.className = 'lead';
-    lead.textContent = ' · Hidden lead';
-    rel.append(lead);
-  }
-  $('focus-title').textContent = topic.title;
-  $('focus-liner').textContent = topic.liner;
-  $('focus-measures').hidden = o.isSun;
-  $('m-link').style.width = o.link * 100 + '%';
-  $('m-rel').style.width = o.relevance * 100 + '%';
-  $('m-link-v').textContent = Math.round(o.link * 100);
-  $('m-rel-v').textContent = Math.round(o.relevance * 100);
-
-  const unfoldBtn = $('unfold');
-  if (o.isSun) {
-    unfoldBtn.hidden = true;
-    $('unfold-note').textContent = '';
-  } else {
-    unfoldBtn.hidden = false;
-    unfoldBtn.disabled = !canUnfold(o.id);
-    $('unfold-note').textContent = canUnfold(o.id)
-      ? ''
-      : 'This sketch only has a few unfoldable topics (the ones with a double outline). Every topic will unfold once live search arrives in stage 4.';
-  }
-  $('focus').hidden = false;
   updateDimming();
 }
 
 function closeFocus() {
+  if (!selected) return;
+  selected.el.style.translate = '';
   selected = null;
-  $('focus').hidden = true;
   updateDimming();
+}
+
+function runAction(action, o) {
+  if (action === 'close') closeFocus();
+  if (action === 'unfold') unfold(o.id);
 }
 
 function updateDimming() {
@@ -445,8 +445,6 @@ function updateDimming() {
   }
 }
 
-$('focus-close').addEventListener('click', closeFocus);
-$('unfold').addEventListener('click', () => selected && unfold(selected.id));
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   closeFocus();
@@ -456,13 +454,18 @@ addEventListener('keydown', (e) => {
 // Click = press and release without dragging
 let down = null;
 stage.addEventListener('pointerdown', (e) => {
-  down = { x: e.clientX, y: e.clientY, orb: e.target.closest?.('.orb')?._orb ?? null };
+  down = {
+    x: e.clientX, y: e.clientY,
+    orb: e.target.closest?.('.orb')?._orb ?? null,
+    action: e.target.closest?.('[data-action]')?.dataset.action ?? null,
+  };
 });
 stage.addEventListener('pointerup', (e) => {
   const d = down;
   down = null;
   if (!d || e.button !== 0 || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 5) return;
-  if (d.orb) openFocus(d.orb);
+  if (d.action && d.orb) runAction(d.action, d.orb);
+  else if (d.orb) openFocus(d.orb);
   else closeFocus();
 });
 
@@ -685,17 +688,23 @@ function frame(now) {
     // Open up smoothly on hover or focus
     const open = o === hovered || o === selected ? 1 : 0;
     o.k += (open - o.k) * (reduceMotion ? 1 : 0.2);
+    o.f += ((o === selected ? 1 : 0) - o.f) * (reduceMotion ? 1 : 0.2);
     // Size on screen, in pixels
     const pxPerUnit = h / (2 * tanV * (view.sameSize ? focusDist : camDist));
     const base = Math.max(TUNING.minDiameter, 2 * o.radius * view.orbSize * pxPerUnit);
-    const d = lerp(base, Math.max(base, TUNING.hoverDiameter), o.k) * o.grow;
+    const hoverD = lerp(base, Math.max(base, TUNING.hoverDiameter), o.k);
+    const d = lerp(hoverD, Math.max(base, TUNING.focusDiameter), o.f) * o.grow;
     o.el.style.width = o.el.style.height = d.toFixed(1) + 'px';
     o.el.style.setProperty('--d', d.toFixed(1));
     o.el.style.setProperty('--k', o.k.toFixed(3));
+    o.el.style.setProperty('--f', o.f.toFixed(3));
     o.el.style.visibility = d < 4 ? 'hidden' : '';
-    // Fade orbs that are further back than the centre
+    // The further away an orb is, the more see-through it gets
     let fade = 1;
-    if (view.depthFade && !o.isSun) fade = 1 - 0.6 * clamp((camDist - focusDist) / systemRadius, 0, 1);
+    if (view.depthFade && !o.isSun) {
+      const far = clamp((camDist - (focusDist - systemRadius)) / (2 * systemRadius), 0, 1);
+      fade = lerp(1, TUNING.farthestFade, far);
+    }
     o.el.style.opacity = (Math.max(fade, o.k) * Math.min(1, o.grow * 1.5)).toFixed(3);
     // The circle's radius in scene units, so streams can start at its edge
     o.surface = (d / 2) * (2 * tanV * camDist) / h;
@@ -717,9 +726,21 @@ function frame(now) {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
   // Whatever you're pointing at or focusing always sits on top
-  if (selected) selected.el.style.zIndex = '99998';
+  if (selected) { selected.el.style.zIndex = '99998'; keepOnScreen(selected); }
   if (hovered) hovered.el.style.zIndex = '99999';
   requestAnimationFrame(frame);
+}
+
+// Nudge an opened orb so none of it hangs off the edge of the screen
+const projected = new THREE.Vector3();
+function keepOnScreen(o) {
+  const w = stage.clientWidth, h = stage.clientHeight;
+  o.obj.getWorldPosition(projected).project(camera);
+  const x = (projected.x + 1) / 2 * w, y = (1 - projected.y) / 2 * h;
+  const r = parseFloat(o.el.style.width) / 2 + 12;
+  const dx = clamp(x, r, w - r) - x;
+  const dy = clamp(y, Math.min(r + 90, h / 2), Math.max(h - r, h / 2)) - y;
+  o.el.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
 }
 
 // ─── Size the canvas to the window ───────────────────────────

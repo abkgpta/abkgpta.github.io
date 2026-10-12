@@ -16,7 +16,7 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Cause and effect | Outline colour (violet = cause, cyan = effect, grey = related) plus streams: violet flows **in** from causes, cyan flows **out** to effects. **Stronger link = longer, thicker stream. More relevant = more frequent.** A line to the sun appears only on hover or focus. |
 | Screen use | The camera frames each system to fill the whole display. |
 | Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
-| View panel | Switches and sliders for how the view looks, remembered between visits: colour scheme (six options), streams, outline colours, hidden-lead glow, names, same size at any depth, depth fade, stretch to fill, sway, spin, stream speed, spacing, orb size. |
+| View panel | Switches and sliders for how the view looks, remembered between visits: colour scheme (six options), streams, outline colours, hidden-lead glow, names, same size at any depth, fade with distance (on by default), stretch to fill, sway, spin, stream speed, spacing, orb size. |
 | Navigation | Left-drag rotates, scroll or pinch zooms (sped up), middle- or right-drag pans. |
 | Hidden leads | Orbs that are far (loosely linked) but big (relevant here) glow. |
 | Breadth | Generalist, like Wikipedia. |
@@ -27,10 +27,10 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Action | Name | What happens |
 |---|---|---|
 | Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
-| Click | **Focus** | A panel with a visual, a longer explanation, and its sources. |
+| Click | **Open** | The orb itself opens up to show its details (relation, one-liner, link and relevance, and later a visual and sources) with an Unfold button. No separate panel. |
 | Unfold button | **Unfold** | The orb becomes the new sun and breaks into its own orbs. |
 
-The visual in the Focus panel depends on the topic: a photo, a chart from real data,
+The visual inside an opened orb depends on the topic: a photo, a chart from real data,
 a cause-and-effect loop, a process flow, a timeline, a map, a video link, or a labelled schematic.
 
 ## Sources
