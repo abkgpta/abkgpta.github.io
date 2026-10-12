@@ -7,6 +7,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 const DATA = window.CELESTIAL_DATA;
 
@@ -23,15 +26,15 @@ const TUNING = {
   hiddenLead: { maxLink: 0.45, minRelevance: 0.65 },  // when an orb glows
   keepSizeWithDepth: true, // cancel perspective so size only means relevance
   sway: true,             // gently rock the view until you grab it
-  // Height bands, in degrees above (+) or below (−) the sun
-  bands: { cause: [-72, -22], effect: [22, 66], related: [-16, 16] },
+  lineOfSight: 0.82,      // keeps orbs out of the cones straight in front of and behind the sun
   breathingRoom: 1.0,     // minimum gap between orbs
   widen: 2.4,             // most a system may stretch sideways to fill a wide screen
   pulses: {
     slowest: 6.0,         // seconds between pulses for the least relevant orb
     fastest: 2.2,         // seconds between pulses for the most relevant orb
     travel: 1.5,          // seconds a pulse takes to cross
-    size: 0.85,
+    length: 2.4,          // length of a streak, in scene units
+    width: 2.5,           // thickness of a streak, in screen pixels
     brightness: 1,
   },
 };
@@ -56,6 +59,11 @@ camera.position.set(0, 3, 44);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
+controls.zoomSpeed = 2.4;          // faster trackpad pinch and scroll
+controls.rotateSpeed = 0.8;
+controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIGHT: THREE.MOUSE.PAN };
+// Stop the browser's own middle-click scrolling from taking over
+renderer.domElement.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
 
 let swaying = TUNING.sway && !reduceMotion;
 controls.addEventListener('start', () => { swaying = false; });
@@ -113,31 +121,25 @@ const orbitOf = (l) => lerp(TUNING.nearestOrbit, TUNING.farthestOrbit, 1 - l.lin
 const sizeOf = (l) => lerp(TUNING.smallestOrb, TUNING.largestOrb, l.relevance);
 
 // ─── Layout: where each orb goes ─────────────────────────────
-// Distance from the sun comes from "link"; up/down comes from "rel".
+// Directions are spread evenly around the sun, like points on a globe.
+// Distance from the sun comes from "link".
 function layout(links) {
-  const groups = { cause: [], effect: [], related: [] };
-  for (const l of links) groups[l.rel].push(l);
-  const golden = Math.PI * (3 - Math.sqrt(5));   // spreads orbs evenly around
-  const turn = { cause: 0.3, effect: 1.4, related: 2.6 };
-  const placed = [];
-  for (const [rel, list] of Object.entries(groups)) {
-    const [lo, hi] = TUNING.bands[rel];
-    list.sort((a, b) => b.relevance - a.relevance);
-    list.forEach((l, i) => {
-      const step = list.length > 1 ? (i * 0.618) % 1 : 0.5;
-      const elevation = THREE.MathUtils.degToRad(lerp(lo, hi, step));
-      const around = turn[rel] + i * golden;
-      const r = orbitOf(l);
-      placed.push({
-        ...l,
-        target: new THREE.Vector3(
-          r * Math.cos(elevation) * Math.cos(around),
-          r * Math.sin(elevation),
-          r * Math.cos(elevation) * Math.sin(around),
-        ),
-      });
-    });
-  }
+  const n = links.length;
+  const golden = Math.PI * (3 - Math.sqrt(5));
+  const cap = TUNING.lineOfSight;
+  // Even directions over a sphere, skipping the two caps that point
+  // straight at or away from the camera (orbs there would hide the sun)
+  const dirs = Array.from({ length: n }, (_, i) => {
+    const z = cap * (1 - (2 * (i + 0.5)) / n);
+    const ring = Math.sqrt(1 - z * z);
+    const a = i * golden;
+    return new THREE.Vector3(ring * Math.cos(a), ring * Math.sin(a), z);
+  });
+  // The most relevant orbs get the clearest, most face-on directions
+  dirs.sort((a, b) => Math.abs(a.z) - Math.abs(b.z));
+  const placed = [...links]
+    .sort((a, b) => b.relevance - a.relevance)
+    .map((l, i) => ({ ...l, target: dirs[i].multiplyScalar(orbitOf(l)) }));
   spreadOut(placed);
   // Stretch sideways until the system's shape matches the screen's shape
   const usable = stage.clientWidth / Math.max(stage.clientHeight - UI_TOP - UI_BOTTOM, 1);
@@ -148,24 +150,21 @@ function layout(links) {
   return placed;
 }
 
-// Nudge orbs apart where they crowd each other as seen from the
-// starting camera angle, and keep them from hiding behind the sun.
-// Each orb keeps its distance from the sun, so distance still means "link".
+// Nudge apart any orbs whose labels would still collide as seen from
+// the starting camera angle. Each orb keeps its distance from the sun,
+// so distance still means "link".
 function spreadOut(placed) {
   const clearOfSun = TUNING.sunSize + 2.6;
-  const deg = THREE.MathUtils.degToRad;
-  // Put an orb back at its distance from the sun, inside its height band
-  // (so causes always stay below and effects above)
-  const fit = (l) => {
+  const minFlat = Math.sqrt(1 - TUNING.lineOfSight ** 2);
+  const fit = (l) => {   // put an orb back at its distance from the sun
     const p = l.target, r = orbitOf(l);
-    const [lo, hi] = TUNING.bands[l.rel];
-    const el = THREE.MathUtils.clamp(Math.asin(THREE.MathUtils.clamp(p.y / r, -1, 1)), deg(lo), deg(hi));
-    p.y = r * Math.sin(el);
-    const h = r * Math.cos(el);
-    if (Math.abs(p.x) > h) p.x = Math.sign(p.x) * h;
-    p.z = Math.sign(p.z || 1) * Math.sqrt(Math.max(0, h * h - p.x * p.x));
+    let flat = Math.hypot(p.x, p.y) || 0.01;
+    const lo = Math.max(clearOfSun, r * minFlat);
+    const k = flat > r ? r / flat : flat < lo ? Math.min(lo, r) / flat : 1;
+    p.x = (p.x || 0.01) * k; p.y *= k;
+    p.z = Math.sign(p.z || 1) * Math.sqrt(Math.max(0, r * r - p.x * p.x - p.y * p.y));
   };
-  for (let pass = 0; pass < 80; pass++) {
+  for (let pass = 0; pass < 60; pass++) {
     for (let i = 0; i < placed.length; i++) {
       const a = placed[i].target;
       for (let j = i + 1; j < placed.length; j++) {
@@ -178,11 +177,6 @@ function spreadOut(placed) {
         a.x += dx * k * 1.6; a.y += dy * k;
         b.x -= dx * k * 1.6; b.y -= dy * k;
         fit(placed[j]);
-      }
-      const flat = Math.hypot(a.x, a.y);
-      if (flat < clearOfSun) {
-        const k = clearOfSun / (flat || 0.01);
-        a.x = (a.x || 0.01) * k; a.y *= k;
       }
       fit(placed[i]);
     }
@@ -224,7 +218,7 @@ function makeLabel(o) {
   const topic = DATA.topics[o.id];
   const el = document.createElement('div');
   const size = o.isSun ? 'sun' : o.relevance >= 0.7 ? 'lg' : o.relevance >= 0.4 ? 'md' : 'sm';
-  el.className = 'orb-label ' + size;
+  el.className = 'orb-label ' + size + (o.rel === 'cause' || o.rel === 'effect' ? ' is-' + o.rel : '');
   let tag = '';
   if (o.cameFrom) tag = 'Came from';
   else if (o.lead) tag = 'Hidden lead';
@@ -239,13 +233,27 @@ function makeLabel(o) {
   return label;
 }
 
+// A streak is drawn as a straight segment one unit long, then moved,
+// turned and stretched into place every frame.
+const STREAK = new LineGeometry();
+STREAK.setPositions([0, 0, 0, 0, 0, 1]);
+const streakMaterials = new Set();   // kept so they can follow window resizes
+
 function makePulse() {
-  // A pulse is a bright head with a short fading tail
-  return [1, 0.55, 0.3].map((strength) => {
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: GLOW, transparent: true, depthWrite: false }));
-    s.userData.strength = strength;
-    world.add(s);
-    return s;
+  // A pulse is a short bright streak riding on a longer faint one,
+  // which reads as a stream that tapers behind its head
+  return [
+    { length: 1, width: 0.8, strength: 0.35 },
+    { length: 0.45, width: 1, strength: 1 },
+  ].map((part) => {
+    const m = new LineMaterial({ linewidth: TUNING.pulses.width * part.width, transparent: true, depthWrite: false });
+    m.resolution.set(stage.clientWidth, stage.clientHeight);
+    streakMaterials.add(m);
+    const streak = new Line2(STREAK, m);
+    streak.frustumCulled = false;
+    streak.userData = part;
+    world.add(streak);
+    return streak;
   });
 }
 
@@ -314,7 +322,7 @@ function removeOrb(o) {
   for (const obj of [o.mesh, o.line, o.glow, o.ring, o.label, ...(o.pulse || [])]) {
     if (!obj) continue;
     world.remove(obj);
-    if (obj.material && obj !== o.label) obj.material.dispose();
+    if (obj.material && obj !== o.label) { obj.material.dispose(); streakMaterials.delete(obj.material); }
   }
   o.line?.geometry.dispose();
 }
@@ -503,26 +511,35 @@ function tweenVector(v, to, ms) {
   tween(ms, (t) => v.lerpVectors(from, to, t));
 }
 
-// ─── Pulses: causes fire in towards the sun, effects fire out ─
+// ─── Pulses: causes stream in towards the sun, effects stream out ─
 const pulseFrom = new THREE.Vector3(), pulseTo = new THREE.Vector3(), dir = new THREE.Vector3();
+const tailAt = new THREE.Vector3(), headAt = new THREE.Vector3();
 function updatePulse(o, sun, seconds, scale) {
   const P = TUNING.pulses;
   const show = !reduceMotion && o.grow > 0.99 && !busy;
-  const u = ((seconds + o.pulseOffset) % o.pulseEvery) / P.travel;   // 0→1 while travelling
   // Start and end at the surfaces, not the centres
   dir.subVectors(sun.mesh.position, o.mesh.position).normalize();
   const outer = pulseFrom.copy(o.mesh.position).addScaledVector(dir, o.radius * scale * o.swell);
   const inner = pulseTo.copy(sun.mesh.position).addScaledVector(dir, -sun.radius * scale);
   const [a, b] = o.rel === 'cause' ? [outer, inner] : [inner, outer];
+  const path = a.distanceTo(b);
   const dimmed = selected && selected !== o ? 0.25 : 1;
-  o.pulse.forEach((s, k) => {
-    const t = u - k * 0.045;
-    s.visible = show && t > 0 && t < 1;
-    if (!s.visible) return;
-    s.position.lerpVectors(a, b, t);
-    s.material.opacity = Math.min(1, Math.sin(Math.PI * t) * s.userData.strength * P.brightness * dimmed);
-    s.scale.setScalar(P.size * scale * (0.6 + 0.4 * s.userData.strength));
-  });
+  const u = ((seconds + o.pulseOffset) % o.pulseEvery) / P.travel;   // 0→1 while travelling
+  for (const streak of o.pulse) {
+    const len = Math.min(P.length * streak.userData.length * scale, path * 0.6) / path;
+    // The head runs a little past the end so the tail can slide in after it
+    const head = u * (1 + len);
+    const h = Math.min(head, 1), t = Math.max(head - len, 0);
+    streak.visible = show && path > 0.1 && head > 0 && t < 1 && h - t > 0.001;
+    if (!streak.visible) continue;
+    tailAt.lerpVectors(a, b, t);
+    headAt.lerpVectors(a, b, h);
+    streak.position.copy(tailAt);
+    streak.lookAt(world.localToWorld(headAt.clone()));
+    streak.scale.set(1, 1, tailAt.distanceTo(headAt));
+    const fade = Math.sin(Math.PI * Math.min(1, head / (1 + len)));
+    streak.material.opacity = Math.min(1, fade * streak.userData.strength * P.brightness * dimmed);
+  }
 }
 
 // ─── Every frame ─────────────────────────────────────────────
@@ -579,6 +596,7 @@ function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
   renderer.setSize(w, h);
   labelRenderer.setSize(w, h);
+  for (const m of streakMaterials) m.resolution.set(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   clearTimeout(resizeTimer);

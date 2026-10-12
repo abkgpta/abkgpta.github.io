@@ -12,10 +12,11 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Main view | 3D solar system. The current topic is the **sun**, related topics are **orbs**, each with one line back to the sun. |
 | Distance from the sun | How strongly the topic is linked to the sun **in general**. |
 | Orb size | How relevant the topic is to **your current line of reasoning** (depends on the path you took). |
-| Up / down | Causes sit **below** the sun, effects **above**, related topics around the middle. |
-| Cause and effect pulses | No permanent lines. Violet pulses flow **in** from causes, cyan pulses flow **out** to effects. More relevant orbs pulse more often. A line to the sun appears only on hover or focus. |
+| Placement | Orbs are spread evenly around the sun in every direction, like points on a globe. Position no longer encodes cause or effect. |
+| Cause and effect | Shown by colour and motion: violet streams flow **in** from causes, cyan streams flow **out** to effects. More relevant orbs stream more often. A small coloured dot sits beside each label. A line to the sun appears only on hover or focus. |
 | Screen use | The camera frames each system to fill the whole display. |
 | Hover | Orbs swell slightly. |
+| Navigation | Left-drag rotates, scroll or pinch zooms (sped up), middle- or right-drag pans. |
 | Hidden leads | Orbs that are far (loosely linked) but big (relevant here) glow. |
 | Breadth | Generalist, like Wikipedia. |
 | Summaries | None for now. Each topic has a title and a one-liner; we'll experiment further. |
@@ -64,7 +65,6 @@ Every stage ends with a link to click and a short list of things to try.
 ### Switches planned for the tuning rig (stage 3)
 - Unfold as **new sun** vs as **moons** around the orb
 - Orbs keep the same on-screen size at any depth, on or off
-- Causes below / effects above, on or off
 - Full 3D vs flatter, tilted disc
 - Orbit distances, orb sizes, hidden-lead thresholds, sway
 
