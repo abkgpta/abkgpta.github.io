@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Orrery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- APP:START -->
+<div id="stage" class="stage" aria-label="3D map of related topics"></div>
+
+<header class="top">
+  <div class="brand">
+    <span class="brand-name">Orrery</span>
+    <span class="brand-stage">Stage 1 · Sketch · example content</span>
+  </div>
+  <form id="prompt" class="prompt" autocomplete="off">
+    <label for="prompt-input" class="visually-hidden">What do you want to understand?</label>
+    <input id="prompt-input" name="q" type="text">
+    <button type="submit">Explore</button>
+  </form>
+  <nav id="trail" class="trail" aria-label="Your path"></nav>
+  <p id="about" class="about"></p>
+</header>
+
+<aside id="focus" class="focus" hidden aria-labelledby="focus-title">
+  <button id="focus-close" class="focus-close" type="button" aria-label="Close focus panel">&times;</button>
+  <p id="focus-rel" class="focus-rel"></p>
+  <h2 id="focus-title" class="focus-title"></h2>
+  <p id="focus-liner" class="focus-liner"></p>
+  <dl id="focus-measures" class="measures">
+    <div>
+      <dt>General link</dt>
+      <dd><span class="bar"><i id="m-link"></i></span><output id="m-link-v"></output></dd>
+      <dd class="measure-note">Sets distance from the sun</dd>
+    </div>
+    <div>
+      <dt>Relevance here</dt>
+      <dd><span class="bar"><i id="m-rel"></i></span><output id="m-rel-v"></output></dd>
+      <dd class="measure-note">Sets orb size</dd>
+    </div>
+  </dl>
+  <div class="focus-slot">Picture or chart, a longer explanation, and its sources go here in stage 2.</div>
+  <button id="unfold" class="unfold" type="button">Unfold</button>
+  <p id="unfold-note" class="unfold-note"></p>
+</aside>
+
+<details class="legend" open>
+  <summary>How to read it</summary>
+  <ul>
+    <li><span class="key key-dist"></span><span><b>Distance</b> = how strongly it's linked to the sun in general</span></li>
+    <li><span class="key key-size"></span><span><b>Size</b> = how relevant it is to your line of reasoning</span></li>
+    <li><span class="key key-below"></span><span><b>Below</b> = causes &nbsp;·&nbsp; <b>Above</b> = effects</span></li>
+    <li><span class="key key-glow"></span><span><b>Glow</b> = hidden lead: loosely linked, but big here</span></li>
+    <li><span class="key key-plus"></span><span><b>Ring</b> = can be unfolded in this sketch</span></li>
+  </ul>
+</details>
+
+<p class="hint">Drag to rotate · Scroll to zoom · Right-drag to pan · Click an orb to focus</p>
+<p id="toast" class="toast" role="status" hidden></p>
+<!-- APP:END -->
+
+<script src="data.js"></script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
