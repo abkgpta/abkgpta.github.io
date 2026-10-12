@@ -3,22 +3,6 @@
    Two themes (Tide, Dusk), each with a light and a dark mode. A theme only redefines the
    tokens below; everything else is shared. The 3D canvas reads --3d-*, the backdrop --sh-*. */
 
-/* Libre Caslon Condensed: the typeface for the whole interface */
-@font-face {
-  font-family: "Libre Caslon Condensed";
-  src: url("fonts/LibreCaslonCondensed-VariableFont_wght.ttf") format("truetype");
-  font-weight: 400 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: "Libre Caslon Condensed";
-  src: url("fonts/LibreCaslonCondensed-Italic-VariableFont_wght.ttf") format("truetype");
-  font-weight: 400 700;
-  font-style: italic;
-  font-display: swap;
-}
-
 /* Tide · light: sea glass, teal and bottle green (also the fallback before the script runs) */
 :root, :root[data-theme="light"], :root[data-theme="tide-light"] {
   --bg: #e3ebe8;
@@ -46,8 +30,9 @@
   /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
   --tier-1: #2c5bc9; --tier-2: #13808a; --tier-3: #3d8a4a; --tier-4: #b98512; --tier-5: #cf5a26; --tier-6: #858a92;
 
-  --font-display: "Libre Caslon Condensed", "Iowan Old Style", Georgia, serif;
-  --font-body: "Libre Caslon Condensed", "Iowan Old Style", Georgia, serif;
+  /* Helvetica Neue where installed (all Macs); Inter elsewhere */
+  --font-display: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+  --font-body: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 /* Tier colours, lifted for dark modes */
@@ -109,7 +94,7 @@ body {
   overflow: hidden;
   background: var(--bg);
   color: var(--ink);
-  font: 15px/1.45 var(--font-body);
+  font: 14px/1.45 var(--font-body);
 }
 button, input { font: inherit; color: inherit; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -177,8 +162,8 @@ button, input { font: inherit; color: inherit; }
   max-width: 100%;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(11px, calc(var(--d) * 0.145px), 18px);
-  line-height: 1.1;
+  font-size: clamp(9.5px, calc(var(--d) * 0.125px), 16px);
+  line-height: 1.12;
   color: var(--ink);
   text-wrap: balance;
   display: -webkit-box;
@@ -186,14 +171,14 @@ button, input { font: inherit; color: inherit; }
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.orb.is-hover .t { font-size: 19px; -webkit-line-clamp: 3; }
+.orb.is-hover .t { font-size: 16px; -webkit-line-clamp: 3; }
 .orb .l {
   max-width: 100%;
   max-height: calc(var(--k) * 12em);
   overflow: hidden;
   opacity: var(--k);
-  font-size: 14.5px;
-  line-height: 1.35;
+  font-size: 13px;
+  line-height: 1.4;
   color: var(--ink-soft);
   text-wrap: pretty;
 }
@@ -244,8 +229,8 @@ button, input { font: inherit; color: inherit; }
   color: var(--line);
 }
 .orb.sun .rel { color: var(--accent); }
-.orb.is-selected .t { font-size: 24px; -webkit-line-clamp: 3; }
-.orb.is-selected .l { color: var(--ink); font-size: 16px; }
+.orb.is-selected .t { font-size: 21px; letter-spacing: -0.01em; -webkit-line-clamp: 3; }
+.orb.is-selected .l { color: var(--ink); font-size: 14.5px; }
 .orb .more { width: 100%; justify-items: center; gap: 10px; margin-top: 8px; }
 .orb .meters { width: 100%; margin: 0; display: grid; gap: 5px; padding-top: 10px; border-top: 1px solid var(--rule); }
 .orb .meters div { display: grid; grid-template-columns: 70px 1fr 2.5ch; align-items: center; gap: 8px; }
@@ -293,7 +278,7 @@ button, input { font: inherit; color: inherit; }
 }
 .orb.is-selected .rel { padding-right: 34px; }
 .orb.is-selected .more { justify-items: stretch; gap: 14px; margin-top: 10px; }
-.orb .about-text { margin: 0; font-size: 15.5px; line-height: 1.45; color: var(--ink); text-wrap: pretty; }
+.orb .about-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink); text-wrap: pretty; }
 .orb .section { display: grid; gap: 6px; }
 .orb .section h3 {
   margin: 0;
@@ -304,8 +289,8 @@ button, input { font: inherit; color: inherit; }
   text-transform: uppercase;
   color: var(--ink-soft);
 }
-.orb .section h3 span { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-style: italic; font-size: 12px; }
-.orb .checks { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 14.5px; line-height: 1.35; }
+.orb .section h3 span { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-size: 11.5px; }
+.orb .checks { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 13.5px; line-height: 1.4; }
 .orb .checks li::marker { color: var(--line); }
 .orb .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .orb .chip {
@@ -313,11 +298,11 @@ button, input { font: inherit; color: inherit; }
   border: 1px solid var(--rule);
   border-radius: 999px;
   background: var(--bg);
-  font-size: 13.5px;
+  font-size: 12.5px;
   cursor: pointer;
 }
 .orb .chip:hover { border-color: var(--line); }
-.orb .sources { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.3; }
+.orb .sources { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 12.5px; line-height: 1.3; }
 .orb .sources li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: start; }
 .orb .sources b { font-weight: 600; }
 .orb .flag { font-style: normal; font-size: 12px; color: var(--tier-5); white-space: nowrap; }
@@ -354,7 +339,7 @@ button, input { font: inherit; color: inherit; }
     color-mix(in srgb, var(--accent) 20%, var(--bg)) 0%, color-mix(in srgb, var(--accent) 8%, var(--bg)) 65%);
   box-shadow: 0 0 34px 6px color-mix(in srgb, var(--accent) 30%, transparent);
 }
-.orb.sun .t { font-size: clamp(15px, calc(var(--d) * 0.15px), 25px); font-weight: 700; }
+.orb.sun .t { font-size: clamp(13px, calc(var(--d) * 0.13px), 22px); font-weight: 600; letter-spacing: -0.01em; }
 
 /* ── Top bar ──────────────────────────────────── */
 .top {
@@ -370,7 +355,7 @@ button, input { font: inherit; color: inherit; }
 }
 .top > * { pointer-events: auto; }
 .brand { grid-area: brand; display: grid; gap: 1px; justify-items: start; align-self: start; }
-.brand-name { font-family: var(--font-display); font-size: 26px; font-weight: 600; font-style: italic; line-height: 1; }
+.brand-name { font-family: var(--font-display); font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.1; }
 .brand-stage { font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
 
 .prompt {
