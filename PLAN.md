@@ -15,8 +15,10 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Placement | Orbs are spread evenly in all three dimensions around the sun, so spacing looks even from any angle. |
 | Cause and effect | Outline colour (violet = cause, cyan = effect, grey = related) plus streams: violet flows **in** from causes, cyan flows **out** to effects. **Stronger link = longer, thicker stream. More relevant = more frequent.** A line to the sun appears only on hover or focus. |
 | Screen use | The camera frames each system to fill the whole display. |
-| Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
-| View panel | Switches and sliders for how the view looks, remembered between visits: colour scheme (six options), streams, outline colours, hidden-lead glow, names, same size at any depth, fade with distance (on by default), stretch to fill, sway, spin, stream speed, spacing, orb size. |
+| Orbs | At rest: an outlined, softly shifting near-circle with the name inside and a faint drifting highlight. Hover: widens into a rounded preview card sized to its text. Click: opens into a full card. A double outline means it can be unfolded. |
+| View panel | Switches and sliders, remembered between visits: theme (Tide or Dusk) and light/dark/match device, shifting background, line art, streams, faint lines, outline colours, hidden-lead glow, names, orb shape drift, same size at any depth, fade with distance, stretch to fill, sway, spin, stream speed, spacing, orb size. |
+| Lines | Very faint permanent lines from each cause and effect to the centre. Faint lines between orbiting topics that are strongly linked to each other (from `crossLinks` in data.js). Both brighten on hover. |
+| Look | Two themes, each light and dark: **Tide** (teal, bottle green) and **Dusk** (pink, purple). A very faint shifting gradient shader behind everything. Celestial line art (astrolabe scale, orbit diagrams, starburst, constellations) along the bottom edge, fading towards the centre, blended like a multiply layer. Typeface: Libre Caslon Condensed. |
 | Navigation | Left-drag rotates, scroll or pinch zooms (sped up), middle- or right-drag pans. |
 | Hidden leads | Orbs that are far (loosely linked) but big (relevant here) glow. |
 | Breadth | Generalist, like Wikipedia. |
@@ -26,7 +28,7 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 
 | Action | Name | What happens |
 |---|---|---|
-| Orbs | An outlined circle with the name inside. On hover it grows until the one-liner fits inside it, and the outline glows. A double outline means it can be unfolded. |
+| Orbs | At rest: an outlined, softly shifting near-circle with the name inside and a faint drifting highlight. Hover: widens into a rounded preview card sized to its text. Click: opens into a full card. A double outline means it can be unfolded. |
 | Click | **Open** | The orb itself opens up to show its details (relation, one-liner, link and relevance, and later a visual and sources) with an Unfold button. No separate panel. |
 | Unfold button | **Unfold** | The orb becomes the new sun and breaks into its own orbs. |
 

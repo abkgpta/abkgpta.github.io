@@ -6,11 +6,13 @@
 <title>Celestial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <!-- APP:START -->
+<div id="backdrop" class="backdrop" aria-hidden="true"></div>
+<div id="art" class="art" aria-hidden="true"></div>
 <div id="stage" class="stage" aria-label="3D map of related topics"></div>
 
 <header class="top">
@@ -44,6 +46,8 @@
     <li><span class="key key-cause"></span><span><b>Violet outline</b> = cause: streams flow <b>in</b> to the centre</span></li>
     <li><span class="key key-effect"></span><span><b>Cyan outline</b> = effect: streams flow <b>out</b> from the centre</span></li>
     <li><span class="key key-plain"></span><span><b>Grey outline</b> = related, neither cause nor effect</span></li>
+    <li><span class="key key-centre"></span><span><b>Faint line to the centre</b> = a cause or effect link</span></li>
+    <li><span class="key key-cross"></span><span><b>Faint line between orbs</b> = they're strongly linked to each other</span></li>
     <li><span class="key key-stream"></span><span><b>Longer, thicker streams</b> = stronger link. <b>More frequent</b> = more relevant</span></li>
     <li><span class="key key-glow"></span><span><b>Glow</b> = hidden lead: loosely linked, but big here</span></li>
     <li><span class="key key-ring"></span><span><b>Double outline</b> = can be unfolded in this sketch</span></li>
