@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Orrery</title>
+<title>Celestial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -15,7 +15,7 @@
 
 <header class="top">
   <div class="brand">
-    <span class="brand-name">Orrery</span>
+    <span class="brand-name">Celestial</span>
     <span class="brand-stage">Stage 1 · Sketch · example content</span>
   </div>
   <form id="prompt" class="prompt" autocomplete="off">
@@ -49,18 +49,20 @@
   <p id="unfold-note" class="unfold-note"></p>
 </aside>
 
-<details class="legend" open>
+<details class="legend">
   <summary>How to read it</summary>
   <ul>
     <li><span class="key key-dist"></span><span><b>Distance</b> = how strongly it's linked to the sun in general</span></li>
     <li><span class="key key-size"></span><span><b>Size</b> = how relevant it is to your line of reasoning</span></li>
-    <li><span class="key key-below"></span><span><b>Below</b> = causes &nbsp;·&nbsp; <b>Above</b> = effects</span></li>
+    <li><span class="key key-cause"></span><span><b>Causes</b> sit below, pulsing <b>in</b> to the centre</span></li>
+    <li><span class="key key-effect"></span><span><b>Effects</b> sit above, pulsing <b>out</b> from the centre</span></li>
+    <li><span class="key key-pulse"></span><span><b>Faster pulses</b> = more relevant here</span></li>
     <li><span class="key key-glow"></span><span><b>Glow</b> = hidden lead: loosely linked, but big here</span></li>
     <li><span class="key key-plus"></span><span><b>Ring</b> = can be unfolded in this sketch</span></li>
   </ul>
 </details>
 
-<p class="hint">Drag to rotate · Scroll to zoom · Right-drag to pan · Click an orb to focus</p>
+<p class="hint">Drag to rotate · Scroll to zoom · Right-drag to pan · Click an orb to focus · Hover to see its link</p>
 <p id="toast" class="toast" role="status" hidden></p>
 <!-- APP:END -->
 

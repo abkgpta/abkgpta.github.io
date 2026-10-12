@@ -1,4 +1,4 @@
-/* Layout: one full-screen 3D studio with thin instrument-style overlays at the edges.
+/* Celestial. Layout: one full-screen 3D studio with thin instrument-style overlays at the edges.
    The 3D scene reads its colours from the --3d-* tokens below. */
 :root {
   --bg: #e6e8eb;          /* studio backdrop, a cool grey */
@@ -12,8 +12,11 @@
   --3d-orb: #bfc3c9;
   --3d-sun: #c2186b;
   --3d-line: #3a4048;
-  --3d-line-soft: #8e959e;
   --3d-glow: #e0287f;
+  --3d-cause: #5b3fe0;    /* violet: pulses flowing in */
+  --3d-effect: #0094b3;   /* cyan: pulses flowing out */
+  --cause: #5b3fe0;
+  --effect: #00809b;
 
   --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
@@ -23,14 +26,14 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #15181c; --panel: #1e2227; --ink: #e8eaed; --ink-soft: #9aa2ac; --rule: #343a42; --accent: #f0609e;
-    --3d-scene: #15181c; --3d-orb: #5b636d; --3d-sun: #f0609e; --3d-line: #b9c0c8; --3d-line-soft: #5f6771; --3d-glow: #ff6fae;
+    --3d-scene: #15181c; --3d-orb: #5b636d; --3d-sun: #f0609e; --3d-line: #b9c0c8; --3d-glow: #ff6fae; --3d-cause: #9f8bff; --3d-effect: #34d0ee; --cause: #ad9cff; --effect: #4fd6f0;
     --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #15181c; --panel: #1e2227; --ink: #e8eaed; --ink-soft: #9aa2ac; --rule: #343a42; --accent: #f0609e;
-  --3d-scene: #15181c; --3d-orb: #5b636d; --3d-sun: #f0609e; --3d-line: #b9c0c8; --3d-line-soft: #5f6771; --3d-glow: #ff6fae;
+  --3d-scene: #15181c; --3d-orb: #5b636d; --3d-sun: #f0609e; --3d-line: #b9c0c8; --3d-glow: #ff6fae; --3d-cause: #9f8bff; --3d-effect: #34d0ee; --cause: #ad9cff; --effect: #4fd6f0;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
   color-scheme: dark;
 }
@@ -185,6 +188,8 @@ button, input { font: inherit; color: inherit; }
 .focus-close:hover { background: var(--bg); color: var(--ink); }
 .focus-rel { margin: 0; font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); padding-right: 30px; }
 .focus-rel .lead { color: var(--accent); }
+.focus-rel[data-rel="cause"] { color: var(--cause); }
+.focus-rel[data-rel="effect"] { color: var(--effect); }
 .focus-title { margin: 0; font-family: var(--font-display); font-size: 22px; font-weight: 700; font-stretch: 108%; line-height: 1.15; text-wrap: balance; }
 .focus-liner { margin: 0; font-size: 14.5px; color: var(--ink); }
 
@@ -222,15 +227,16 @@ button, input { font: inherit; color: inherit; }
 /* ── Legend, hint, toast ──────────────────────── */
 .legend {
   position: fixed;
-  left: 20px; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+  left: 20px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
   max-width: 300px;
-  padding: 12px 14px;
+  padding: 8px 14px;
   background: var(--panel);
   border: 1px solid var(--rule);
   border-radius: 10px;
   box-shadow: var(--shadow);
   font-size: 12.5px;
 }
+.legend[open] { padding-block: 12px; }
 .legend summary { cursor: pointer; font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
 .legend ul { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 7px; }
 .legend li { display: grid; grid-template-columns: 26px 1fr; align-items: center; gap: 8px; color: var(--ink-soft); }
@@ -241,8 +247,11 @@ button, input { font: inherit; color: inherit; }
 .key-dist::after { width: 6px; height: 6px; right: 0; top: 6px; }
 .key-size::before { width: 5px; height: 5px; left: 1px; top: 7px; }
 .key-size::after { width: 14px; height: 14px; right: 0; top: 2px; }
-.key-below::before { width: 6px; height: 6px; left: 10px; top: 0; background: var(--ink); }
-.key-below::after { width: 6px; height: 6px; left: 10px; bottom: 0; }
+.key-cause::before { width: 6px; height: 6px; left: 2px; top: 6px; background: var(--cause); box-shadow: 8px 0 0 -1px color-mix(in srgb, var(--cause) 55%, transparent); }
+.key-cause::after { width: 8px; height: 8px; right: 0; top: 5px; background: var(--accent); }
+.key-effect::before { width: 8px; height: 8px; left: 0; top: 5px; background: var(--accent); }
+.key-effect::after { width: 6px; height: 6px; right: 2px; top: 6px; background: var(--effect); box-shadow: -8px 0 0 -1px color-mix(in srgb, var(--effect) 55%, transparent); }
+.key-pulse::before { width: 5px; height: 5px; left: 0; top: 7px; background: var(--ink-soft); box-shadow: 7px 0 0 0 var(--ink-soft), 14px 0 0 0 var(--ink-soft), 21px 0 0 0 var(--ink-soft); }
 .key-glow::before { width: 10px; height: 10px; left: 8px; top: 4px; box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
 .key-plus::before { width: 10px; height: 10px; left: 8px; top: 4px; background: none; border: 1.5px solid var(--ink); }
 
@@ -250,6 +259,7 @@ button, input { font: inherit; color: inherit; }
   position: fixed;
   right: 20px; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
   margin: 0;
+  pointer-events: none;
   font-family: var(--font-data);
   font-size: 11px;
   color: var(--ink-soft);

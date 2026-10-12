@@ -1,6 +1,4 @@
-# Orrery — plan
-
-*Working title. An orrery is a mechanical model of the solar system.*
+# Celestial — plan
 
 A 3D research tool for **diagnosing problems (about 75%) and learning topics (about 25%)**,
 loosely based on the 5 Whys. You start from a question, see the topics around it as a solar
@@ -15,6 +13,9 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Distance from the sun | How strongly the topic is linked to the sun **in general**. |
 | Orb size | How relevant the topic is to **your current line of reasoning** (depends on the path you took). |
 | Up / down | Causes sit **below** the sun, effects **above**, related topics around the middle. |
+| Cause and effect pulses | No permanent lines. Violet pulses flow **in** from causes, cyan pulses flow **out** to effects. More relevant orbs pulse more often. A line to the sun appears only on hover or focus. |
+| Screen use | The camera frames each system to fill the whole display. |
+| Hover | Orbs swell slightly. |
 | Hidden leads | Orbs that are far (loosely linked) but big (relevant here) glow. |
 | Breadth | Generalist, like Wikipedia. |
 | Summaries | None for now. Each topic has a title and a one-liner; we'll experiment further. |

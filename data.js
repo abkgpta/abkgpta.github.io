@@ -9,8 +9,8 @@
 //            and how. Only topics listed here can be unfolded.
 //
 // For each orbiting orb:
-//   rel        "cause"   → sits BELOW the sun (it's a root of the problem)
-//              "effect"  → sits ABOVE the sun (it's a consequence)
+//   rel        "cause"   → sits BELOW the sun, pulses flow IN to the sun
+//              "effect"  → sits ABOVE the sun, pulses flow OUT of the sun
 //              "related" → sits around the middle
 //   link       0 to 1. How strongly the two topics are linked in general.
 //              Sets DISTANCE: 1 = tight orbit, 0 = far out.
@@ -21,7 +21,7 @@
 // because relevance depends on how you got there.
 // ─────────────────────────────────────────────────────────────
 
-window.ORRERY_DATA = {
+window.CELESTIAL_DATA = {
   start: 'warping',
   prompt: 'Why is my injection-moulded part warping?',
 
