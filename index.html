@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
 <title>Celestial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,7 +19,7 @@
 <header class="top">
   <div class="brand">
     <span class="brand-name">Celestial</span>
-    <span class="brand-stage">Stage 1 · Sketch · example content</span>
+    <span id="brand-stage" class="brand-stage">Example</span>
     <button id="view-toggle" class="view-toggle-btn" type="button" aria-expanded="false" aria-controls="view-panel">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="5.5" cy="12" r="1.6"/></svg>
       View
@@ -26,14 +27,29 @@
   </div>
   <form id="prompt" class="prompt" autocomplete="off">
     <label for="prompt-input" class="visually-hidden">What do you want to understand?</label>
-    <input id="prompt-input" name="q" type="text">
+    <input id="prompt-input" name="q" type="text" placeholder="Ask why something happens, or type a topic">
     <button type="submit">Explore</button>
   </form>
   <nav id="trail" class="trail" aria-label="Your path"></nav>
   <p id="about" class="about"></p>
+  <p id="status" class="status" role="status" hidden></p>
 </header>
 
 <section id="view-panel" class="view-panel" hidden aria-label="View settings">
+  <p class="view-group">Research with Claude</p>
+  <form id="key-form" class="key-form" autocomplete="off">
+    <label for="api-key">Your Claude API key</label>
+    <div class="key-row">
+      <input id="api-key" type="password" spellcheck="false" placeholder="sk-ant-…">
+      <button type="submit">Save</button>
+    </div>
+    <p id="key-note" class="key-note"></p>
+    <div class="key-actions">
+      <button type="button" id="key-forget" class="link-btn" hidden>Forget key</button>
+      <button type="button" id="show-example" class="link-btn">Show the example</button>
+    </div>
+    <p id="spend" class="spend"></p>
+  </form>
   <div id="view-list" class="view-list"></div>
   <button id="view-reset" class="view-reset" type="button">Reset to defaults</button>
 </section>
@@ -59,6 +75,8 @@
 <!-- APP:END -->
 
 <script src="data.js"></script>
+<script src="illustrations.js"></script>
+<script src="research.js"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",

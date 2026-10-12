@@ -60,9 +60,9 @@ Every stage ends with a link to click and a short list of things to try.
 | Stage | Like a… | What you get | AI? | Status |
 |---|---|---|---|---|
 | 1. Sketch | Foam model | 3D solar system with example content. Rotate, zoom, hover, click, unfold. | No | **Built** |
-| 2. Looks-like | Appearance model | Source tiers, a full opened card with charts and sources. | No | **Mostly done** (example content for 17 topics) |
+| 2. Looks-like | Appearance model | Source tiers, full opened cards with charts, illustrations and sources. | No | **Done** |
 | 3. Tuning rig | Test jig | On-screen sliders and switches to try options without code. | No | **Started** (View panel) |
-| 4. Works-like | Working prototype | Type any question and get real topics, sources and relationships. | Yes | |
+| 4. Works-like | Working prototype | Type any question or keyword and Claude maps it; open any orb to research it with web sources and a Wikipedia picture; unfold any orb. Runs on your own API key, from your browser. | Yes | **Built** |
 | 5. Memory | — | Saved sessions, built so they can merge into one growing map later. | Yes | |
 
 ### Switches planned for the tuning rig (stage 3)
@@ -76,11 +76,21 @@ Every stage ends with a link to click and a short list of things to try.
 - Stage 4: the AI needs an access key. For a personal tool, the simplest route is pasting your
   own key into a settings box, where it stays only in your browser.
 
+## How live research works
+
+- **Your key, your browser.** Paste a Claude API key into the View panel. It is stored in that browser only and sent only to Anthropic. Nothing about it is in the website's files.
+- **Typing** a question that describes a problem ("Why…", "…keeps failing") starts a *diagnosis*. A single keyword or topic name starts an *exploration*: mostly related topics that map the subject. The View panel can force either.
+- **Mapping** a system is one request to Claude (no web search). **Opening** an orb is a second request that searches the web for sources, rates each by tier, and names a Wikipedia article whose picture is shown.
+- **Unfolding** any orb maps it as a new centre, with the path you took shaping what counts as relevant.
+- **Cost:** the View panel shows a running estimate for the current visit. Model choice: Opus 5.5 (default), Sonnet 5.5 or Haiku 5.5.
+- **Remembered:** research and your last path are saved in the browser, so reopening the page resumes where you were without paying again.
+- **Privacy:** the page asks search engines not to list it. The site itself is reachable by anyone with the address, but without your key it can only show the example.
+
 ## Next steps
 
 1. **Finish the look (stages 2–3).** Source rings on resting orbs showing what each rests on; pictures as well as charts; the unfold-as-moons option; any line-art reference you want to swap in.
 2. **Decide the prompt line.** What typing a question should do: start a fresh system, add to the current one, or ask a "why" about the open orb.
-3. **Make it work for real (stage 4).**
+3. ~~**Make it work for real (stage 4).**~~ Done, see above.
    - Choose how the AI is reached: your own key pasted into a settings box, or a small private server that holds the key.
    - The AI turns a question into a system: topics, one-liners, cause/effect/related, link and relevance numbers, and links between orbs.
    - Real sources: research databases (OpenAlex, Semantic Scholar), Wikipedia, news and the web, each rated by tier.

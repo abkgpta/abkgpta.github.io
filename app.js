@@ -26,10 +26,11 @@ const DATA = window.CELESTIAL_DATA;
 const TUNING = {
   nearestOrbit: 9,        // distance of an orb with link = 1 (scene units)
   farthestOrbit: 24,      // distance of an orb with link = 0
-  smallestOrb: 1.6,       // radius of an orb with relevance = 0
-  largestOrb: 3.0,        // radius of an orb with relevance = 1
+  smallestOrb: 1.0,       // radius of an orb with relevance = 0
+  largestOrb: 3.4,        // radius of an orb with relevance = 1
   sunSize: 3.6,
-  minDiameter: 76,        // pixels: orbs never shrink below this, so names fit
+  minDiameter: [50, 92],  // pixels: smallest size for the least / most relevant orb
+  leastRelevantFade: 0.38, // opacity of the least relevant orb (most relevant = 1)
   hoverWidth: 270,        // pixels: width of an orb's preview card on hover
   openWidth: 460,         // pixels: width of an orb opened by a click
   cardPadding: 20,        // pixels: inner space of a preview or opened card
@@ -57,6 +58,10 @@ const TUNING = {
 
 // ─── View settings: the controls in the View panel ───────────
 const VIEW_DEFAULTS = {
+  model: 'claude-opus-5-5',
+  webSearch: true,
+  reading: 'auto',
+  hierarchy: 1,
   theme: 'tide',
   mode: 'system',
   backdropMotion: true,
@@ -78,6 +83,17 @@ const VIEW_DEFAULTS = {
   orbSize: 1,
 };
 const VIEW_SETTINGS = [
+  { key: 'model', label: 'Model', options: [
+    ['claude-opus-5-5', 'Opus 5.5', 'Best · $4 / $20'],
+    ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster · $2 / $10'],
+    ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
+  ] },
+  { key: 'reading', label: 'How to read what you type', options: [
+    ['auto', 'Auto'],
+    ['diagnose', 'Diagnose'],
+    ['explore', 'Explore'],
+  ] },
+  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. About $0.01 per search' },
   { group: 'Theme' },
   { key: 'theme', label: 'Theme', swatches: true, options: [
     ['tide', 'Tide', 'Teal and bottle green'],
@@ -98,6 +114,7 @@ const VIEW_SETTINGS = [
   { key: 'leadGlow', label: 'Glow around hidden leads' },
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
   { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'hierarchy', label: 'Emphasis on relevance', min: 0, max: 1, step: 0.05, unit: '', relayout: true },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
@@ -315,9 +332,23 @@ let busy = false;       // true while a transition is playing
 let systemRadius = 20;
 
 const isHiddenLead = (l) => l.link <= TUNING.hiddenLead.maxLink && l.relevance >= TUNING.hiddenLead.minRelevance;
-const canUnfold = (id) => Boolean(DATA.systems[id]);
+// ─── Live research with Claude (see research.js) ─────────────
+const R = window.CELESTIAL_RESEARCH;
+const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
+const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
+let apiKey = readKey();
+const live = () => Boolean(apiKey && R);
+const session = { mode: 'diagnose' };
+const liveIds = new Set();          // topics that came from Claude (saved between visits)
+const pending = new Set();          // systems being mapped right now
+const detailsLoading = new Set();
+
+const canUnfold = (id) => Boolean(DATA.systems[id]) || live();
 const orbitOf = (l) => lerp(TUNING.nearestOrbit, TUNING.farthestOrbit, 1 - l.link) * view.spacing;
-const sizeOf = (l) => lerp(TUNING.smallestOrb, TUNING.largestOrb, l.relevance) * view.orbSize;
+// Size grows with relevance; "Emphasis on relevance" blends towards equal sizes
+const radiusFor = (relevance) => lerp((TUNING.smallestOrb + TUNING.largestOrb) / 2,
+  lerp(TUNING.smallestOrb, TUNING.largestOrb, relevance), view.hierarchy);
+const sizeOf = (l) => radiusFor(l.relevance) * view.orbSize;
 
 // ─── Layout: where each orb goes ─────────────────────────────
 // Orbs are spread evenly in all three dimensions around the sun.
@@ -404,7 +435,8 @@ function connectionsOf(id) {
 
 // A small horizontal bar chart, drawn to scale
 function chartHTML(c) {
-  const W = 320, labelW = 52, valueW = 40, rowH = 20;
+  const W = 320, valueW = 44, rowH = 20;
+  const labelW = Math.min(120, Math.max(44, Math.max(...c.rows.map((r) => String(r[0]).length)) * 6.3 + 12));
   const max = Math.max(...c.rows.map((r) => r[1]));
   const bars = c.rows.map(([label, value], i) => {
     const y = i * rowH;
@@ -418,48 +450,16 @@ function chartHTML(c) {
     ${c.note ? `<p class="viz-note">${esc(c.note)}</p>` : ''}</figure>`;
 }
 function makeOrbElement(o) {
-  const topic = DATA.topics[o.id];
   const el = document.createElement('div');
   el.className = ['orb',
     o.isSun ? 'sun' : 'rel-' + o.rel,
     o.lead ? 'lead' : '',
-    !o.isSun && canUnfold(o.id) ? 'unfoldable' : '',
+    // Double outline: this orb's own system is ready to open instantly
+    !o.isSun && DATA.systems[o.id] ? 'unfoldable' : '',
+    o.isSun ? '' : o.relevance >= 0.75 ? 'rank-high' : o.relevance < 0.4 ? 'rank-low' : '',
   ].filter(Boolean).join(' ');
-  let tag = '';
-  if (o.cameFrom) tag = 'Came from';
-  else if (o.lead) tag = 'Hidden lead';
-  const meter = (name, value) =>
-    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
-  const more = DATA.details?.[o.id] || {};
-  const links = o.isSun ? [] : connectionsOf(o.id);
-  el.innerHTML = `
-    <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
-    <div class="inner">
-      ${tag ? `<span class="tag">${tag}</span>` : ''}
-      <span class="rel"></span>
-      <span class="t"></span>
-      <span class="l"></span>
-      <div class="more">
-        ${more.chart ? chartHTML(more.chart) : ''}
-        ${more.about
-          ? `<p class="about-text">${esc(more.about)}</p>`
-          : '<p class="slot">A longer explanation for this topic arrives with live research in stage 4.</p>'}
-        ${more.check ? `<section class="section"><h3>What to check</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
-        ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
-          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
-        ${more.sources ? `<section class="section"><h3>Sources <span>· examples of the rating system</span></h3><ul class="sources">${more.sources.map((src) =>
-          `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${esc(src.title)}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : canUnfold(o.id)
-          ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
-          : '<p class="slot">Not unfoldable in this sketch</p>'}
-      </div>
-    </div>`;
   // Scrolling inside an opened card shouldn't zoom the view
   el.addEventListener('wheel', (e) => { if (o === selected) e.stopPropagation(); });
-  el.querySelector('.rel').textContent = relationText(o);
-  el.querySelector('.t').textContent = topic.title;
-  el.querySelector('.l').textContent = topic.liner;
   el.addEventListener('pointerenter', () => setHover(o));
   el.addEventListener('pointerleave', () => { if (hovered === o) setHover(null); });
   // Inside an opened card, the card handles its own clicks and scrolling,
@@ -470,7 +470,61 @@ function makeOrbElement(o) {
     if (btn) runAction(btn.dataset.action, o, btn.dataset.id);
   });
   el._orb = o;
+  o.el = el;
+  fillOrb(o);
   return el;
+}
+
+// Everything inside an orb. Called again when research arrives.
+function fillOrb(o) {
+  const topic = DATA.topics[o.id];
+  const el = o.el;
+  let tag = '';
+  if (o.cameFrom) tag = 'Came from';
+  else if (o.lead) tag = 'Hidden lead';
+  const meter = (name, value) =>
+    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
+  const more = DATA.details?.[o.id] || {};
+  const links = o.isSun ? [] : connectionsOf(o.id);
+  const drawing = window.CELESTIAL_ILLUSTRATIONS?.[o.id];
+  let body;
+  if (more.loading) body = `<p class="researching"><span class="spinner"></span>Researching with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and searching the web' : ''}…</p>`;
+  else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
+  else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
+  else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
+  else body = '<p class="slot">Add your Claude API key in the View panel to research any topic in depth.</p>';
+  const sourceLine = (src) => {
+    const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
+    return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
+  };
+  el.innerHTML = `
+    <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
+    <div class="inner">
+      ${tag ? `<span class="tag">${tag}</span>` : ''}
+      <span class="rel"></span>
+      <span class="t"></span>
+      <span class="l"></span>
+      <div class="more">
+        ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
+        ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
+        ${body}
+        ${more.chart ? chartHTML(more.chart) : ''}
+        ${more.check?.length ? `<section class="section"><h3>${session.mode === 'explore' && more.live ? 'Worth exploring next' : 'What to check'}</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
+        ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
+        ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
+          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
+        ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
+        ${o.isSun ? '' : canUnfold(o.id)
+          ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
+          : '<p class="slot">Add a Claude API key to unfold any orb</p>'}
+      </div>
+    </div>`;
+  el.querySelector('.rel').textContent = relationText(o);
+  el.querySelector('.t').textContent = topic.title;
+  el.querySelector('.l').textContent = topic.liner;
+  o.inner = el.querySelector('.inner');   // measured every frame to fit the card
+  // Once a picture arrives the card may need to grow
+  el.querySelector('.photo img')?.addEventListener('error', (e) => e.target.closest('figure').remove());
 }
 
 // A stream is a straight segment one unit long, moved, turned and
@@ -531,9 +585,8 @@ function makeOrb(spec) {
     phase: Math.random() * 10,   // so each orb's shape drifts differently
   };
   o.lead = !o.isSun && isHiddenLead(o);
-  o.radius = o.isSun ? TUNING.sunSize : lerp(TUNING.smallestOrb, TUNING.largestOrb, o.relevance);
+  o.radius = o.isSun ? TUNING.sunSize : radiusFor(o.relevance);
   o.el = makeOrbElement(o);
-  o.inner = o.el.querySelector('.inner');
   o.obj = new CSS2DObject(o.el);
   world.add(o.obj);
 
@@ -571,7 +624,7 @@ function showSystem(sunId) {
   setHover(null);
   const previous = trail.length > 1 ? trail[trail.length - 2] : null;
   const sun = makeOrb({ to: sunId, isSun: true });
-  const planets = layout(DATA.systems[sunId]).map((spec) =>
+  const planets = layout(DATA.systems[sunId] || []).map((spec) =>
     makeOrb({ ...spec, cameFrom: spec.to === previous }));
   orbs = [sun, ...planets];
 
@@ -599,7 +652,7 @@ function showSystem(sunId) {
 // Re-place the current orbs after a spacing or size change
 function relayout() {
   if (!orbs.length || busy) return;
-  const placed = layout(DATA.systems[orbs[0].id]);
+  const placed = layout(DATA.systems[orbs[0].id] || []);
   for (const o of orbs.slice(1)) {
     const p = placed.find((q) => q.to === o.id);
     if (p) o.target = p.target;
@@ -608,25 +661,203 @@ function relayout() {
   fitCamera();
 }
 
-function unfold(id) {
+async function unfold(id) {
   if (busy || !canUnfold(id)) return;
+  const before = trail;
   const at = trail.indexOf(id);
   trail = at >= 0 ? trail.slice(0, at + 1) : [...trail, id];
   closeFocus();
   const chosen = orbs.find((o) => o.id === id);
+  // If you unfold a cause, the old centre becomes its effect (and vice versa)
+  const back = { cause: 'effect', effect: 'cause', related: 'related' }[chosen?.rel] || 'related';
   busy = true;
   const from = chosen ? chosen.obj.position.clone() : new THREE.Vector3();
   // Everything else shrinks away while the chosen orb slides to the centre
-  tween(450, (t) => {
+  await new Promise((done) => tween(450, (t) => {
     for (const o of orbs) {
       if (o === chosen) o.obj.position.lerpVectors(from, new THREE.Vector3(), t);
       else o.grow = 1 - t;
     }
-  }, () => {
-    busy = false;
-    world.rotation.y = 0;
+  }, done));
+  world.rotation.y = 0;
+  if (!DATA.systems[id]) {
+    // Not mapped yet: show the new centre on its own while Claude maps it
     showSystem(id);
-  });
+    const ok = await mapLive(id, at >= 0 ? null : before[before.length - 1], back);
+    if (!ok) { busy = false; trail = before; showSystem(trail[trail.length - 1]); return; }
+  }
+  busy = false;
+  showSystem(id);
+  saveSession();
+}
+
+// Ask Claude for the system around a topic and store it like the example data
+async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
+  const topic = DATA.topics[centreId];
+  pending.add(centreId);
+  setStatus(`Mapping “${topic.title}” with ${R.MODELS[view.model].name}…`);
+  try {
+    const out = await R.map({
+      key: apiKey,
+      model: view.model,
+      centre: topic.title,
+      mode: session.mode,
+      path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
+      cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
+    });
+    storeMap(centreId, out, cameFromId, cameFromRel);
+    setStatus('');
+    saveCache();
+    return true;
+  } catch (err) {
+    setStatus(R.explain(err), 'error');
+    return false;
+  } finally {
+    pending.delete(centreId);
+    updateSpend();
+  }
+}
+
+const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'topic';
+
+function storeMap(centreId, out, cameFromId, cameFromRel) {
+  if (!trail.slice(0, -1).length) {
+    // A fresh search: use Claude's tidier name for the centre
+    DATA.topics[centreId] = { title: out.centre.title || DATA.topics[centreId].title, liner: out.centre.liner || '' };
+  }
+  liveIds.add(centreId);
+  const byTitle = new Map();
+  const seen = new Set([centreId]);
+  const system = [];
+  if (cameFromId) {
+    system.push({ to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
+    seen.add(cameFromId);
+    byTitle.set(DATA.topics[cameFromId].title.toLowerCase(), cameFromId);
+  }
+  for (const orb of out.orbs.slice(0, 20)) {
+    const known = byTitle.get(orb.title.toLowerCase());
+    if (known) continue;   // e.g. Claude's copy of the "came from" topic
+    const id = slug(orb.title);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    byTitle.set(orb.title.toLowerCase(), id);
+    if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
+    liveIds.add(id);
+    system.push({ to: id, rel: orb.rel, link: orb.link, relevance: orb.relevance });
+  }
+  DATA.systems[centreId] = system;
+  DATA.crossLinks[centreId] = out.links
+    .map((l) => [byTitle.get(l.a.toLowerCase()), byTitle.get(l.b.toLowerCase()), l.strength])
+    .filter(([a, b]) => a && b && a !== b);
+}
+
+// Start a new investigation from the prompt line
+const DIAGNOSE_CUES = /^(why|how come|what causes|what's causing|what is causing)\b|\b(problem|issue|fail|failing|failure|broken|keeps|won't|doesn't|not working|declin|drop|dropping|slow|leak|crack|warp|error|wrong)\b/i;
+function modeFor(q) {
+  if (view.reading !== 'auto') return view.reading;
+  return DIAGNOSE_CUES.test(q) ? 'diagnose' : 'explore';
+}
+
+async function explore(query) {
+  if (!live()) {
+    setViewPanel(true);
+    $('api-key').focus();
+    toast('Add your Claude API key here to explore your own questions.');
+    return;
+  }
+  if (busy) return;
+  busy = true;
+  closeFocus();
+  session.mode = modeFor(query);
+  const id = 'q-' + slug(query);
+  DATA.topics[id] = { title: query, liner: session.mode === 'explore' ? 'Mapping the subject…' : 'Tracing causes and effects…' };
+  await new Promise((done) => tween(400, (t) => { for (const o of orbs) o.grow = Math.min(o.grow, 1 - t); }, done));
+  const before = trail;
+  trail = [id];
+  delete DATA.systems[id];
+  showSystem(id);
+  const ok = await mapLive(id);
+  busy = false;
+  if (!ok) { delete DATA.topics[id]; trail = before; showSystem(trail[trail.length - 1]); return; }
+  showSystem(id);
+  saveSession();
+}
+
+// Research an opened orb: explanation, sources, picture
+async function loadDetails(o) {
+  const id = o.id;
+  if (!live() || detailsLoading.has(id)) return;
+  const known = DATA.details[id];
+  if (known && !known.error) return;
+  detailsLoading.add(id);
+  DATA.details[id] = { live: true, loading: true };
+  refill(id);
+  try {
+    const centreId = trail[trail.length - 1];
+    const d = await R.details({
+      key: apiKey,
+      model: view.model,
+      topic: DATA.topics[id].title,
+      liner: DATA.topics[id].liner,
+      centre: DATA.topics[centreId].title,
+      rel: o.isSun ? null : o.rel,
+      mode: session.mode,
+      path: trail.map((t) => DATA.topics[t].title),
+      webSearch: view.webSearch,
+    });
+    DATA.details[id] = { ...d, live: true };
+    liveIds.add(id);
+    refill(id);
+    const image = await R.wikipediaImage(d.wikipedia);
+    if (image) { DATA.details[id].image = image; refill(id); }
+    saveCache();
+  } catch (err) {
+    DATA.details[id] = { live: true, error: R.explain(err) };
+    refill(id);
+  } finally {
+    detailsLoading.delete(id);
+    updateSpend();
+  }
+}
+const refill = (id) => { for (const o of orbs) if (o.id === id) fillOrb(o); };
+
+// ─── Remember research between visits (in this browser only) ─
+function saveCache() {
+  const pick = (table) => Object.fromEntries([...liveIds].filter((id) => table[id] && !table[id].loading).map((id) => [id, table[id]]));
+  try {
+    localStorage.setItem(CACHE_STORE, JSON.stringify({
+      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks),
+      details: Object.fromEntries(Object.entries(pick(DATA.details)).filter(([, d]) => !d.error)),
+    }));
+  } catch { /* storage full or blocked: research still works, it just won't be remembered */ }
+}
+function saveSession() {
+  try { localStorage.setItem(CACHE_STORE + '.session', JSON.stringify({ trail, mode: session.mode })); } catch { /* ignore */ }
+}
+function loadCache() {
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_STORE) || 'null');
+    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'details']) {
+      Object.assign(DATA[table], c[table] || {});
+      Object.keys(c[table] || {}).forEach((id) => liveIds.add(id));
+    }
+    const last = JSON.parse(localStorage.getItem(CACHE_STORE + '.session') || 'null');
+    if (last?.trail?.length && last.trail.every((id) => DATA.topics[id] && DATA.systems[id])) {
+      trail = last.trail;
+      session.mode = last.mode || 'diagnose';
+    }
+  } catch { /* nothing saved yet */ }
+}
+
+// ─── Status line under the prompt ───────────────────────────
+function setStatus(text, kind = '') {
+  const el = $('status');
+  el.hidden = !text;
+  el.className = 'status' + (kind ? ' is-' + kind : '');
+  el.innerHTML = text ? (kind === 'error' ? '' : '<span class="spinner"></span>') + '<span></span>' : '';
+  if (text) el.lastChild.textContent = text;
+  document.body.classList.toggle('is-researching', Boolean(text) && kind !== 'error');
+  if (kind === 'error') { clearTimeout(setStatus.t); setStatus.t = setTimeout(() => setStatus(''), 8000); }
 }
 
 // ─── Hover ───────────────────────────────────────────────────
@@ -649,6 +880,7 @@ function openFocus(o) {
   if (selected) selected.el.style.translate = '';
   selected = o;
   updateDimming();
+  if (live() && !DATA.details[o.id]?.about) loadDetails(o);
 }
 
 function closeFocus() {
@@ -662,6 +894,7 @@ function runAction(action, o, id) {
   if (action === 'close') closeFocus();
   if (action === 'unfold') unfold(o.id);
   if (action === 'open') { const other = orbs.find((x) => x.id === id); if (other) openFocus(other); }
+  if (action === 'retry') { delete DATA.details[o.id]; loadDetails(o); }
 }
 
 function updateDimming() {
@@ -822,6 +1055,7 @@ function applyView() {
   $('art').hidden = !view.lineArt;
   controls.autoRotate = view.spin && !reduceMotion;
   readPalette();
+  if ($('brand-stage') && R) $('brand-stage').textContent = live() ? `Live · ${R.MODELS[view.model].name}` : 'Example · add a key to go live';
 }
 darkDevice.addEventListener('change', applyView);
 // If the page host switches light/dark itself, keep our theme and follow its mode
@@ -851,10 +1085,58 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.hidden = true; }, 4200);
 }
-$('prompt-input').value = DATA.prompt;
+$('prompt-input').value = trail[0] === DATA.start ? DATA.prompt : DATA.topics[trail[0]].title;
 $('prompt').addEventListener('submit', (e) => {
   e.preventDefault();
-  toast('This sketch runs on one example topic. Typing your own question works from stage 4.');
+  const q = $('prompt-input').value.trim();
+  if (q) explore(q);
+});
+
+// ─── Your Claude API key ────────────────────────────────────
+function updateLiveState() {
+  $('brand-stage').textContent = live()
+    ? `Live · ${R.MODELS[view.model].name}`
+    : 'Example · add a key to go live';
+  $('key-forget').hidden = !apiKey;
+  $('api-key').value = apiKey ? '••••••••••••' + apiKey.slice(-4) : '';
+  $('key-note').textContent = apiKey
+    ? 'Saved in this browser only. It is sent only to Anthropic.'
+    : 'Stored only in this browser and sent only to Anthropic. Create one at console.anthropic.com → API keys.';
+  for (const o of orbs) fillOrb(o);
+  updateSpend();
+}
+function updateSpend() {
+  const s = R?.spend;
+  $('spend').textContent = s && s.requests
+    ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web searches` : ''}, about $${s.dollars.toFixed(2)}`
+    : '';
+}
+$('key-form').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const v = $('api-key').value.trim();
+  if (!v || v.startsWith('•')) return;
+  if (!v.startsWith('sk-ant-')) { toast('That doesn’t look like a Claude API key. They start with sk-ant-.'); return; }
+  apiKey = v;
+  try { localStorage.setItem(KEY_STORE, v); } catch { toast('This browser won’t store the key, so it will be forgotten when you close the tab.'); }
+  updateLiveState();
+  toast('Key saved. Type a question or topic to begin.');
+  $('prompt-input').focus();
+  $('prompt-input').select();
+});
+$('key-forget').addEventListener('click', () => {
+  apiKey = '';
+  try { localStorage.removeItem(KEY_STORE); } catch { /* ignore */ }
+  updateLiveState();
+  toast('Key removed from this browser.');
+});
+$('show-example').addEventListener('click', () => {
+  if (busy) return;
+  trail = [DATA.start];
+  session.mode = 'diagnose';
+  $('prompt-input').value = DATA.prompt;
+  closeFocus();
+  showSystem(DATA.start);
+  saveSession();
 });
 
 // ─── Small animation helper ──────────────────────────────────
@@ -961,7 +1243,8 @@ function frame(now) {
 
     // Size: a circle at rest, widening into a card as it opens
     const pxPerUnit = h / (2 * tanV * (view.sameSize ? focusDist : camDist));
-    const rest = Math.max(TUNING.minDiameter, 2 * o.radius * view.orbSize * pxPerUnit);
+    const rank = o.isSun ? 1 : lerp(0.5, o.relevance, view.hierarchy);
+    const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], rank), 2 * o.radius * view.orbSize * pxPerUnit);
     const cardW = lerp(Math.max(rest, TUNING.hoverWidth), Math.max(rest, TUNING.openWidth), o.f);
     const w = lerp(rest, cardW, open) * o.grow;
     const pad = lerp(rest * 0.15, TUNING.cardPadding, open);
@@ -999,6 +1282,8 @@ function frame(now) {
       const far = clamp((camDist - (focusDist - systemRadius)) / (2 * systemRadius), 0, 1);
       fade = lerp(1, TUNING.farthestFade, far);
     }
+    // Less relevant orbs recede, so the eye lands on the relevant ones first
+    if (!o.isSun) fade *= lerp(1, lerp(TUNING.leastRelevantFade, 1, o.relevance), view.hierarchy);
     o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5);
     o.el.style.opacity = o.fade.toFixed(3);
     // The orb's radius in scene units, so lines and streams meet its edge
@@ -1071,9 +1356,11 @@ function resize() {
 new ResizeObserver(resize).observe(stage);
 
 // ─── Start ───────────────────────────────────────────────────
+loadCache();
 buildViewPanel();
 applyView();
 resize();
 drawLineArt();
-showSystem(DATA.start);
+showSystem(trail[trail.length - 1]);
+updateLiveState();
 requestAnimationFrame(frame);
