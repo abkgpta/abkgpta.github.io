@@ -31,11 +31,13 @@ const TUNING = {
   sunSize: 3.6,
   minDiameter: 76,        // pixels: orbs never shrink below this, so names fit
   hoverWidth: 270,        // pixels: width of an orb's preview card on hover
-  openWidth: 400,         // pixels: width of an orb opened by a click
+  openWidth: 460,         // pixels: width of an orb opened by a click
   cardPadding: 20,        // pixels: inner space of a preview or opened card
   hoverCorner: 34,        // pixels: corner rounding of a preview card
   openCorner: 26,         // pixels: corner rounding of an opened card
-  wobble: 5,              // how far a resting orb drifts from a perfect circle (%)
+  wobble: 3.5,            // how far a resting orb warps from a perfect circle (%)
+  float: 2.5,             // pixels a resting orb drifts about its place
+  tilt: 1.2,              // degrees a resting orb sways
   gap: 1.4,               // minimum space between orbs
   widen: 1.8,             // most a system may stretch to fill a wide screen
   farthestFade: 0.35,     // opacity of the farthest orb when "fade with distance" is on
@@ -95,7 +97,7 @@ const VIEW_SETTINGS = [
   { key: 'relationColour', label: 'Colour outlines by cause and effect' },
   { key: 'leadGlow', label: 'Glow around hidden leads' },
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
-  { key: 'organic', label: 'Softly shifting orb shapes' },
+  { key: 'organic', label: 'Gently warping, drifting orbs' },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
@@ -389,6 +391,32 @@ function fitCamera(animate = true) {
 }
 
 // ─── Building orbs ───────────────────────────────────────────
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// Topics in the current system strongly linked to this one, strongest first
+function connectionsOf(id) {
+  const sunId = trail[trail.length - 1];
+  return (DATA.crossLinks?.[sunId] || [])
+    .filter(([a, b, strength]) => strength >= TUNING.crossLinkMin && (a === id || b === id))
+    .map(([a, b, strength]) => [a === id ? b : a, strength])
+    .sort((x, y) => y[1] - x[1]);
+}
+
+// A small horizontal bar chart, drawn to scale
+function chartHTML(c) {
+  const W = 320, labelW = 52, valueW = 40, rowH = 20;
+  const max = Math.max(...c.rows.map((r) => r[1]));
+  const bars = c.rows.map(([label, value], i) => {
+    const y = i * rowH;
+    const w = (value / max) * (W - labelW - valueW);
+    return `<text class="viz-label" x="${labelW - 8}" y="${y + 13}" text-anchor="end">${esc(label)}</text>
+      <rect class="viz-bar" x="${labelW}" y="${y + 5}" width="${w.toFixed(1)}" height="10" rx="2"/>
+      <text class="viz-value" x="${(labelW + w + 6).toFixed(1)}" y="${y + 13}">${value}${esc(c.unit)}</text>`;
+  }).join('');
+  return `<figure class="viz"><figcaption>${esc(c.title)}</figcaption>
+    <svg viewBox="0 0 ${W} ${c.rows.length * rowH}" role="img" aria-label="${esc(c.title)}">${bars}</svg>
+    ${c.note ? `<p class="viz-note">${esc(c.note)}</p>` : ''}</figure>`;
+}
 function makeOrbElement(o) {
   const topic = DATA.topics[o.id];
   const el = document.createElement('div');
@@ -402,6 +430,8 @@ function makeOrbElement(o) {
   else if (o.lead) tag = 'Hidden lead';
   const meter = (name, value) =>
     `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
+  const more = DATA.details?.[o.id] || {};
+  const links = o.isSun ? [] : connectionsOf(o.id);
   el.innerHTML = `
     <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
     <div class="inner">
@@ -410,22 +440,34 @@ function makeOrbElement(o) {
       <span class="t"></span>
       <span class="l"></span>
       <div class="more">
+        ${more.chart ? chartHTML(more.chart) : ''}
+        ${more.about
+          ? `<p class="about-text">${esc(more.about)}</p>`
+          : '<p class="slot">A longer explanation for this topic arrives with live research in stage 4.</p>'}
+        ${more.check ? `<section class="section"><h3>What to check</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
         ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
-        <p class="slot">Picture, longer explanation and sources arrive in stage 2</p>
+        ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
+          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
+        ${more.sources ? `<section class="section"><h3>Sources <span>· examples of the rating system</span></h3><ul class="sources">${more.sources.map((src) =>
+          `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${esc(src.title)}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`).join('')}</ul></section>` : ''}
         ${o.isSun ? '' : canUnfold(o.id)
           ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
           : '<p class="slot">Not unfoldable in this sketch</p>'}
       </div>
     </div>`;
+  // Scrolling inside an opened card shouldn't zoom the view
+  el.addEventListener('wheel', (e) => { if (o === selected) e.stopPropagation(); });
   el.querySelector('.rel').textContent = relationText(o);
   el.querySelector('.t').textContent = topic.title;
   el.querySelector('.l').textContent = topic.liner;
   el.addEventListener('pointerenter', () => setHover(o));
   el.addEventListener('pointerleave', () => { if (hovered === o) setHover(null); });
-  // Keyboard presses on the buttons (mouse clicks are handled on the stage)
+  // Inside an opened card, the card handles its own clicks and scrolling,
+  // and dragging doesn't turn the view
+  el.addEventListener('pointerdown', (e) => { if (o === selected) e.stopPropagation(); });
   el.addEventListener('click', (e) => {
-    const action = e.target.closest('[data-action]')?.dataset.action;
-    if (action && e.detail === 0) runAction(action, o);
+    const btn = e.target.closest('[data-action]');
+    if (btn) runAction(btn.dataset.action, o, btn.dataset.id);
   });
   el._orb = o;
   return el;
@@ -616,9 +658,10 @@ function closeFocus() {
   updateDimming();
 }
 
-function runAction(action, o) {
+function runAction(action, o, id) {
   if (action === 'close') closeFocus();
   if (action === 'unfold') unfold(o.id);
+  if (action === 'open') { const other = orbs.find((x) => x.id === id); if (other) openFocus(other); }
 }
 
 function updateDimming() {
@@ -641,13 +684,14 @@ stage.addEventListener('pointerdown', (e) => {
     x: e.clientX, y: e.clientY,
     orb: e.target.closest?.('.orb')?._orb ?? null,
     action: e.target.closest?.('[data-action]')?.dataset.action ?? null,
+    id: e.target.closest?.('[data-action]')?.dataset.id ?? null,
   };
 });
 stage.addEventListener('pointerup', (e) => {
   const d = down;
   down = null;
   if (!d || e.button !== 0 || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 5) return;
-  if (d.action && d.orb) runAction(d.action, d.orb);
+  if (d.action && d.orb) runAction(d.action, d.orb, d.id);
   else if (d.orb) openFocus(d.orb);
   else closeFocus();
 });
@@ -871,8 +915,11 @@ function orbShape(o, w, h, open, seconds) {
   const wob = view.organic && !reduceMotion ? TUNING.wobble : 0;
   const across = [], down = [];
   for (let i = 0; i < 4; i++) {
-    across.push(lerp(50 + wob * Math.sin(seconds * 0.45 + o.phase + i * 1.7), (corner / w) * 100, open).toFixed(1) + '%');
-    down.push(lerp(50 + wob * Math.cos(seconds * 0.38 + o.phase * 1.3 + i * 2.1), (corner / h) * 100, open).toFixed(1) + '%');
+    // Two slow waves at different speeds, so the warping never repeats exactly
+    const a = 0.65 * Math.sin(seconds * 0.55 + o.phase + i * 1.7) + 0.35 * Math.sin(seconds * 1.37 + o.phase * 2.3 + i);
+    const b = 0.65 * Math.cos(seconds * 0.47 + o.phase * 1.3 + i * 2.1) + 0.35 * Math.cos(seconds * 1.21 + o.phase * 1.7 + i * 0.6);
+    across.push(lerp(50 + wob * a, (corner / w) * 100, open).toFixed(2) + '%');
+    down.push(lerp(50 + wob * b, (corner / h) * 100, open).toFixed(2) + '%');
   }
   return across.join(' ') + ' / ' + down.join(' ');
 }
@@ -921,9 +968,11 @@ function frame(now) {
     o.el.style.setProperty('--iw', Math.max(8, w - 2 * pad).toFixed(1) + 'px');
     let hgt = w;
     if (open > 0.002) {
-      // Fit the height to the text, so nothing is cut off
-      const fits = o.inner.offsetHeight + 2 * pad;
-      hgt = lerp(w, Math.max(fits, rest * 0.8), open);
+      // Fit the height to the text; very long cards scroll inside instead
+      const maxH = h - UI_TOP - UI_BOTTOM;
+      o.el.style.setProperty('--maxh', (maxH - 2 * pad).toFixed(0) + 'px');
+      const fits = o.inner.scrollHeight + 2 * pad;
+      hgt = lerp(w, clamp(fits, rest * 0.8, maxH), open);
     }
     o.el.style.width = w.toFixed(1) + 'px';
     o.el.style.height = hgt.toFixed(1) + 'px';
@@ -936,6 +985,14 @@ function frame(now) {
     o.el.style.setProperty('--gx', (50 + 28 * Math.sin(seconds * 0.21 + o.phase)).toFixed(1) + '%');
     o.el.style.setProperty('--gy', (40 + 22 * Math.cos(seconds * 0.17 + o.phase * 0.7)).toFixed(1) + '%');
     o.el.style.visibility = w < 4 ? 'hidden' : '';
+    // At rest, drift and sway very slightly; still when open, for reading
+    const calm = (1 - open) * (view.organic && !reduceMotion ? 1 : 0);
+    if (o !== selected) {
+      const fx = TUNING.float * (0.7 * Math.sin(seconds * 0.6 + o.phase) + 0.3 * Math.sin(seconds * 1.4 + o.phase * 2));
+      const fy = TUNING.float * (0.7 * Math.cos(seconds * 0.5 + o.phase * 1.4) + 0.3 * Math.cos(seconds * 1.1 + o.phase));
+      o.el.style.translate = `${(fx * calm).toFixed(2)}px ${(fy * calm).toFixed(2)}px`;
+    }
+    o.el.style.rotate = `${(TUNING.tilt * Math.sin(seconds * 0.33 + o.phase * 0.9) * calm).toFixed(2)}deg`;
     // The further away an orb is, the more see-through it gets
     let fade = 1;
     if (view.depthFade && !o.isSun) {
@@ -991,7 +1048,9 @@ function keepOnScreen(o) {
   const x = (projected.x + 1) / 2 * w, y = (1 - projected.y) / 2 * h;
   const rx = parseFloat(o.el.style.width) / 2 + 12, ry = parseFloat(o.el.style.height) / 2 + 12;
   const dx = clamp(x, rx, w - rx) - x;
-  const dy = clamp(y, Math.min(ry + 90, h / 2), Math.max(h - ry, h / 2)) - y;
+  // Keep it between the top bar and the bottom edge
+  const top = UI_TOP + ry - 12, bottom = h - UI_BOTTOM - ry + 12;
+  const dy = (top <= bottom ? clamp(y, top, bottom) : (top + bottom) / 2) - y;
   o.el.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
 }
 

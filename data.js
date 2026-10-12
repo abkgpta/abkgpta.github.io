@@ -194,4 +194,114 @@ window.CELESTIAL_DATA = {
       ['high-shrinkage', 'warping', 0.75],
     ],
   },
+
+  // Extra detail shown when an orb is opened. Topics without an entry
+  // show their one-liner only (live research fills the rest in stage 4).
+  //   about   – a short explanation
+  //   check   – what to look at when diagnosing
+  //   chart   – an optional bar chart: { title, unit, note, rows: [[label, value], …] }
+  //   sources – EXAMPLES showing how reliability tiers will look (1 = most reliable, 6 = unsourced)
+  details: {
+    'warping': {
+      about: 'Every plastic shrinks as it cools from melt to room temperature. Warping is what happens when that shrinkage is uneven: one region ends up shorter than its neighbour, and the part bends or twists to relieve the mismatch. Almost every cause of warping is a different route to uneven shrinkage.',
+      check: ['Which way does it bend, and is it the same on every part?', 'Did it start suddenly (material, machine, season) or has it always happened (design, tooling)?', 'Does it get worse over hours or days after moulding?'],
+      sources: [
+        { tier: 2, type: 'Textbook', title: 'A plastics part design textbook, chapter on shrinkage and warpage' },
+        { tier: 3, type: 'Reference', title: 'Encyclopedia entry on injection moulding defects' },
+        { tier: 5, type: 'Forum', title: 'Moulders’ forum thread on troubleshooting warped lids' },
+      ],
+    },
+    'uneven-cooling': {
+      about: 'A part keeps shrinking until it freezes. If one side sits against hotter steel, it stays soft longer and keeps shrinking after the other side has set, so the part bows towards the hotter side. On flat parts a difference of a few degrees between the mould halves can be enough.',
+      check: ['Measure the surface temperature of both mould halves, ideally with a thermal camera on the open tool.', 'Check flow and temperature on each cooling circuit, not just the chiller setting.', 'See which way the part bows: usually towards the hotter side.'],
+      sources: [
+        { tier: 2, type: 'Textbook', title: 'Mould design textbook, chapter on cooling systems' },
+        { tier: 4, type: 'Company guide', title: 'Simulation software vendor’s guide to warpage', flag: 'Conflict of interest' },
+        { tier: 6, type: 'AI inference', title: 'Link between thermal imaging and this diagnosis, not yet sourced' },
+      ],
+    },
+    'wall-thickness': {
+      about: 'Cooling time grows roughly with the square of wall thickness, so a section twice as thick takes about four times as long to set. Thick and thin areas in the same part therefore freeze at different times and shrink by different amounts, pulling the part out of shape.',
+      check: ['Section the part or use the CAD wall-thickness check to find thick zones.', 'Look for thick areas where ribs, bosses or styling features join the main wall.', 'Compare against a nominal wall: variation above about 25% is a warning sign.'],
+      chart: { title: 'Relative cooling time by wall thickness', unit: '×', note: 'Cooling time scales with thickness squared (1 mm = 1×).', rows: [['1 mm', 1], ['2 mm', 4], ['3 mm', 9], ['4 mm', 16]] },
+      sources: [
+        { tier: 2, type: 'Textbook', title: 'Heat transfer in injection moulding, design handbook' },
+        { tier: 3, type: 'Design guide', title: 'Resin supplier’s part design guide', flag: 'Conflict of interest' },
+      ],
+    },
+    'diff-shrinkage': {
+      about: 'This is the mechanism behind warping rather than a separate cause. Shrinkage differs through the thickness (skin versus core), across the part (thick versus thin, near versus far from the gate) and with direction (along versus across the flow). Warp follows wherever those differences are largest.',
+      check: ['Measure shrinkage along and across the flow on test plaques.', 'Compare dimensions near and far from the gate.'],
+      sources: [
+        { tier: 1, type: 'Standard', title: 'ISO 294-4: determining moulding shrinkage' },
+        { tier: 2, type: 'Peer-reviewed', title: 'Studies of residual stress and warpage in moulded plates' },
+      ],
+    },
+    'semi-crystalline': {
+      about: 'In semi-crystalline plastics, part of the polymer packs into ordered crystals as it cools, which takes up less space. They shrink more than amorphous plastics, and by different amounts depending on how fast each region cooled and which way it flowed.',
+      check: ['Check the material datasheet’s shrinkage along and across the flow.', 'Ask whether an amorphous or filled grade would meet the requirements.', 'Keep mould temperature steady: it changes how much crystallises.'],
+      chart: { title: 'Typical mould shrinkage, unfilled grades', unit: '%', note: 'Typical mid-range values; real grades vary.', rows: [['HDPE', 2.5], ['POM', 2.0], ['PP', 1.8], ['PA6', 1.2], ['PC', 0.6], ['ABS', 0.55], ['PMMA', 0.4]] },
+      sources: [
+        { tier: 1, type: 'Datasheet', title: 'Resin manufacturers’ shrinkage data', flag: 'Conflict of interest' },
+        { tier: 2, type: 'Textbook', title: 'Polymer science textbook, chapter on crystallisation' },
+      ],
+    },
+    'hot-stacking': {
+      about: 'A part can look fine at the machine and still warp later. If it is packed while warm, it keeps cooling in the box under the weight of the parts above it, and sets in the shape it was squashed into.',
+      check: ['Measure parts straight off the machine and again after 24 hours.', 'Check how long parts cool before packing, and how they are stacked.', 'Try a cooling fixture or conveyor for flat parts.'],
+      sources: [
+        { tier: 3, type: 'Trade article', title: 'Trade magazine piece on post-mould shrinkage' },
+        { tier: 5, type: 'Forum', title: 'Forum reports of lids warping in storage' },
+      ],
+    },
+    'resin-batch': {
+      about: 'When warping starts suddenly on a tool that used to run well, the material is a prime suspect. A new lot, a different supplier, a change in regrind ratio or a colour masterbatch that nucleates crystals can all change shrinkage.',
+      check: ['Match the date the problem began against material lot numbers.', 'Check whether regrind or colourant changed.', 'Run a known good lot, if any remains, as a comparison.'],
+      sources: [
+        { tier: 3, type: 'Trade article', title: 'Processing magazine article on lot-to-lot variation' },
+        { tier: 6, type: 'AI inference', title: 'Suggested from the sudden-onset pattern, not yet sourced' },
+      ],
+    },
+    'early-eject': {
+      about: 'Shortening cooling time is a common way to speed up a cycle. If the part leaves the mould before it is stiff enough, ejector pins can push it out of shape and it keeps shrinking unevenly outside the mould.',
+      check: ['Has the cycle time been shortened recently?', 'Look for ejector pin marks or distortion near the pins.', 'Try a longer cooling time as a test.'],
+    },
+    'gate': {
+      about: 'The gate is where plastic enters the cavity. It decides the flow direction, how well far areas are packed, and which way fibres and molecules line up, all of which change local shrinkage.',
+      check: ['Compare warp direction with flow direction from the gate.', 'Check whether far regions are being packed properly.'],
+    },
+    'packing': {
+      about: 'After filling, the machine keeps pushing in extra material to make up for shrinkage. Too little pressure, or a gate that freezes too soon, leaves thick areas under-packed so they shrink more.',
+      check: ['Weigh parts while increasing hold time: weight stops rising when the gate freezes.', 'Check hold pressure and hold time against the material’s recommendations.'],
+    },
+    'fibre': {
+      about: 'Glass fibres line up with the flow. The part then shrinks very little along the fibres and much more across them, which twists flat or long parts.',
+      check: ['Compare the warp with the flow pattern.', 'Consider a different gate position or a mineral or bead filler.'],
+    },
+    'ribs': {
+      about: 'Ribs stiffen a part, but where a thick rib meets the wall it creates a local hot spot that shrinks more, often showing as a sink mark on the other face.',
+      check: ['Rib thickness should usually be around 50 to 60% of the wall it joins.', 'Look for sink marks opposite ribs as a clue.'],
+    },
+    'assembly': {
+      about: 'Warp often isn’t noticed until assembly: snap fits that won’t engage, screw bosses out of line, or mating parts that won’t close evenly.',
+      check: ['Measure the part on a fixture that matches its assembled position.', 'Check whether the mating part is warped too.'],
+    },
+    'sink': {
+      about: 'Sink marks are shallow dips on the surface over thick sections. They share a root with warping: thick areas shrink more as they cool.',
+      check: ['Look for sinks over ribs and bosses.', 'If you see both sink and warp, suspect wall thickness first.'],
+    },
+    'mould-halves': {
+      about: 'If the core and cavity halves of the mould run at different temperatures, one face of the part shrinks more than the other and the part bends towards the hotter half.',
+      check: ['Measure both halves after the tool has stabilised.', 'Check that each half has its own temperature control and that both are working.'],
+    },
+    'cooling-channels': {
+      about: 'Cooling channels carry heat out of the mould. Channels that are too far from the surface, too far apart, or missing from cores leave hot spots that cool the part unevenly.',
+      check: ['Check channel layout in the tool drawings.', 'Use a thermal image of the open tool to spot hot zones.'],
+    },
+    'inside-corners': {
+      about: 'The inside corner of a box-shaped part is surrounded by steel on several sides and is hard to cool. It stays hot, shrinks more, and pulls the walls inward.',
+      check: ['Check whether the walls of box shapes lean inwards.', 'Look for cooling in cores, such as baffles or bubblers.'],
+    },
+  },
 };
+

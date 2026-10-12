@@ -29,7 +29,7 @@ system, and keep branching, the way Wikipedia lets you keep clicking.
 | Action | Name | What happens |
 |---|---|---|
 | Orbs | At rest: an outlined, softly shifting near-circle with the name inside and a faint drifting highlight. Hover: widens into a rounded preview card sized to its text. Click: opens into a full card. A double outline means it can be unfolded. |
-| Click | **Open** | The orb itself opens up to show its details (relation, one-liner, link and relevance, and later a visual and sources) with an Unfold button. No separate panel. |
+| Click | **Open** | The orb opens into a card in place: relation, one-liner, a chart or picture where one fits, a short explanation, **What to check** (for diagnosing), link and relevance, **Strongly linked to** (jump to those orbs), sources with reliability tiers, and Unfold. Long cards scroll. |
 | Unfold button | **Unfold** | The orb becomes the new sun and breaks into its own orbs. |
 
 The visual inside an opened orb depends on the topic: a photo, a chart from real data,
@@ -60,7 +60,7 @@ Every stage ends with a link to click and a short list of things to try.
 | Stage | Like a… | What you get | AI? | Status |
 |---|---|---|---|---|
 | 1. Sketch | Foam model | 3D solar system with example content. Rotate, zoom, hover, click, unfold. | No | **Built** |
-| 2. Looks-like | Appearance model | Source colour rings, a full Focus panel with visuals and sources. | No | Next |
+| 2. Looks-like | Appearance model | Source tiers, a full opened card with charts and sources. | No | **Mostly done** (example content for 17 topics) |
 | 3. Tuning rig | Test jig | On-screen sliders and switches to try options without code. | No | **Started** (View panel) |
 | 4. Works-like | Working prototype | Type any question and get real topics, sources and relationships. | Yes | |
 | 5. Memory | — | Saved sessions, built so they can merge into one growing map later. | Yes | |
@@ -75,6 +75,18 @@ Every stage ends with a link to click and a short list of things to try.
 - Exactly what the prompt line does (you're refining this).
 - Stage 4: the AI needs an access key. For a personal tool, the simplest route is pasting your
   own key into a settings box, where it stays only in your browser.
+
+## Next steps
+
+1. **Finish the look (stages 2–3).** Source rings on resting orbs showing what each rests on; pictures as well as charts; the unfold-as-moons option; any line-art reference you want to swap in.
+2. **Decide the prompt line.** What typing a question should do: start a fresh system, add to the current one, or ask a "why" about the open orb.
+3. **Make it work for real (stage 4).**
+   - Choose how the AI is reached: your own key pasted into a settings box, or a small private server that holds the key.
+   - The AI turns a question into a system: topics, one-liners, cause/effect/related, link and relevance numbers, and links between orbs.
+   - Real sources: research databases (OpenAlex, Semantic Scholar), Wikipedia, news and the web, each rated by tier.
+   - Unfold any orb, not just the four example ones.
+4. **Memory (stage 5).** Save sessions, mark orbs as suspected / ruled out / confirmed while diagnosing, and later merge sessions into one growing map.
+5. **Go live.** Put the tool on abkgpta.github.io once you're happy with a version.
 
 ## How the code is organised
 

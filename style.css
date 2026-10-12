@@ -43,9 +43,19 @@
   --shadow: 0 1px 2px rgb(20 40 34 / 0.08), 0 8px 24px rgb(20 40 34 / 0.08);
   color-scheme: light;
 
+  /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
+  --tier-1: #2c5bc9; --tier-2: #13808a; --tier-3: #3d8a4a; --tier-4: #b98512; --tier-5: #cf5a26; --tier-6: #858a92;
+
   --font-display: "Libre Caslon Condensed", "Iowan Old Style", Georgia, serif;
   --font-body: "Libre Caslon Condensed", "Iowan Old Style", Georgia, serif;
   --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+/* Tier colours, lifted for dark modes */
+:root[data-theme="dark"], :root[data-theme$="-dark"] {
+  --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8; }
 }
 /* Tide · dark: deep sea */
 @media (prefers-color-scheme: dark) {
@@ -154,6 +164,7 @@ button, input { font: inherit; color: inherit; }
   user-select: none;
   transition: border-color 0.2s, box-shadow 0.25s;
 }
+.orb .inner > * { flex-shrink: 0; }   /* never squash text; scroll instead */
 .orb .inner {
   flex: none;
   width: var(--iw, 60px);
@@ -269,6 +280,71 @@ button, input { font: inherit; color: inherit; }
 }
 .orb-close:hover { color: var(--ink); border-color: var(--ink-soft); }
 .orb.is-selected.is-dim { opacity: 1 !important; }
+
+/* The opened card reads like a short page: left-aligned, scrolls if long */
+.orb.is-selected .inner {
+  max-height: var(--maxh, 70vh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  align-items: stretch;
+  text-align: left;
+  user-select: text;
+  scrollbar-width: thin;
+}
+.orb.is-selected .rel { padding-right: 34px; }
+.orb.is-selected .more { justify-items: stretch; gap: 14px; margin-top: 10px; }
+.orb .about-text { margin: 0; font-size: 15.5px; line-height: 1.45; color: var(--ink); text-wrap: pretty; }
+.orb .section { display: grid; gap: 6px; }
+.orb .section h3 {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.orb .section h3 span { text-transform: none; letter-spacing: 0; font-family: var(--font-body); font-style: italic; font-size: 12px; }
+.orb .checks { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; font-size: 14.5px; line-height: 1.35; }
+.orb .checks li::marker { color: var(--line); }
+.orb .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.orb .chip {
+  padding: 3px 11px 4px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg);
+  font-size: 13.5px;
+  cursor: pointer;
+}
+.orb .chip:hover { border-color: var(--line); }
+.orb .sources { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.3; }
+.orb .sources li { display: grid; grid-template-columns: 20px 1fr; gap: 8px; align-items: start; }
+.orb .sources b { font-weight: 600; }
+.orb .flag { font-style: normal; font-size: 12px; color: var(--tier-5); white-space: nowrap; }
+/* Reliability tiers: colour = how far to trust it */
+.tier {
+  display: grid;
+  place-items: center;
+  width: 18px; height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--panel);
+}
+.tier-1 { background: var(--tier-1); }
+.tier-2 { background: var(--tier-2); }
+.tier-3 { background: var(--tier-3); }
+.tier-4 { background: var(--tier-4); }
+.tier-5 { background: var(--tier-5); }
+.tier-6 { background: none; color: var(--tier-6); border: 1.5px dashed var(--tier-6); }
+/* Charts inside cards */
+.orb .viz { margin: 0; display: grid; gap: 6px; padding: 12px 12px 10px; border-radius: 12px; background: color-mix(in srgb, var(--line) 6%, var(--bg)); }
+.orb .viz figcaption { font-size: 13px; font-weight: 600; }
+.orb .viz svg { width: 100%; height: auto; overflow: visible; }
+.orb .viz-label, .orb .viz-value { font-family: var(--font-data); font-size: 10.5px; fill: var(--ink-soft); }
+.orb .viz-bar { fill: var(--line); }
+.orb .viz-note { margin: 0; font-size: 12px; font-style: italic; color: var(--ink-soft); }
 
 /* The sun */
 .orb.sun {
