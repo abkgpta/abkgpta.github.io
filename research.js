@@ -273,13 +273,64 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
 
   const clamp01 = (n) => Math.min(1, Math.max(0, Number(n) || 0));
 
+  // ─── What the person has ticked and crossed so far ─────────
+  // feedback: { yes: [titles], no: [titles] }
+  function feedbackNote(feedback) {
+    const yes = feedback?.yes || [], no = feedback?.no || [];
+    if (!yes.length && !no.length) return '';
+    return [
+      'The person has been marking topics as they go.',
+      yes.length ? `Marked relevant: ${yes.join('; ')}.` : '',
+      no.length ? `Marked not relevant: ${no.join('; ')}.` : '',
+      'Weight your answer towards what they found relevant (raise the relevance of topics close to those, and dig further in that direction). Lower the relevance of anything close to what they ruled out, and do not suggest the ruled-out topics again.',
+    ].filter(Boolean).join(' ');
+  }
+
+  // ─── digest: the running answer in the findings panel ───────
+  const DIGEST_SYSTEM = `You keep the running answer for Celestial, a 3D research explorer. The person asked a question and is marking topics as relevant or not relevant to it. Write what their marks add up to so far.
+
+- title: 2 to 7 words naming the current answer. When diagnosing, the most likely explanation (e.g. "Mould halves at different temperatures"). When exploring, the angle their picks point to.
+- summary: two to four plain sentences. When diagnosing: the most likely explanation, how the relevant findings fit together, and how sure one can be. When exploring: what the relevant topics add up to.
+- next: two to four concrete next steps. When diagnosing, the checks or fixes that would confirm or resolve it, most decisive first. When exploring, the most useful things to look into next.
+Mention ruled-out topics only to say they were set aside. Be honest when the marks don't yet point anywhere clear.`;
+  const DIGEST_SCHEMA = {
+    type: 'object',
+    additionalProperties: false,
+    required: ['title', 'summary', 'next'],
+    properties: { title: { type: 'string' }, summary: { type: 'string' }, next: { type: 'array', items: { type: 'string' } } },
+  };
+  // relevant: [{ title, liner, about }], notRelevant: [titles]
+  async function digest({ backend, tier, key, model, question, mode, relevant, notRelevant }) {
+    const lines = [
+      `Question: ${question}`,
+      `Mode: ${mode === 'explore' ? 'exploring a subject' : 'diagnosing a problem'}.`,
+      'Marked relevant:',
+      ...relevant.map((r) => `- ${r.title}: ${r.liner}${r.about ? ' ' + r.about : ''}`),
+      notRelevant.length ? `Marked not relevant: ${notRelevant.join('; ')}` : '',
+    ].filter(Boolean).join('\n');
+    let d;
+    if (backend === 'plan') {
+      d = await askPlan(DIGEST_SYSTEM + '\n\n' + lines + '\n\nReply with only JSON in exactly this shape: {"title":"","summary":"","next":[""]}', tier);
+    } else {
+      const res = await ask(key, model, {
+        system: DIGEST_SYSTEM,
+        output_config: { effort: 'low', format: { type: 'json_schema', schema: DIGEST_SCHEMA } },
+        messages: [{ role: 'user', content: lines }],
+      });
+      try { d = JSON.parse(res.content.filter((b) => b.type === 'text').map((b) => b.text).join('')); } catch { d = null; }
+    }
+    if (!d || typeof d !== 'object' || !d.summary) throw { code: 'invalid_json' };
+    return { title: String(d.title || ''), summary: String(d.summary), next: (Array.isArray(d.next) ? d.next : []).filter(Boolean).map(String).slice(0, 5) };
+  }
+
   // ─── map: the system around a topic ────────────────────────
-  async function map({ backend, tier, key, model, centre, mode, path, cameFrom }) {
+  async function map({ backend, tier, key, model, centre, mode, path, cameFrom, feedback }) {
     const lines = [
       `Centre topic: ${centre}`,
       MODE_NOTES[mode] || MODE_NOTES.diagnose,
       path.length ? `Path so far: ${path.join(' › ')}` : 'This is the starting point.',
       cameFrom ? `Came from: ${cameFrom} (include it as an orbiting topic with this exact title)` : '',
+      feedbackNote(feedback),
     ].filter(Boolean);
     let out;
     if (backend === 'plan') {
@@ -309,7 +360,7 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
   }
 
   // ─── details: what an opened orb shows ─────────────────────
-  async function details({ backend, tier, key, model, topic, liner, centre, rel, mode, path, webSearch }) {
+  async function details({ backend, tier, key, model, topic, liner, centre, rel, mode, path, webSearch, feedback }) {
     const relation = { cause: `a possible cause of "${centre}"`, effect: `an effect of "${centre}"`, related: `related to "${centre}"` }[rel] || `the centre of the investigation`;
     const intro = [
       `Topic: ${topic}`,
@@ -317,6 +368,7 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
       `It is ${relation}.`,
       `Mode: ${mode === 'explore' ? 'exploring a subject' : 'diagnosing a problem'}.`,
       path.length ? `Path so far: ${path.join(' › ')}` : '',
+      feedback?.yes?.length ? `The person has marked these as relevant so far: ${feedback.yes.join('; ')}. Where it helps, say how this topic relates to them.` : '',
       webSearch ? 'Search the web for good sources first.' : 'Do not search the web: rely on what you know, rate sources honestly, and use tier 6 for claims you can’t attribute.',
     ].filter(Boolean).join('\n');
     if (backend === 'plan') {
@@ -418,13 +470,14 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
   }
 
   // Topics as they're written. onCentre({title, liner}) once, onOrb(orb) per topic.
-  async function quickMap({ backend, key, centre, mode, path, cameFrom, onCentre, onOrb }) {
+  async function quickMap({ backend, key, centre, mode, path, cameFrom, feedback, onCentre, onOrb }) {
     const prompt = [
       QUICK_MAP,
       `Centre topic: ${centre}`,
       MODE_NOTES[mode] || MODE_NOTES.diagnose,
       path.length ? `Path so far: ${path.join(' › ')}` : '',
       cameFrom ? `Skip "${cameFrom}": it is already shown.` : '',
+      feedbackNote(feedback),
     ].filter(Boolean).join('\n');
     const reader = lineReader((v) => {
       if (v.centre) onCentre?.(v.centre);
@@ -463,5 +516,5 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
+  window.CELESTIAL_RESEARCH = { MODELS, map, details, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();

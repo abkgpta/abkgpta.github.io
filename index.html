@@ -17,26 +17,44 @@
 <div id="stage" class="stage" aria-label="3D map of related topics"></div>
 
 <header class="top">
-  <div class="brand">
-    <span class="brand-name">Celestial</span>
-    <span id="brand-stage" class="brand-stage">Example</span>
-    <button id="view-toggle" class="view-toggle-btn" type="button" aria-expanded="false" aria-controls="view-panel">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="5.5" cy="12" r="1.6"/></svg>
-      View
-    </button>
-  </div>
-  <form id="prompt" class="prompt" autocomplete="off">
+  <form id="prompt" class="prompt" autocomplete="off" role="search">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>
     <label for="prompt-input" class="visually-hidden">What do you want to understand?</label>
     <input id="prompt-input" name="q" type="text" placeholder="Ask why something happens, or type a topic">
     <button type="submit">Explore</button>
   </form>
+  <div class="brand">
+    <span class="brand-name">Celestial</span>
+    <span id="brand-stage" class="brand-stage">Example</span>
+  </div>
+  <div class="menus">
+    <button id="view-toggle" class="menu-btn" type="button" aria-expanded="false" aria-controls="view-panel" title="View">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="5.5" cy="12" r="1.6"/></svg>
+      <span class="menu-label">View</span>
+    </button>
+    <button id="help-toggle" class="menu-btn" type="button" aria-expanded="false" aria-controls="help-panel" title="How to use">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2"/><path d="M6.3 6.2a1.8 1.8 0 1 1 2.5 1.7c-.5.2-.8.6-.8 1.1v.5"/><circle cx="8" cy="11.6" r=".4"/></svg>
+      <span class="menu-label">How to use</span>
+    </button>
+  </div>
   <nav id="trail" class="trail" aria-label="Your path"></nav>
   <p id="about" class="about"></p>
   <p id="status" class="status" role="status" hidden></p>
 </header>
 
-<section id="view-panel" class="view-panel" hidden aria-label="View settings">
-  <p class="view-group">Research with Claude</p>
+<section id="view-panel" class="panel view-panel" hidden aria-labelledby="view-title">
+  <div class="panel-head">
+    <h2 id="view-title">View</h2>
+    <button type="button" class="panel-close" data-close="view" aria-label="Close">&times;</button>
+  </div>
+  <div id="view-tabs" class="view-tabs" role="tablist" aria-label="View settings"></div>
+  <div id="view-list" class="panel-body"></div>
+  <div class="view-foot"><button id="view-reset" class="view-reset" type="button">Reset to defaults</button></div>
+</section>
+
+<!-- Moved into the View panel's Claude tab by the script -->
+<div id="connection" class="connection">
+  <p class="view-group">Connection</p>
   <p id="plan-note" class="key-note plan-note" hidden>Running on your Claude plan, no key needed. The first search asks your permission. Research here comes from Claude’s own knowledge (no web browsing), so sources are named but not linked.</p>
   <div class="key-actions plan-actions">
     <button type="button" id="plan-allow" class="link-btn" hidden>Allow Claude for this page</button>
@@ -55,28 +73,70 @@
     </div>
     <p id="spend" class="spend"></p>
   </form>
-  <div id="view-list" class="view-list"></div>
-  <button id="view-reset" class="view-reset" type="button">Reset to defaults</button>
+</div>
+
+<section id="help-panel" class="panel help-panel" hidden aria-labelledby="help-title">
+  <div class="panel-head">
+    <h2 id="help-title">How to use</h2>
+    <button type="button" class="panel-close" data-close="help" aria-label="Close">&times;</button>
+  </div>
+  <div class="panel-body">
+    <ol class="help-steps">
+      <li><span><b>Ask a question</b> in the search bar, like “Why is my bread dense?”, or type a topic to learn about.</span></li>
+      <li><span><b>Click an orb</b> to open it and read what it is, what to check and where the information comes from.</span></li>
+      <li><span><b>Mark it</b> <span class="mini-verdict yes">✓</span> relevant or <span class="mini-verdict no">✕</span> not relevant. The map rearranges around your answers: related orbs move closer, ruled-out ones fade away.</span></li>
+      <li><span><b>Read the running answer</b> in the panel that appears bottom left after your first tick. It updates every time you mark an orb.</span></li>
+      <li><span><b>Expand</b> an orb to make it the new centre and dig a level deeper. The path at the top takes you back.</span></li>
+    </ol>
+
+    <p class="view-group">Where and how big</p>
+    <ul class="help-key">
+      <li><span class="key key-dist"></span><span><b>Closer to the centre</b>: more strongly linked to it</span></li>
+      <li><span class="key key-size"></span><span><b>Bigger</b>: more relevant to your question</span></li>
+      <li><span class="key key-glow"></span><span><b>Glow</b>: a hidden lead, loosely linked but worth checking</span></li>
+      <li><span class="key key-ring"></span><span><b>Double outline</b>: can be expanded straight away</span></li>
+    </ul>
+
+    <p class="view-group">Colours</p>
+    <ul class="help-key">
+      <li><span class="key key-cause"></span><span><b>Violet</b>: a cause of the centre</span></li>
+      <li><span class="key key-effect"></span><span><b>Cyan</b>: an effect of the centre</span></li>
+      <li><span class="key key-plain"></span><span><b>Grey</b>: related, neither cause nor effect</span></li>
+      <li><span class="key key-yes"></span><span><b>Green, thick</b>: you marked it relevant</span></li>
+      <li><span class="key key-no"></span><span><b>Faded, dashed</b>: you marked it not relevant</span></li>
+    </ul>
+
+    <p class="view-group">Lines and streams</p>
+    <ul class="help-key">
+      <li><span class="key key-stream"></span><span><b>Streams</b> flow into the centre from causes and out to effects. Longer and thicker means a stronger link</span></li>
+      <li><span class="key key-centre"></span><span><b>Faint line to the centre</b>: a cause or effect link</span></li>
+      <li><span class="key key-cross"></span><span><b>Faint line between orbs</b>: they are strongly linked to each other</span></li>
+    </ul>
+
+    <p class="view-group">Moving around</p>
+    <dl class="help-controls">
+      <dt>Drag</dt><dd>Turn the map</dd>
+      <dt>Scroll, pinch</dt><dd>Zoom</dd>
+      <dt>Right-drag</dt><dd>Move the map sideways</dd>
+      <dt>Hover</dt><dd>Preview an orb</dd>
+      <dt>Esc</dt><dd>Close whatever is open</dd>
+    </dl>
+  </div>
 </section>
 
-<details class="legend">
-  <summary>How to read it</summary>
-  <ul>
-    <li><span class="key key-dist"></span><span><b>Distance</b> = how strongly it's linked to the centre in general</span></li>
-    <li><span class="key key-size"></span><span><b>Size</b> = how relevant it is to your line of reasoning</span></li>
-    <li><span class="key key-cause"></span><span><b>Violet outline</b> = cause: streams flow <b>in</b> to the centre</span></li>
-    <li><span class="key key-effect"></span><span><b>Cyan outline</b> = effect: streams flow <b>out</b> from the centre</span></li>
-    <li><span class="key key-plain"></span><span><b>Grey outline</b> = related, neither cause nor effect</span></li>
-    <li><span class="key key-centre"></span><span><b>Faint line to the centre</b> = a cause or effect link</span></li>
-    <li><span class="key key-cross"></span><span><b>Faint line between orbs</b> = they're strongly linked to each other</span></li>
-    <li><span class="key key-stream"></span><span><b>Longer, thicker streams</b> = stronger link. <b>More frequent</b> = more relevant</span></li>
-    <li><span class="key key-glow"></span><span><b>Glow</b> = hidden lead: loosely linked, but big here</span></li>
-    <li><span class="key key-ring"></span><span><b>Double outline</b> = can be unfolded in this sketch</span></li>
-  </ul>
-</details>
+<aside id="findings" class="findings" hidden aria-live="polite" aria-labelledby="findings-title">
+  <div class="findings-head" id="findings-head">
+    <div>
+      <span id="findings-kicker" class="findings-kicker"></span>
+      <h2 id="findings-title">Diagnosis</h2>
+    </div>
+    <button id="findings-toggle" class="findings-toggle" type="button" aria-expanded="true" aria-controls="findings-body" aria-label="Collapse">▾</button>
+  </div>
+  <div id="findings-body" class="findings-body"></div>
+</aside>
 
-<p class="hint">Drag to rotate · Scroll or pinch to zoom · Middle- or right-drag to pan · Hover to preview · Click to open</p>
 <p id="toast" class="toast" role="status" hidden></p>
+
 <!-- APP:END -->
 
 <script src="data.js"></script>

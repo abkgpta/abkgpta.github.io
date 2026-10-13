@@ -45,6 +45,16 @@ const TUNING = {
   centreLine: 0.16,       // strength of the faint cause/effect lines to the centre
   crossLine: 0.14,        // strength of the faint lines between linked orbs
   crossLinkMin: 0.6,      // links between orbs weaker than this aren't drawn
+  // Motion
+  cameraGlide: 0.55,      // seconds: how softly the camera glides to a new view (higher = softer)
+  expand: {
+    move: 1500,           // ms: the chosen orb gliding into the centre, the old centre moving out
+    leave: 1100,          // ms: orbs that aren't in the new system drifting away and fading
+    arrive: 1300,         // ms: each new orb easing out from the centre
+    stagger: 55,          // ms between new orbs appearing (most relevant first)
+    drift: 1.45,          // how far leaving orbs drift outward (× their distance)
+  },
+  openSpeed: 9,           // how quickly an orb opens on hover or click (higher = snappier)
   hiddenLead: { maxLink: 0.45, minRelevance: 0.65 },  // when an orb glows
   pulses: {
     slowest: 6.0,         // seconds between streams for the least relevant orb
@@ -83,7 +93,11 @@ const VIEW_DEFAULTS = {
   spacing: 1,
   orbSize: 1,
 };
+// { tab } starts a tab in the View panel, { group } a small heading within it
 const VIEW_SETTINGS = [
+  { tab: 'Claude' },
+  { connection: true },
+  { group: 'How Claude works' },
   { key: 'model', label: 'Model (your API key)', options: [
     ['claude-opus-5-5', 'Opus 5.5', 'Best · $4 / $20'],
     ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster · $2 / $10'],
@@ -94,13 +108,14 @@ const VIEW_SETTINGS = [
     ['default', 'Balanced', 'Recommended'],
     ['complex', 'Thorough', 'Slower, deeper'],
   ] },
-  { key: 'reading', label: 'What you type is…', options: [
+  { key: 'reading', label: 'Treat what you type as', options: [
     ['auto', 'Auto'],
     ['diagnose', 'A problem'],
     ['explore', 'A topic'],
   ] },
   { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. About $0.01 per search' },
-  { group: 'Theme' },
+  { tab: 'Look' },
+  { group: 'Colours' },
   { key: 'theme', label: 'Theme', swatches: true, options: [
     ['tide', 'Tide', 'Teal and bottle green'],
     ['dusk', 'Dusk', 'Pink and purple'],
@@ -110,30 +125,35 @@ const VIEW_SETTINGS = [
     ['light', 'Light'],
     ['dark', 'Dark'],
   ] },
-  { key: 'backdropMotion', label: 'Shifting background' },
-  { key: 'lineArt', label: 'Line art along the bottom' },
-  { group: 'Show' },
-  { key: 'streams', label: 'Cause and effect streams' },
-  { key: 'centreLines', label: 'Faint lines from causes and effects' },
-  { key: 'crossLinks', label: 'Faint lines between linked orbs' },
   { key: 'relationColour', label: 'Colour outlines by cause and effect' },
-  { key: 'leadGlow', label: 'Glow around hidden leads' },
+  { group: 'Background' },
+  { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
+  { key: 'lineArt', label: 'Patterned border' },
+  { tab: 'Map' },
+  { group: 'Orbs' },
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
-  { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'leadGlow', label: 'Glow around hidden leads' },
   { key: 'hierarchy', label: 'Emphasis on relevance', min: 0, max: 1, step: 0.05, unit: '', relayout: true },
+  { key: 'orbSize', label: 'Orb size', min: 0.6, max: 1.5, step: 0.05, unit: '×', relayout: true },
+  { key: 'spacing', label: 'Spacing', min: 0.6, max: 1.6, step: 0.05, unit: '×', relayout: true },
+  { group: 'Lines' },
+  { key: 'streams', label: 'Cause and effect streams' },
+  { key: 'centreLines', label: 'Faint lines to the centre' },
+  { key: 'crossLinks', label: 'Faint lines between linked orbs' },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
   { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
-  { group: 'Motion' },
+  { tab: 'Motion' },
+  { group: 'Orbs' },
+  { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'streamSpeed', label: 'Stream speed', min: 0.4, max: 2, step: 0.1, unit: '×' },
+  { group: 'Whole map' },
   { key: 'sway', label: 'Gentle sway until you grab it' },
   { key: 'spin', label: 'Slow spin' },
-  { key: 'streamSpeed', label: 'Stream speed', min: 0.4, max: 2, step: 0.1, unit: '×' },
-  { group: 'Scale' },
-  { key: 'spacing', label: 'Spacing', min: 0.6, max: 1.6, step: 0.05, unit: '×', relayout: true },
-  { key: 'orbSize', label: 'Orb size', min: 0.6, max: 1.5, step: 0.05, unit: '×', relayout: true },
 ];
 const STORE_KEY = 'celestial.view';
+let viewTab = 'Claude';
 const view = { ...VIEW_DEFAULTS, ...readStoredView() };
 if (!['tide', 'dusk'].includes(view.theme)) view.theme = VIEW_DEFAULTS.theme;
 function readStoredView() {
@@ -145,7 +165,12 @@ function storeView() {
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const darkDevice = matchMedia('(prefers-color-scheme: dark)');
-const UI_TOP = 130, UI_BOTTOM = 40;   // pixels taken by the bars at top and bottom
+const UI_TOP = 140, UI_BOTTOM = 40;   // pixels taken by the bars at top and bottom
+// Pixels the open findings panel takes on the left of a wide screen
+const uiLeft = () => {
+  const f = document.getElementById('findings');
+  return f && !f.hidden && !f.classList.contains('is-collapsed') && innerWidth > 900 ? f.offsetWidth + 24 : 0;
+};
 const lerp = THREE.MathUtils.lerp;
 const clamp = THREE.MathUtils.clamp;
 const $ = (id) => document.getElementById(id);
@@ -202,80 +227,188 @@ backdropScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.Shader
 })));
 const backdropCamera = new THREE.Camera();
 
-// ─── 2. Line art along the bottom edge ───────────────────────
-// Engraving-style motifs from star charts, astrolabes and space-age
-// diagrams. It's drawn fresh for the window size and faded towards
-// the centre by a mask in style.css.
+// ─── 2. Line art around the edges ────────────────────────────
+// Tribal, engraved patterns with a celestial core: sun-stones in the corners,
+// moon-phase stones at the sides, an astrolabe horizon along the bottom,
+// patterned friezes that slowly circle the frame, and twinkling stars.
+// Each moving part is its own layer, so the browser can move it cheaply.
+// A mask in style.css fades all of it out towards the middle of the screen.
+const n1 = (v) => v.toFixed(1);
+const polar = (r, deg) => [r * Math.cos(deg * Math.PI / 180), r * Math.sin(deg * Math.PI / 180)];
+const pts = (list) => list.map(([x, y]) => `${n1(x)} ${n1(y)}`).join('L');
+const ring = (r, extra = '') => `<circle r="${n1(r)}" ${extra}/>`;
+const FILL = 'fill="currentColor" stroke="none"';
+const SOFT_FILL = 'fill="currentColor" fill-opacity="0.45" stroke="none"';
+
+// A ring of triangle "teeth" between two radii, every other one filled
+function teeth(r1, r2, count, extra = '') {
+  let out = '';
+  const step = 360 / count;
+  for (let i = 0; i < count; i++) {
+    const a = i * step;
+    out += `<path d="M${pts([polar(r1, a), polar(r2, a + step / 2), polar(r1, a + step)])}" ${i % 2 ? SOFT_FILL : extra}/>`;
+  }
+  return out;
+}
+// A zigzag running round between two radii
+const zigzag = (r1, r2, count) =>
+  `<path d="M${pts(Array.from({ length: count * 2 + 1 }, (_, i) => polar(i % 2 ? r2 : r1, (i * 180) / count)))}"/>`;
+// A ring of dots
+const dotRing = (r, count, size) => Array.from({ length: count }, (_, i) => {
+  const [x, y] = polar(r, (i * 360) / count);
+  return `<circle cx="${n1(x)}" cy="${n1(y)}" r="${size}" ${FILL}/>`;
+}).join('');
+// Rays between two radii, alternating long and short
+const rays = (r1, r2, r3, count) => Array.from({ length: count }, (_, i) => {
+  const a = (i * 360) / count;
+  return `<path d="M${pts([polar(r1, a), polar(i % 2 ? r3 : r2, a)])}"/>`;
+}).join('');
+// Lens-shaped petals around the centre
+const petals = (r1, r2, count, width) => Array.from({ length: count }, (_, i) => {
+  const a = (i * 360) / count, [x1, y1] = polar(r1, a), [x2, y2] = polar(r2, a);
+  const [c1x, c1y] = polar((r1 + r2) / 2, a + width), [c2x, c2y] = polar((r1 + r2) / 2, a - width);
+  return `<path d="M${n1(x1)} ${n1(y1)}Q${n1(c1x)} ${n1(c1y)} ${n1(x2)} ${n1(y2)}Q${n1(c2x)} ${n1(c2y)} ${n1(x1)} ${n1(y1)}Z" ${i % 2 ? SOFT_FILL : ''}/>`;
+}).join('');
+// A moon in a given phase (0 new → 0.5 full → 1 new)
+function moon(x, y, r, phase) {
+  const lit = Math.cos(phase * 2 * Math.PI), rx = Math.abs(lit) * r;
+  const waxing = phase < 0.5;
+  const d = `M${n1(x)} ${n1(y - r)}A${n1(r)} ${n1(r)} 0 0 ${waxing ? 1 : 0} ${n1(x)} ${n1(y + r)}A${n1(rx)} ${n1(r)} 0 0 ${(lit > 0) === waxing ? 0 : 1} ${n1(x)} ${n1(y - r)}Z`;
+  return `<circle cx="${n1(x)}" cy="${n1(y)}" r="${n1(r)}"/><path d="${d}" ${SOFT_FILL}/>`;
+}
+
+// A sun-stone in two layers that turn in opposite directions
+function sunStone(r, count = 36) {
+  const outer = ring(r) + ring(r * 0.965) + teeth(r * 0.84, r * 0.95, count) + ring(r * 0.84)
+    + dotRing(r * 0.795, count * 2, Math.max(0.8, r * 0.006)) + ring(r * 0.75, 'stroke-dasharray="1 5"');
+  const inner = zigzag(r * 0.56, r * 0.69, count / 2) + ring(r * 0.71) + ring(r * 0.54)
+    + rays(r * 0.31, r * 0.5, r * 0.42, count / 2) + ring(r * 0.3) + petals(r * 0.1, r * 0.27, 8, 13)
+    + ring(r * 0.085) + `<circle r="${n1(r * 0.03)}" ${FILL}/>`;
+  return { outer, inner };
+}
+// A moon-stone: the phases of the moon in a patterned ring
+function moonStone(r) {
+  const phases = Array.from({ length: 12 }, (_, i) => {
+    const [x, y] = polar(r * 0.8, i * 30 - 90);
+    return moon(x, y, r * 0.075, i / 12);
+  }).join('');
+  const outer = ring(r) + ring(r * 0.97, 'stroke-dasharray="2 4"') + teeth(r * 0.9, r * 0.97, 48) + ring(r * 0.9)
+    + phases + ring(r * 0.69);
+  const inner = zigzag(r * 0.5, r * 0.63, 20) + ring(r * 0.47) + dotRing(r * 0.42, 40, Math.max(0.7, r * 0.007))
+    + ring(r * 0.36) + rays(r * 0.12, r * 0.33, r * 0.25, 24) + ring(r * 0.11);
+  return { outer, inner };
+}
+
+// One period of the frieze that circles the screen edge. y is the distance
+// in from the edge. Drawn one period too long, so sliding it loops seamlessly.
+const FRIEZE = { depth: 66, period: 24 };
+function frieze(length) {
+  const P = FRIEZE.period, out = [];
+  out.push(`<path d="M0 3H${length}M0 19H${length}M0 33H${length}M0 59H${length}" stroke-width="0.7"/>`);
+  for (let x = 0; x < length; x += P) {
+    // Teeth pointing inward, every other one filled
+    out.push(`<path d="M${x} 3L${x + P / 4} 15L${x + P / 2} 3" />`);
+    out.push(`<path d="M${x + P / 2} 3L${x + (3 * P) / 4} 15L${x + P} 3Z" ${SOFT_FILL}/>`);
+    // A chain of diamonds with a dot in each
+    for (const d of [0, P / 2]) {
+      const cx = x + d + P / 4;
+      out.push(`<path d="M${cx - P / 4} 26L${cx} 21L${cx + P / 4} 26L${cx} 31Z"/>`);
+      out.push(`<circle cx="${cx}" cy="26" r="1.1" ${FILL}/>`);
+    }
+    // Dotted row
+    for (let i = 0; i < 4; i++) out.push(`<circle cx="${x + i * (P / 4) + P / 8}" cy="39" r="0.9" ${FILL}/>`);
+    // A row of rising suns
+    out.push(`<path d="M${x + 4} 57A8 8 0 0 1 ${x + 20} 57M${x + 7} 57A5 5 0 0 1 ${x + 17} 57"/>`);
+    out.push(`<circle cx="${x + 12}" cy="57" r="1.6" ${FILL}/>`);
+    for (const a of [-150, -120, -90, -60, -30]) {
+      const [x1, y1] = polar(10, a), [x2, y2] = polar(a === -90 ? 15 : 13, a);
+      out.push(`<path d="M${n1(x + 12 + x1)} ${n1(57 + y1)}L${n1(x + 12 + x2)} ${n1(57 + y2)}"/>`);
+    }
+  }
+  return out.join('');
+}
+
 function drawLineArt() {
   const w = innerWidth, h = innerHeight;
   let seed = 11;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const n = (v) => v.toFixed(1);
-  const out = [];
-  const path = (d, extra = '') => out.push(`<path d="${d}" ${extra}/>`);
-  const circle = (x, y, r, extra = '') => out.push(`<circle cx="${n(x)}" cy="${n(y)}" r="${n(r)}" ${extra}/>`);
-  const dot = (x, y, r) => circle(x, y, r, 'fill="currentColor" stroke="none"');
-  const polar = (x, y, r, deg) => [x + r * Math.cos(deg * Math.PI / 180), y + r * Math.sin(deg * Math.PI / 180)];
+  const layers = [];
+  const svg = (vb, body, attrs = '') =>
+    `<svg viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="0.8" ${attrs}>${body}</svg>`;
 
-  // Horizon: a great arc rising from below, with an astrolabe-style degree scale
-  const hx = w / 2, R = Math.max(w * 0.78, 760), hy = h + R * 0.86;
-  circle(hx, hy, R);
-  circle(hx, hy, R + 16);
-  circle(hx, hy, R + 70, 'stroke-dasharray="2 7"');
-  circle(hx, hy, R - 48, 'stroke-dasharray="1 9"');
-  for (let a = -64; a <= 64; a += 1.25) {
+  // Friezes along all four edges, circling the screen clockwise
+  const D = FRIEZE.depth, P = FRIEZE.period;
+  for (const [length, place] of [
+    [w, `left:0;top:0;transform:none`],
+    [h - 2 * D, `left:${w}px;top:${D}px;transform:rotate(90deg)`],
+    [w, `left:${w}px;top:${h}px;transform:rotate(180deg)`],
+    [h - 2 * D, `left:0;top:${h - D}px;transform:rotate(-90deg)`],
+  ]) {
+    const L = Math.ceil(length / P) * P + P;
+    layers.push(`<div class="strip" style="${place};width:${n1(length)}px;height:${D}px">${svg(`0 0 ${L} ${D}`, frieze(L), `width="${L}" height="${D}" class="drift"`)}</div>`);
+  }
+
+  // Stones: two layers each, turning slowly in opposite directions
+  const m = Math.min(w, h);
+  const stones = [
+    [0.02 * w, h * 1.0, m * 0.36, 'sun', 240],
+    [w * 0.98, h * 1.0, m * 0.36, 'sun', 300],
+    [-m * 0.02, h * 0.5, m * 0.17, 'moon', 200],
+    [w + m * 0.02, h * 0.5, m * 0.17, 'moon', 220],
+    [0, 0, m * 0.22, 'sun', 260],
+    [w, 0, m * 0.22, 'sun', 280],
+  ];
+  for (const [x, y, r, kind, secs] of stones) {
+    const { outer, inner } = kind === 'sun' ? sunStone(r, 36) : moonStone(r);
+    const box = `left:${n1(x - r)}px;top:${n1(y - r)}px;width:${n1(2 * r)}px;height:${n1(2 * r)}px`;
+    const vb = `${n1(-r)} ${n1(-r)} ${n1(2 * r)} ${n1(2 * r)}`;
+    layers.push(`<div class="stone" style="${box}">
+      ${svg(vb, outer, `class="turn" style="--secs:${secs}s"`)}
+      ${svg(vb, inner, `class="turn back" style="--secs:${secs * 0.7}s"`)}</div>`);
+  }
+
+  // The astrolabe horizon: a great arc with a degree scale, turning very slowly
+  const R = Math.max(w * 0.78, 760), cy = h + R * 0.86;
+  let arc = ring(R) + ring(R + 16) + ring(R + 22, 'stroke-dasharray="1 6"') + ring(R + 70, 'stroke-dasharray="2 7"') + ring(R - 48, 'stroke-dasharray="1 9"');
+  for (let a = -180; a < 180; a += 1.25) {
     const major = Math.abs(a % 10) < 0.01;
-    const [x1, y1] = polar(hx, hy, R, a - 90);
-    const [x2, y2] = polar(hx, hy, R + (major ? 16 : 6), a - 90);
-    path(`M${n(x1)} ${n(y1)}L${n(x2)} ${n(y2)}`);
+    arc += `<path d="M${pts([polar(R, a), polar(R + (major ? 16 : 6), a)])}"/>`;
   }
-  for (let a = -60; a <= 60; a += 5) {
-    const [x1, y1] = polar(hx, hy, R + 16, a - 90);
-    const [x2, y2] = polar(hx, hy, R + 70, a - 90);
-    path(`M${n(x1)} ${n(y1)}L${n(x2)} ${n(y2)}`, 'stroke-dasharray="1 4"');
+  arc += teeth(R + 30, R + 44, 360);
+  for (let a = -180; a < 180; a += 5) arc += `<path d="M${pts([polar(R + 48, a), polar(R + 70, a)])}" stroke-dasharray="1 4"/>`;
+  const big = R + 72;
+  layers.push(`<div class="stone horizon" style="left:${n1(w / 2 - big)}px;top:${n1(cy - big)}px;width:${n1(2 * big)}px;height:${n1(2 * big)}px">
+    ${svg(`${n1(-big)} ${n1(-big)} ${n1(2 * big)} ${n1(2 * big)}`, arc, 'class="turn" style="--secs:900s"')}</div>`);
+
+  // Stars and constellations, only around the edges
+  const stars = [];
+  while (stars.length < 54) {
+    const x = rnd() * w, y = rnd() * h;
+    const dx = (x - w / 2) / (w / 2), dy = (y - h * 0.45) / (h / 2);
+    if (dx * dx + dy * dy > 0.62) stars.push([x, y, 1.5 + rnd() * 3.5]);
+  }
+  let lines = '';
+  for (let c = 0; c < 5; c++) {
+    const [ax, ay] = stars[c * 9];
+    const near = [...stars].sort((p, q) => Math.hypot(p[0] - ax, p[1] - ay) - Math.hypot(q[0] - ax, q[1] - ay)).slice(0, 5);
+    lines += `<path d="M${pts(near)}" stroke-dasharray="4 3"/>`;
+  }
+  layers.push(svg(`0 0 ${w} ${h}`, lines, `class="sky" width="${w}" height="${h}"`));
+  for (const [x, y, size] of stars) {
+    const star = `<path d="M${-size} 0Q0 0 0 ${-size}Q0 0 ${size} 0Q0 0 0 ${size}Q0 0 ${-size} 0Z" ${FILL}/>`;
+    layers.push(`<div class="star" style="left:${n1(x - size)}px;top:${n1(y - size)}px;width:${n1(2 * size)}px;height:${n1(2 * size)}px;--delay:${(-rnd() * 9).toFixed(1)}s;--secs:${(5 + rnd() * 6).toFixed(1)}s">${svg(`${-size} ${-size} ${2 * size} ${2 * size}`, star)}</div>`);
   }
 
-  // Left corner: an armillary of tilted orbits, each carrying a small planet
-  const ax = w * 0.08, ay = h * 0.9;
-  for (const [rx, ry, tilt, dash] of [[175, 52, -16, ''], [130, 130, 0, 'stroke-dasharray="3 5"'], [215, 66, 22, ''], [92, 28, 64, '']]) {
-    out.push(`<ellipse cx="${n(ax)}" cy="${n(ay)}" rx="${rx}" ry="${ry}" transform="rotate(${tilt} ${n(ax)} ${n(ay)})" ${dash}/>`);
-    const th = rnd() * Math.PI * 2, ph = tilt * Math.PI / 180;
-    dot(ax + rx * Math.cos(th) * Math.cos(ph) - ry * Math.sin(th) * Math.sin(ph),
-        ay + rx * Math.cos(th) * Math.sin(ph) + ry * Math.sin(th) * Math.cos(ph), 2.5 + rnd() * 2);
-  }
-  circle(ax, ay, 7);
-  dot(ax, ay, 3);
-
-  // Right corner: a heliocentric diagram of concentric orbits and planets
-  const ox = w * 0.93, oy = h * 1.04;
-  [48, 92, 146, 210, 286, 372].forEach((r, i) => {
-    circle(ox, oy, r, i % 2 ? 'stroke-dasharray="1 6"' : '');
-    const [px, py] = polar(ox, oy, r, 190 + rnd() * 75);
-    dot(px, py, 2 + rnd() * 3);
-    if (i === 3) circle(px, py, 11);
-  });
-
-  // A space-age starburst
-  const sx = w * 0.7, sy = h * 0.9;
-  for (let i = 0; i < 36; i++) {
-    const [x1, y1] = polar(sx, sy, 7, i * 10);
-    const [x2, y2] = polar(sx, sy, i % 3 === 0 ? 34 : i % 3 === 1 ? 18 : 12, i * 10);
-    path(`M${n(x1)} ${n(y1)}L${n(x2)} ${n(y2)}`);
-  }
-  dot(sx, sy, 3);
-
-  // Stars, a few joined into constellations
-  const stars = Array.from({ length: 46 }, () => [rnd() * w, h * (0.7 + rnd() * 0.3), 1.5 + rnd() * 3.5]);
-  for (const [x, y, s] of stars) {
-    path(`M${n(x - s)} ${n(y)}Q${n(x)} ${n(y)} ${n(x)} ${n(y - s)}Q${n(x)} ${n(y)} ${n(x + s)} ${n(y)}Q${n(x)} ${n(y)} ${n(x)} ${n(y + s)}Q${n(x)} ${n(y)} ${n(x - s)} ${n(y)}Z`, 'fill="currentColor" stroke="none"');
-  }
-  for (let c = 0; c < 4; c++) {
-    const near = [...stars].sort((a, b) => Math.hypot(a[0] - stars[c * 9][0], a[1] - stars[c * 9][1]) - Math.hypot(b[0] - stars[c * 9][0], b[1] - stars[c * 9][1])).slice(0, 5);
-    path('M' + near.map(([x, y]) => `${n(x)} ${n(y)}`).join('L'), 'stroke-dasharray="4 3"');
-  }
-
-  $('art').innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" fill="none" stroke="currentColor" stroke-width="0.8" aria-hidden="true">${out.join('')}</svg>`;
+  $('art').innerHTML = layers.join('');
 }
+
+// The sun's halo: a small sun-stone that turns slowly behind the centre topic
+const SUN_HALO = (() => {
+  const r = 100;
+  const body = ring(r * 0.62) + teeth(r * 0.66, r * 0.8, 28) + ring(r * 0.66) + dotRing(r * 0.86, 56, 0.9)
+    + rays(r * 0.9, r * 1.0, r * 0.95, 56);
+  return `<svg class="halo" viewBox="${-r} ${-r} ${2 * r} ${2 * r}" fill="none" stroke="currentColor" stroke-width="0.9" aria-hidden="true">${body}</svg>`;
+})();
 
 // ─── 3 & 4. Scene: renderer, camera, controls ────────────────
 const stage = $('stage');
@@ -305,7 +438,7 @@ controls.mouseButtons = { LEFT: THREE.MOUSE.ROTATE, MIDDLE: THREE.MOUSE.PAN, RIG
 stage.addEventListener('mousedown', (e) => { if (e.button === 1) e.preventDefault(); });
 
 let grabbed = false;   // becomes true once you drag the view yourself
-controls.addEventListener('start', () => { grabbed = true; });
+controls.addEventListener('start', () => { grabbed = true; camGoal = null; camVel.set(0, 0, 0); lookVel.set(0, 0, 0); });
 
 const world = new THREE.Group();
 scene.add(world);
@@ -357,12 +490,96 @@ const liveIds = new Set();          // topics that came from Claude (saved betwe
 const pending = new Set();          // systems being mapped right now
 const detailsLoading = new Set();
 
-const canUnfold = (id) => Boolean(DATA.systems[id]) || live();
+const canExpand = (id) => Boolean(DATA.systems[id]) || live();
 const orbitOf = (l) => lerp(TUNING.nearestOrbit, TUNING.farthestOrbit, 1 - l.link) * view.spacing;
 // Size grows with relevance; "Emphasis on relevance" blends towards equal sizes
 const radiusFor = (relevance) => lerp((TUNING.smallestOrb + TUNING.largestOrb) / 2,
   lerp(TUNING.smallestOrb, TUNING.largestOrb, relevance), view.hierarchy);
 const sizeOf = (l) => radiusFor(l.relevance) * view.orbSize;
+
+// ─── Your ticks and crosses ──────────────────────────────────
+// Each opened orb can be marked relevant (yes) or not relevant (no).
+// Marks belong to the current investigation and are kept between visits.
+// They rearrange the map: ticked orbs come in close and grow, crossed
+// orbs shrink, fade and drift out, and unmarked orbs move towards or
+// away from them depending on how closely they're linked.
+const FEEDBACK_STORE = 'celestial.feedback';
+let verdicts = {};                  // topic id → 'yes' | 'no'
+let verdictOrder = [];              // ids in the order they were marked
+const FEEDBACK = {
+  pull: 0.35,          // how far an unmarked orb's link and relevance move with affinity
+  sway: 0.45,          // how far it turns towards the ticked orb it's linked to
+};
+const marked = (v) => verdictOrder.filter((id) => verdicts[id] === v && DATA.topics[id]);
+function saveFeedback() {
+  try { localStorage.setItem(FEEDBACK_STORE, JSON.stringify({ root: trail[0], verdicts, order: verdictOrder })); } catch { /* ignore */ }
+}
+function loadFeedback() {
+  try {
+    const f = JSON.parse(localStorage.getItem(FEEDBACK_STORE) || 'null');
+    if (f && f.root === trail[0]) { verdicts = f.verdicts || {}; verdictOrder = (f.order || Object.keys(verdicts)).filter((id) => verdicts[id]); }
+  } catch { /* nothing saved */ }
+}
+function clearFeedback() { verdicts = {}; verdictOrder = []; saveFeedback(); }
+const feedbackTitles = () => ({ yes: marked('yes').map((id) => DATA.topics[id].title), no: marked('no').map((id) => DATA.topics[id].title) });
+
+// Words in a title or one-liner, roughly stemmed, for spotting kinship
+// between topics that the map didn't link explicitly
+const STOP = new Set('the and for with from that this into than when what which their there about your more less over under after before part parts'.split(' '));
+const wordsOf = (id) => new Set(`${DATA.topics[id]?.title || ''} ${DATA.topics[id]?.liner || ''}`.toLowerCase().match(/[a-z]{4,}/g)?.filter((w) => !STOP.has(w)).map((w) => w.replace(/(ing|ed|es|s)$/, '')) || []);
+function kinship(a, b) {
+  const wa = wordsOf(a), wb = wordsOf(b);
+  if (!wa.size || !wb.size) return 0;
+  let shared = 0;
+  for (const w of wa) if (wb.has(w)) shared++;
+  return Math.min(1, shared / Math.sqrt(wa.size * wb.size) * 1.6);
+}
+
+// How strongly an unmarked orb is tied to what you ticked (+) and crossed (−),
+// and which ticked orb it leans towards. Cross-links count most; shared
+// words count a little.
+function affinity(id, sunId) {
+  let score = 0, towards = null, best = 0;
+  const links = DATA.crossLinks?.[sunId] || [];
+  for (const other of verdictOrder) {
+    const v = verdicts[other];
+    if (!v || other === id) continue;
+    const link = links.find(([a, b]) => (a === id && b === other) || (b === id && a === other));
+    const tie = Math.max(link ? link[2] : 0, 0.6 * kinship(id, other));
+    if (tie < 0.15) continue;
+    if (v === 'yes') { score += tie; if (tie > best) { best = tie; towards = other; } }
+    else score -= 0.7 * tie;
+  }
+  return { score: clamp(score, -1, 1), towards };
+}
+
+// The system around a sun, with link and relevance adjusted by your marks.
+// order keeps each orb's place in the spiral, so marking reshapes the map
+// without shuffling everything.
+function adjustedSystem(sunId) {
+  return (DATA.systems[sunId] || []).map((spec) => {
+    const v = verdicts[spec.to];
+    const base = { ...spec, order: spec.relevance, verdict: v || null, towards: null, affinity: 0 };
+    if (v === 'yes') return { ...base, link: Math.max(spec.link, 0.6 + 0.4 * spec.link), relevance: Math.max(spec.relevance, 0.95) };
+    if (v === 'no') return { ...base, link: spec.link * 0.25, relevance: spec.relevance * 0.35 };
+    const { score, towards } = affinity(spec.to, sunId);
+    return {
+      ...base,
+      affinity: score,
+      towards: score > 0 ? towards : null,
+      link: clamp(spec.link + score * FEEDBACK.pull, 0, 1),
+      relevance: clamp(spec.relevance + score * FEEDBACK.pull, 0, 1),
+    };
+  });
+}
+
+// Unmarked orbs that your ticks point to most, for "worth a look next"
+function suggestions(sunId, n = 3) {
+  return adjustedSystem(sunId)
+    .filter((s) => !s.verdict && s.affinity > 0.1)
+    .sort((a, b) => b.affinity * 2 + b.relevance - (a.affinity * 2 + a.relevance))
+    .slice(0, n);
+}
 
 // ─── Layout: where each orb goes ─────────────────────────────
 // Orbs are spread evenly in all three dimensions around the sun.
@@ -381,8 +598,17 @@ function layout(links) {
   const gcd = (a, b) => (b ? gcd(b, a % b) : a);
   while (gcd(stride, n) !== 1) stride++;
   const placed = [...links]
-    .sort((a, b) => b.relevance - a.relevance)
+    .sort((a, b) => (b.order ?? b.relevance) - (a.order ?? a.relevance))
     .map((l, k) => ({ ...l, target: dirs[(k * stride) % n].clone().multiplyScalar(orbitOf(l)) }));
+  // Orbs tied to something you ticked turn towards it, so related
+  // findings gather on one side of the sun
+  for (const p of placed) {
+    if (!p.towards) continue;
+    const anchor = placed.find((q) => q.to === p.towards);
+    if (!anchor) continue;
+    const d = p.target.clone().normalize().lerp(anchor.target.clone().normalize(), FEEDBACK.sway * clamp(p.affinity, 0, 1));
+    if (d.lengthSq() > 1e-4) p.target.copy(d.setLength(orbitOf(p)));
+  }
   // 3. Push apart any that still crowd each other in 3D, keeping each
   //    one's distance from the sun (so distance still means "link")
   const push = new THREE.Vector3();
@@ -442,8 +668,9 @@ function addQuickOrb(centreId, spec) {
   (DATA.systems[centreId] ||= []).push(spec);   // provisional until the full map arrives
   const previous = trail.length > 1 ? trail[trail.length - 2] : null;
   const o = makeOrb({ ...spec, target: placeAmong(spec, orbs.slice(1).map((x) => x.target)), cameFrom: spec.to === previous });
+  o.hub = orbs[0];
   orbs.push(o);
-  tween(700, (t) => { o.grow = t; o.obj.position.lerpVectors(o.start, o.target, t); });
+  tween(TUNING.expand.arrive, (t) => { o.grow = t; o.obj.position.lerpVectors(o.start, o.target, t); }, null, { ease: easeOut, owner: o });
   scheduleFit();
   return true;
 }
@@ -453,7 +680,8 @@ function fitCamera(animate = true) {
   if (!orbs.length) return;
   const w = stage.clientWidth, h = stage.clientHeight;
   const fy = (h - UI_TOP - UI_BOTTOM) / h;
-  const fx = (w - 60) / w;
+  const left = uiLeft();
+  const fx = (w - 60 - left) / w;
   systemRadius = Math.max(...orbs.map((o) => o.target.length()), 10);
   let dist = 20;
   for (const o of orbs) {
@@ -464,12 +692,14 @@ function fitCamera(animate = true) {
   }
   // Shift the view so the system sits in the space between the bars
   const shift = ((UI_TOP - UI_BOTTOM) / 2 / h) * 2 * tanV * dist;
-  const to = new THREE.Vector3(0, dist * 0.05 + shift, dist);
-  const look = new THREE.Vector3(0, shift, 0);
+  // ...and to the right of the findings panel when it's open
+  const shiftX = -(left / 2 / w) * 2 * tanV * camera.aspect * dist;
+  const to = new THREE.Vector3(shiftX, dist * 0.05 + shift, dist);
+  const look = new THREE.Vector3(shiftX, shift, 0);
   controls.minDistance = dist * 0.25;
   controls.maxDistance = dist * 3;
-  if (animate) { tweenVector(camera.position, to, 900); tweenVector(controls.target, look, 900); }
-  else { camera.position.copy(to); controls.target.copy(look); }
+  if (animate && !reduceMotion) camGoal = { pos: to, look };
+  else { camGoal = null; camera.position.copy(to); controls.target.copy(look); }
 }
 
 // ─── Building orbs ───────────────────────────────────────────
@@ -500,18 +730,26 @@ function chartHTML(c) {
     <svg viewBox="0 0 ${W} ${c.rows.length * rowH}" role="img" aria-label="${esc(c.title)}">${bars}</svg>
     ${c.note ? `<p class="viz-note">${esc(c.note)}</p>` : ''}</figure>`;
 }
-function makeOrbElement(o) {
-  const el = document.createElement('div');
-  el.className = ['orb',
+function orbClasses(o) {
+  const keep = ['is-hover', 'is-selected', 'is-dim', 'is-leaving'].filter((c) => o.el.classList.contains(c));
+  o.el.className = ['orb',
     o.isSun ? 'sun' : 'rel-' + o.rel,
     o.lead ? 'lead' : '',
     // Double outline: this orb's own system is ready to open instantly
-    !o.isSun && DATA.systems[o.id] ? 'unfoldable' : '',
+    !o.isSun && DATA.systems[o.id] ? 'expandable' : '',
     o.isSun ? '' : o.relevance >= 0.75 ? 'rank-high' : o.relevance < 0.4 ? 'rank-low' : '',
+    o.verdict ? 'v-' + o.verdict : '',
+    ...keep,
   ].filter(Boolean).join(' ');
+}
+function makeOrbElement(o) {
+  const el = document.createElement('div');
+  o.el = el;
+  orbClasses(o);
   // Scrolling inside an opened card shouldn't zoom the view
   el.addEventListener('wheel', (e) => { if (o === selected) e.stopPropagation(); });
-  el.addEventListener('pointerenter', () => setHover(o));
+  // No hover previews while orbs are sliding into place under a still mouse
+  el.addEventListener('pointerenter', () => { if (!busy) setHover(o); });
   el.addEventListener('pointerleave', () => { if (hovered === o) setHover(null); });
   // Inside an opened card, the card handles its own clicks and scrolling,
   // and dragging doesn't turn the view
@@ -531,8 +769,11 @@ function fillOrb(o) {
   const topic = DATA.topics[o.id];
   const el = o.el;
   let tag = '';
-  if (o.cameFrom) tag = 'Came from';
+  if (o.verdict === 'yes') tag = '✓ Relevant';
+  else if (o.verdict === 'no') tag = '✕ Not relevant';
+  else if (o.cameFrom) tag = 'Came from';
   else if (o.lead) tag = 'Hidden lead';
+  const pressed = (v) => String(o.verdict === v);
   const meter = (name, value) =>
     `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
   const more = DATA.details?.[o.id] || {};
@@ -551,12 +792,20 @@ function fillOrb(o) {
     return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
   };
   el.innerHTML = `
+    ${o.isSun ? SUN_HALO : ''}
     <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
     <div class="inner">
       ${tag ? `<span class="tag">${tag}</span>` : ''}
       <span class="rel"></span>
       <span class="t"></span>
       <span class="l"></span>
+      ${o.isSun ? '' : `<div class="verdict" role="group" aria-label="Is this relevant?">
+        <p class="verdict-q">${o.verdict ? 'Marked. Change your mind any time.' : 'Is this relevant to what you’re looking for?'}</p>
+        <div class="verdict-row">
+          <button type="button" class="verdict-btn yes" data-action="tick" aria-pressed="${pressed('yes')}"><span aria-hidden="true">✓</span>Relevant</button>
+          <button type="button" class="verdict-btn no" data-action="cross" aria-pressed="${pressed('no')}"><span aria-hidden="true">✕</span>Not relevant</button>
+        </div>
+      </div>`}
       <div class="more">
         ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
         ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
@@ -567,9 +816,9 @@ function fillOrb(o) {
         ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
           `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
         ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : canUnfold(o.id)
-          ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
-          : `<p class="slot">${inViewer ? 'Sign in to claude.ai to unfold any orb' : 'Connect Claude to unfold any orb'}</p>`}
+        ${o.isSun ? '' : canExpand(o.id)
+          ? '<button class="orb-expand" type="button" data-action="expand">Expand</button>'
+          : `<p class="slot">${inViewer ? 'Sign in to claude.ai to expand any orb' : 'Connect Claude to expand any orb'}</p>`}
       </div>
     </div>`;
   el.querySelector('.rel').textContent = relationText(o);
@@ -638,14 +887,26 @@ function makeOrb(spec) {
     f: 0,          // 0 → 1 as the orb opens fully on click
     surface: 1,    // the orb's radius in scene units, worked out each frame
     phase: Math.random() * 10,   // so each orb's shape drifts differently
+    exit: 0,       // 0 → 1 as the orb drifts away when you leave its system
+    nx: 0, ny: 0,  // a gentle nudge that keeps an opened card on screen
   };
-  o.lead = !o.isSun && isHiddenLead(o);
+  o.verdict = spec.verdict || null;
+  o.lead = !o.isSun && !o.verdict && isHiddenLead(o);
   o.radius = o.isSun ? TUNING.sunSize : radiusFor(o.relevance);
   o.el = makeOrbElement(o);
   o.obj = new CSS2DObject(o.el);
   world.add(o.obj);
+  attachLinks(o);
+  paintOrb(o);
+  return o;
+}
 
-  // A line to the sun: faint for causes and effects, brighter on hover
+// A line to the sun (faint for causes and effects, brighter on hover)
+// and, for causes and effects, the streams. They fade in gently.
+function attachLinks(o) {
+  dropLinks(o);
+  o.linkIn = 0;
+  o.flow = 0;
   if (!o.isSun) o.line = makeLine();
   if (o.rel === 'cause' || o.rel === 'effect') {
     o.pulse = makePulse(o);
@@ -653,8 +914,48 @@ function makeOrb(spec) {
     o.pulseEvery = lerp(TUNING.pulses.slowest, TUNING.pulses.fastest, o.relevance);
     o.pulseOffset = Math.random() * o.pulseEvery;
   }
+}
+function dropLinks(o) {
+  if (o.line) { world.remove(o.line); o.line.geometry.dispose(); o.line.material.dispose(); o.line = null; }
+  for (const s of o.pulse || []) { world.remove(s); s.material.dispose(); streakMaterials.delete(s.material); }
+  o.pulse = null;
+}
+
+// An orb that stays on screen but takes a new role in the next system
+// (the orb you expand becomes the sun; the old sun becomes a planet)
+function reshape(o, spec) {
+  Object.assign(o, {
+    rel: spec.rel || null,
+    link: spec.link ?? 1,
+    relevance: spec.relevance ?? 1,
+    isSun: Boolean(spec.isSun),
+    cameFrom: spec.cameFrom,
+    target: spec.target || new THREE.Vector3(),
+    verdict: spec.verdict || null,
+    kept: true,
+  });
+  o.lead = !o.isSun && !o.verdict && isHiddenLead(o);
+  o.radius = o.isSun ? TUNING.sunSize : radiusFor(o.relevance);
+  orbClasses(o);
+  fillOrb(o);
+  attachLinks(o);
   paintOrb(o);
-  return o;
+}
+
+// New link and relevance after a mark: size, glow, rank and streams follow
+function applySpec(o, spec) {
+  const was = o.verdict;
+  o.link = spec.link;
+  o.relevance = spec.relevance;
+  o.verdict = spec.verdict || null;
+  o.lead = !o.verdict && isHiddenLead(o);
+  o.radius = radiusFor(o.relevance);
+  if (o.pulse) {
+    o.pulseLength = lerp(TUNING.pulses.shortest, TUNING.pulses.longest, o.link);
+    o.pulseEvery = lerp(TUNING.pulses.slowest, TUNING.pulses.fastest, o.relevance);
+  }
+  orbClasses(o);
+  if (was !== o.verdict) fillOrb(o);
 }
 
 function relationColour(o) {
@@ -668,89 +969,146 @@ function paintOrb(o) {
 
 function removeOrb(o) {
   world.remove(o.obj);   // also removes its HTML element
-  if (o.line) { world.remove(o.line); o.line.geometry.dispose(); o.line.material.dispose(); }
-  for (const s of o.pulse || []) { world.remove(s); s.material.dispose(); streakMaterials.delete(s.material); }
+  dropLinks(o);
+}
+
+// Orbs that aren't part of the next system drift outward and fade.
+// shift: how the view is re-centring, so they travel with it
+let leaving = [];
+function retire(o, shift) {
+  if (hovered === o) setHover(null);
+  o.leaving = true;
+  o.el.classList.add('is-leaving');
+  leaving.push(o);
+  const from = o.obj.position.clone();
+  const to = from.clone().add(shift).multiplyScalar(TUNING.expand.drift);
+  const grew = o.grow;
+  tween(TUNING.expand.leave, (t) => {
+    o.exit = t;
+    o.grow = grew;
+    o.obj.position.lerpVectors(from, to, t);
+  }, () => { removeOrb(o); leaving = leaving.filter((x) => x !== o); }, { ease: easeInOut, owner: o });
+}
+
+let fadingLines = [];
+function retireLine(c) {
+  fadingLines.push(c);
+  const from = c.life ?? 1;
+  tween(TUNING.expand.leave * 0.6, (t) => { c.life = from * (1 - t); }, () => {
+    world.remove(c.line); c.line.geometry.dispose(); c.line.material.dispose();
+    fadingLines = fadingLines.filter((x) => x !== c);
+  }, { ease: easeInOut, owner: c });
 }
 
 // ─── Showing a system ────────────────────────────────────────
-// keep: orbs already on screen glide from where they are instead of
-// bursting from the centre (used when a quick sketch is refined)
-function showSystem(sunId, { keep = false } = {}) {
-  const was = keep ? new Map(orbs.map((o) => [o.id, o.obj.position.clone()])) : null;
-  for (const o of orbs) removeOrb(o);
-  for (const c of crossLines) { world.remove(c.line); c.line.geometry.dispose(); c.line.material.dispose(); }
+// One continuous movement from whatever is on screen to the new system:
+// - orbs in both systems stay and glide to their new places (the orb you
+//   expanded glides into the centre and becomes the sun)
+// - orbs not in the new system drift outward and fade
+// - new orbs ease out from the centre in a wave, most relevant first
+// - the camera glides to frame it all
+// Resolves once the movement has settled.
+function showSystem(sunId) {
+  const E = TUNING.expand;
+  const old = new Map(orbs.map((o) => [o.id, o]));
+  const chosen = old.get(sunId);
+  // The view re-centres on the chosen orb, so everything leaving travels with it
+  const shift = chosen && !chosen.isSun ? chosen.obj.position.clone().negate() : new THREE.Vector3();
   setHover(null);
+  for (const c of crossLines) retireLine(c);
+
   const previous = trail.length > 1 ? trail[trail.length - 2] : null;
-  const sun = makeOrb({ to: sunId, isSun: true });
-  const planets = layout(DATA.systems[sunId] || []).map((spec) =>
-    makeOrb({ ...spec, cameFrom: spec.to === previous }));
-  orbs = [sun, ...planets];
-  for (const o of orbs) if (was?.has(o.id)) { o.start.copy(was.get(o.id)); o.kept = true; }
+  const specs = [{ to: sunId, isSun: true },
+    ...layout(adjustedSystem(sunId)).map((spec) => ({ ...spec, cameFrom: spec.to === previous }))];
+  orbs = specs.map((spec) => {
+    const o = old.get(spec.to);
+    if (!o) return makeOrb(spec);
+    old.delete(spec.to);
+    reshape(o, spec);
+    return o;
+  });
+  for (const o of old.values()) retire(o, shift);
+  for (const o of orbs) o.hub = o.isSun ? null : orbs[0];
+  updateDimming();
 
   // Faint lines between orbiting topics that are strongly linked to each other
-  const byId = new Map(planets.map((o) => [o.id, o]));
+  const byId = new Map(orbs.slice(1).map((o) => [o.id, o]));
   crossLines = (DATA.crossLinks?.[sunId] || [])
     .filter(([a, b, s]) => byId.has(a) && byId.has(b) && s >= TUNING.crossLinkMin)
     .map(([a, b, strength]) => {
       const line = makeLine();
       line.material.color.copy(palette.line);
-      return { a: byId.get(a), b: byId.get(b), strength, line };
+      const c = { a: byId.get(a), b: byId.get(b), strength, line, life: 0 };
+      tween(E.arrive, (t) => { c.life = t; }, null, { ease: easeInOut, delay: E.move * 0.5, owner: c });
+      return c;
     });
   fitCamera();
 
-  // Burst outward from the centre (orbs already shown just glide)
-  tween(900, (t) => {
-    for (const o of orbs) {
-      o.grow = o.kept ? 1 : o.isSun ? Math.min(1, t * 2) : t;
-      o.obj.position.lerpVectors(o.start, o.target, t);
+  const fresh = orbs.filter((o) => !o.kept && !o.isSun).sort((x, y) => y.relevance - x.relevance);
+  let settled = E.move;
+  for (const o of orbs) {
+    const from = o.obj.position.clone(), grew = o.grow;
+    if (o.kept) {
+      tween(E.move, (t) => {
+        o.grow = lerp(grew, 1, t);
+        o.obj.position.lerpVectors(from, o.target, t);
+      }, null, { ease: easeInOut, owner: o });
+    } else {
+      // New orbs start at the centre, so they seem to come out of the sun
+      const delay = o.isSun ? 0 : E.move * 0.3 + fresh.indexOf(o) * E.stagger;
+      o.obj.position.set(0, 0, 0);
+      tween(o.isSun ? E.move * 0.7 : E.arrive, (t) => {
+        o.grow = t;
+        o.obj.position.lerpVectors(from.set(0, 0, 0), o.target, t);
+      }, null, { ease: easeOut, delay, owner: o });
+      settled = Math.max(settled, delay + E.arrive);
     }
-  });
+  }
   renderTrail();
+  return wait(settled * 0.8);
 }
 
 // Re-place the current orbs after a spacing or size change
-function relayout() {
+function relayout(ms = 800) {
   if (!orbs.length || busy) return;
-  const placed = layout(DATA.systems[orbs[0].id] || []);
+  const placed = layout(adjustedSystem(orbs[0].id));
   for (const o of orbs.slice(1)) {
     const p = placed.find((q) => q.to === o.id);
-    if (p) o.target = p.target;
+    if (!p) continue;
+    o.target = p.target;
+    applySpec(o, p);
   }
-  for (const o of orbs) tweenVector(o.obj.position, o.target, 500);
+  for (const o of orbs) {
+    const from = o.obj.position.clone();
+    tween(ms, (t) => o.obj.position.lerpVectors(from, o.target, t), null, { ease: easeInOut, owner: o });
+  }
   fitCamera();
 }
 
-async function unfold(id) {
-  if (busy || !canUnfold(id)) return;
+// Make an orb the new centre of the view
+async function expand(id) {
+  if (busy || !canExpand(id)) return;
   const before = trail;
   const at = trail.indexOf(id);
   trail = at >= 0 ? trail.slice(0, at + 1) : [...trail, id];
   closeFocus();
   const chosen = orbs.find((o) => o.id === id);
-  // If you unfold a cause, the old centre becomes its effect (and vice versa)
+  // If you expand a cause, the old centre becomes its effect (and vice versa)
   const back = { cause: 'effect', effect: 'cause', related: 'related' }[chosen?.rel] || 'related';
   busy = true;
-  const from = chosen ? chosen.obj.position.clone() : new THREE.Vector3();
-  // Everything else shrinks away while the chosen orb slides to the centre
-  await new Promise((done) => tween(450, (t) => {
-    for (const o of orbs) {
-      if (o === chosen) o.obj.position.lerpVectors(from, new THREE.Vector3(), t);
-      else o.grow = 1 - t;
-    }
-  }, done));
-  world.rotation.y = 0;
   if (!DATA.systems[id]) {
-    // Not mapped yet: show the new centre, and let orbs arrive as Claude maps it
-    showSystem(id);
+    // Not mapped yet: glide to the new centre, and let orbs arrive as Claude maps it
+    const moved = showSystem(id);
     const ok = await mapLive(id, at >= 0 ? null : before[before.length - 1], back);
+    await moved;
+    if (!ok) { trail = before; await showSystem(trail[trail.length - 1]); busy = false; return; }
+    await showSystem(id);
     busy = false;
-    if (!ok) { trail = before; showSystem(trail[trail.length - 1]); return; }
-    showSystem(id, { keep: true });
     saveSession();
     return;
   }
+  await showSystem(id);
   busy = false;
-  showSystem(id);
   saveSession();
 }
 
@@ -771,6 +1129,7 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     mode: session.mode,
     path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
     cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
+    feedback: feedbackTitles(),
   };
   let fullDone = false, sketched = 0;
   if (cameFromId) addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
@@ -785,7 +1144,7 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     onOrb: (orb) => {
       if (fullDone) return;
       const id = slug(orb.title);
-      if (id === centreId || id === cameFromId) return;
+      if (id === centreId || id === cameFromId || verdicts[id] === 'no') return;
       if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
       liveIds.add(id);
       if (addQuickOrb(centreId, { to: id, rel: orb.rel, link: orb.link, relevance: orb.relevance })) sketched++;
@@ -836,7 +1195,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
     const known = byTitle.get(orb.title.toLowerCase());
     if (known) continue;   // e.g. Claude's copy of the "came from" topic
     const id = slug(orb.title);
-    if (seen.has(id)) continue;
+    if (seen.has(id) || verdicts[id] === 'no') continue;   // you ruled it out already
     seen.add(id);
     byTitle.set(orb.title.toLowerCase(), id);
     if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
@@ -859,6 +1218,7 @@ function modeFor(q) {
 async function explore(query) {
   if (!live()) {
     setViewPanel(true);
+    showViewTab('Claude');
     if (!inViewer) $('api-key').focus();
     if (inViewer) {
       // Ask claude.ai once more before giving up
@@ -874,17 +1234,28 @@ async function explore(query) {
   closeFocus();
   session.mode = modeFor(query);
   const id = 'q-' + slug(query);
+  // A new question starts with no marks (the old ones come back if mapping fails)
+  const kept = { verdicts, verdictOrder, findings: { ...findings } };
+  verdicts = {}; verdictOrder = [];
+  Object.assign(findings, { shown: false, claude: null, sig: '', loading: false, error: '' });
+  renderFindings();
   DATA.topics[id] = { title: query, liner: session.mode === 'explore' ? 'Mapping the subject…' : 'Tracing causes and effects…' };
-  await new Promise((done) => tween(400, (t) => { for (const o of orbs) o.grow = Math.min(o.grow, 1 - t); }, done));
   const before = trail;
   trail = [id];
   delete DATA.systems[id];
   showSystem(id);
   const ok = await mapLive(id);
   busy = false;
-  if (!ok) { delete DATA.topics[id]; trail = before; showSystem(trail[trail.length - 1]); return; }
-  showSystem(id, { keep: true });
+  if (!ok) {
+    delete DATA.topics[id]; trail = before;
+    ({ verdicts, verdictOrder } = kept); Object.assign(findings, kept.findings);
+    showSystem(trail[trail.length - 1]); renderFindings();
+    return;
+  }
+  await showSystem(id);
   saveSession();
+  saveFeedback();
+  saveFindings();
 }
 
 // Research an opened orb: explanation, sources, picture
@@ -925,6 +1296,7 @@ async function loadDetails(o) {
       mode: session.mode,
       path: trail.map((t) => DATA.topics[t].title),
       webSearch: view.webSearch,
+      feedback: feedbackTitles(),
     });
     DATA.details[id] = { ...d, live: true };
     liveIds.add(id);
@@ -971,6 +1343,123 @@ function loadCache() {
   } catch { /* nothing saved yet */ }
 }
 
+// ─── Findings: the running answer, built from your ticks ─────
+// Appears the first time you tick an orb and updates on every mark.
+// Its name follows the kind of question: a problem gets a Diagnosis,
+// a topic gets a Synthesis. Without Claude it's assembled from the
+// example notes; with Claude, a short written answer is added on top.
+const FINDINGS_STORE = 'celestial.findings';
+const findings = { shown: false, collapsed: false, claude: null, sig: '', loading: false, error: '' };
+function loadFindings() {
+  try {
+    const f = JSON.parse(localStorage.getItem(FINDINGS_STORE) || 'null');
+    if (f && f.root === trail[0]) Object.assign(findings, f, { loading: false, error: '' });
+  } catch { /* ignore */ }
+}
+const saveFindings = () => { try { localStorage.setItem(FINDINGS_STORE, JSON.stringify({ root: trail[0], shown: findings.shown, collapsed: findings.collapsed, claude: findings.claude, sig: findings.sig })); } catch { /* ignore */ } };
+const findingsName = () => (session.mode === 'explore' ? 'Synthesis' : 'Diagnosis');
+const feedbackSig = () => JSON.stringify([trail[0], marked('yes'), marked('no')]);
+let findingsTimer = null, findingsAsk = 0;
+
+function updateFindings() {
+  const yes = marked('yes');
+  // First tick: the panel opens (as a small bar on a phone, so the map stays visible)
+  if (yes.length && !findings.shown) { findings.shown = true; findings.collapsed = innerWidth < 640; }
+  renderFindings();
+  // Ask Claude for a written answer once the marks settle
+  clearTimeout(findingsTimer);
+  if (!live() || !yes.length || findings.sig === feedbackSig()) return;
+  findings.loading = true;
+  renderFindings();
+  findingsTimer = setTimeout(askFindings, 1200);
+}
+
+async function askFindings() {
+  const ask = ++findingsAsk, sig = feedbackSig();
+  findings.error = '';
+  try {
+    const d = await R.digest({
+      backend: backend(), tier: view.tier, key: apiKey, model: view.model,
+      question: DATA.topics[trail[0]].title,
+      mode: session.mode,
+      relevant: marked('yes').map((id) => ({ title: DATA.topics[id].title, liner: DATA.topics[id].liner, about: DATA.details[id]?.about || '' })),
+      notRelevant: marked('no').map((id) => DATA.topics[id].title),
+    });
+    if (ask !== findingsAsk) return;   // you've marked something since; a newer answer is coming
+    findings.claude = d;
+    findings.sig = sig;
+  } catch (err) {
+    if (ask !== findingsAsk) return;
+    findings.error = R.explain(err);
+  } finally {
+    if (ask === findingsAsk) { findings.loading = false; renderFindings(); saveFindings(); updateSpend(); }
+  }
+}
+
+let findingsWidth = 0;
+function renderFindings() {
+  const box = $('findings');
+  box.hidden = !findings.shown || !marked('yes').length && !marked('no').length;
+  saveFindings();
+  // Make room for the panel (or give it back)
+  queueMicrotask(() => { const w = uiLeft(); if (w !== findingsWidth) { findingsWidth = w; scheduleFit(); } });
+  if (box.hidden) return;
+  const yes = marked('yes'), no = marked('no');
+  const diagnose = session.mode !== 'explore';
+  const sunId = trail[trail.length - 1];
+  box.classList.toggle('is-collapsed', findings.collapsed);
+  $('findings-toggle').textContent = findings.collapsed ? '▸' : '▾';
+  $('findings-toggle').setAttribute('aria-expanded', String(!findings.collapsed));
+  $('findings-toggle').setAttribute('aria-label', findings.collapsed ? 'Expand' : 'Collapse');
+  $('findings-kicker').textContent = `${findingsName()} · ${yes.length} relevant${no.length ? `, ${no.length} ruled out` : ''}`;
+  const fresh = findings.claude && findings.sig === feedbackSig();
+  const claude = findings.claude;
+  // Title: Claude's name for the answer when it has one, else the strongest tick
+  const lead = [...yes].sort((a, b) => (verdictWeight(b) - verdictWeight(a)))[0];
+  $('findings-title').textContent = claude?.title || (yes.length
+    ? (diagnose ? `Leading lead: ${DATA.topics[lead].title}` : `Centred on ${DATA.topics[lead].title}`)
+    : 'Nothing ticked yet');
+
+  const parts = [];
+  if (claude?.summary) parts.push(`<p class="findings-lead">${esc(claude.summary)}</p>`);
+  if (findings.loading) parts.push(`<p class="findings-note"><span class="spinner"></span>${claude ? 'Updating with your latest marks…' : 'Claude is writing this up…'}</p>`);
+  else if (findings.error) parts.push(`<p class="findings-note">${esc(findings.error)}</p>`);
+  else if (claude && !fresh && live()) parts.push('<p class="findings-note">Out of date: mark another orb to refresh it.</p>');
+  else if (!live() && yes.length) parts.push(`<p class="findings-note">${inViewer ? 'Built from the example notes. With Claude on, a written answer appears here too.' : 'Built from the example notes. Connect Claude for a written answer.'}</p>`);
+
+  if (yes.length) parts.push(`<section class="findings-section"><h3>${diagnose ? 'Most likely' : 'What matters here'}</h3><ol class="findings-list">${
+    [...yes].sort((a, b) => verdictWeight(b) - verdictWeight(a)).map((id) => `<li>${esc(DATA.topics[id].title)}<small>${esc(DATA.topics[id].liner)}</small></li>`).join('')}</ol></section>`);
+
+  // Next steps: Claude's, or the checks noted for what you ticked
+  const next = claude?.next?.length && fresh ? claude.next : [...new Set(yes.flatMap((id) => (DATA.details[id]?.check || []).slice(0, 2)))].slice(0, 4);
+  if (next.length) parts.push(`<section class="findings-section"><h3>${diagnose ? 'Check next' : 'Look into next'}</h3><ul class="findings-list">${next.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>`);
+  else if (yes.length) parts.push(`<section class="findings-section"><h3>${diagnose ? 'Check next' : 'Look into next'}</h3><p class="findings-out">Open a ticked orb to see ${diagnose ? 'what to check' : 'where to go next'}.</p></section>`);
+
+  const more = suggestions(sunId);
+  if (more.length) parts.push(`<section class="findings-section"><h3>Worth a look</h3><div class="findings-chips">${more.map((s) =>
+    `<button type="button" class="findings-chip" data-open="${esc(s.to)}">${esc(DATA.topics[s.to].title)}</button>`).join('')}</div></section>`);
+  if (no.length) parts.push(`<p class="findings-out">Ruled out: ${no.map((id) => `<s>${esc(DATA.topics[id].title)}</s>`).join(', ')}</p>`);
+  $('findings-body').innerHTML = parts.join('');
+}
+// Stronger link and higher relevance (as first given) put a tick higher in the list
+function verdictWeight(id) {
+  for (const sys of [DATA.systems[trail[trail.length - 1]], ...trail.map((t) => DATA.systems[t])]) {
+    const s = sys?.find((x) => x.to === id);
+    if (s) return s.relevance + s.link * 0.5;
+  }
+  return 0;
+}
+$('findings-head').addEventListener('click', (e) => {
+  if (e.target.closest('a')) return;
+  findings.collapsed = !findings.collapsed;
+  renderFindings();
+});
+$('findings-body').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-open]');
+  const o = b && orbs.find((x) => x.id === b.dataset.open);
+  if (o) openFocus(o);
+});
+
 // ─── Status line under the prompt ───────────────────────────
 function setStatus(text, kind = '') {
   const el = $('status');
@@ -999,7 +1488,6 @@ function relationText(o) {
 
 function openFocus(o) {
   if (selected === o) return;
-  if (selected) selected.el.style.translate = '';
   selected = o;
   updateDimming();
   if (live() && !DATA.details[o.id]?.about) loadDetails(o);
@@ -1007,16 +1495,31 @@ function openFocus(o) {
 
 function closeFocus() {
   if (!selected) return;
-  selected.el.style.translate = '';
   selected = null;
   updateDimming();
 }
 
 function runAction(action, o, id) {
   if (action === 'close') closeFocus();
-  if (action === 'unfold') unfold(o.id);
+  if (action === 'expand') expand(o.id);
   if (action === 'open') { const other = orbs.find((x) => x.id === id); if (other) openFocus(other); }
   if (action === 'retry') { delete DATA.details[o.id]; loadDetails(o); }
+  if (action === 'tick') setVerdict(o, 'yes');
+  if (action === 'cross') setVerdict(o, 'no');
+}
+
+// Mark an orb; pressing the same mark again clears it
+function setVerdict(o, v) {
+  if (o.isSun) return;
+  const next = verdicts[o.id] === v ? null : v;
+  verdictOrder = verdictOrder.filter((id) => id !== o.id);
+  if (next) { verdicts[o.id] = next; verdictOrder.push(o.id); }
+  else delete verdicts[o.id];
+  saveFeedback();
+  relayout(900);
+  // A crossed orb has said what it needed to: close it and let it drift off
+  if (next === 'no' && selected === o) closeFocus();
+  updateFindings();
 }
 
 function updateDimming() {
@@ -1029,7 +1532,7 @@ function updateDimming() {
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   closeFocus();
-  setViewPanel(false);
+  setPanel(null, false);
 });
 
 // Click = press and release without dragging
@@ -1071,15 +1574,36 @@ function renderTrail() {
     b.type = 'button';
     b.textContent = DATA.topics[id].title;
     if (i === trail.length - 1) b.setAttribute('aria-current', 'step');
-    else b.addEventListener('click', () => unfold(id));
+    else b.addEventListener('click', () => expand(id));
     nav.append(b);
   });
 }
 
 // ─── View panel ──────────────────────────────────────────────
 function buildViewPanel() {
-  const list = $('view-list');
+  const tabs = $('view-tabs');
+  let list = null;
   for (const s of VIEW_SETTINGS) {
+    if (s.tab) {
+      // A tab button and the pane it shows
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'view-tab';
+      b.id = 'view-tab-' + s.tab;
+      b.textContent = s.tab;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-controls', 'view-pane-' + s.tab);
+      b.addEventListener('click', () => showViewTab(s.tab));
+      tabs.append(b);
+      list = document.createElement('div');
+      list.className = 'view-pane';
+      list.id = 'view-pane-' + s.tab;
+      list.setAttribute('role', 'tabpanel');
+      list.setAttribute('aria-labelledby', b.id);
+      $('view-list').append(list);
+      continue;
+    }
+    if (s.connection) { list.append($('connection')); continue; }
     if (s.group) {
       const h = document.createElement('p');
       h.className = 'view-group';
@@ -1129,7 +1653,7 @@ function buildViewPanel() {
       row.innerHTML = `<span class="view-text"><span></span>${s.hint ? '<small></small>' : ''}</span>`;
       row.querySelector('span span').textContent = s.label;
       if (s.hint) row.querySelector('small').textContent = s.hint;
-      row.prepend(input);
+      row.append(input);
       input.addEventListener('change', () => { view[s.key] = input.checked; afterViewChange(s); });
     } else {
       row.className = 'view-slider';
@@ -1142,12 +1666,24 @@ function buildViewPanel() {
     }
     list.append(row);
   }
+  showViewTab(viewTab);
   syncViewPanel();
+}
+
+function showViewTab(name) {
+  viewTab = name;
+  for (const b of $('view-tabs').children) {
+    const on = b.textContent === name;
+    b.setAttribute('aria-selected', String(on));
+    b.tabIndex = on ? 0 : -1;
+    $('view-pane-' + b.textContent).hidden = !on;
+  }
+  $('view-list').scrollTop = 0;
 }
 
 function syncViewPanel() {
   for (const s of VIEW_SETTINGS) {
-    if (s.group) continue;
+    if (!s.key) continue;
     const el = $('view-' + s.key);
     if (s.options) {
       for (const b of el.querySelectorAll('.choice')) b.setAttribute('aria-checked', String(b.dataset.value === view[s.key]));
@@ -1183,6 +1719,7 @@ function applyView() {
   b.toggle('plain-outlines', !view.relationColour);
   b.toggle('no-lead-glow', !view.leadGlow);
   $('art').hidden = !view.lineArt;
+  b.toggle('still', !view.backdropMotion);
   controls.autoRotate = view.spin && !reduceMotion;
   readPalette();
   if ($('plan-note') && R) updateLiveState(false);
@@ -1196,11 +1733,18 @@ new MutationObserver(() => {
   applyView();
 }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-function setViewPanel(open) {
-  $('view-panel').hidden = !open;
-  $('view-toggle').setAttribute('aria-expanded', String(open));
+// The View and How to use panels: one open at a time
+function setPanel(name, open) {
+  for (const n of ['view', 'help']) {
+    const on = n === name && open;
+    $(n + '-panel').hidden = !on;
+    $(n + '-toggle').setAttribute('aria-expanded', String(on));
+  }
 }
-$('view-toggle').addEventListener('click', () => setViewPanel($('view-panel').hidden));
+const setViewPanel = (open) => setPanel('view', open);
+$('view-toggle').addEventListener('click', () => setPanel('view', $('view-panel').hidden));
+$('help-toggle').addEventListener('click', () => setPanel('help', $('help-panel').hidden));
+for (const b of document.querySelectorAll('[data-close]')) b.addEventListener('click', () => setPanel(b.dataset.close, false));
 $('view-reset').addEventListener('click', () => {
   Object.assign(view, VIEW_DEFAULTS);
   afterViewChange({ relayout: true });
@@ -1250,6 +1794,7 @@ function updateLiveState(refill = true) {
     ? 'Saved in this browser only. It is sent only to Anthropic.'
     : 'Stored only in this browser and sent only to Anthropic. Create one at console.anthropic.com → API keys.';
   if (refill) for (const o of orbs) fillOrb(o);
+  if (refill) updateFindings(); else renderFindings();
   updateSpend();
 }
 function updateSpend() {
@@ -1280,6 +1825,9 @@ $('show-example').addEventListener('click', () => {
   if (busy) return;
   trail = [DATA.start];
   session.mode = 'diagnose';
+  clearFeedback();
+  Object.assign(findings, { shown: false, claude: null, sig: '', loading: false, error: '' });
+  renderFindings();
   $('prompt-input').value = DATA.prompt;
   closeFocus();
   showSystem(DATA.start);
@@ -1287,14 +1835,39 @@ $('show-example').addEventListener('click', () => {
 });
 
 // ─── Small animation helper ──────────────────────────────────
+// Easing curves: how a movement speeds up and slows down
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);                       // quick start, soft landing
+const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);   // soft at both ends
 const tweens = [];
-const ease = (t) => 1 - Math.pow(1 - t, 3);
-function tween(ms, step, done) {
-  tweens.push({ start: performance.now(), ms: reduceMotion ? 1 : ms, step, done });
+// owner: starting a new tween for the same thing stops its previous one
+function tween(ms, step, done, { ease = easeOut, delay = 0, owner = null } = {}) {
+  if (owner) for (let i = tweens.length - 1; i >= 0; i--) if (tweens[i].owner === owner) tweens.splice(i, 1);
+  if (reduceMotion) { step(1); done?.(); return; }
+  tweens.push({ start: performance.now() + delay, ms, step, done, ease, owner });
 }
-function tweenVector(v, to, ms) {
+function tweenVector(v, to, ms, opts) {
   const from = v.clone();
-  tween(ms, (t) => v.lerpVectors(from, to, t));
+  tween(ms, (t) => v.lerpVectors(from, to, t), null, opts);
+}
+const wait = (ms) => new Promise((done) => tween(ms, () => {}, done, { ease: (t) => t }));
+
+// The camera glides like it's on a soft spring: it eases away, and if the
+// goal moves mid-flight (more orbs arrive) it bends towards it without a jolt
+let camGoal = null;
+const camVel = new THREE.Vector3(), lookVel = new THREE.Vector3();
+function smoothDamp(v, goal, vel, time, dt) {
+  const w = 2 / time, x = w * dt;
+  const decay = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+  const change = v.clone().sub(goal);
+  const temp = vel.clone().addScaledVector(change, w).multiplyScalar(dt);
+  vel.sub(temp.clone().multiplyScalar(w)).multiplyScalar(decay);
+  v.copy(goal).add(change.add(temp).multiplyScalar(decay));
+}
+function glideCamera(dt) {
+  if (!camGoal) return;
+  smoothDamp(camera.position, camGoal.pos, camVel, TUNING.cameraGlide, dt);
+  smoothDamp(controls.target, camGoal.look, lookVel, TUNING.cameraGlide, dt);
+  if (camera.position.distanceTo(camGoal.pos) < 0.01 && camVel.length() < 0.01) camGoal = null;
 }
 
 // ─── Streams: causes stream in towards the sun, effects stream out ─
@@ -1309,10 +1882,12 @@ function edgePoints(a, b) {
   pathTo.copy(b.obj.position).addScaledVector(dir, -b.surface);
 }
 
-function updatePulse(o, sun) {
+function updatePulse(o, sun, approach) {
   const P = TUNING.pulses;
-  const show = view.streams && !reduceMotion && o.grow > 0.99 && !busy;
-  if (!show) { for (const s of o.pulse) s.visible = false; return; }
+  const show = view.streams && !reduceMotion && o.grow > 0.99 && !busy && !o.leaving && sun;
+  // Streams fade in and out instead of switching on and off
+  o.flow += ((show ? 1 : 0) - o.flow) * approach * 0.4;
+  if (o.flow < 0.01 || !sun) { for (const s of o.pulse) s.visible = false; return; }
   edgePoints(o, sun);
   const [a, b] = o.rel === 'cause' ? [pathFrom, pathTo] : [pathTo, pathFrom];
   const path = a.distanceTo(b);
@@ -1331,7 +1906,7 @@ function updatePulse(o, sun) {
     streak.lookAt(world.localToWorld(lookAt.copy(headAt)));
     streak.scale.set(1, 1, tailAt.distanceTo(headAt));
     const fade = Math.sin(Math.PI * Math.min(1, head / (1 + len)));
-    streak.material.opacity = Math.min(1, fade * streak.userData.strength * dimmed);
+    streak.material.opacity = Math.min(1, fade * streak.userData.strength * dimmed) * o.flow;
   }
 }
 
@@ -1366,20 +1941,23 @@ function frame(now) {
 
   for (let i = tweens.length - 1; i >= 0; i--) {
     const tw = tweens[i];
+    if (now < tw.start) continue;   // still waiting for its delay
     const t = Math.min(1, (now - tw.start) / tw.ms);
-    tw.step(ease(t));
+    tw.step(tw.ease(t));
     if (t >= 1) { tweens.splice(i, 1); tw.done?.(); }
   }
   if (view.sway && !view.spin && !grabbed && !reduceMotion) world.rotation.y = Math.sin(now / 4000) * 0.12;
+  glideCamera(dt);
   controls.update();
 
   // How far to move towards an orb's open/closed state this frame
   // (based on time, so it feels the same on fast and slow machines)
-  const approach = reduceMotion ? 1 : 1 - Math.exp(-dt * 12);
-  const h = stage.clientHeight;
+  const approach = reduceMotion ? 1 : 1 - Math.exp(-dt * TUNING.openSpeed);
+  const settle = reduceMotion ? 1 : 1 - Math.exp(-dt * 3);   // slower, for size and role changes
+  const h = stage.clientHeight, sw = stage.clientWidth;
   const focusDist = camera.position.distanceTo(controls.target);
-  const sun = orbs[0];
-  for (const o of orbs) {
+  const all = leaving.length ? orbs.concat(leaving) : orbs;
+  for (const o of all) {
     o.obj.getWorldPosition(worldPos);
     const camDist = camera.position.distanceTo(worldPos);
     // Open up smoothly on hover (preview) or click (full)
@@ -1390,10 +1968,14 @@ function frame(now) {
 
     // Size: a circle at rest, widening into a card as it opens
     const pxPerUnit = h / (2 * tanV * (view.sameSize ? focusDist : camDist));
-    const rank = o.isSun ? 1 : lerp(0.5, o.relevance, view.hierarchy);
-    const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], rank), 2 * o.radius * view.orbSize * pxPerUnit);
+    // Rank and radius ease towards new values, so an orb that becomes the
+    // sun (or a sun that becomes an orb) grows or shrinks smoothly
+    const rankGoal = o.isSun ? 1 : lerp(0.5, o.relevance, view.hierarchy);
+    o.rank = o.rank == null ? rankGoal : o.rank + (rankGoal - o.rank) * settle;
+    o.size = o.size == null ? o.radius : o.size + (o.radius - o.size) * settle;
+    const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], o.rank), 2 * o.size * view.orbSize * pxPerUnit);
     const cardW = lerp(Math.max(rest, TUNING.hoverWidth), Math.max(rest, TUNING.openWidth), o.f);
-    const w = lerp(rest, cardW, open) * o.grow;
+    const w = lerp(rest, cardW, open) * o.grow * (1 - 0.3 * o.exit);
     const pad = lerp(rest * 0.15, TUNING.cardPadding, open);
     o.el.style.setProperty('--iw', Math.max(8, w - 2 * pad).toFixed(1) + 'px');
     let hgt = w;
@@ -1417,11 +1999,26 @@ function frame(now) {
     o.el.style.visibility = w < 4 ? 'hidden' : '';
     // At rest, drift and sway very slightly; still when open, for reading
     const calm = (1 - open) * (view.organic && !reduceMotion ? 1 : 0);
-    if (o !== selected) {
-      const fx = TUNING.float * (0.7 * Math.sin(seconds * 0.6 + o.phase) + 0.3 * Math.sin(seconds * 1.4 + o.phase * 2));
-      const fy = TUNING.float * (0.7 * Math.cos(seconds * 0.5 + o.phase * 1.4) + 0.3 * Math.cos(seconds * 1.1 + o.phase));
-      o.el.style.translate = `${(fx * calm).toFixed(2)}px ${(fy * calm).toFixed(2)}px`;
+    const fx = TUNING.float * (0.7 * Math.sin(seconds * 0.6 + o.phase) + 0.3 * Math.sin(seconds * 1.4 + o.phase * 2));
+    const fy = TUNING.float * (0.7 * Math.cos(seconds * 0.5 + o.phase * 1.4) + 0.3 * Math.cos(seconds * 1.1 + o.phase));
+    // An opened card slides gently so none of it hangs off the screen
+    let nx = 0, ny = 0;
+    if (o === selected) {
+      projected.copy(worldPos).project(camera);
+      const x = (projected.x + 1) / 2 * sw, y = (1 - projected.y) / 2 * h;
+      const rx = w / 2 + 12, ry = hgt / 2 + 12;
+      const left = uiLeft();
+      nx = (left + rx <= sw - rx ? clamp(x, left + rx, sw - rx) : clamp(x, rx, sw - rx)) - x;
+      // Keep it between the top bar and the bottom edge
+      const top = UI_TOP + ry - 12, bottom = h - UI_BOTTOM - ry + 12;
+      ny = (top <= bottom ? clamp(y, top, bottom) : (top + bottom) / 2) - y;
     }
+    o.nx += (nx - o.nx) * approach;
+    o.ny += (ny - o.ny) * approach;
+    o.el.style.translate = `${(o.nx + fx * calm).toFixed(2)}px ${(o.ny + fy * calm).toFixed(2)}px`;
+    // A slowly turning pattern ring, inward for causes, outward for effects
+    o.spin = (o.spin ?? o.phase * 36) + dt * (o.rel === 'cause' ? -4 : 4) * (reduceMotion ? 0 : 1);
+    o.el.style.setProperty('--spin', (o.spin % 360).toFixed(2) + 'deg');
     o.el.style.rotate = `${(TUNING.tilt * Math.sin(seconds * 0.33 + o.phase * 0.9) * calm).toFixed(2)}deg`;
     // The further away an orb is, the more see-through it gets
     let fade = 1;
@@ -1431,30 +2028,34 @@ function frame(now) {
     }
     // Less relevant orbs recede, so the eye lands on the relevant ones first
     if (!o.isSun) fade *= lerp(1, lerp(TUNING.leastRelevantFade, 1, o.relevance), view.hierarchy);
-    o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5);
+    if (o.verdict === 'no') fade *= 0.6;   // ruled out: fades back
+    if (o.verdict === 'yes') fade = Math.max(fade, 0.95);   // relevant: stays clear
+    o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5) * (1 - o.exit);
     o.el.style.opacity = o.fade.toFixed(3);
     // The orb's radius in scene units, so lines and streams meet its edge
     o.surface = (Math.min(w, hgt) / 2) * (2 * tanV * camDist) / h;
   }
 
-  for (const o of orbs) {
+  for (const o of all) {
+    const sun = o.hub;
+    o.linkIn += ((o.leaving ? 0 : 1) - o.linkIn) * settle;
     if (o.line) {
       const faint = view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine : 0;
       const dim = selected && selected !== o ? 0.4 : 1;
-      const strength = Math.max(faint * o.fade * dim, 0.6 * o.k) * o.grow;
-      o.line.visible = strength > 0.005;
+      const strength = Math.max(faint * o.fade * dim, 0.6 * o.k) * o.grow * o.linkIn;
+      o.line.visible = strength > 0.005 && Boolean(sun);
       if (o.line.visible) {
         edgePoints(o, sun);
         setLine(o.line, pathFrom, pathTo);
         o.line.material.opacity = strength;
       }
     }
-    if (o.pulse) updatePulse(o, sun);
+    if (o.pulse) updatePulse(o, sun, approach);
   }
-  for (const c of crossLines) {
+  for (const c of fadingLines.length ? crossLines.concat(fadingLines) : crossLines) {
     const lit = Math.max(c.a.k, c.b.k);
     const dim = selected && selected !== c.a && selected !== c.b ? 0.4 : 1;
-    const strength = Math.max(TUNING.crossLine * c.strength * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow);
+    const strength = Math.max(TUNING.crossLine * c.strength * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow) * (c.life ?? 1);
     c.line.visible = view.crossLinks && strength > 0.005;
     if (!c.line.visible) continue;
     edgePoints(c.a, c.b);
@@ -1467,24 +2068,12 @@ function frame(now) {
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
   // Whatever you're pointing at or have opened always sits on top
-  if (selected) { selected.el.style.zIndex = '99998'; keepOnScreen(selected); }
+  if (selected) selected.el.style.zIndex = '99998';
   if (hovered) hovered.el.style.zIndex = '99999';
   requestAnimationFrame(frame);
 }
 
-// Nudge an opened orb so none of it hangs off the edge of the screen
 const projected = new THREE.Vector3();
-function keepOnScreen(o) {
-  const w = stage.clientWidth, h = stage.clientHeight;
-  o.obj.getWorldPosition(projected).project(camera);
-  const x = (projected.x + 1) / 2 * w, y = (1 - projected.y) / 2 * h;
-  const rx = parseFloat(o.el.style.width) / 2 + 12, ry = parseFloat(o.el.style.height) / 2 + 12;
-  const dx = clamp(x, rx, w - rx) - x;
-  // Keep it between the top bar and the bottom edge
-  const top = UI_TOP + ry - 12, bottom = h - UI_BOTTOM - ry + 12;
-  const dy = (top <= bottom ? clamp(y, top, bottom) : (top + bottom) / 2) - y;
-  o.el.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
-}
 
 // ─── Size everything to the window ───────────────────────────
 let resizeTimer;
@@ -1504,12 +2093,15 @@ new ResizeObserver(resize).observe(stage);
 
 // ─── Start ───────────────────────────────────────────────────
 loadCache();
+loadFeedback();
+loadFindings();
 buildViewPanel();
 applyView();
 resize();
 drawLineArt();
 showSystem(trail[trail.length - 1]);
 updateLiveState();
+renderFindings();
 requestAnimationFrame(frame);
 // On claude.ai, research runs on your Claude plan instead of a key
 async function checkPlan() {

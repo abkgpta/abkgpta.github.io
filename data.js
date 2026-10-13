@@ -6,7 +6,7 @@
 //
 // TOPICS   – every orb that can appear, with its name and one-liner.
 // SYSTEMS  – the "solar system" around a topic: which orbs orbit it,
-//            and how. Only topics listed here can be unfolded.
+//            and how. Only topics listed here can be expanded.
 //
 // For each orbiting orb:
 //   rel        "cause"   → sits BELOW the sun, pulses flow IN to the sun
