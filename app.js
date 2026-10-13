@@ -343,6 +343,9 @@ const R = window.CELESTIAL_RESEARCH;
 const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
 const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
 let apiKey = readKey();
+// Opened on claude.ai? Then research can only run on the viewer's own Claude
+// plan (the page can't reach Anthropic's API directly from there).
+const inViewer = Boolean(window.claude?.use);
 let planReady = false;              // true when opened on claude.ai: research runs on your Claude plan
 const live = () => Boolean(R && (planReady || apiKey));
 const backend = () => (planReady ? 'plan' : 'api');
@@ -540,7 +543,7 @@ function fillOrb(o) {
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
-  else body = '<p class="slot">Connect Claude in the View panel to research any topic in depth.</p>';
+  else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in the View panel to research any topic in depth.'}</p>`;
   const sourceLine = (src) => {
     const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
     return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
@@ -564,7 +567,7 @@ function fillOrb(o) {
         ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
         ${o.isSun ? '' : canUnfold(o.id)
           ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
-          : '<p class="slot">Connect Claude to unfold any orb</p>'}
+          : `<p class="slot">${inViewer ? 'Sign in to claude.ai to unfold any orb' : 'Connect Claude to unfold any orb'}</p>`}
       </div>
     </div>`;
   el.querySelector('.rel').textContent = relationText(o);
@@ -854,8 +857,8 @@ function modeFor(q) {
 async function explore(query) {
   if (!live()) {
     setViewPanel(true);
-    $('api-key').focus();
-    toast(window.claude ? 'Claude isn’t available to this page right now. Reload to try again.' : 'Add your Claude API key here to explore your own questions.');
+    if (!inViewer) $('api-key').focus();
+    toast(inViewer ? 'Sign in to claude.ai, then reload, to research your own questions. It uses your own Claude plan.' : 'Add your Claude API key here to explore your own questions.');
     return;
   }
   if (busy) return;
@@ -1214,17 +1217,22 @@ $('prompt').addEventListener('submit', (e) => {
 // ─── Your Claude API key ────────────────────────────────────
 function updateLiveState(refill = true) {
   $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
+    : inViewer ? 'Example · sign in to Claude to go live'
     : live() ? `Live · ${R.MODELS[view.model].name}`
     : 'Example · add a key to go live';
-  // On claude.ai your plan is used, so the key and API-only settings step aside
-  $('plan-note').hidden = !planReady;
-  $('key-form').querySelector('label').hidden = planReady;
-  $('key-form').querySelector('.key-row').hidden = planReady;
-  $('key-note').hidden = planReady;
-  $('view-model').hidden = planReady;
-  $('view-webSearch').closest('label').hidden = planReady;
+  // On claude.ai each viewer's own plan is used, so the key and API-only settings step aside
+  const onClaude = planReady || inViewer;
+  $('plan-note').hidden = !onClaude;
+  $('plan-note').textContent = planReady
+    ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so sources are named but not linked.'
+    : 'Sign in to claude.ai to research your own questions here. It runs on your own Claude plan. Until then you can explore the example.';
+  $('key-form').querySelector('label').hidden = onClaude;
+  $('key-form').querySelector('.key-row').hidden = onClaude;
+  $('key-note').hidden = onClaude;
+  $('view-model').hidden = onClaude;
+  $('view-webSearch').closest('label').hidden = onClaude;
   $('view-tier').hidden = !planReady;
-  $('key-forget').hidden = !apiKey;
+  $('key-forget').hidden = !apiKey || onClaude;
   $('api-key').value = apiKey ? '••••••••••••' + apiKey.slice(-4) : '';
   $('key-note').textContent = apiKey
     ? 'Saved in this browser only. It is sent only to Anthropic.'
