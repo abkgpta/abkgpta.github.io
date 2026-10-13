@@ -165,7 +165,20 @@ function storeView() {
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const darkDevice = matchMedia('(prefers-color-scheme: dark)');
-const UI_TOP = 140, UI_BOTTOM = 40;   // pixels taken by the bars at top and bottom
+// Pixels taken by the bars at the top and bottom, measured from the page
+// (the top bar is taller on a phone, and the findings bar sits at the bottom there)
+const narrow = () => innerWidth < 640;
+let bars = null;   // measured at most once per frame
+function measureBars() {
+  if (bars && bars.at === frameCount) return bars;
+  const top = Math.max(90, (document.querySelector('.top')?.getBoundingClientRect().bottom || 130) + 10);
+  const f = document.getElementById('findings');
+  const bottom = !narrow() || !f || f.hidden ? 40 : Math.max(40, innerHeight - f.getBoundingClientRect().top + 12);
+  return (bars = { top, bottom, at: frameCount });
+}
+let frameCount = 0;
+const uiTop = () => measureBars().top;
+const uiBottom = () => measureBars().bottom;
 // Pixels the open findings panel takes on the left of a wide screen
 const uiLeft = () => {
   const f = document.getElementById('findings');
@@ -614,13 +627,20 @@ function layout(links) {
   }
   // 4. Optionally stretch sideways so a wide screen gets used
   const widen = widenFactor();
-  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; }
+  const tall = tallFactor();
+  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; p.target.y *= tall; }
   return placed;
 }
 
+// On a tall (portrait) screen the system stretches vertically instead
+function tallFactor() {
+  if (!view.fillScreen) return 1;
+  const usable = Math.max(stage.clientHeight - uiTop() - uiBottom(), 1) / stage.clientWidth;
+  return clamp(usable * 1.2, 1, 2.6);
+}
 function widenFactor() {
   if (!view.fillScreen) return 1;
-  const usable = stage.clientWidth / Math.max(stage.clientHeight - UI_TOP - UI_BOTTOM, 1);
+  const usable = stage.clientWidth / Math.max(stage.clientHeight - uiTop() - uiBottom(), 1);
   return clamp(usable, 1, TUNING.widen);
 }
 
@@ -628,7 +648,8 @@ function widenFactor() {
 // furthest from everything already there, at the distance its link sets.
 function placeAmong(spec, existing) {
   const widen = widenFactor();
-  const taken = existing.map((t) => new THREE.Vector3(t.x / widen, t.y, t.z / widen).normalize());
+  const tall = tallFactor();
+  const taken = existing.map((t) => new THREE.Vector3(t.x / widen, t.y / tall, t.z / widen).normalize());
   const golden = Math.PI * (3 - Math.sqrt(5)), spin = Math.random() * Math.PI * 2;
   let best = null, bestGap = -1;
   for (let i = 0; i < 64; i++) {
@@ -638,7 +659,7 @@ function placeAmong(spec, existing) {
     if (gap > bestGap) { bestGap = gap; best = dir; }
   }
   const p = best.multiplyScalar(orbitOf(spec));
-  p.x *= widen; p.z *= widen;
+  p.x *= widen; p.z *= widen; p.y *= tall;
   return p;
 }
 
@@ -663,7 +684,7 @@ function addQuickOrb(centreId, spec) {
 function fitCamera(animate = true) {
   if (!orbs.length) return;
   const w = stage.clientWidth, h = stage.clientHeight;
-  const fy = (h - UI_TOP - UI_BOTTOM) / h;
+  const fy = (h - uiTop() - uiBottom()) / h;
   const left = uiLeft();
   const fx = (w - 60 - left) / w;
   systemRadius = Math.max(...orbs.map((o) => o.target.length()), 10);
@@ -675,7 +696,7 @@ function fitCamera(animate = true) {
       p.z + (Math.abs(p.x) + pad) / (tanV * camera.aspect * fx));
   }
   // Shift the view so the system sits in the space between the bars
-  const shift = ((UI_TOP - UI_BOTTOM) / 2 / h) * 2 * tanV * dist;
+  const shift = ((uiTop() - uiBottom()) / 2 / h) * 2 * tanV * dist;
   // ...and to the right of the findings panel when it's open
   const shiftX = -(left / 2 / w) * 2 * tanV * camera.aspect * dist;
   const to = new THREE.Vector3(shiftX, dist * 0.05 + shift, dist);
@@ -806,8 +827,10 @@ function makeOrbElement(o) {
   el.addEventListener('pointerleave', () => { if (hovered === o) setHover(null); });
   // Inside an opened card, the card handles its own clicks and scrolling,
   // and dragging doesn't turn the view
-  el.addEventListener('pointerdown', (e) => { if (o === selected) e.stopPropagation(); });
+  el.addEventListener('pointerdown', (e) => { o.wasOpen = o === selected; if (o.wasOpen) e.stopPropagation(); });
   el.addEventListener('click', (e) => {
+    // The card's buttons appear under your finger as it opens: don't press them by accident
+    if (!o.wasOpen) return;
     const btn = e.target.closest('[data-action]');
     if (btn) runAction(btn.dataset.action, o, btn.dataset.id);
   });
@@ -1987,6 +2010,7 @@ const worldPos = new THREE.Vector3();
 let lastNow = performance.now();
 let backdropClock = 0;
 function frame(now) {
+  frameCount++;
   const dt = Math.min(0.1, (now - lastNow) / 1000);
   lastNow = now;
   const seconds = now / 1000;
@@ -2027,15 +2051,17 @@ function frame(now) {
     const rankGoal = o.isSun ? 1 : lerp(0.5, o.relevance, view.hierarchy);
     o.rank = o.rank == null ? rankGoal : o.rank + (rankGoal - o.rank) * settle;
     o.size = o.size == null ? o.radius : o.size + (o.radius - o.size) * settle;
-    const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], o.rank), 2 * o.size * view.orbSize * pxPerUnit);
-    const cardW = lerp(Math.max(rest, TUNING.hoverWidth), Math.max(rest, TUNING.openWidth), o.f);
+    const small = narrow() ? 0.72 : 1;   // phones get smaller resting orbs
+    const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], o.rank) * small, 2 * o.size * view.orbSize * pxPerUnit * small);
+    // Cards never get wider than the screen
+    const cardW = Math.min(lerp(Math.max(rest, TUNING.hoverWidth), Math.max(rest, TUNING.openWidth), o.f), sw - 24);
     const w = lerp(rest, cardW, open) * o.grow * (1 - 0.3 * o.exit);
     const pad = lerp(rest * 0.15, TUNING.cardPadding, open);
     o.el.style.setProperty('--iw', Math.max(8, w - 2 * pad).toFixed(1) + 'px');
     let hgt = w;
     if (open > 0.002) {
       // Fit the height to the text; very long cards scroll inside instead
-      const maxH = h - UI_TOP - UI_BOTTOM;
+      const maxH = h - uiTop() - uiBottom();
       o.el.style.setProperty('--maxh', (maxH - 2 * pad).toFixed(0) + 'px');
       const fits = o.inner.scrollHeight + 2 * pad;
       hgt = lerp(w, clamp(fits, rest * 0.8, maxH), open);
@@ -2064,7 +2090,7 @@ function frame(now) {
       const left = uiLeft();
       nx = (left + rx <= sw - rx ? clamp(x, left + rx, sw - rx) : clamp(x, rx, sw - rx)) - x;
       // Keep it between the top bar and the bottom edge
-      const top = UI_TOP + ry - 12, bottom = h - UI_BOTTOM - ry + 12;
+      const top = uiTop() + ry - 12, bottom = h - uiBottom() - ry + 12;
       ny = (top <= bottom ? clamp(y, top, bottom) : (top + bottom) / 2) - y;
     }
     o.nx += (nx - o.nx) * approach;
