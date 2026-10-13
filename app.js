@@ -346,7 +346,9 @@ let apiKey = readKey();
 // Opened on claude.ai? Then research can only run on the viewer's own Claude
 // plan (the page can't reach Anthropic's API directly from there).
 const inViewer = Boolean(window.claude?.use);
-let planReady = false;              // true when opened on claude.ai: research runs on your Claude plan
+let planReady = false;              // true when research can run on the viewer's Claude plan
+const BLOCKED_NOTE = 'claude.ai isn’t letting this page use Claude for you here, and doesn’t say why. Things to try: open the link in a web browser (not the mobile app) while signed in to claude.ai, then reload; check that your account or organisation allows artifacts to use Claude. Meanwhile you can explore the example.';
+let planBlocked = 'checking';       // on claude.ai without Claude: 'checking' | 'denied' | 'unavailable'
 const live = () => Boolean(R && (planReady || apiKey));
 const backend = () => (planReady ? 'plan' : 'api');
 const whoAnswers = () => (planReady ? 'your Claude plan' : R.MODELS[view.model].name);
@@ -858,7 +860,13 @@ async function explore(query) {
   if (!live()) {
     setViewPanel(true);
     if (!inViewer) $('api-key').focus();
-    toast(inViewer ? 'Sign in to claude.ai, then reload, to research your own questions. It uses your own Claude plan.' : 'Add your Claude API key here to explore your own questions.');
+    if (inViewer) {
+      // Ask claude.ai once more before giving up
+      if (await R.planAvailable(true)) { planReady = true; updateLiveState(); return explore(query); }
+      toast(planBlocked === 'denied' ? 'Claude is switched off for this page. Use “Allow Claude” in the View panel.' : 'Claude isn’t available to this page here. See the View panel for what to try.');
+    } else {
+      toast('Add your Claude API key here to explore your own questions.');
+    }
     return;
   }
   if (busy) return;
@@ -1217,7 +1225,7 @@ $('prompt').addEventListener('submit', (e) => {
 // ─── Your Claude API key ────────────────────────────────────
 function updateLiveState(refill = true) {
   $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
-    : inViewer ? 'Example · sign in to Claude to go live'
+    : inViewer ? (planBlocked === 'checking' ? 'Connecting to Claude…' : 'Example · Claude not available here')
     : live() ? `Live · ${R.MODELS[view.model].name}`
     : 'Example · add a key to go live';
   // On claude.ai each viewer's own plan is used, so the key and API-only settings step aside
@@ -1225,7 +1233,11 @@ function updateLiveState(refill = true) {
   $('plan-note').hidden = !onClaude;
   $('plan-note').textContent = planReady
     ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so sources are named but not linked.'
-    : 'Sign in to claude.ai to research your own questions here. It runs on your own Claude plan. Until then you can explore the example.';
+    : planBlocked === 'checking' ? 'Connecting to Claude…'
+    : planBlocked === 'denied' ? 'Claude is switched off for this page in your settings. Turn it back on to research your own questions; it runs on your own Claude plan.'
+    : BLOCKED_NOTE;
+  $('plan-allow').hidden = !(inViewer && !planReady && planBlocked === 'denied');
+  $('plan-retry').hidden = !(inViewer && !planReady && planBlocked === 'unavailable');
   $('key-form').querySelector('label').hidden = onClaude;
   $('key-form').querySelector('.key-row').hidden = onClaude;
   $('key-note').hidden = onClaude;
@@ -1500,4 +1512,15 @@ showSystem(trail[trail.length - 1]);
 updateLiveState();
 requestAnimationFrame(frame);
 // On claude.ai, research runs on your Claude plan instead of a key
-R?.planAvailable().then((ok) => { planReady = ok; updateLiveState(); });
+async function checkPlan() {
+  const ok = await R.planAvailable(planBlocked !== 'checking');
+  planReady = ok;
+  planBlocked = ok ? '' : (await R.planState()) === 'denied' ? 'denied' : 'unavailable';
+  updateLiveState();
+}
+if (R && inViewer) checkPlan();
+$('plan-retry').addEventListener('click', () => { planBlocked = 'checking'; updateLiveState(false); checkPlan(); });
+$('plan-allow').addEventListener('click', async () => {
+  try { await R.openPermissions(); } catch { toast('Open the page’s Permissions menu on claude.ai and switch Claude on.'); }
+  checkPlan();
+});

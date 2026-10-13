@@ -161,7 +161,24 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     }
     return samplePromise;
   }
-  async function planAvailable() { return Boolean(await getSample()); }
+  // retry: ask claude.ai again (an earlier "no" can be a timing hiccup)
+  async function planAvailable(retry = false) {
+    if (retry && !(await getSample())) samplePromise = null;
+    return Boolean(await getSample());
+  }
+  // Why Claude can't be used here, as far as claude.ai will say:
+  // "denied" (this viewer turned it off for the page), or "unavailable"
+  async function planState() {
+    try {
+      const perms = await window.claude?.use?.('permissions');
+      return perms ? await perms.state('sample') : 'unavailable';
+    } catch { return 'unavailable'; }
+  }
+  async function openPermissions() {
+    const perms = await window.claude?.use?.('permissions');
+    if (!perms) throw new Error('unavailable');
+    await perms.manage();
+  }
 
   // How a reply should look, spelled out for requests made on your plan
   const MAP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5}],"links":[{"a":"orb title","b":"orb title","strength":0.7}]}';
@@ -446,5 +463,5 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable };
+  window.CELESTIAL_RESEARCH = { MODELS, map, details, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();
