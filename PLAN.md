@@ -92,7 +92,9 @@ The same code runs in both places: it uses your plan when opened on claude.ai, a
 
 - **Your key, your browser.** Paste a Claude API key into the View panel. It is stored in that browser only and sent only to Anthropic. Nothing about it is in the website's files.
 - **Typing** a question that describes a problem ("Why…", "…keeps failing") starts a *diagnosis*. A single keyword or topic name starts an *exploration*: mostly related topics that map the subject. The View panel can force either.
-- **Mapping** a system is one request to Claude (no web search). **Opening** an orb is a second request that searches the web for sources, rates each by tier, and names a Wikipedia article whose picture is shown.
+- **Mapping** runs two requests side by side: a fast sketch on Haiku (the quickest tier on your plan) that streams topics in one by one, so orbs appear as they're written, and the full map, which then refines what's on screen without a reset. If the full map fails, the sketch stays.
+- **Opening** an orb shows Haiku's quick take within seconds while the full research loads.
+- (Previously: mapping a system is one request to Claude, no web search.) **Opening** an orb is a second request that searches the web for sources, rates each by tier, and names a Wikipedia article whose picture is shown.
 - **Unfolding** any orb maps it as a new centre, with the path you took shaping what counts as relevant.
 - **Cost:** the View panel shows a running estimate for the current visit. Model choice: Opus 5.5 (default), Sonnet 5.5 or Haiku 5.5.
 - **Remembered:** research and your last path are saved in the browser, so reopening the page resumes where you were without paying again.

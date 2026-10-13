@@ -344,6 +344,95 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
     };
   }
 
+  // ─── Quick first pass: Haiku, streamed, while the full answer loads ─
+  // Fast and cheap: topics arrive one per line so orbs can appear as they
+  // are written, and opened orbs get a short summary to read while waiting.
+  const QUICK_MODEL = 'claude-haiku-5-5';
+
+  const QUICK_MAP = `List the topics that orbit a centre topic in a research map, as fast as you can.
+Write one JSON object per line and nothing else: no code fence, no commentary.
+Line 1: {"centre":{"title":"short name","liner":"one sentence"}}
+Then 12 to 16 lines, the most relevant first, each:
+{"title":"1 to 5 words","liner":"one plain sentence linking it to the centre","rel":"cause|effect|related","link":0.0,"relevance":0.0}
+rel: cause if it can cause the centre, effect if the centre leads to it, otherwise related.
+link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how much it matters for this line of reasoning; spread the values, only a few above 0.8.`;
+
+  // Read a growing reply line by line, handing each complete JSON line on
+  function lineReader(onValue) {
+    let pending = '';
+    const take = (line) => {
+      const t = line.trim().replace(/,$/, '');
+      if (!t.startsWith('{')) return;
+      try { onValue(JSON.parse(t)); } catch { /* half a line or chatter: skip */ }
+    };
+    return {
+      feed(delta) {
+        const lines = (pending + delta).split('\n');
+        pending = lines.pop();
+        lines.forEach(take);
+      },
+      end() { take(pending); pending = ''; },
+    };
+  }
+
+  // Stream a short answer from the fastest model, calling onText as it grows
+  async function streamQuick({ backend, key, prompt, onDelta }) {
+    if (backend === 'plan') {
+      const sample = await getSample();
+      if (!sample) throw { code: 'sampling_disabled' };
+      spend.requests += 1;
+      const { text } = await sample(prompt, { modelTier: 'quick', onText: ({ delta }) => onDelta(delta) });
+      return text;
+    }
+    const c = await getClient(key);
+    const stream = c.messages.stream({
+      model: QUICK_MODEL,
+      max_tokens: 4000,
+      thinking: { type: 'disabled' },        // no thinking: text starts at once
+      output_config: { effort: 'low' },
+      messages: [{ role: 'user', content: prompt }],
+    });
+    for await (const event of stream) {
+      if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') onDelta(event.delta.text);
+    }
+    const final = await stream.finalMessage();
+    count(QUICK_MODEL, final.usage);
+    return final.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
+  }
+
+  // Topics as they're written. onCentre({title, liner}) once, onOrb(orb) per topic.
+  async function quickMap({ backend, key, centre, mode, path, cameFrom, onCentre, onOrb }) {
+    const prompt = [
+      QUICK_MAP,
+      `Centre topic: ${centre}`,
+      MODE_NOTES[mode] || MODE_NOTES.diagnose,
+      path.length ? `Path so far: ${path.join(' › ')}` : '',
+      cameFrom ? `Skip "${cameFrom}": it is already shown.` : '',
+    ].filter(Boolean).join('\n');
+    const reader = lineReader((v) => {
+      if (v.centre) onCentre?.(v.centre);
+      else if (v.title) {
+        onOrb({
+          title: String(v.title),
+          liner: String(v.liner || ''),
+          rel: ['cause', 'effect', 'related'].includes(v.rel) ? v.rel : 'related',
+          link: clamp01(v.link),
+          relevance: clamp01(v.relevance),
+        });
+      }
+    });
+    await streamQuick({ backend, key, prompt, onDelta: reader.feed });
+    reader.end();
+  }
+
+  // A short plain summary of a topic, streamed
+  async function quickAbout({ backend, key, topic, liner, centre, mode, onText }) {
+    const prompt = `In two or three plain sentences, explain "${topic}" (${liner}) in the context of ${mode === 'explore' ? 'learning about' : 'diagnosing'} "${centre}". No preamble, no headings.`;
+    let text = '';
+    await streamQuick({ backend, key, prompt, onDelta: (d) => { text += d; onText(text); } });
+    return text;
+  }
+
   // ─── A picture from Wikipedia (free to request from the browser) ─
   async function wikipediaImage(title) {
     if (!title) return null;
@@ -357,5 +446,5 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, wikipediaImage, explain, spend, planAvailable };
+  window.CELESTIAL_RESEARCH = { MODELS, map, details, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable };
 })();

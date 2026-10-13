@@ -398,12 +398,49 @@ function layout(links) {
     if (!moved) break;
   }
   // 4. Optionally stretch sideways so a wide screen gets used
-  if (view.fillScreen) {
-    const usable = stage.clientWidth / Math.max(stage.clientHeight - UI_TOP - UI_BOTTOM, 1);
-    const widen = clamp(usable, 1, TUNING.widen);
-    for (const p of placed) { p.target.x *= widen; p.target.z *= widen; }
-  }
+  const widen = widenFactor();
+  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; }
   return placed;
+}
+
+function widenFactor() {
+  if (!view.fillScreen) return 1;
+  const usable = stage.clientWidth / Math.max(stage.clientHeight - UI_TOP - UI_BOTTOM, 1);
+  return clamp(usable, 1, TUNING.widen);
+}
+
+// Place one more orb while others already exist: pick the direction
+// furthest from everything already there, at the distance its link sets.
+function placeAmong(spec, existing) {
+  const widen = widenFactor();
+  const taken = existing.map((t) => new THREE.Vector3(t.x / widen, t.y, t.z / widen).normalize());
+  const golden = Math.PI * (3 - Math.sqrt(5)), spin = Math.random() * Math.PI * 2;
+  let best = null, bestGap = -1;
+  for (let i = 0; i < 64; i++) {
+    const y = 1 - (2 * (i + 0.5)) / 64, ring = Math.sqrt(1 - y * y), a = spin + i * golden;
+    const dir = new THREE.Vector3(ring * Math.cos(a), y, ring * Math.sin(a));
+    const gap = taken.length ? Math.min(...taken.map((t) => t.distanceTo(dir))) : 1;
+    if (gap > bestGap) { bestGap = gap; best = dir; }
+  }
+  const p = best.multiplyScalar(orbitOf(spec));
+  p.x *= widen; p.z *= widen;
+  return p;
+}
+
+// Re-frame the camera shortly after orbs stop arriving
+let fitTimer;
+const scheduleFit = () => { clearTimeout(fitTimer); fitTimer = setTimeout(() => fitCamera(), 250); };
+
+// Add an orb to the system on screen while the rest are still loading
+function addQuickOrb(centreId, spec) {
+  if (orbs[0]?.id !== centreId || orbs.some((o) => o.id === spec.to)) return false;
+  (DATA.systems[centreId] ||= []).push(spec);   // provisional until the full map arrives
+  const previous = trail.length > 1 ? trail[trail.length - 2] : null;
+  const o = makeOrb({ ...spec, target: placeAmong(spec, orbs.slice(1).map((x) => x.target)), cameFrom: spec.to === previous });
+  orbs.push(o);
+  tween(700, (t) => { o.grow = t; o.obj.position.lerpVectors(o.start, o.target, t); });
+  scheduleFit();
+  return true;
 }
 
 // ─── Camera: frame the whole system so it fills the screen ───
@@ -497,9 +534,9 @@ function fillOrb(o) {
   const links = o.isSun ? [] : connectionsOf(o.id);
   const drawing = window.CELESTIAL_ILLUSTRATIONS?.[o.id];
   let body;
-  if (more.loading) body = `<p class="researching"><span class="spinner"></span>${planReady
-    ? 'Researching with Claude on your plan…'
-    : `Researching with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and searching the web' : ''}…`}</p>`;
+  if (more.loading) body = `<p class="about-text preview-text">${esc(more.preview || '')}</p><p class="researching"><span class="spinner"></span>${planReady
+    ? 'Researching in depth on your plan…'
+    : `Researching in depth with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and the web' : ''}…`}</p>`;
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
@@ -534,6 +571,8 @@ function fillOrb(o) {
   el.querySelector('.t').textContent = topic.title;
   el.querySelector('.l').textContent = topic.liner;
   o.inner = el.querySelector('.inner');   // measured every frame to fit the card
+  // The longest word sets a ceiling on text size, so long words never get cut off
+  el.style.setProperty('--longest', Math.max(7, ...topic.title.split(/\s+/).map((w) => w.length)));
   // Once a picture arrives the card may need to grow
   el.querySelector('.photo img')?.addEventListener('error', (e) => e.target.closest('figure').remove());
 }
@@ -629,7 +668,10 @@ function removeOrb(o) {
 }
 
 // ─── Showing a system ────────────────────────────────────────
-function showSystem(sunId) {
+// keep: orbs already on screen glide from where they are instead of
+// bursting from the centre (used when a quick sketch is refined)
+function showSystem(sunId, { keep = false } = {}) {
+  const was = keep ? new Map(orbs.map((o) => [o.id, o.obj.position.clone()])) : null;
   for (const o of orbs) removeOrb(o);
   for (const c of crossLines) { world.remove(c.line); c.line.geometry.dispose(); c.line.material.dispose(); }
   setHover(null);
@@ -638,6 +680,7 @@ function showSystem(sunId) {
   const planets = layout(DATA.systems[sunId] || []).map((spec) =>
     makeOrb({ ...spec, cameFrom: spec.to === previous }));
   orbs = [sun, ...planets];
+  for (const o of orbs) if (was?.has(o.id)) { o.start.copy(was.get(o.id)); o.kept = true; }
 
   // Faint lines between orbiting topics that are strongly linked to each other
   const byId = new Map(planets.map((o) => [o.id, o]));
@@ -650,10 +693,10 @@ function showSystem(sunId) {
     });
   fitCamera();
 
-  // Burst outward from the centre
+  // Burst outward from the centre (orbs already shown just glide)
   tween(900, (t) => {
     for (const o of orbs) {
-      o.grow = o.isSun ? Math.min(1, t * 2) : t;
+      o.grow = o.kept ? 1 : o.isSun ? Math.min(1, t * 2) : t;
       o.obj.position.lerpVectors(o.start, o.target, t);
     }
   });
@@ -692,37 +735,74 @@ async function unfold(id) {
   }, done));
   world.rotation.y = 0;
   if (!DATA.systems[id]) {
-    // Not mapped yet: show the new centre on its own while Claude maps it
+    // Not mapped yet: show the new centre, and let orbs arrive as Claude maps it
     showSystem(id);
     const ok = await mapLive(id, at >= 0 ? null : before[before.length - 1], back);
-    if (!ok) { busy = false; trail = before; showSystem(trail[trail.length - 1]); return; }
+    busy = false;
+    if (!ok) { trail = before; showSystem(trail[trail.length - 1]); return; }
+    showSystem(id, { keep: true });
+    saveSession();
+    return;
   }
   busy = false;
   showSystem(id);
   saveSession();
 }
 
-// Ask Claude for the system around a topic and store it like the example data
+// Ask Claude for the system around a topic and store it like the example data.
+// Two requests run side by side: a fast streamed sketch (Haiku) whose orbs
+// appear one by one, and the full map, which then refines what's on screen.
 async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
   const topic = DATA.topics[centreId];
+  const fresh = !trail.slice(0, -1).length;
   pending.add(centreId);
-  setStatus(`Mapping “${topic.title}” with ${whoAnswers()}…`);
+  setStatus(`Sketching “${topic.title}”… then mapping it in depth with ${whoAnswers()}`);
+  const args = {
+    backend: backend(),
+    tier: view.tier,
+    key: apiKey,
+    model: view.model,
+    centre: topic.title,
+    mode: session.mode,
+    path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
+    cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
+  };
+  let fullDone = false, sketched = 0;
+  if (cameFromId) addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
+  const quick = R.quickMap({
+    ...args,
+    onCentre: (c) => {
+      if (fullDone || !fresh || !c.title) return;
+      DATA.topics[centreId] = { title: c.title, liner: c.liner || '' };
+      refill(centreId);
+      renderTrail();
+    },
+    onOrb: (orb) => {
+      if (fullDone) return;
+      const id = slug(orb.title);
+      if (id === centreId || id === cameFromId) return;
+      if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
+      liveIds.add(id);
+      if (addQuickOrb(centreId, { to: id, rel: orb.rel, link: orb.link, relevance: orb.relevance })) sketched++;
+    },
+  }).catch(() => null);   // the sketch is a bonus; the full map decides
   try {
-    const out = await R.map({
-      backend: backend(),
-      tier: view.tier,
-      key: apiKey,
-      model: view.model,
-      centre: topic.title,
-      mode: session.mode,
-      path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
-      cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
-    });
+    const out = await R.map(args);
+    fullDone = true;
     storeMap(centreId, out, cameFromId, cameFromRel);
     setStatus('');
     saveCache();
     return true;
   } catch (err) {
+    fullDone = true;
+    await quick;
+    if (sketched >= 4) {
+      // Keep the quick sketch rather than losing everything
+      liveIds.add(centreId);
+      saveCache();
+      setStatus('Showing the quick sketch. ' + R.explain(err), 'error');
+      return true;
+    }
     setStatus(R.explain(err), 'error');
     return false;
   } finally {
@@ -792,7 +872,7 @@ async function explore(query) {
   const ok = await mapLive(id);
   busy = false;
   if (!ok) { delete DATA.topics[id]; trail = before; showSystem(trail[trail.length - 1]); return; }
-  showSystem(id);
+  showSystem(id, { keep: true });
   saveSession();
 }
 
@@ -803,10 +883,25 @@ async function loadDetails(o) {
   const known = DATA.details[id];
   if (known && !known.error) return;
   detailsLoading.add(id);
-  DATA.details[id] = { live: true, loading: true };
+  DATA.details[id] = { live: true, loading: true, preview: '' };
   refill(id);
+  const centreId = trail[trail.length - 1];
+  // A quick take from Haiku to read while the full research runs
+  R.quickAbout({
+    backend: backend(),
+    key: apiKey,
+    topic: DATA.topics[id].title,
+    liner: DATA.topics[id].liner,
+    centre: DATA.topics[centreId].title,
+    mode: session.mode,
+    onText: (text) => {
+      const d = DATA.details[id];
+      if (!d?.loading) return;
+      d.preview = text;
+      for (const x of orbs) if (x.id === id) { const p = x.el.querySelector('.preview-text'); if (p) p.textContent = text; }
+    },
+  }).catch(() => {});
   try {
-    const centreId = trail[trail.length - 1];
     const d = await R.details({
       backend: backend(),
       tier: view.tier,
