@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Celestial design system</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="style.css">
+<style>
+  body { overflow: auto; }
+  main { max-width: 980px; margin: 0 auto; padding: var(--space-6) var(--gutter) 80px; display: grid; gap: 48px; }
+  h1 { margin: 0; font: var(--weight-medium) 44px/1.05 var(--font-display); letter-spacing: var(--tracking-title); }
+  h2 { margin: 0 0 var(--space-3); font: var(--weight-medium) 13px var(--font-data); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; color: var(--ink-soft); padding-bottom: var(--space-2); border-bottom: 1px solid var(--rule); }
+  p.lead { margin: var(--space-2) 0 0; color: var(--ink-soft); max-width: 60ch; }
+  .bar { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-4); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--space-3); }
+  .sw { display: grid; gap: 6px; font: var(--text-xs) var(--font-data); color: var(--ink-soft); }
+  .sw i { display: block; height: 52px; border-radius: var(--radius-sm); border: 1px solid var(--rule); }
+  .sw b { color: var(--ink); font-weight: 500; }
+  .row { display: flex; flex-wrap: wrap; gap: var(--space-5); align-items: center; }
+  .stage-demo { position: relative; padding: 40px 24px; border-radius: var(--radius-md); border: 1px solid var(--rule); background: linear-gradient(135deg, var(--sh-a), var(--sh-b)); }
+  .stage-demo .orb { position: relative; flex: none; --d: 96; width: 96px; height: 96px; }
+  .stage-demo .orb.wide { width: 220px; height: auto; min-height: 96px; border-radius: 28px; padding: 14px; }
+  .stage-demo .orb .inner { width: auto; max-width: 100%; }
+  .spec { font: var(--text-xs) var(--font-data); color: var(--ink-soft); display: grid; gap: 2px; justify-items: center; margin-top: 8px; text-align: center; }
+  .cell { display: grid; justify-items: center; }
+  .scale div { display: grid; grid-template-columns: 90px 1fr; align-items: baseline; gap: var(--space-3); padding: 6px 0; border-bottom: 1px solid var(--rule); }
+  .scale code, .tok { font: var(--text-xs) var(--font-data); color: var(--ink-soft); }
+  .space-row { display: flex; align-items: center; gap: var(--space-3); margin: 4px 0; }
+  .space-row i { display: block; height: 12px; background: var(--accent); border-radius: 2px; }
+  .shapes { display: flex; gap: var(--space-4); flex-wrap: wrap; }
+  .shapes div { width: 96px; height: 64px; border: 1.5px solid var(--ink-soft); display: grid; place-items: center; font: var(--text-xs) var(--font-data); }
+  .demo-card { position: relative; width: 340px; max-width: 100%; border-radius: 28px; padding: 22px; }
+  .demo-card .inner, .demo-card .more { display: flex; flex-direction: column; width: 100%; text-align: left; align-items: stretch; gap: 10px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Celestial design system</h1>
+    <p class="lead">Tokens and components for the orb map. Everything on this page is rendered with the live <code>tokens.css</code> and <code>style.css</code>: change a token and both this page and the visualizer change.</p>
+    <div class="bar" id="themes" role="radiogroup" aria-label="Theme"></div>
+  </header>
+
+  <section><h2>Colour · roles</h2><div class="grid" id="roles"></div></section>
+  <section><h2>Colour · relation</h2>
+    <p class="lead">Outline colour says how a topic relates to the sun. Violet flows in (cause), cyan flows out (effect), grey is related. The sun and hidden leads use the accent.</p>
+    <div class="stage-demo row" style="margin-top:12px">
+      <div class="cell"><div class="orb rel-cause"><div class="inner"><span class="t">Cause</span></div></div><div class="spec">--cause</div></div>
+      <div class="cell"><div class="orb rel-effect"><div class="inner"><span class="t">Effect</span></div></div><div class="spec">--effect</div></div>
+      <div class="cell"><div class="orb"><div class="inner"><span class="t">Related</span></div></div><div class="spec">--orb-line</div></div>
+      <div class="cell"><div class="orb sun"><div class="inner"><span class="t">Sun</span></div></div><div class="spec">--accent</div></div>
+    </div>
+  </section>
+  <section><h2>Colour · source reliability</h2><div class="row" id="tiers"></div></section>
+
+  <section><h2>Orb states</h2>
+    <p class="lead">One orb, seven states. Distance and size carry meaning, so state only ever changes outline, fill and light, never position.</p>
+    <div class="stage-demo row" style="margin-top:12px">
+      <div class="cell"><div class="orb rel-cause"><div class="inner"><span class="t">Rest</span></div></div><div class="spec">rest<br>1.5px outline</div></div>
+      <div class="cell"><div class="orb rel-cause is-hover"><div class="inner"><span class="t">Hover</span></div></div><div class="spec">is-hover<br>2px + glow</div></div>
+      <div class="cell"><div class="orb rel-cause is-selected" style="cursor:default"><div class="inner"><span class="t" style="font-size:var(--text-md)">Open</span></div></div><div class="spec">is-selected<br>card</div></div>
+      <div class="cell"><div class="orb rel-effect unfoldable"><div class="inner"><span class="t">Unfold</span></div></div><div class="spec">unfoldable<br>double outline</div></div>
+      <div class="cell"><div class="orb lead"><div class="inner"><span class="t">Lead</span></div></div><div class="spec">lead<br>accent glow</div></div>
+      <div class="cell"><div class="orb rel-effect is-dim"><div class="inner"><span class="t">Dim</span></div></div><div class="spec">is-dim<br>30% opacity</div></div>
+      <div class="cell"><div class="orb sun"><div class="inner"><span class="t">Sun</span></div></div><div class="spec">sun<br>2.5px + halo</div></div>
+    </div>
+    <div class="stage-demo row" style="margin-top:12px">
+      <div class="cell"><div class="orb rel-cause rank-high"><div class="inner"><span class="t">High</span></div></div><div class="spec">rank-high</div></div>
+      <div class="cell"><div class="orb rel-cause"><div class="inner"><span class="t">Mid</span></div></div><div class="spec">default</div></div>
+      <div class="cell"><div class="orb rel-cause rank-low"><div class="inner"><span class="t">Low</span></div></div><div class="spec">rank-low</div></div>
+      <div class="cell"><div class="orb wide rel-effect is-hover"><div class="inner"><span class="t">Preview card</span><span class="l" style="--k:1;max-height:none">Widens on hover to show the one-liner.</span></div></div><div class="spec">preview</div></div>
+    </div>
+  </section>
+
+  <section><h2>Components</h2>
+    <div class="row" style="align-items:flex-start;gap:32px">
+      <div class="orb demo-card rel-cause is-selected" style="--f:1;--k:1;cursor:default"><div class="inner" style="max-height:none">
+        <span class="rel">Cause · linked 82 · relevant 74</span>
+        <span class="t">Thermal fatigue</span>
+        <span class="l" style="max-height:none">Repeated heating and cooling cracks a part.</span>
+        <div class="more">
+          <div class="section"><h3>What to check</h3><ul class="checks"><li>Cycle count since service</li><li>Crack origin near a weld</li></ul></div>
+          <div class="section"><h3>Strongly linked to</h3><div class="chips"><span class="chip">Creep</span><span class="chip">Weld defects</span></div></div>
+          <div class="section"><h3>Sources</h3><ul class="sources"><li><span class="tier tier-2">2</span><span><b>Paper</b> Fatigue of metals</span></li><li><span class="tier tier-5">5</span><span><b>Blog</b> Shop notes <em class="flag">⚠ outdated</em></span></li></ul></div>
+          <button class="orb-unfold" type="button">Unfold</button>
+        </div></div></div>
+      <div style="display:grid;gap:16px;flex:1;min-width:260px">
+        <form class="prompt" style="max-width:420px"><input placeholder="Ask why something happens, or type a topic"><button type="button">Explore</button></form>
+        <div class="row"><button class="view-toggle-btn" type="button" style="margin:0">View</button><button class="view-reset" type="button" style="margin:0">Reset to defaults</button><button class="link-btn" type="button">Forget key</button></div>
+        <div class="row"><label class="view-toggle" style="grid-template-columns:auto auto"><input type="checkbox" checked><span class="view-text">Toggle</span></label><span class="status"><span class="spinner"></span>Researching…</span></div>
+        <div class="row"><span class="status is-error">Something failed</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section><h2>Type</h2><div class="scale">
+    <div><code>display</code><span style="font:var(--weight-medium) var(--text-2xl)/1.1 var(--font-display)">Celestial · Libre Caslon Condensed</span></div>
+    <div><code>text-xl</code><span style="font:var(--weight-medium) var(--text-xl)/1.2 var(--font-display)">Opened-orb title</span></div>
+    <div><code>text-lg</code><span style="font-size:var(--text-lg)">Prompt and primary input</span></div>
+    <div><code>text-md</code><span style="font-size:var(--text-md)">Body copy reads at fourteen pixels in a neutral sans.</span></div>
+    <div><code>text-sm</code><span style="font-size:var(--text-sm)">Chips, sources, legend and buttons</span></div>
+    <div><code>text-xs · mono</code><span style="font:var(--text-xs) var(--font-data);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--ink-soft)">Eyebrow, group label, relation</span></div>
+  </div></section>
+
+  <section><h2>Space · shape · light</h2>
+    <div id="space"></div>
+    <div class="shapes" style="margin-top:20px">
+      <div style="border-radius:var(--radius-sm)">sm 8</div><div style="border-radius:var(--radius-md)">md 12</div><div style="border-radius:var(--radius-lg)">lg 16</div><div style="border-radius:var(--radius-pill)">pill</div><div style="border-radius:50%">orb</div>
+    </div>
+    <div class="shapes" style="margin-top:20px">
+      <div style="box-shadow:var(--shadow);border-color:var(--rule)">shadow</div>
+      <div style="border-color:var(--cause);box-shadow:var(--glow-sm) color-mix(in srgb,var(--cause) 50%,transparent)">glow-sm</div>
+      <div style="border-color:var(--accent);box-shadow:var(--glow-md) color-mix(in srgb,var(--accent) var(--orb-sun-mix),transparent)">glow-md</div>
+    </div>
+  </section>
+</main>
+<script>
+  const themes = [["tide-light","Tide light"],["tide-dark","Tide dark"],["dusk-light","Dusk light"],["dusk-dark","Dusk dark"]];
+  const bar = document.getElementById("themes");
+  const set = id => { document.documentElement.dataset.theme = id; [...bar.children].forEach(b => b.setAttribute("aria-checked", b.dataset.id === id)); paint(); try { localStorage.setItem("ds-theme", id); } catch (e) {} };
+  themes.forEach(([id, label]) => { const b = document.createElement("button"); b.className = "choice"; b.type = "button"; b.setAttribute("role", "radio"); b.dataset.id = id; b.textContent = label; b.style.gridTemplateColumns = "1fr"; b.onclick = () => set(id); bar.append(b); });
+  const roles = ["bg","panel","ink","ink-soft","rule","accent","cause","effect","orb-line","3d-line","sh-a","sh-b"];
+  const tiers = [1,2,3,4,5,6];
+  function paint() {
+    const cs = getComputedStyle(document.documentElement);
+    document.getElementById("roles").innerHTML = roles.map(r => `<div class="sw"><i style="background:var(--${r})"></i><b>--${r}</b>${cs.getPropertyValue("--" + r).trim()}</div>`).join("");
+    document.getElementById("tiers").innerHTML = tiers.map(t => `<div class="cell"><span class="tier tier-${t}" style="width:28px;height:28px;font-size:13px">${t}</span><div class="spec">tier-${t}</div></div>`).join("");
+    document.getElementById("space").innerHTML = [1,2,3,4,5,6].map(n => `<div class="space-row"><span class="tok" style="width:70px">--space-${n}</span><i style="width:${cs.getPropertyValue("--space-" + n).trim()}"></i><span class="tok">${cs.getPropertyValue("--space-" + n).trim()}</span></div>`).join("");
+  }
+  let start = "tide-light"; try { start = localStorage.getItem("ds-theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "tide-dark" : start); } catch (e) {}
+  set(start);
+</script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+/* Celestial design tokens.
+   One file holds every decision the interface makes: colour themes, type, space, shape,
+   elevation, motion and orb states. style.css only consumes these; app.js reads the
+   --3d-* and --sh-* colours for the canvas and the shader backdrop.
+   Layers: 1 themes (colour, below) · 2 type · 3 space · 4 shape · 5 elevation · 6 motion · 7 orb states.
+   Naming: --<role> for colour, --<scale>-<step> for everything else. */
+
+@font-face {
+  font-family: "Libre Caslon Condensed";
+  src: url("fonts/LibreCaslonCondensed-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Libre Caslon Condensed";
+  src: url("fonts/LibreCaslonCondensed-Italic-VariableFont_wght.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ── 1 · Colour themes ────────────────────────────
+   Tide (teal, bottle green) and Dusk (pink, purple), each light and dark.
+   Roles: bg/panel/ink/ink-soft/rule = surfaces and text; accent = the sun and hidden leads;
+   cause (violet, flows in) and effect (cyan, flows out); orb-* = resting orbs;
+   3d-* = canvas colours; sh-* = backdrop shader; art-* = line art; tier-1…6 = source reliability. */
+/* Tide · light: sea glass, teal and bottle green (also the fallback before the script runs) */
+:root, :root[data-theme="light"], :root[data-theme="tide-light"] {
+  --bg: #e3ebe8;
+  --panel: #f2f7f5;
+  --ink: #15201d;
+  --ink-soft: #50615b;
+  --rule: #c2d1cb;
+  --accent: #c8325b;      /* the sun and hidden leads */
+  --cause: #5b3fe0;       /* violet: streams flowing in */
+  --effect: #00809b;      /* cyan: streams flowing out */
+  --orb-line: #85968f;
+  --orb-fill: rgb(227 235 232 / 0.8);
+  --3d-line: #2f3d39;
+  --3d-cause: #5b3fe0;
+  --3d-effect: #0094b3;
+  --sh-base: #e3ebe8;     /* backdrop shader: base and two drifting tints */
+  --sh-a: #cfe6e1;
+  --sh-b: #d6e5d3;
+  --art: #1d3a33;         /* line art, multiplied over the backdrop */
+  --art-opacity: 0.22;
+  --art-blend: multiply;
+  --shadow: 0 1px 2px rgb(20 40 34 / 0.08), 0 8px 24px rgb(20 40 34 / 0.08);
+  color-scheme: light;
+
+  /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
+  --hot: #d0562e; --cold: #2f7fc1;
+  --tier-1: #2c5bc9; --tier-2: #13808a; --tier-3: #3d8a4a; --tier-4: #b98512; --tier-5: #cf5a26; --tier-6: #858a92;
+
+}
+/* Tier colours, lifted for dark modes */
+:root[data-theme="dark"], :root[data-theme$="-dark"] {
+  --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8;
+  --hot: #ff8a5c; --cold: #6fb0ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --hot: #ff8a5c; --cold: #6fb0ff; --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8; }
+}
+/* Tide · dark: deep sea */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    --bg: #0d1615; --panel: #142120; --ink: #e4eeeb; --ink-soft: #8fa6a0; --rule: #263f3a;
+    --accent: #ff5c8a; --cause: #ad9cff; --effect: #4fd6f0;
+    --orb-line: #4d6a63; --orb-fill: rgb(13 22 21 / 0.78);
+    --3d-line: #b6cbc5; --3d-cause: #9f8bff; --3d-effect: #34d0ee;
+    --sh-base: #0d1615; --sh-a: #0f2d2a; --sh-b: #11251a;
+    --art: #7fb8a8; --art-opacity: 0.16; --art-blend: screen;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"], :root[data-theme="tide-dark"] {
+  --bg: #0d1615; --panel: #142120; --ink: #e4eeeb; --ink-soft: #8fa6a0; --rule: #263f3a;
+  --accent: #ff5c8a; --cause: #ad9cff; --effect: #4fd6f0;
+  --orb-line: #4d6a63; --orb-fill: rgb(13 22 21 / 0.78);
+  --3d-line: #b6cbc5; --3d-cause: #9f8bff; --3d-effect: #34d0ee;
+  --sh-base: #0d1615; --sh-a: #0f2d2a; --sh-b: #11251a;
+  --art: #7fb8a8; --art-opacity: 0.16; --art-blend: screen;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+/* Dusk · light: blush, pink and lavender */
+:root[data-theme="dusk-light"] {
+  --bg: #efe6ec; --panel: #faf4f8; --ink: #241a22; --ink-soft: #6c5a67; --rule: #dccad6;
+  --accent: #c46a00; --cause: #5b3fe0; --effect: #00809b;
+  --orb-line: #9c8a97; --orb-fill: rgb(239 230 236 / 0.8);
+  --3d-line: #3d2f39; --3d-cause: #5b3fe0; --3d-effect: #0094b3;
+  --sh-base: #efe6ec; --sh-a: #f2d8e5; --sh-b: #e3d9f1;
+  --art: #4a2840; --art-opacity: 0.2; --art-blend: multiply;
+  --shadow: 0 1px 2px rgb(50 20 40 / 0.08), 0 8px 24px rgb(50 20 40 / 0.08);
+  color-scheme: light;
+}
+/* Dusk · dark: plum night */
+:root[data-theme="dusk-dark"] {
+  --bg: #16111a; --panel: #201927; --ink: #f1e9f2; --ink-soft: #ab9bb1; --rule: #3a2c42;
+  --accent: #ffb03b; --cause: #b8a4ff; --effect: #4fd6f0;
+  --orb-line: #66556e; --orb-fill: rgb(22 17 26 / 0.78);
+  --3d-line: #d0c3d6; --3d-cause: #a990ff; --3d-effect: #34d0ee;
+  --sh-base: #16111a; --sh-a: #2c1428; --sh-b: #1e1533;
+  --art: #c79bd0; --art-opacity: 0.15; --art-blend: screen;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+
+
+/* ── Everything below is theme-independent ───── */
+:root {
+  /* 2 · Type. Caslon for the voice (brand, suns, card titles); a neutral sans for reading;
+     a mono for data labels. Helvetica Neue is on every Mac, Inter covers the rest. */
+  --font-display: "Libre Caslon Condensed", "Iowan Old Style", Georgia, serif;
+  --font-body: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --text-2xs: 9.5px;   /* orb tags, relation labels */
+  --text-xs: 10.5px;   /* mono eyebrows, group labels */
+  --text-sm: 12.5px;   /* chips, sources, legend, buttons */
+  --text-md: 14px;     /* body */
+  --text-lg: 15px;     /* prompt */
+  --text-xl: 21px;     /* opened-orb title */
+  --text-2xl: 26px;    /* brand */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-strong: 600;
+  --tracking-eyebrow: 0.06em;   /* uppercase mono labels */
+  --tracking-title: -0.01em;
+
+  /* 3 · Space (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 28px;
+  --gutter: 20px;      /* edge of the screen to any overlay */
+
+  /* 4 · Shape */
+  --radius-sm: 8px;    /* inputs, choices */
+  --radius-md: 12px;   /* panels, figures */
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --border-hair: 1px;
+  --border-orb: 1.5px;        /* resting orb outline */
+  --border-orb-strong: 2px;   /* hover, opened, high relevance */
+  --border-sun: 2.5px;
+
+  /* 5 · Elevation. --shadow is theme-aware (set above); glow is the orb light. */
+  --glow-sm: 0 0 18px 3px;
+  --glow-md: 0 0 34px 6px;
+  --glow-lg: 0 0 46px 8px;
+
+  /* 6 · Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-fast: 0.15s;   /* toggles, hovers on controls */
+  --dur-base: 0.25s;   /* orb glow, borders */
+  --dur-breathe: 1.6s; /* sun while researching */
+  --dur-spin: 0.8s;
+
+  /* 7 · Orb states. Each state is a recipe of outline, fill and light, so a new state is
+     one more row here and one rule in style.css. */
+  --orb-rest-border: var(--border-orb);
+  --orb-active-border: var(--border-orb-strong);
+  --orb-dim-opacity: 0.3;
+  --orb-unfold-gap: 3px;       /* second outline: can be unfolded */
+  --orb-unfold-line: 4.5px;
+  --orb-lead-glow: 22px;       /* hidden lead: far but big */
+  --orb-lead-mix: 38%;
+  --orb-sun-mix: 30%;
+  --orb-fill-mix: 12%;         /* tint of the drifting highlight at rest */
+  --orb-fill-mix-active: 7%;
+}
