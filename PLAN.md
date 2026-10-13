@@ -76,6 +76,18 @@ Every stage ends with a link to click and a short list of things to try.
 - Stage 4: the AI needs an access key. For a personal tool, the simplest route is pasting your
   own key into a settings box, where it stays only in your browser.
 
+## Two ways to reach Claude
+
+| | On claude.ai (the private preview link) | On your own site |
+|---|---|---|
+| Pays with | Your Claude plan's usage | Your API credits (console.anthropic.com) |
+| Setup | None. The first search asks permission | Paste an API key in the View panel |
+| Sources | From Claude's knowledge, named but mostly not linked | Found with web search, linked |
+| Pictures | Example drawings only | Wikipedia pictures for live topics |
+| Model | Fast / Balanced / Thorough | Opus 5.5, Sonnet 5.5 or Haiku 5.5 |
+
+The same code runs in both places: it uses your plan when opened on claude.ai, and your key elsewhere.
+
 ## How live research works
 
 - **Your key, your browser.** Paste a Claude API key into the View panel. It is stored in that browser only and sent only to Anthropic. Nothing about it is in the website's files.

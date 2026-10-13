@@ -59,6 +59,7 @@ const TUNING = {
 // ─── View settings: the controls in the View panel ───────────
 const VIEW_DEFAULTS = {
   model: 'claude-opus-5-5',
+  tier: 'default',
   webSearch: true,
   reading: 'auto',
   hierarchy: 1,
@@ -83,15 +84,20 @@ const VIEW_DEFAULTS = {
   orbSize: 1,
 };
 const VIEW_SETTINGS = [
-  { key: 'model', label: 'Model', options: [
+  { key: 'model', label: 'Model (your API key)', options: [
     ['claude-opus-5-5', 'Opus 5.5', 'Best · $4 / $20'],
     ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster · $2 / $10'],
     ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
   ] },
-  { key: 'reading', label: 'How to read what you type', options: [
+  { key: 'tier', label: 'How hard Claude thinks', options: [
+    ['quick', 'Fast', 'Lightest'],
+    ['default', 'Balanced', 'Recommended'],
+    ['complex', 'Thorough', 'Slower, deeper'],
+  ] },
+  { key: 'reading', label: 'What you type is…', options: [
     ['auto', 'Auto'],
-    ['diagnose', 'Diagnose'],
-    ['explore', 'Explore'],
+    ['diagnose', 'A problem'],
+    ['explore', 'A topic'],
   ] },
   { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. About $0.01 per search' },
   { group: 'Theme' },
@@ -337,7 +343,10 @@ const R = window.CELESTIAL_RESEARCH;
 const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
 const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
 let apiKey = readKey();
-const live = () => Boolean(apiKey && R);
+let planReady = false;              // true when opened on claude.ai: research runs on your Claude plan
+const live = () => Boolean(R && (planReady || apiKey));
+const backend = () => (planReady ? 'plan' : 'api');
+const whoAnswers = () => (planReady ? 'your Claude plan' : R.MODELS[view.model].name);
 const session = { mode: 'diagnose' };
 const liveIds = new Set();          // topics that came from Claude (saved between visits)
 const pending = new Set();          // systems being mapped right now
@@ -488,11 +497,13 @@ function fillOrb(o) {
   const links = o.isSun ? [] : connectionsOf(o.id);
   const drawing = window.CELESTIAL_ILLUSTRATIONS?.[o.id];
   let body;
-  if (more.loading) body = `<p class="researching"><span class="spinner"></span>Researching with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and searching the web' : ''}…</p>`;
+  if (more.loading) body = `<p class="researching"><span class="spinner"></span>${planReady
+    ? 'Researching with Claude on your plan…'
+    : `Researching with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and searching the web' : ''}…`}</p>`;
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
-  else body = '<p class="slot">Add your Claude API key in the View panel to research any topic in depth.</p>';
+  else body = '<p class="slot">Connect Claude in the View panel to research any topic in depth.</p>';
   const sourceLine = (src) => {
     const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
     return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
@@ -516,7 +527,7 @@ function fillOrb(o) {
         ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
         ${o.isSun ? '' : canUnfold(o.id)
           ? '<button class="orb-unfold" type="button" data-action="unfold">Unfold</button>'
-          : '<p class="slot">Add a Claude API key to unfold any orb</p>'}
+          : '<p class="slot">Connect Claude to unfold any orb</p>'}
       </div>
     </div>`;
   el.querySelector('.rel').textContent = relationText(o);
@@ -695,9 +706,11 @@ async function unfold(id) {
 async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
   const topic = DATA.topics[centreId];
   pending.add(centreId);
-  setStatus(`Mapping “${topic.title}” with ${R.MODELS[view.model].name}…`);
+  setStatus(`Mapping “${topic.title}” with ${whoAnswers()}…`);
   try {
     const out = await R.map({
+      backend: backend(),
+      tier: view.tier,
       key: apiKey,
       model: view.model,
       centre: topic.title,
@@ -762,7 +775,7 @@ async function explore(query) {
   if (!live()) {
     setViewPanel(true);
     $('api-key').focus();
-    toast('Add your Claude API key here to explore your own questions.');
+    toast(window.claude ? 'Claude isn’t available to this page right now. Reload to try again.' : 'Add your Claude API key here to explore your own questions.');
     return;
   }
   if (busy) return;
@@ -795,6 +808,8 @@ async function loadDetails(o) {
   try {
     const centreId = trail[trail.length - 1];
     const d = await R.details({
+      backend: backend(),
+      tier: view.tier,
       key: apiKey,
       model: view.model,
       topic: DATA.topics[id].title,
@@ -808,7 +823,8 @@ async function loadDetails(o) {
     DATA.details[id] = { ...d, live: true };
     liveIds.add(id);
     refill(id);
-    const image = await R.wikipediaImage(d.wikipedia);
+    // Pictures come from Wikipedia, which only your own site can reach
+    const image = backend() === 'api' ? await R.wikipediaImage(d.wikipedia) : null;
     if (image) { DATA.details[id].image = image; refill(id); }
     saveCache();
   } catch (err) {
@@ -967,7 +983,15 @@ function buildViewPanel() {
     }
     const id = 'view-' + s.key;
     if (s.options) {
-      // A row of choices, like radio buttons
+      // A row of choices, like radio buttons, with a small caption
+      const wrap = document.createElement('div');
+      wrap.id = id;
+      if (!s.swatches) {
+        const cap = document.createElement('p');
+        cap.className = 'view-caption';
+        cap.textContent = s.label;
+        wrap.append(cap);
+      }
       const row = document.createElement('div');
       row.className = s.swatches ? 'view-choices view-themes' : 'view-choices';
       row.setAttribute('role', 'radiogroup');
@@ -984,8 +1008,8 @@ function buildViewPanel() {
         b.addEventListener('click', () => { view[s.key] = value; afterViewChange(s); });
         row.append(b);
       }
-      row.id = id;
-      list.append(row);
+      wrap.append(row);
+      list.append(wrap);
       continue;
     }
     const row = document.createElement('label');
@@ -1020,7 +1044,7 @@ function syncViewPanel() {
     if (s.group) continue;
     const el = $('view-' + s.key);
     if (s.options) {
-      for (const b of el.children) b.setAttribute('aria-checked', String(b.dataset.value === view[s.key]));
+      for (const b of el.querySelectorAll('.choice')) b.setAttribute('aria-checked', String(b.dataset.value === view[s.key]));
     } else if (el.type === 'checkbox') {
       el.checked = view[s.key];
     } else {
@@ -1055,7 +1079,7 @@ function applyView() {
   $('art').hidden = !view.lineArt;
   controls.autoRotate = view.spin && !reduceMotion;
   readPalette();
-  if ($('brand-stage') && R) $('brand-stage').textContent = live() ? `Live · ${R.MODELS[view.model].name}` : 'Example · add a key to go live';
+  if ($('plan-note') && R) updateLiveState(false);
 }
 darkDevice.addEventListener('change', applyView);
 // If the page host switches light/dark itself, keep our theme and follow its mode
@@ -1093,23 +1117,31 @@ $('prompt').addEventListener('submit', (e) => {
 });
 
 // ─── Your Claude API key ────────────────────────────────────
-function updateLiveState() {
-  $('brand-stage').textContent = live()
-    ? `Live · ${R.MODELS[view.model].name}`
+function updateLiveState(refill = true) {
+  $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
+    : live() ? `Live · ${R.MODELS[view.model].name}`
     : 'Example · add a key to go live';
+  // On claude.ai your plan is used, so the key and API-only settings step aside
+  $('plan-note').hidden = !planReady;
+  $('key-form').querySelector('label').hidden = planReady;
+  $('key-form').querySelector('.key-row').hidden = planReady;
+  $('key-note').hidden = planReady;
+  $('view-model').hidden = planReady;
+  $('view-webSearch').closest('label').hidden = planReady;
+  $('view-tier').hidden = !planReady;
   $('key-forget').hidden = !apiKey;
   $('api-key').value = apiKey ? '••••••••••••' + apiKey.slice(-4) : '';
   $('key-note').textContent = apiKey
     ? 'Saved in this browser only. It is sent only to Anthropic.'
     : 'Stored only in this browser and sent only to Anthropic. Create one at console.anthropic.com → API keys.';
-  for (const o of orbs) fillOrb(o);
+  if (refill) for (const o of orbs) fillOrb(o);
   updateSpend();
 }
 function updateSpend() {
   const s = R?.spend;
-  $('spend').textContent = s && s.requests
-    ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web searches` : ''}, about $${s.dollars.toFixed(2)}`
-    : '';
+  $('spend').textContent = !s?.requests ? ''
+    : planReady ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'} on your Claude plan`
+    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web searches` : ''}, about $${s.dollars.toFixed(2)}`;
 }
 $('key-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -1364,3 +1396,5 @@ drawLineArt();
 showSystem(trail[trail.length - 1]);
 updateLiveState();
 requestAnimationFrame(frame);
+// On claude.ai, research runs on your Claude plan instead of a key
+R?.planAvailable().then((ok) => { planReady = ok; updateLiveState(); });

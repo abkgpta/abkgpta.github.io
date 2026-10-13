@@ -457,6 +457,7 @@ button, input { font: inherit; color: inherit; }
 .view-slider .view-text { grid-template-columns: 1fr auto; }
 .view-slider output { font-family: var(--font-data); font-size: 12px; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
 .view-slider input { width: 100%; accent-color: var(--ink); }
+.view-caption { margin: 8px 0 4px; font-size: 12px; color: var(--ink-soft); }
 .view-choices { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; margin-bottom: 6px; }
 .choice {
   display: grid;
@@ -564,6 +565,7 @@ button, input { font: inherit; color: inherit; }
 }
 .key-row button, .link-btn { cursor: pointer; }
 .key-row button { padding: 6px 14px; border: 0; border-radius: 8px; background: var(--ink); color: var(--panel); font-weight: 600; }
+.plan-note { margin: 0 0 8px; }
 .key-note, .spend { margin: 0; font-size: 12px; color: var(--ink-soft); }
 .spend:empty { display: none; }
 .key-actions { display: flex; gap: 14px; }

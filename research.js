@@ -1,9 +1,11 @@
 // ─────────────────────────────────────────────────────────────
 // RESEARCH · asks Claude to map topics and find sources.
 //
-// This runs only in your own browser, with your own Claude API key.
-// The key is kept in this browser's storage and sent only to
-// Anthropic's API. It never goes into the website's files.
+// It reaches Claude in one of two ways:
+//  • On claude.ai: through your own Claude plan. No key needed; the
+//    first request asks your permission. No web browsing there.
+//  • On your own site: with your own Claude API key, kept in this
+//    browser's storage and sent only to Anthropic's API.
 //
 // Two kinds of request:
 //   map(…)     → the solar system around a topic (names, one-liners,
@@ -151,7 +153,42 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     },
   };
 
-  // ─── Connection to Claude ──────────────────────────────────
+  // ─── Your Claude plan (only when the page is opened on claude.ai) ─
+  let samplePromise = null;
+  function getSample() {
+    if (!samplePromise) {
+      samplePromise = (window.claude?.use ? window.claude.use('sample') : Promise.resolve(null)).catch(() => null);
+    }
+    return samplePromise;
+  }
+  async function planAvailable() { return Boolean(await getSample()); }
+
+  // How a reply should look, spelled out for requests made on your plan
+  const MAP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5}],"links":[{"a":"orb title","b":"orb title","strength":0.7}]}';
+  const PLAN_DETAILS = `You research one topic for Celestial, a 3D research explorer. You cannot browse the web here, so draw on what you know and be honest about it.
+
+- about: two to four plain sentences explaining what it is or how the mechanism works, in context.
+- check: two to four concrete items. When diagnosing, things to measure or look at to confirm or rule this out. When exploring, the most useful things to explore next.
+- chart: only when you know a genuinely useful, well-established numeric comparison (4 to 8 rows) — otherwise an empty rows list. Keep labels short; say in the note that values are typical.
+- sources: three to six that you are confident exist (textbooks, standards, reviews, landmark papers, encyclopedia articles, official bodies), described well enough to find: author or organisation, year, title. Leave url empty unless it is a stable address you are certain of, such as a Wikipedia article. Rate each with a tier:
+  1 primary evidence: meta-analyses, systematic reviews, official statistics, datasets, standards, laws
+  2 peer-reviewed papers, academic textbooks, institutional reports
+  3 encyclopedias including Wikipedia, major news outlets, analyst reports, official documentation
+  4 preprints, expert blogs, talks, lectures, documentaries, company white papers
+  5 opinion pieces, general blogs, podcasts, forums, social media
+  6 a point you are making without a source you can name (url empty)
+  flag is "" or one of: "Conflict of interest", "Outdated", "Disputed", "Retracted".
+
+Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"title":"","unit":"","note":"","rows":[{"label":"","value":0}]},"sources":[{"tier":3,"type":"","title":"","url":"","flag":""}]}`;
+
+  async function askPlan(prompt, tier) {
+    const sample = await getSample();
+    if (!sample) throw { code: 'sampling_disabled' };
+    spend.requests += 1;
+    return sample.json(prompt, { modelTier: tier || 'default' });
+  }
+
+  // ─── Connection to Claude with an API key ──────────────────
   let sdk = null, client = null, clientKey = null;
   async function getClient(key) {
     if (!sdk) sdk = await import(SDK_URL);
@@ -191,8 +228,21 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     return res;
   }
 
-  // Turn SDK errors into sentences a person can act on
+  // Turn errors into sentences a person can act on
+  const PLAN_ERRORS = {
+    not_granted: 'You didn’t allow this page to use Claude. Reload the page to be asked again.',
+    sampling_disabled: 'Claude isn’t available to this page for your account.',
+    rate_limited: 'Your Claude plan’s usage limit is reached for now, or too many requests are running. Try again a little later.',
+    session_expired: 'Your claude.ai session expired. Sign in again, then reload.',
+    refused: 'Claude declined this request. Try rephrasing the topic.',
+    invalid_json: 'Claude’s answer came back incomplete. Try again.',
+    empty_completion: 'Claude returned nothing. Try again, or rephrase.',
+    prompt_too_large: 'That request was too long for Claude.',
+  };
   function explain(err) {
+    if (err && typeof err.code === 'string' && !(err instanceof Error)) {
+      return PLAN_ERRORS[err.code] || 'Couldn’t reach Claude just now. Try again in a moment.';
+    }
     const E = sdk?.default;
     if (E && err instanceof E.AuthenticationError) return 'Your API key was rejected. Check it in the View panel.';
     if (E && err instanceof E.PermissionDeniedError) return 'This API key isn’t allowed to use that model.';
@@ -207,28 +257,42 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   const clamp01 = (n) => Math.min(1, Math.max(0, Number(n) || 0));
 
   // ─── map: the system around a topic ────────────────────────
-  async function map({ key, model, centre, mode, path, cameFrom }) {
+  async function map({ backend, tier, key, model, centre, mode, path, cameFrom }) {
     const lines = [
       `Centre topic: ${centre}`,
       MODE_NOTES[mode] || MODE_NOTES.diagnose,
       path.length ? `Path so far: ${path.join(' › ')}` : 'This is the starting point.',
       cameFrom ? `Came from: ${cameFrom} (include it as an orbiting topic with this exact title)` : '',
     ].filter(Boolean);
+    let out;
+    if (backend === 'plan') {
+      out = await askPlan([MAP_SYSTEM, ...lines, MAP_JSON].join('\n\n'), tier);
+      if (!out || !Array.isArray(out.orbs)) throw { code: 'invalid_json' };
+      out.centre = out.centre || {};
+      out.links = Array.isArray(out.links) ? out.links : [];
+      out.orbs = out.orbs
+        .filter((o) => o && o.title)
+        .map((o) => ({ ...o, rel: ['cause', 'effect', 'related'].includes(o.rel) ? o.rel : 'related', liner: o.liner || '' }));
+      return tidyMap(out);
+    }
     const res = await ask(key, model, {
       system: MAP_SYSTEM,
       output_config: { effort: 'medium', format: { type: 'json_schema', schema: MAP_SCHEMA } },
       messages: [{ role: 'user', content: lines.join('\n') }],
     });
     const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
-    let out;
     try { out = JSON.parse(text); } catch { throw new Error('Claude’s answer came back incomplete. Try again.'); }
+    return tidyMap(out);
+  }
+
+  function tidyMap(out) {
     out.orbs = (out.orbs || []).map((o) => ({ ...o, link: clamp01(o.link), relevance: clamp01(o.relevance) }));
-    out.links = (out.links || []).map((l) => ({ ...l, strength: clamp01(l.strength) }));
+    out.links = (out.links || []).filter((l) => l && l.a && l.b).map((l) => ({ ...l, strength: clamp01(l.strength) }));
     return out;
   }
 
   // ─── details: what an opened orb shows ─────────────────────
-  async function details({ key, model, topic, liner, centre, rel, mode, path, webSearch }) {
+  async function details({ backend, tier, key, model, topic, liner, centre, rel, mode, path, webSearch }) {
     const relation = { cause: `a possible cause of "${centre}"`, effect: `an effect of "${centre}"`, related: `related to "${centre}"` }[rel] || `the centre of the investigation`;
     const intro = [
       `Topic: ${topic}`,
@@ -238,6 +302,12 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
       path.length ? `Path so far: ${path.join(' › ')}` : '',
       webSearch ? 'Search the web for good sources first.' : 'Do not search the web: rely on what you know, rate sources honestly, and use tier 6 for claims you can’t attribute.',
     ].filter(Boolean).join('\n');
+    if (backend === 'plan') {
+      const brief = intro.split('\n').filter((l) => !l.startsWith('Search the web') && !l.startsWith('Do not search')).join('\n');
+      const d = await askPlan(PLAN_DETAILS + '\n\n' + brief, tier);
+      if (!d || typeof d !== 'object') throw { code: 'invalid_json' };
+      return tidyDetails({ wikipedia: '', ...d });
+    }
     const tools = [DETAILS_TOOL, ...(webSearch ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }] : [])];
     const messages = [{ role: 'user', content: intro }];
     for (let round = 0; round < 4; round++) {
@@ -258,12 +328,12 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   }
 
   function tidyDetails(d) {
-    const rows = (d.chart?.rows || []).filter((r) => r.label && Number.isFinite(r.value)).slice(0, 8);
+    const rows = (d.chart?.rows || []).map((r) => ({ label: r.label, value: Number(r.value) })).filter((r) => r.label && Number.isFinite(r.value)).slice(0, 8);
     return {
       about: d.about || '',
-      check: (d.check || []).slice(0, 5),
+      check: (Array.isArray(d.check) ? d.check : []).filter(Boolean).slice(0, 5),
       chart: rows.length >= 2 ? { title: d.chart.title, unit: d.chart.unit || '', note: d.chart.note || '', rows: rows.map((r) => [r.label, r.value]) } : null,
-      sources: (d.sources || []).slice(0, 8).map((s) => ({
+      sources: (Array.isArray(d.sources) ? d.sources : []).filter((s) => s && s.title).slice(0, 8).map((s) => ({
         tier: Math.min(6, Math.max(1, Math.round(s.tier) || 6)),
         type: s.type || 'Source',
         title: s.title || '',
@@ -287,5 +357,5 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, wikipediaImage, explain, spend };
+  window.CELESTIAL_RESEARCH = { MODELS, map, details, wikipediaImage, explain, spend, planAvailable };
 })();
