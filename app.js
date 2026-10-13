@@ -301,10 +301,10 @@ function moonStone(r) {
 
 // One period of the frieze that circles the screen edge. y is the distance
 // in from the edge. Drawn one period too long, so sliding it loops seamlessly.
-const FRIEZE = { depth: 66, period: 24 };
+const FRIEZE = { depth: 44, period: 24 };
 function frieze(length) {
   const P = FRIEZE.period, out = [];
-  out.push(`<path d="M0 3H${length}M0 19H${length}M0 33H${length}M0 59H${length}" stroke-width="0.7"/>`);
+  out.push(`<path d="M0 3H${length}M0 19H${length}M0 33H${length}" stroke-width="0.7"/>`);
   for (let x = 0; x < length; x += P) {
     // Teeth pointing inward, every other one filled
     out.push(`<path d="M${x} 3L${x + P / 4} 15L${x + P / 2} 3" />`);
@@ -317,13 +317,6 @@ function frieze(length) {
     }
     // Dotted row
     for (let i = 0; i < 4; i++) out.push(`<circle cx="${x + i * (P / 4) + P / 8}" cy="39" r="0.9" ${FILL}/>`);
-    // A row of rising suns
-    out.push(`<path d="M${x + 4} 57A8 8 0 0 1 ${x + 20} 57M${x + 7} 57A5 5 0 0 1 ${x + 17} 57"/>`);
-    out.push(`<circle cx="${x + 12}" cy="57" r="1.6" ${FILL}/>`);
-    for (const a of [-150, -120, -90, -60, -30]) {
-      const [x1, y1] = polar(10, a), [x2, y2] = polar(a === -90 ? 15 : 13, a);
-      out.push(`<path d="M${n1(x + 12 + x1)} ${n1(57 + y1)}L${n1(x + 12 + x2)} ${n1(57 + y2)}"/>`);
-    }
   }
   return out.join('');
 }
@@ -351,12 +344,10 @@ function drawLineArt() {
   // Stones: two layers each, turning slowly in opposite directions
   const m = Math.min(w, h);
   const stones = [
-    [0.02 * w, h * 1.0, m * 0.36, 'sun', 240],
-    [w * 0.98, h * 1.0, m * 0.36, 'sun', 300],
-    [-m * 0.02, h * 0.5, m * 0.17, 'moon', 200],
-    [w + m * 0.02, h * 0.5, m * 0.17, 'moon', 220],
-    [0, 0, m * 0.22, 'sun', 260],
-    [w, 0, m * 0.22, 'sun', 280],
+    [0.02 * w, h * 1.0, m * 0.3, 'sun', 300],
+    [w * 0.98, h * 1.0, m * 0.3, 'sun', 360],
+    [-m * 0.04, h * 0.5, m * 0.14, 'moon', 260],
+    [w + m * 0.04, h * 0.5, m * 0.14, 'moon', 280],
   ];
   for (const [x, y, r, kind, secs] of stones) {
     const { outer, inner } = kind === 'sun' ? sunStone(r, 36) : moonStone(r);
@@ -382,13 +373,13 @@ function drawLineArt() {
 
   // Stars and constellations, only around the edges
   const stars = [];
-  while (stars.length < 54) {
+  while (stars.length < 30) {
     const x = rnd() * w, y = rnd() * h;
     const dx = (x - w / 2) / (w / 2), dy = (y - h * 0.45) / (h / 2);
     if (dx * dx + dy * dy > 0.62) stars.push([x, y, 1.5 + rnd() * 3.5]);
   }
   let lines = '';
-  for (let c = 0; c < 5; c++) {
+  for (let c = 0; c < 3; c++) {
     const [ax, ay] = stars[c * 9];
     const near = [...stars].sort((p, q) => Math.hypot(p[0] - ax, p[1] - ay) - Math.hypot(q[0] - ax, q[1] - ay)).slice(0, 5);
     lines += `<path d="M${pts(near)}" stroke-dasharray="4 3"/>`;
@@ -402,13 +393,6 @@ function drawLineArt() {
   $('art').innerHTML = layers.join('');
 }
 
-// The sun's halo: a small sun-stone that turns slowly behind the centre topic
-const SUN_HALO = (() => {
-  const r = 100;
-  const body = ring(r * 0.62) + teeth(r * 0.66, r * 0.8, 28) + ring(r * 0.66) + dotRing(r * 0.86, 56, 0.9)
-    + rays(r * 0.9, r * 1.0, r * 0.95, 56);
-  return `<svg class="halo" viewBox="${-r} ${-r} ${2 * r} ${2 * r}" fill="none" stroke="currentColor" stroke-width="0.9" aria-hidden="true">${body}</svg>`;
-})();
 
 // ─── 3 & 4. Scene: renderer, camera, controls ────────────────
 const stage = $('stage');
@@ -792,7 +776,6 @@ function fillOrb(o) {
     return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
   };
   el.innerHTML = `
-    ${o.isSun ? SUN_HALO : ''}
     <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
     <div class="inner">
       ${tag ? `<span class="tag">${tag}</span>` : ''}
@@ -2016,9 +1999,6 @@ function frame(now) {
     o.nx += (nx - o.nx) * approach;
     o.ny += (ny - o.ny) * approach;
     o.el.style.translate = `${(o.nx + fx * calm).toFixed(2)}px ${(o.ny + fy * calm).toFixed(2)}px`;
-    // A slowly turning pattern ring, inward for causes, outward for effects
-    o.spin = (o.spin ?? o.phase * 36) + dt * (o.rel === 'cause' ? -4 : 4) * (reduceMotion ? 0 : 1);
-    o.el.style.setProperty('--spin', (o.spin % 360).toFixed(2) + 'deg');
     o.el.style.rotate = `${(TUNING.tilt * Math.sin(seconds * 0.33 + o.phase * 0.9) * calm).toFixed(2)}deg`;
     // The further away an orb is, the more see-through it gets
     let fade = 1;
