@@ -11,7 +11,7 @@
 //   map(…)     → the solar system around a topic (names, one-liners,
 //                cause/effect/related, link and relevance numbers)
 //   details(…) → what an opened orb shows: explanation, what to check,
-//                optional chart, rated sources (found with web search),
+//                optional chart, a diagram, rated sources (found with web search),
 //                and a Wikipedia article to borrow a picture from
 // ─────────────────────────────────────────────────────────────
 (() => {
@@ -63,6 +63,11 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   5 opinion and community: opinion pieces, general blogs, podcasts, general YouTube, forums, social media
   6 unsourced: a claim you are making without a source (url empty)
   Adjust a tier up or down for an unusually strong or weak example. flag is "" or one of: "Conflict of interest", "Outdated", "Disputed", "Retracted".
+- diagram: a simple picture of the idea, which the app draws from your words. Choose the kind that explains it best:
+  "chain" for a mechanism or process: 3 to 6 steps in order;
+  "cycle" for a feedback loop: 3 to 5 steps, the last leading back to the first;
+  "hub" for what it is made of, or the factors that feed into it: 3 to 6 parts.
+  Each node: label of 2 to 5 words, note of at most 10 words (may be "" for a hub). caption: one sentence saying what the diagram shows. Use kind "none" with no nodes only if no diagram would help.
 - wikipedia: the exact title of the English Wikipedia article whose lead image would best illustrate this topic, or "" if none fits.`;
 
   const DETAILS_TOOL = {
@@ -72,7 +77,7 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     input_schema: {
       type: 'object',
       additionalProperties: false,
-      required: ['about', 'check', 'chart', 'sources', 'wikipedia'],
+      required: ['about', 'check', 'chart', 'diagram', 'sources', 'wikipedia'],
       properties: {
         about: { type: 'string' },
         check: { type: 'array', items: { type: 'string' } },
@@ -107,6 +112,24 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
               title: { type: 'string' },
               url: { type: 'string' },
               flag: { type: 'string' },
+            },
+          },
+        },
+        diagram: {
+          type: 'object',
+          additionalProperties: false,
+          required: ['kind', 'caption', 'nodes'],
+          properties: {
+            kind: { type: 'string', enum: ['chain', 'cycle', 'hub', 'none'] },
+            caption: { type: 'string' },
+            nodes: {
+              type: 'array',
+              items: {
+                type: 'object',
+                additionalProperties: false,
+                required: ['label', 'note'],
+                properties: { label: { type: 'string' }, note: { type: 'string' } },
+              },
             },
           },
         },
@@ -187,6 +210,11 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
 - about: two to four plain sentences explaining what it is or how the mechanism works, in context.
 - check: two to four concrete items. When diagnosing, things to measure or look at to confirm or rule this out. When exploring, the most useful things to explore next.
 - chart: only when you know a genuinely useful, well-established numeric comparison (4 to 8 rows) — otherwise an empty rows list. Keep labels short; say in the note that values are typical.
+- diagram: a simple picture of the idea, which the app draws from your words. Choose the kind that explains it best:
+  "chain" for a mechanism or process: 3 to 6 steps in order;
+  "cycle" for a feedback loop: 3 to 5 steps, the last leading back to the first;
+  "hub" for what it is made of, or the factors that feed into it: 3 to 6 parts.
+  Each node: label of 2 to 5 words, note of at most 10 words (may be "" for a hub). caption: one sentence saying what the diagram shows. Use kind "none" with no nodes only if no diagram would help.
 - sources: three to six that you are confident exist (textbooks, standards, reviews, landmark papers, encyclopedia articles, official bodies), described well enough to find: author or organisation, year, title. Leave url empty unless it is a stable address you are certain of, such as a Wikipedia article. Rate each with a tier:
   1 primary evidence: meta-analyses, systematic reviews, official statistics, datasets, standards, laws
   2 peer-reviewed papers, academic textbooks, institutional reports
@@ -196,7 +224,7 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   6 a point you are making without a source you can name (url empty)
   flag is "" or one of: "Conflict of interest", "Outdated", "Disputed", "Retracted".
 
-Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"title":"","unit":"","note":"","rows":[{"label":"","value":0}]},"sources":[{"tier":3,"type":"","title":"","url":"","flag":""}]}`;
+Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"title":"","unit":"","note":"","rows":[{"label":"","value":0}]},"diagram":{"kind":"chain|cycle|hub|none","caption":"","nodes":[{"label":"","note":""}]},"sources":[{"tier":3,"type":"","title":"","url":"","flag":""}]}`;
 
   async function askPlan(prompt, tier) {
     const sample = await getSample();
@@ -409,8 +437,19 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
         url: /^https?:\/\//.test(s.url || '') ? s.url : '',
         flag: s.flag || '',
       })),
+      diagram: tidyDiagram(d.diagram),
       wikipedia: d.wikipedia || '',
     };
+  }
+
+  // A diagram needs a known kind and at least three nodes to be worth drawing
+  function tidyDiagram(g) {
+    if (!g || !['chain', 'cycle', 'hub'].includes(g.kind)) return null;
+    const nodes = (Array.isArray(g.nodes) ? g.nodes : [])
+      .filter((n) => n && n.label)
+      .slice(0, g.kind === 'cycle' ? 5 : 6)
+      .map((n) => ({ label: String(n.label).slice(0, 48), note: String(n.note || '').slice(0, 90) }));
+    return nodes.length >= 3 ? { kind: g.kind, caption: String(g.caption || ''), nodes } : null;
   }
 
   // ─── Quick first pass: Haiku, streamed, while the full answer loads ─

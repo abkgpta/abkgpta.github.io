@@ -714,6 +714,75 @@ function chartHTML(c) {
     <svg viewBox="0 0 ${W} ${c.rows.length * rowH}" role="img" aria-label="${esc(c.title)}">${bars}</svg>
     ${c.note ? `<p class="viz-note">${esc(c.note)}</p>` : ''}</figure>`;
 }
+// ─── Diagrams Claude describes, drawn here ───────────────────
+// Claude sends a short description (the kind of diagram and its steps or
+// parts); this turns it into a drawing in the same style as the hand-made
+// illustrations. chain = steps in order, cycle = a loop, hub = parts.
+function wrapWords(text, max) {
+  const lines = [];
+  let line = '';
+  for (const word of String(text).split(/\s+/).filter(Boolean)) {
+    if (line && (line + ' ' + word).length > max) { lines.push(line); line = word; }
+    else line = line ? line + ' ' + word : word;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+function arrowPath(x1, y1, x2, y2) {
+  const a = Math.atan2(y2 - y1, x2 - x1), h = 5.5, n = (v) => v.toFixed(1);
+  return `<path class="il-arrow" d="M${n(x1)} ${n(y1)}L${n(x2)} ${n(y2)}M${n(x2 + h * Math.cos(a + 2.6))} ${n(y2 + h * Math.sin(a + 2.6))}L${n(x2)} ${n(y2)}L${n(x2 + h * Math.cos(a - 2.6))} ${n(y2 + h * Math.sin(a - 2.6))}"/>`;
+}
+const textLines = (lines, x, y, cls, step, anchor = 'middle') =>
+  lines.map((l, i) => `<text class="${cls}" x="${x}" y="${(y + i * step).toFixed(1)}" text-anchor="${anchor}">${esc(l)}</text>`).join('');
+
+function diagramSVG(d, centreTitle) {
+  const W = 320;
+  if (d.kind === 'chain') {
+    // Steps top to bottom, each in a box, joined by arrows
+    let y = 4, body = '';
+    d.nodes.forEach((node, i) => {
+      const label = wrapWords(node.label, 44).slice(0, 2), note = wrapWords(node.note, 54).slice(0, 2);
+      const h = 10 + label.length * 13 + note.length * 11;
+      body += `<rect class="il-part" x="28" y="${y}" width="${W - 36}" height="${h}" rx="6"/>`;
+      body += `<circle class="il-accent" cx="12" cy="${y + h / 2}" r="8"/>${textLines([String(i + 1)], 12, y + h / 2 + 3, 'il-text', 0)}`;
+      body += textLines(label, 38, y + 16, 'il-head', 13, 'start');
+      body += textLines(note, 38, y + 16 + label.length * 13, 'il-text', 11, 'start');
+      y += h;
+      if (i < d.nodes.length - 1) { body += arrowPath(W / 2, y + 2, W / 2, y + 14); y += 16; }
+    });
+    return `<svg viewBox="0 0 ${W} ${y + 4}" role="img">${body}</svg>`;
+  }
+  // Hub and cycle: nodes around an ellipse
+  const H = 236, cx = W / 2, cy = H / 2, rx = 108, ry = 82, n = d.nodes.length;
+  const spots = d.nodes.map((node, i) => {
+    const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+    const label = wrapWords(node.label, 15).slice(0, 3);
+    const w = Math.max(...label.map((l) => l.length)) * 5.9 + 14, h = label.length * 12 + 8;
+    return { x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a), label, w, h };
+  });
+  let lines = '', boxes = '';
+  if (d.kind === 'hub') {
+    const title = wrapWords(centreTitle, 12).slice(0, 3);
+    for (const p of spots) lines += `<path class="il-ghost" d="M${cx} ${cy}L${p.x.toFixed(1)} ${p.y.toFixed(1)}"/>`;
+    boxes += `<circle class="il-steel" cx="${cx}" cy="${cy}" r="34"/>` + textLines(title, cx, cy + 4 - (title.length - 1) * 6, 'il-head', 12);
+  } else {
+    // Arrows from each step to the next, stopping short of the labels
+    spots.forEach((p, i) => {
+      const q = spots[(i + 1) % n];
+      const dx = q.x - p.x, dy = q.y - p.y, len = Math.hypot(dx, dy);
+      const cut = (s) => Math.min(len * 0.35, Math.abs(dx / len) * s.w / 2 + Math.abs(dy / len) * s.h / 2 + 6);
+      const a = cut(p), b = cut(q);
+      lines += arrowPath(p.x + dx / len * a, p.y + dy / len * a, q.x - dx / len * b, q.y - dy / len * b);
+    });
+  }
+  for (const p of spots) {
+    const x = clamp(p.x, p.w / 2 + 2, W - p.w / 2 - 2), y = clamp(p.y, p.h / 2 + 2, H - p.h / 2 - 2);
+    boxes += `<rect class="il-part" x="${(x - p.w / 2).toFixed(1)}" y="${(y - p.h / 2).toFixed(1)}" width="${p.w.toFixed(1)}" height="${p.h}" rx="6"/>`;
+    boxes += textLines(p.label, x.toFixed(1), y - p.h / 2 + 15, 'il-head', 12);
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${lines}${boxes}</svg>`;
+}
+
 function orbClasses(o) {
   const keep = ['is-hover', 'is-selected', 'is-dim', 'is-leaving'].filter((c) => o.el.classList.contains(c));
   o.el.className = ['orb',
@@ -762,7 +831,9 @@ function fillOrb(o) {
     `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
   const more = DATA.details?.[o.id] || {};
   const links = o.isSun ? [] : connectionsOf(o.id);
-  const drawing = window.CELESTIAL_ILLUSTRATIONS?.[o.id];
+  // A hand-made drawing for the example topics, else one Claude described
+  const drawing = window.CELESTIAL_ILLUSTRATIONS?.[o.id]
+    || (more.diagram && { svg: diagramSVG(more.diagram, topic.title), caption: more.diagram.caption });
   let body;
   if (more.loading) body = `<p class="about-text preview-text">${esc(more.preview || '')}</p><p class="researching"><span class="spinner"></span>${planReady
     ? 'Researching in depth on your plan…'
