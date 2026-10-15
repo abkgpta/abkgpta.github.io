@@ -1,6 +1,6 @@
 /* Celestial. Layout: one full-screen 3D space with thin instrument-style overlays at the edges.
    Back to front: shader backdrop, line art, lines and streams, orbs, interface.
-   Two themes (Tide, Dusk), each with a light and a dark mode. A theme only redefines the
+   Three themes (Tide, Dusk, Nebula), each with a light and a dark mode. A theme only redefines the
    tokens below; everything else is shared. The 3D canvas reads --3d-*, the backdrop --sh-*. */
 
 /* Tide · light: sea glass, teal and bottle green (also the fallback before the script runs) */
@@ -88,6 +88,28 @@
   --sh-base: #16111a; --sh-a: #2c1428; --sh-b: #1e1533;
   --art: #c79bd0; --art-opacity: 0.11; --art-blend: screen;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+  color-scheme: dark;
+}
+/* Nebula · light: pale starlit haze, rose and periwinkle */
+:root[data-theme="nebula-light"] {
+  --bg: #e7e6f1; --panel: #f4f3fa; --ink: #1b1a2b; --ink-soft: #5d5a75; --rule: #cfcce0;
+  --accent: #c0247a; --cause: #5b3fe0; --effect: #00809b;
+  --orb-line: #8e8aa6; --orb-fill: rgb(231 230 241 / 0.8);
+  --3d-line: #34314d; --3d-cause: #5b3fe0; --3d-effect: #0094b3;
+  --sh-base: #e7e6f1; --sh-a: #eed6ea; --sh-b: #d4ddf3;
+  --art: #2e2a55; --art-opacity: 0.16; --art-blend: multiply;
+  --shadow: 0 1px 2px rgb(30 25 60 / 0.08), 0 8px 24px rgb(30 25 60 / 0.08);
+  color-scheme: light;
+}
+/* Nebula · dark: deep space with magenta and blue gas clouds, a gold star at the centre */
+:root[data-theme="nebula-dark"] {
+  --bg: #0a0a17; --panel: #141325; --ink: #ecebf8; --ink-soft: #9d9ab8; --rule: #2c2a48;
+  --accent: #ffc857; --cause: #c3a6ff; --effect: #5ce1f5;
+  --orb-line: #5a5780; --orb-fill: rgb(10 10 23 / 0.78);
+  --3d-line: #cbc8e6; --3d-cause: #b394ff; --3d-effect: #3fd8f2;
+  --sh-base: #0a0a17; --sh-a: #2e1238; --sh-b: #0e1f42;
+  --art: #a9b4ff; --art-opacity: 0.12; --art-blend: screen;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 8px 24px rgb(0 0 0 / 0.4);
   color-scheme: dark;
 }
 
@@ -530,6 +552,7 @@ button, input { font: inherit; color: inherit; }
 /* Swatches always show their own theme, whatever theme is active */
 .theme-tide .swatch { background: linear-gradient(135deg, #cfe6e1 0 25%, #d6e5d3 25% 50%, #0f2d2a 50% 75%, #11251a 75%); }
 .theme-dusk .swatch { background: linear-gradient(135deg, #f2d8e5 0 25%, #e3d9f1 25% 50%, #2c1428 50% 75%, #1e1533 75%); }
+.theme-nebula .swatch { background: linear-gradient(135deg, #eed6ea 0 25%, #d4ddf3 25% 50%, #2e1238 50% 75%, #0e1f42 75%); }
 .view-foot { display: flex; justify-content: flex-end; padding: 10px 16px 14px; border-top: 1px solid var(--rule); }
 .view-reset {
   padding: 6px 12px;
