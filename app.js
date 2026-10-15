@@ -119,6 +119,7 @@ const VIEW_SETTINGS = [
   { key: 'theme', label: 'Theme', swatches: true, options: [
     ['tide', 'Tide', 'Teal and bottle green'],
     ['dusk', 'Dusk', 'Pink and purple'],
+    ['nebula', 'Nebula', 'Deep violet and magenta'],
   ] },
   { key: 'mode', label: 'Light or dark', options: [
     ['system', 'Match device'],
@@ -155,7 +156,7 @@ const VIEW_SETTINGS = [
 const STORE_KEY = 'celestial.view';
 let viewTab = 'Claude';
 const view = { ...VIEW_DEFAULTS, ...readStoredView() };
-if (!['tide', 'dusk'].includes(view.theme)) view.theme = VIEW_DEFAULTS.theme;
+if (!['tide', 'dusk', 'nebula'].includes(view.theme)) view.theme = VIEW_DEFAULTS.theme;
 function readStoredView() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
 }
@@ -1782,7 +1783,7 @@ function afterViewChange(s) {
 }
 
 // The page's colours come from data-theme on the root, e.g. "tide-dark"
-const OUR_THEMES = ['tide-light', 'tide-dark', 'dusk-light', 'dusk-dark'];
+const OUR_THEMES = ['tide-light', 'tide-dark', 'dusk-light', 'dusk-dark', 'nebula-light', 'nebula-dark'];
 function themeName() {
   const dark = view.mode === 'dark' || (view.mode === 'system' && darkDevice.matches);
   return `${view.theme}-${dark ? 'dark' : 'light'}`;
