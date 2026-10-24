@@ -106,3 +106,8 @@ const LAUNCHES = {
   ],
   source: { name: "Autocar India, upcoming bikes", url: "https://www.autocarindia.com/upcoming-bikes" }
 };
+
+const MUSIC = {
+  song: { title: "Never Come Back", artist: "Caribou", id: "0Ej6OBBtMvhjaJvtt1vtUt", why: "Warm, euphoric house from Caribou's 2020 album Suddenly, in the same lane as your recent Overmono, Bicep and Fred again.. plays." },
+  lately: ["Overmono", "Jamie xx", "Fred again..", "Bicep", "For Those I Love", "Conducta"]
+};
