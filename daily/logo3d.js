@@ -250,8 +250,9 @@
       yaw += (front + hx * 0.6 - yaw) * k;
       pitch += (-0.14 + hy * 0.45 - pitch) * k;
     } else {
-      if (!still) yaw += dt * 0.55;                  // about one turn every 11 seconds
-      pitch += (-0.14 + Math.sin(t / 3000) * 0.06 - pitch) * k;
+      // keeps turning, but lingers face-on and moves quickly through the edge-on angle
+      if (!still) yaw += dt * 0.45 * (0.45 + 1.4 * Math.abs(Math.sin(yaw)));
+      pitch += (-0.3 + Math.sin(t / 3000) * 0.06 - pitch) * k;  // tilted so the top fillet shows edge-on
     }
     gl.uniformMatrix3fv(uRot, false, rot(pitch, yaw));
     gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);

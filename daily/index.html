@@ -69,14 +69,14 @@
   .name { font-family: "Michroma", sans-serif; font-size: 28px; font-weight: 400; margin: 0; }
   .name span { color: var(--accent); }
   .tagline { font-family: "Michroma", sans-serif; font-size: 14px; color: var(--accent); margin: 10px 0 0; max-width: 720px; }
-  .tagline .by { color: var(--dim); font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+  .tagline .by { color: var(--dim); font-family: "IBM Plex Mono", monospace; font-size: 12px; white-space: nowrap; }
   .meta { text-align: right; font-size: 12px; color: var(--dim); }
   .meta .weather { color: var(--paper); margin-top: 4px; }
   .archive-note { color: var(--accent); }
   .search { grid-column: 1 / -1; display: flex; border: 1px solid var(--rule); }
   .search input { flex: 1; background: transparent; border: 0; color: var(--paper); font: inherit; padding: 10px 12px; outline: none; }
   .search input::placeholder { color: var(--dim); }
-  .search button { background: var(--accent); color: var(--black); border: 0; font: inherit; padding: 0 16px; cursor: pointer; }
+  .search button { background: var(--accent); color: #000000; border: 0; font: inherit; padding: 0 16px; cursor: pointer; }
 
   /* Layout */
   .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 32px 0 16px; }
@@ -88,10 +88,10 @@
   }
 
   h2 { font-family: "Michroma", sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
-  h2 .sub { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: none; margin-left: 8px; }
+  h2 .sub { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.04em; text-transform: none; margin-left: 8px; }
   .block { margin-bottom: 36px; }
-  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; }
-  .src { font-size: 11px; color: var(--dim); }
+  .label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; }
+  .src { font-size: 12px; color: var(--dim); }
   .src a { color: var(--dim); }
 
   /* Now */
@@ -99,7 +99,7 @@
   .now-item:last-child { border-bottom: 0; }
   .now-name { font-family: "Michroma", sans-serif; font-size: 12px; }
   .now-note { font-size: 13px; }
-  .now-date { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent); margin-top: 2px; }
+  .now-date { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); margin-top: 2px; }
   .hdr-updated { color: var(--accent); margin-top: 2px; }
   .week-link { display: inline-block; margin-top: 6px; color: var(--paper); font-size: 12px; text-decoration: none; border-bottom: 1px solid var(--accent); }
   .week-link:hover { color: var(--accent); }
@@ -113,7 +113,7 @@
   .story-title:hover { color: var(--accent); }
   .why { font-size: 12px; color: var(--dim); margin: 0 0 6px; }
   .story-foot { display: flex; gap: 12px; align-items: center; }
-  .save { background: none; border: 1px solid var(--rule); color: var(--dim); font: inherit; font-size: 11px; padding: 1px 8px; cursor: pointer; }
+  .save { background: none; border: 1px solid var(--rule); color: var(--dim); font: inherit; font-size: 12px; padding: 5px 12px; min-height: 32px; cursor: pointer; }
   .save:hover, .save.on { border-color: var(--accent); color: var(--accent); }
   .story.noimg { grid-template-columns: 1fr; }
   @media (max-width: 520px) {
@@ -129,7 +129,7 @@
   .day:first-child { margin-top: 0; }
   .stat { display: flex; gap: 24px; margin-bottom: 8px; }
   .stat div { font-family: "Michroma", sans-serif; font-size: 20px; }
-  .stat small { display: block; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--dim); }
+  .stat small { display: block; font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--dim); }
   .empty { color: var(--dim); font-size: 13px; }
   .player { width: 100%; height: 152px; border: 0; border-radius: 12px; display: block; margin: 2px 0 8px; background: var(--well); }
   .lately { font-size: 12px; color: var(--dim); margin-top: 10px; }
@@ -141,7 +141,7 @@
 
   /* Tables */
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th { text-align: left; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); padding: 0 8px 8px 0; border-bottom: 1px solid var(--rule); }
+  th { text-align: left; font-weight: 400; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); padding: 0 8px 8px 0; border-bottom: 1px solid var(--rule); }
   td { padding: 8px 8px 8px 0; border-bottom: 1px dashed var(--rule); vertical-align: top; }
   td.num { color: var(--accent); white-space: nowrap; }
 
@@ -151,19 +151,55 @@
   .past { margin-top: 12px; font-size: 12px; color: var(--dim); }
   .diagram { width: 100%; height: auto; display: block; margin: 4px 0 16px; }
   .design-img { width: 100%; height: 280px; object-fit: cover; display: block; margin: 4px 0 6px; background: var(--well); }
-  .credit { font-size: 10px; color: var(--dim); margin-bottom: 14px; }
+  .credit { font-size: 12px; color: var(--dim); margin-bottom: 14px; }
   .credit a { color: var(--dim); }
 
-  footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 11px; color: var(--dim); }
+  footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 12px; color: var(--dim); }
   footer a { color: var(--dim); margin-right: 10px; }
   .lockbar { margin-top: 10px; }
-  .linkish { background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 11px; text-decoration: underline; cursor: pointer; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
   .linkish:hover { color: var(--accent); }
   .unlock { display: inline-flex; gap: 8px; margin-left: 12px; align-items: center; flex-wrap: wrap; }
   .unlock input { background: transparent; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 8px; }
-  .unlock button { background: var(--accent); color: var(--black); border: 0; font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer; }
+  .unlock button { background: var(--accent); color: #000000; border: 0; font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer; }
   .lockmsg { color: var(--accent); }
   footer a:hover { color: var(--accent); }
+
+  /* ---- Audit fixes ---- */
+  /* Visible keyboard focus */
+  :focus-visible { outline: 2px solid #fb0068; outline-offset: 2px; }
+  .search:focus-within { outline: 2px solid #fb0068; outline-offset: 2px; }
+
+  /* Light mode: small magenta text sits in a black enclosure (magenta on black passes contrast) */
+  :root[data-theme="light"] .tagline { display: inline-block; background: #000000; padding: 4px 10px; }
+  :root[data-theme="light"] .tagline .by { color: rgba(247, 242, 239, 0.75); }
+  :root[data-theme="light"] :is(.hdr-updated, .now-date, .label, .archive-note, .lockmsg) { display: inline-block; background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] .now-date { display: table; margin-top: 4px; }
+  :root[data-theme="light"] h2 .sub { background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] td.num span { background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] .save.on { background: #000000; color: #fb0068; border-color: #000000; }
+
+  /* Bigger tap areas on touch screens without moving the layout */
+  @media (pointer: coarse) {
+    .save { min-height: 44px; padding: 8px 14px; }
+    .src a, .credit a, footer a, .linkish, .lately a, .now-name a, .week-link, .saved-item a { display: inline-block; padding: 12px 4px; margin: -12px -4px; }
+    .saved-item button { min-width: 44px; min-height: 44px; }
+  }
+
+  /* Phones: projects stack, tables tighten, Listening and Running come first */
+  @media (max-width: 600px) {
+    .now-item { grid-template-columns: 1fr; gap: 4px; }
+    .now-name { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    .ftable th:nth-child(4), .ftable td:nth-child(4) { display: none; }
+    .ftable td:nth-child(3), td.num { white-space: nowrap; }
+  }
+  @media (max-width: 860px) {
+    .layout { gap: 0; }
+    .layout > main, .layout > aside { display: contents; }
+    #musicBlock { order: 1; } #stravaBlock { order: 2; } #nowBlock { order: 3; } #newsBlock { order: 4; margin-bottom: 36px; }
+    #calendarBlock { order: 5; } #racingBlock { order: 6; } #savedBlock { order: 7; }
+  }
 </style>
 </head>
 <body>
@@ -217,7 +253,7 @@
         <h2>Racing</h2>
         <div id="racing"></div>
       </section>
-      <section class="block">
+      <section class="block" id="savedBlock">
         <h2>Reading list<span class="sub">saved in this browser</span></h2>
         <div id="saved"></div>
       </section>
@@ -244,7 +280,7 @@
   </div>
 
   <footer>
-    <div>Headlines link to their sources. Updated <span id="updated"></span>.</div>
+    <div>Headlines link to their sources.</div>
     <div id="archive" style="margin-top:8px"></div>
     <div id="lockbar" class="lockbar"></div>
   </footer>
@@ -358,45 +394,49 @@
   function diagram(d) {
     if (!d || typeof d !== "object") return null;
     const light = document.documentElement.getAttribute("data-theme") === "light";
-    const paper = light ? "#000000" : "#f7f2ef", accent = "#fb0068", dim = light ? "rgba(0,0,0,0.35)" : "rgba(247,242,239,0.35)";
+    const paper = light ? "#000000" : "#f7f2ef", accent = "#fb0068", dim = light ? "rgba(0,0,0,0.6)" : "rgba(247,242,239,0.6)";
+    const hlFill = light ? "#000000" : "rgba(251,0,104,0.16)";
     const font = "IBM Plex Mono, ui-monospace, monospace";
     let svg, W = 560;
     if (d.type === "layers" && Array.isArray(d.panels) && d.panels.length) {
-      const panels = d.panels.slice(0, 3), gap = 24, pw = (W - gap * (panels.length - 1)) / panels.length;
-      const rows = Math.max(...panels.map(p => (p.layers || []).length)), lh = 34, top = 30;
-      const H = top + rows * (lh + 6) + (d.caption ? 24 : 4);
+      const narrow = window.innerWidth < 600, panels = d.panels.slice(0, 3);
+      const cols = narrow ? 1 : panels.length, gap = 24, pw = (W - gap * (cols - 1)) / cols;
+      const fs = narrow ? 20 : 13, lh = narrow ? 44 : 34, th = narrow ? 34 : 26;
+      const rows = Math.max(...panels.map(p => (p.layers || []).slice(0, 8).length));
+      const panelH = th + rows * (lh + 6) + 10;
+      const H = Math.ceil(panels.length / cols) * panelH + (d.caption ? 28 : 4);
       svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "diagram", role: "img", "aria-label": d.caption || "Diagram" });
       panels.forEach((p, i) => {
-        const x = i * (pw + gap);
-        svg.appendChild(s("text", { x, y: 16, fill: paper, "font-family": "Michroma, sans-serif", "font-size": 11 }, fitText(p.title || "", 34)));
+        const x = (i % cols) * (pw + gap), y0 = Math.floor(i / cols) * panelH;
+        svg.appendChild(s("text", { x, y: y0 + fs + 2, fill: paper, "font-family": "Michroma, sans-serif", "font-size": fs }, fitText(p.title || "", Math.floor(pw / (fs * 0.8)))));
         (p.layers || []).slice(0, 8).forEach((l, j) => {
-          const y = top + j * (lh + 6);
-          svg.appendChild(s("rect", { x, y, width: pw, height: lh, fill: l.hl ? "rgba(251,0,104,0.16)" : "none", stroke: l.hl ? accent : dim, "stroke-width": 1 }));
-          svg.appendChild(s("text", { x: x + 10, y: y + lh / 2 + 4, fill: l.hl ? accent : paper, "font-family": font, "font-size": 11 }, fitText(l.label, Math.floor(pw / 7))));
+          const y = y0 + th + j * (lh + 6);
+          svg.appendChild(s("rect", { x, y, width: pw, height: lh, fill: l.hl ? hlFill : "none", stroke: l.hl ? accent : dim, "stroke-width": 1 }));
+          svg.appendChild(s("text", { x: x + 10, y: y + lh / 2 + fs * 0.35, fill: l.hl ? accent : paper, "font-family": font, "font-size": fs }, fitText(l.label, Math.floor((pw - 20) / (fs * 0.62)))));
         });
       });
-      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": 10 }, fitText(d.caption, 90)));
+      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 6, fill: dim, "font-family": font, "font-size": fs }, fitText(d.caption, Math.floor(W / (fs * 0.62)))));
     } else if (d.type === "flow" && Array.isArray(d.steps) && d.steps.length) {
       // step: { label: short title, note: one short line, hl: highlight }
       const steps = d.steps.slice(0, 8), narrow = window.innerWidth < 600;
       const perRow = Math.min(narrow ? 2 : 4, steps.length), gap = 26;
-      const bw = (W - gap * (perRow - 1)) / perRow, bh = narrow ? 96 : 106, rowsN = Math.ceil(steps.length / perRow);
-      const fs = narrow ? 15 : 11, ts = narrow ? 20 : 15, lineH = fs + 4, max = Math.floor((bw - 16) / (fs * 0.62));
-      const H = rowsN * (bh + 18) + (d.caption ? 22 : 0);
+      const bw = (W - gap * (perRow - 1)) / perRow, bh = narrow ? 122 : 112, rowsN = Math.ceil(steps.length / perRow);
+      const fs = narrow ? 20 : 13, ts = narrow ? 26 : 17, lineH = fs + 4, max = Math.floor((bw - 16) / (fs * 0.62));
+      const H = rowsN * (bh + 18) + (d.caption ? (narrow ? 30 : 24) : 0);
       svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "diagram", role: "img", "aria-label": d.caption || "Diagram" });
       steps.forEach((st, i) => {
         const r = Math.floor(i / perRow), c = i % perRow, x = c * (bw + gap), y = r * (bh + 18);
-        svg.appendChild(s("rect", { x, y, width: bw, height: bh, fill: st.hl ? "rgba(251,0,104,0.16)" : "none", stroke: st.hl ? accent : dim }));
+        svg.appendChild(s("rect", { x, y, width: bw, height: bh, fill: st.hl ? hlFill : "none", stroke: st.hl ? accent : dim }));
         svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? accent : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
         const words = String(st.note || "").split(/\s+/).filter(Boolean), lines = [""];
         words.forEach(w => { const t = (lines[lines.length - 1] + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
-        lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
+        lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: (st.hl && light) ? "#f7f2ef" : paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
         if (i < steps.length - 1 && c < perRow - 1) {
           const ax = x + bw + 4, ay = y + bh / 2;
           svg.appendChild(s("path", { d: `M${ax} ${ay} H${ax + gap - 8} M${ax + gap - 13} ${ay - 5} L${ax + gap - 8} ${ay} L${ax + gap - 13} ${ay + 5}`, stroke: accent, fill: "none" }));
         }
       });
-      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": narrow ? 12 : 10 }, fitText(d.caption, narrow ? 72 : 90)));
+      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": narrow ? 20 : 13 }, fitText(d.caption, narrow ? 44 : 68)));
     } else return null;
     return svg;
   }
@@ -404,7 +444,6 @@
   // ---- Render everything from the data file ----
   function render(isArchive, day) {
     $("today").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-    $("updated").textContent = get("UPDATED") || "";
     if (get("UPDATED")) $("hdrUpdated").textContent = "Last updated " + get("UPDATED");
     if (isArchive) { const n = $("archiveNote"); n.hidden = false; n.replaceChildren("Archive: " + day + " · ", el("a", { href: "./" }, "back to today")); }
 
@@ -429,8 +468,17 @@
       }))));
 
     const CAL = get("CALENDAR");
-    if (CAL) show("calendar", CAL.length ? CAL.flatMap(d => [el("div", { class: "day" }, d.day),
-      ...d.items.map(i => el("div", { class: "row" }, el("div", { class: "k" }, i.time), el("div", {}, i.title)))]) : [el("p", { class: "empty" }, "Nothing scheduled.")]);
+    if (CAL) {
+      const days = CAL.slice(0, window.innerWidth < 600 ? 3 : 5);
+      const key = i => i.time + "|" + i.title;
+      const daily = days.length > 1 ? days[0].items.filter(i => days.every(d => d.items.some(j => key(j) === key(i)))) : [];
+      const dk = new Set(daily.map(key));
+      const row = i => el("div", { class: "row" }, el("div", { class: "k" }, i.time), el("div", {}, i.title));
+      const out = [];
+      if (daily.length) out.push(el("div", { class: "day" }, "Every day"), ...daily.map(row));
+      days.forEach(d => { const rest = d.items.filter(i => !dk.has(key(i))); if (rest.length) out.push(el("div", { class: "day" }, d.day), ...rest.map(row)); });
+      show("calendar", out.length ? out : [el("p", { class: "empty" }, "Nothing scheduled.")]);
+    }
 
     const R = get("RACING");
     if (R) show("racing", [
@@ -463,14 +511,14 @@
     const F = get("FUNDING");
     if (F) show("funding", [
       F.summary ? el("p", { class: "body" }, F.summary) : null,
-      el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Company"), el("th", {}, "Amount"), el("th", {}, "Stage"), el("th", {}, "Sector"))),
-        el("tbody", {}, ...F.rounds.map(r => el("tr", {}, el("td", {}, r.company), el("td", { class: "num" }, r.amount), el("td", {}, r.stage || "—"), el("td", {}, r.sector || "—"))))),
+      el("table", { class: "ftable" }, el("thead", {}, el("tr", {}, el("th", {}, "Company"), el("th", {}, "Amount"), el("th", {}, "Stage"), el("th", {}, "Sector"))),
+        el("tbody", {}, ...F.rounds.map(r => el("tr", {}, el("td", {}, r.company), el("td", { class: "num" }, el("span", {}, r.amount)), el("td", {}, r.stage || "—"), el("td", {}, r.sector || "—"))))),
       srcLine(F.source)].filter(Boolean));
 
     const LA = get("LAUNCHES");
     if (LA) show("launches", [
       el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Model"), el("th", {}, "Expected"), el("th", {}, "Price (est.)"))),
-        el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, r.when), el("td", {}, r.price || "—"))))),
+        el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, el("span", {}, r.when)), el("td", {}, r.price || "—"))))),
       srcLine(LA.source)].filter(Boolean));
 
     renderSaved(); syncSaveButtons(); loadWeather();
