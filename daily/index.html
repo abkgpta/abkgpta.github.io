@@ -248,13 +248,13 @@
   .jump a span { color: var(--accent); font-family: "Michroma", sans-serif; }
   .jump a:hover { border-color: var(--accent); }
   @media (pointer: coarse) { .jump a { min-height: 44px; } }
-  .zone { margin-top: 72px; scroll-margin-top: 16px; }
+  .zone { margin-top: 64px; scroll-margin-top: 16px; }
   .zone:first-of-type, .jump + .zone { margin-top: 32px; }
-  .zone-band { display: grid; grid-template-columns: 96px 1fr auto; background: var(--inv-bg); color: var(--inv-fg); margin-bottom: 28px; }
-  .zone-band > * { padding: 14px 18px; display: flex; align-items: center; min-width: 0; }
-  .zone-band .zn { font-family: "Michroma", sans-serif; font-size: 30px; color: var(--accent); border-right: 1px solid var(--accent); justify-content: center; }
-  .zone-band .zt { font-family: "Michroma", sans-serif; font-size: 26px; letter-spacing: 0.02em; text-transform: uppercase; }
-  .zone-band .zs { font-size: 12px; color: var(--inv-dim); }
+  .zone-band { display: grid; grid-template-columns: 48px 1fr auto; border-top: 1px solid var(--paper); margin-bottom: 22px; }
+  .zone-band > * { padding: 10px 14px 0 0; display: flex; align-items: baseline; min-width: 0; }
+  .zone-band .zn { font-family: "Michroma", sans-serif; font-size: 13px; color: var(--accent); }
+  .zone-band .zt { font-family: "Michroma", sans-serif; font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .zone-band .zs { font-size: 12px; color: var(--dim); padding-right: 0; }
   .zgrid { display: grid; gap: 40px; }
   .zgrid > * { min-width: 0; }
   .zgrid.c2 { grid-template-columns: 2fr 1fr; }
@@ -286,8 +286,8 @@
   }
   @media (max-width: 600px) {
     .zone { margin-top: 56px; }
-    .zone-band { grid-template-columns: 64px 1fr; }
-    .zone-band .zn { font-size: 22px; } .zone-band .zt { font-size: 18px; } .zone-band .zs { display: none; }
+    .zone-band { grid-template-columns: 40px 1fr; }
+    .zone-band .zs { display: none; }
     .learn-lead .term { font-size: 22px; }
     .story.lead .story-title { font-size: 18px; }
     .jump { display: grid; grid-template-columns: 1fr 1fr; }
