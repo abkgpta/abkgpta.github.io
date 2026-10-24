@@ -13,110 +13,97 @@
     --paper: #f7f2ef;
     --accent: #fb0068;
     --rule: rgba(247, 242, 239, 0.22);
+    --dim: rgba(247, 242, 239, 0.6);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
-  body {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 14px;
-    line-height: 1.55;
-  }
-  .display { font-family: "Michroma", sans-serif; font-weight: 400; letter-spacing: 0.01em; }
-  .wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px;
-  }
-  header {
-    border-bottom: 1px solid var(--rule);
-    padding: 40px 0 28px;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 16px;
-    align-items: end;
-  }
-  .name { font-family: "Michroma", sans-serif; font-size: 28px; margin: 0; }
+  body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
+  a { color: inherit; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  [hidden] { display: none !important; }
+
+  /* Header */
+  header { border-bottom: 1px solid var(--rule); padding: 40px 0 24px; display: grid; grid-template-columns: 1fr auto; gap: 16px 32px; align-items: end; }
+  .name { font-family: "Michroma", sans-serif; font-size: 28px; font-weight: 400; margin: 0; }
   .name span { color: var(--accent); }
-  .tagline { font-family: "Michroma", sans-serif; font-size: 14px; color: var(--accent); margin: 8px 0 0; }
-  .date { font-size: 12px; opacity: 0.7; text-align: right; }
+  .tagline { font-family: "Michroma", sans-serif; font-size: 14px; color: var(--accent); margin: 10px 0 0; max-width: 720px; }
+  .tagline .by { color: var(--dim); font-family: "IBM Plex Mono", monospace; font-size: 12px; }
+  .meta { text-align: right; font-size: 12px; color: var(--dim); }
+  .meta .weather { color: var(--paper); margin-top: 4px; }
+  .archive-note { color: var(--accent); }
+  .search { grid-column: 1 / -1; display: flex; border: 1px solid var(--rule); }
+  .search input { flex: 1; background: transparent; border: 0; color: var(--paper); font: inherit; padding: 10px 12px; outline: none; }
+  .search input::placeholder { color: var(--dim); }
+  .search button { background: var(--accent); color: var(--black); border: 0; font: inherit; padding: 0 16px; cursor: pointer; }
 
-  .layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 40px;
-    padding: 32px 0 64px;
-  }
-  @media (max-width: 800px) {
-    .layout { grid-template-columns: 1fr; }
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 32px 0 16px; }
+  .full { padding: 16px 0 32px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+  @media (max-width: 860px) {
+    .layout, .full { grid-template-columns: 1fr; }
     header { grid-template-columns: 1fr; }
-    .date { text-align: left; }
+    .meta { text-align: left; }
   }
 
-  h2 {
-    font-family: "Michroma", sans-serif;
-    font-size: 14px;
-    font-weight: 400;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin: 0 0 16px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid var(--rule);
-    color: var(--paper);
-  }
-  h2 .count { color: var(--accent); margin-left: 8px; }
+  h2 { font-family: "Michroma", sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  h2 .sub { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: none; margin-left: 8px; }
+  .block { margin-bottom: 36px; }
+  .label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; }
+  .src { font-size: 11px; color: var(--dim); }
+  .src a { color: var(--dim); }
 
+  /* Now */
+  .now-item { display: grid; grid-template-columns: 130px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--rule); }
+  .now-item:last-child { border-bottom: 0; }
+  .now-name { font-family: "Michroma", sans-serif; font-size: 12px; }
+  .now-note { font-size: 13px; }
+
+  /* News */
   .topic { margin-bottom: 32px; }
-  .topic-label {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent);
-    margin-bottom: 8px;
-  }
-  .story {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    gap: 16px;
-    padding: 12px 0;
-    border-bottom: 1px dashed var(--rule);
-    color: var(--paper);
-    text-decoration: none;
-  }
+  .story { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
   .story:last-child { border-bottom: 0; }
-  .story:hover .story-title { color: var(--accent); }
-  .story-img {
-    width: 160px;
-    height: 100px;
-    object-fit: cover;
-    display: block;
-    background: #111;
-  }
+  .story-img { width: 160px; height: 100px; object-fit: cover; display: block; background: #111; }
+  .story-title { font-size: 14px; margin: 0 0 4px; text-decoration: none; display: block; }
+  .story-title:hover { color: var(--accent); }
+  .why { font-size: 12px; color: var(--dim); margin: 0 0 6px; }
+  .story-foot { display: flex; gap: 12px; align-items: center; }
+  .save { background: none; border: 1px solid var(--rule); color: var(--dim); font: inherit; font-size: 11px; padding: 1px 8px; cursor: pointer; }
+  .save:hover, .save.on { border-color: var(--accent); color: var(--accent); }
+  .story.noimg { grid-template-columns: 1fr; }
   @media (max-width: 520px) {
     .story { grid-template-columns: 1fr; }
     .story-img { width: 100%; height: 180px; }
   }
-  .story-title { font-size: 14px; margin: 0 0 2px; }
-  .source { font-size: 11px; opacity: 0.6; }
 
-  .cal-item {
-    display: grid;
-    grid-template-columns: 90px 1fr;
-    gap: 12px;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--rule);
-  }
-  .cal-time { color: var(--accent); font-size: 12px; }
-  .cal-title { font-size: 13px; }
-  .cal-day { font-family: "Michroma", sans-serif; font-size: 12px; margin: 18px 0 6px; opacity: 0.9; }
-  .cal-day:first-child { margin-top: 0; }
-  .empty { opacity: 0.6; font-size: 13px; }
+  /* Aside lists */
+  .row { display: grid; grid-template-columns: 90px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; }
+  .row:last-child { border-bottom: 0; }
+  .row .k { color: var(--accent); font-size: 12px; }
+  .day { font-family: "Michroma", sans-serif; font-size: 12px; margin: 16px 0 4px; }
+  .day:first-child { margin-top: 0; }
+  .stat { display: flex; gap: 24px; margin-bottom: 8px; }
+  .stat div { font-family: "Michroma", sans-serif; font-size: 20px; }
+  .stat small { display: block; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--dim); }
+  .empty { color: var(--dim); font-size: 13px; }
+  .saved-item { padding: 6px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
+  .saved-item a { text-decoration: none; }
+  .saved-item a:hover { color: var(--accent); }
+  .saved-item button { background: none; border: 0; color: var(--dim); cursor: pointer; font: inherit; }
 
-  footer {
-    border-top: 1px solid var(--rule);
-    padding: 20px 0 40px;
-    font-size: 11px;
-    opacity: 0.6;
-  }
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; font-weight: 400; font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dim); padding: 0 8px 8px 0; border-bottom: 1px solid var(--rule); }
+  td { padding: 8px 8px 8px 0; border-bottom: 1px dashed var(--rule); vertical-align: top; }
+  td.num { color: var(--accent); white-space: nowrap; }
+
+  /* Learn & design */
+  .term { font-family: "Michroma", sans-serif; font-size: 18px; margin: 0 0 8px; }
+  .body { font-size: 13px; margin: 0 0 8px; }
+  .past { margin-top: 12px; font-size: 12px; color: var(--dim); }
+
+  footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 11px; color: var(--dim); }
+  footer a { color: var(--dim); margin-right: 10px; }
+  footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
@@ -126,62 +113,211 @@
       <h1 class="name">ABHIK<span>GUPTA</span></h1>
       <p class="tagline" id="quote"></p>
     </div>
-    <div class="date" id="today"></div>
+    <div class="meta">
+      <div id="today"></div>
+      <div class="weather" id="weather"></div>
+      <div class="archive-note" id="archiveNote" hidden></div>
+    </div>
+    <form class="search" action="https://www.google.com/search" method="get" role="search">
+      <input name="q" placeholder="Search the web" aria-label="Search the web" autocomplete="off">
+      <button type="submit">Go</button>
+    </form>
   </header>
 
   <div class="layout">
     <main>
-      <div id="news"></div>
+      <section class="block" id="nowBlock" hidden>
+        <h2>Now<span class="sub">what I'm working on</span></h2>
+        <div id="now"></div>
+      </section>
+      <section id="newsBlock">
+        <h2>News<span class="sub">for my interests</span></h2>
+        <div id="news"></div>
+      </section>
     </main>
     <aside>
-      <h2>Calendar</h2>
-      <div id="calendar"></div>
+      <section class="block">
+        <h2>Calendar</h2>
+        <div id="calendar"></div>
+      </section>
+      <section class="block" id="racingBlock" hidden>
+        <h2>Racing</h2>
+        <div id="racing"></div>
+      </section>
+      <section class="block" id="stravaBlock" hidden>
+        <h2>Running</h2>
+        <div id="strava"></div>
+      </section>
+      <section class="block">
+        <h2>Reading list<span class="sub">saved in this browser</span></h2>
+        <div id="saved"></div>
+      </section>
     </aside>
   </div>
 
+  <div class="full">
+    <section class="block" id="learnBlock" hidden>
+      <h2>Learn today</h2>
+      <div id="learn"></div>
+    </section>
+    <section class="block" id="designBlock" hidden>
+      <h2>Design pick</h2>
+      <div id="design"></div>
+    </section>
+    <section class="block" id="fundingBlock" hidden>
+      <h2>Funding this week</h2>
+      <div id="funding"></div>
+    </section>
+    <section class="block" id="launchesBlock" hidden>
+      <h2>Upcoming launches</h2>
+      <div id="launches"></div>
+    </section>
+  </div>
+
   <footer>
-    Headlines are linked to their source. Updated <span id="updated"></span>.
+    <div>Headlines link to their sources. Updated <span id="updated"></span>.</div>
+    <div id="archive" style="margin-top:8px"></div>
   </footer>
 </div>
 
-<script src="data.js"></script>
 <script>
-  // ---- Render ----
-  document.getElementById("updated").textContent = UPDATED;
-  (function () {
-    const q = document.getElementById("quote");
-    q.textContent = "\u201C" + QUOTE.text + "\u201D ";
-    const a = document.createElement("span");
-    a.style.cssText = "color:var(--paper);opacity:0.6;font-family:'IBM Plex Mono',monospace;font-size:12px";
-    a.textContent = "\u2014 " + QUOTE.author;
-    q.appendChild(a);
-  })();
-  const esc = s => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+(function () {
+  const $ = id => document.getElementById(id);
+  const has = name => { try { return typeof eval(name) !== "undefined"; } catch (e) { return false; } };
+  const get = name => has(name) ? eval(name) : undefined;
 
-  document.getElementById("today").textContent = new Date().toLocaleDateString("en-IN", {
-    weekday: "long", day: "numeric", month: "long", year: "numeric"
+  // Small DOM helper: el("div", {class: "x"}, child, "text", ...)
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") n.className = v;
+      else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) {
+      if (kid == null || kid === false) continue;
+      n.appendChild(typeof kid === "string" || typeof kid === "number" ? document.createTextNode(String(kid)) : kid);
+    }
+    return n;
+  }
+  const safeUrl = u => (typeof u === "string" && /^https:\/\//i.test(u)) ? u : null;
+  const link = (u, text, cls) => safeUrl(u) ? el("a", { href: u, target: "_blank", rel: "noopener", class: cls }, text) : el("span", { class: cls }, text);
+  const show = (id, nodes) => { const box = $(id); box.replaceChildren(...[].concat(nodes)); const b = $(id + "Block"); if (b) b.hidden = false; };
+  const srcLine = s => s && s.name ? el("div", { class: "src" }, "Source: ", link(s.url, s.name)) : null;
+
+  // ---- Reading list (per browser) ----
+  const KEY = "abhik-daily-saved";
+  const readSaved = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } };
+  const writeSaved = list => { try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {} };
+  function renderSaved() {
+    const list = readSaved();
+    $("saved").replaceChildren(...(list.length ? list.map((s, i) => el("div", { class: "saved-item" },
+      link(s.url, s.title),
+      el("button", { title: "Remove", "aria-label": "Remove", onclick: () => { const l = readSaved(); l.splice(i, 1); writeSaved(l); renderSaved(); syncSaveButtons(); } }, "×")
+    )) : [el("p", { class: "empty" }, "Tap “save” on any story to keep it here.")]));
+  }
+  function syncSaveButtons() {
+    const urls = new Set(readSaved().map(s => s.url));
+    document.querySelectorAll(".save").forEach(b => { const on = urls.has(b.dataset.url); b.classList.toggle("on", on); b.textContent = on ? "saved" : "save"; });
+  }
+  function toggleSave(story) {
+    const l = readSaved(); const i = l.findIndex(s => s.url === story.url);
+    if (i >= 0) l.splice(i, 1); else l.unshift({ title: story.title, url: story.url, source: story.source });
+    writeSaved(l.slice(0, 100)); renderSaved(); syncSaveButtons();
+  }
+
+  // ---- Weather (live, from Open-Meteo) ----
+  const WMO = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Cloudy", 45: "Fog", 48: "Fog", 51: "Drizzle", 53: "Drizzle", 55: "Drizzle", 61: "Rain", 63: "Rain", 65: "Heavy rain", 80: "Showers", 81: "Showers", 82: "Heavy showers", 95: "Thunderstorm", 96: "Thunderstorm", 99: "Thunderstorm" };
+  function loadWeather() {
+    const w = get("WEATHER_PLACE") || { name: "Ahmedabad", lat: 23.02, lon: 72.57 };
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${w.lat}&longitude=${w.lon}&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max&timezone=Asia%2FKolkata&forecast_days=1`;
+    fetch(url).then(r => r.ok ? r.json() : Promise.reject()).then(d => {
+      const now = Math.round(d.current.temperature_2m), hi = Math.round(d.daily.temperature_2m_max[0]), lo = Math.round(d.daily.temperature_2m_min[0]);
+      const sky = WMO[d.daily.weather_code[0]] || "", rain = d.daily.precipitation_probability_max[0];
+      $("weather").textContent = `${w.name} ${now}° · ${sky} · ${hi}°/${lo}°` + (rain >= 30 ? ` · ${rain}% rain` : "");
+    }).catch(() => { $("weather").textContent = ""; });
+  }
+
+  // ---- Render everything from the data file ----
+  function render(isArchive, day) {
+    $("today").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+    $("updated").textContent = get("UPDATED") || "";
+    if (isArchive) { const n = $("archiveNote"); n.hidden = false; n.replaceChildren("Archive: " + day + " · ", el("a", { href: "./" }, "back to today")); }
+
+    const Q = get("QUOTE");
+    if (Q) $("quote").replaceChildren("“" + Q.text + "” ", el("span", { class: "by" }, "— " + Q.author));
+
+    const NOW = get("NOW");
+    if (NOW && NOW.length) show("now", NOW.map(p => el("div", { class: "now-item" },
+      el("div", { class: "now-name" }, p.url ? link(p.url, p.name) : p.name), el("div", { class: "now-note" }, p.note))));
+
+    const NEWS = get("NEWS") || [];
+    $("news").replaceChildren(...NEWS.map(t => el("section", { class: "topic" },
+      el("div", { class: "label" }, t.topic),
+      ...t.stories.map(s => {
+        const img = safeUrl(s.img) ? el("img", { class: "story-img", src: s.img, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: e => { e.target.closest(".story").classList.add("noimg"); e.target.remove(); } }) : null;
+        return el("div", { class: "story" + (img ? "" : " noimg") }, img,
+          el("div", {},
+            link(s.url, s.title, "story-title"),
+            s.why ? el("p", { class: "why" }, s.why) : null,
+            el("div", { class: "story-foot" }, el("span", { class: "src" }, s.source),
+              el("button", { class: "save", "data-url": s.url, onclick: () => toggleSave(s) }, "save"))));
+      }))));
+
+    const CAL = get("CALENDAR") || [];
+    $("calendar").replaceChildren(...(CAL.length ? CAL.flatMap(d => [el("div", { class: "day" }, d.day),
+      ...d.items.map(i => el("div", { class: "row" }, el("div", { class: "k" }, i.time), el("div", {}, i.title)))]) : [el("p", { class: "empty" }, "Nothing scheduled.")]));
+
+    const R = get("RACING");
+    if (R) show("racing", [
+      ...(R.items || []).map(i => el("div", { class: "row" }, el("div", { class: "k" }, i.when), el("div", {}, i.what))),
+      R.note ? el("p", { class: "src" }, R.note) : null, srcLine(R.source)].filter(Boolean));
+
+    const S = get("STRAVA");
+    if (S) show("strava", [
+      el("div", { class: "stat" }, el("div", {}, S.runs, el("small", {}, "runs, " + S.period)), el("div", {}, S.km, el("small", {}, "km, " + S.period))),
+      S.latest ? el("div", { class: "row" }, el("div", { class: "k" }, S.latest.date), el("div", {}, `${S.latest.km} km · ${S.latest.pace}/km`)) : null].filter(Boolean));
+
+    const L = get("LEARN");
+    if (L) show("learn", [el("p", { class: "term" }, L.term), el("p", { class: "body" }, L.body), srcLine(L.source),
+      (L.past && L.past.length) ? el("div", { class: "past" }, "Earlier: " + L.past.join(" · ")) : null].filter(Boolean));
+
+    const D = get("DESIGN");
+    if (D) show("design", [el("p", { class: "term" }, D.name), el("div", { class: "label" }, [D.designer, D.year].filter(Boolean).join(", ")),
+      el("p", { class: "body" }, D.why), srcLine(D.source)].filter(Boolean));
+
+    const F = get("FUNDING");
+    if (F) show("funding", [
+      F.summary ? el("p", { class: "body" }, F.summary) : null,
+      el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Company"), el("th", {}, "Amount"), el("th", {}, "Stage"), el("th", {}, "Sector"))),
+        el("tbody", {}, ...F.rounds.map(r => el("tr", {}, el("td", {}, r.company), el("td", { class: "num" }, r.amount), el("td", {}, r.stage || "—"), el("td", {}, r.sector || "—"))))),
+      srcLine(F.source)].filter(Boolean));
+
+    const LA = get("LAUNCHES");
+    if (LA) show("launches", [
+      el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Model"), el("th", {}, "Expected"), el("th", {}, "Price (est.)"))),
+        el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, r.when), el("td", {}, r.price || "—"))))),
+      srcLine(LA.source)].filter(Boolean));
+
+    renderSaved(); syncSaveButtons(); loadWeather();
+  }
+
+  // ---- Archive list ----
+  function renderArchive() {
+    const dates = (get("ARCHIVE_DATES") || []).slice(0, 14);
+    if (!dates.length) return;
+    $("archive").replaceChildren("Past days: ", ...dates.map(d => el("a", { href: "?d=" + d }, d)));
+  }
+
+  function load(src, cb) { const s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
+  const day = new URLSearchParams(location.search).get("d");
+  const isArchive = !!(day && /^\d{4}-\d{2}-\d{2}$/.test(day));
+  load(isArchive ? "archive/" + day + ".js" : "data.js", () => {
+    render(isArchive, day);
+    load("archive/list.js", renderArchive);
   });
-
-  document.getElementById("news").innerHTML = NEWS.map(t => `
-    <section class="topic">
-      <div class="topic-label">${esc(t.topic)}</div>
-      ${t.stories.map(s => `
-        <a class="story" href="${esc(s.url)}" target="_blank" rel="noopener">
-          ${s.img ? `<img class="story-img" src="${esc(s.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : ""}
-          <div>
-            <p class="story-title">${esc(s.title)}</p>
-            <div class="source">${esc(s.source)}</div>
-          </div>
-        </a>`).join("")}
-    </section>`).join("");
-
-  document.getElementById("calendar").innerHTML = CALENDAR.map(d => `
-    <div class="cal-day">${esc(d.day)}</div>
-    ${d.items.map(i => `
-      <div class="cal-item">
-        <div class="cal-time">${esc(i.time)}</div>
-        <div class="cal-title">${esc(i.title)}</div>
-      </div>`).join("")}`).join("") || '<p class="empty">Nothing scheduled.</p>';
+})();
 </script>
 </body>
 </html>
