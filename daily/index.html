@@ -4,6 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Abhik — Daily</title>
+<meta name="description" content="Abhik Gupta, industrial designer. A daily page of design theory, projects and news on motorcycles, cars, deep tech and Indian startups.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Abhik Gupta — Daily">
+<meta property="og:description" content="Industrial designer. Design theory, projects and the day's news on motorcycles, cars, deep tech and Indian startups.">
+<meta property="og:url" content="https://abkgpta.github.io/daily/">
+<meta property="og:image" content="https://abkgpta.github.io/daily/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ABK badge in dark brushed chrome">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -37,7 +47,7 @@
   .logo3d { flex: 0 0 auto; width: 220px; height: 104px; position: relative; }
   .logo3d canvas, .logo3d img { width: 100%; height: 100%; display: block; }
   .logo-fallback { object-fit: contain; filter: invert(0.95); padding: 10px; }
-  @media (max-width: 600px) { .brand { flex-direction: column; align-items: flex-start; gap: 12px; } .logo3d { width: 180px; height: 86px; } }
+  @media (max-width: 600px) { .brand { flex-direction: column; align-items: flex-start; gap: 12px; } .logo3d { width: 220px; height: 104px; align-self: center; } }
   .name { font-family: "Michroma", sans-serif; font-size: 28px; font-weight: 400; margin: 0; }
   .name span { color: var(--accent); }
   .tagline { font-family: "Michroma", sans-serif; font-size: 14px; color: var(--accent); margin: 10px 0 0; max-width: 720px; }
@@ -73,6 +83,8 @@
   .now-note { font-size: 13px; }
   .now-date { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent); margin-top: 2px; }
   .hdr-updated { color: var(--accent); margin-top: 2px; }
+  .week-link { display: inline-block; margin-top: 6px; color: var(--paper); font-size: 12px; text-decoration: none; border-bottom: 1px solid var(--accent); }
+  .week-link:hover { color: var(--accent); }
 
   /* News */
   .topic { margin-bottom: 32px; }
@@ -126,6 +138,13 @@
 
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 11px; color: var(--dim); }
   footer a { color: var(--dim); margin-right: 10px; }
+  .lockbar { margin-top: 10px; }
+  .linkish { background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 11px; text-decoration: underline; cursor: pointer; }
+  .linkish:hover { color: var(--accent); }
+  .unlock { display: inline-flex; gap: 8px; margin-left: 12px; align-items: center; flex-wrap: wrap; }
+  .unlock input { background: transparent; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 8px; }
+  .unlock button { background: var(--accent); color: var(--black); border: 0; font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer; }
+  .lockmsg { color: var(--accent); }
   footer a:hover { color: var(--accent); }
 </style>
 </head>
@@ -142,10 +161,11 @@
     <div class="meta">
       <div id="today"></div>
       <div class="hdr-updated" id="hdrUpdated"></div>
+      <a class="week-link" href="week.html">This week →</a>
       <div class="weather" id="weather"></div>
       <div class="archive-note" id="archiveNote" hidden></div>
     </div>
-    <form class="search" action="https://www.google.com/search" method="get" role="search">
+    <form class="search" action="search.html" method="get" role="search">
       <input name="q" placeholder="Search the web" aria-label="Search the web" autocomplete="off">
       <button type="submit">Go</button>
     </form>
@@ -171,7 +191,7 @@
         <h2>Running</h2>
         <div id="strava"></div>
       </section>
-      <section class="block">
+      <section class="block" id="calendarBlock" hidden>
         <h2>Calendar</h2>
         <div id="calendar"></div>
       </section>
@@ -208,6 +228,7 @@
   <footer>
     <div>Headlines link to their sources. Updated <span id="updated"></span>.</div>
     <div id="archive" style="margin-top:8px"></div>
+    <div id="lockbar" class="lockbar"></div>
   </footer>
 </div>
 
@@ -215,7 +236,42 @@
 (function () {
   const $ = id => document.getElementById(id);
   const has = name => { try { return typeof eval(name) !== "undefined"; } catch (e) { return false; } };
-  const get = name => has(name) ? eval(name) : undefined;
+  const get = name => (window.__PRIV && name in window.__PRIV) ? window.__PRIV[name] : (has(name) ? eval(name) : undefined);
+
+  // ---- Private sections (calendar, running, listening) ----
+  // They are published encrypted (AES-GCM, key from a passphrase via PBKDF2) and only
+  // decrypted in browsers where Abhik has entered the passphrase.
+  const PASS_KEY = "abhik-daily-pass";
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function unseal(sealed, pass) {
+    const enc = new TextEncoder();
+    const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64(sealed.salt), iterations: sealed.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(sealed.iv) }, key, b64(sealed.data));
+    return JSON.parse(new TextDecoder().decode(plain));
+  }
+  const readPass = () => { try { return localStorage.getItem(PASS_KEY); } catch (e) { return null; } };
+  async function tryUnlock() {
+    const sealed = get("PRIVATE"), pass = readPass();
+    if (!sealed || !pass || !(window.crypto && crypto.subtle)) return false;
+    try { window.__PRIV = await unseal(sealed, pass); return true; } catch (e) { return false; }
+  }
+  function lockbar(unlocked) {
+    const bar = $("lockbar");
+    if (!get("PRIVATE")) return;
+    if (unlocked) {
+      bar.replaceChildren(el("button", { class: "linkish", onclick: () => { try { localStorage.removeItem(PASS_KEY); } catch (e) {} location.reload(); } }, "Lock this browser"));
+      return;
+    }
+    const input = el("input", { type: "password", placeholder: "Passphrase", autocomplete: "current-password", "aria-label": "Passphrase" });
+    const msg = el("span", { class: "lockmsg" });
+    const form = el("form", { class: "unlock", hidden: true, onsubmit: async e => {
+      e.preventDefault();
+      try { await unseal(get("PRIVATE"), input.value); try { localStorage.setItem(PASS_KEY, input.value); } catch (x) {} location.reload(); }
+      catch (x) { msg.textContent = "That passphrase didn't work."; }
+    } }, input, el("button", { type: "submit" }, "Unlock"), msg);
+    bar.replaceChildren(el("button", { class: "linkish", onclick: () => { form.hidden = false; input.focus(); } }, "Owner unlock"), form);
+  }
 
   // Small DOM helper: el("div", {class: "x"}, child, "text", ...)
   function el(tag, attrs, ...kids) {
@@ -353,9 +409,9 @@
               el("button", { class: "save", "data-url": s.url, onclick: () => toggleSave(s) }, "save"))));
       }))));
 
-    const CAL = get("CALENDAR") || [];
-    $("calendar").replaceChildren(...(CAL.length ? CAL.flatMap(d => [el("div", { class: "day" }, d.day),
-      ...d.items.map(i => el("div", { class: "row" }, el("div", { class: "k" }, i.time), el("div", {}, i.title)))]) : [el("p", { class: "empty" }, "Nothing scheduled.")]));
+    const CAL = get("CALENDAR");
+    if (CAL) show("calendar", CAL.length ? CAL.flatMap(d => [el("div", { class: "day" }, d.day),
+      ...d.items.map(i => el("div", { class: "row" }, el("div", { class: "k" }, i.time), el("div", {}, i.title)))]) : [el("p", { class: "empty" }, "Nothing scheduled.")]);
 
     const R = get("RACING");
     if (R) show("racing", [
@@ -411,13 +467,14 @@
   function load(src, cb) { const s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
   const day = new URLSearchParams(location.search).get("d");
   const isArchive = !!(day && /^\d{4}-\d{2}-\d{2}$/.test(day));
-  load(isArchive ? "archive/" + day + ".js" : "data.js", () => {
+  load(isArchive ? "archive/" + day + ".js" : "data.js", async () => {
+    const unlocked = await tryUnlock();
     render(isArchive, day);
+    lockbar(unlocked);
     load("archive/list.js", renderArchive);
   });
 })();
 </script>
-<script src="logo-mesh.js"></script>
 <script src="logo3d.js"></script>
 </body>
 </html>

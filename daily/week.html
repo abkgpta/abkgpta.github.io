@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Abhik — This week</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --black: #000000; --paper: #f7f2ef; --accent: #fb0068; --rule: rgba(247, 242, 239, 0.22); --dim: rgba(247, 242, 239, 0.6); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
+  body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
+  a { color: inherit; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: env(safe-area-inset-top) max(24px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(24px, env(safe-area-inset-left)); }
+  header { border-bottom: 1px solid var(--rule); padding: 40px 0 24px; display: flex; justify-content: space-between; align-items: end; gap: 16px; flex-wrap: wrap; }
+  h1 { font-family: "Michroma", sans-serif; font-weight: 400; font-size: 28px; margin: 0; }
+  h1 span { color: var(--accent); }
+  .range { color: var(--accent); font-size: 12px; margin-top: 8px; }
+  .back { font-size: 12px; color: var(--dim); }
+  .back:hover { color: var(--accent); }
+  h2 { font-family: "Michroma", sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--rule); }
+  h2 .sub { color: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.04em; text-transform: none; margin-left: 8px; }
+  section { margin: 32px 0 40px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; }
+  .card { border-top: 1px dashed var(--rule); padding-top: 12px; }
+  .day { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .term { font-family: "Michroma", sans-serif; font-size: 15px; margin: 0 0 6px; }
+  .body { font-size: 12px; color: var(--dim); margin: 0; }
+  .quote { font-family: "Michroma", sans-serif; font-size: 13px; color: var(--paper); margin: 0 0 4px; }
+  .by { font-size: 11px; color: var(--dim); }
+  .img { width: 100%; height: 150px; object-fit: cover; display: block; background: #111; margin-bottom: 8px; }
+  .row { display: grid; grid-template-columns: 100px 1fr; gap: 12px; padding: 8px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; }
+  .row .k { color: var(--accent); font-size: 12px; }
+  .row a { text-decoration: none; }
+  .row a:hover { color: var(--accent); }
+  .empty { color: var(--dim); font-size: 13px; }
+  [hidden] { display: none !important; }
+  footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 11px; color: var(--dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>THIS <span>WEEK</span></h1>
+      <div class="range" id="range"></div>
+    </div>
+    <a class="back" href="./">← Back to today</a>
+  </header>
+
+  <section>
+    <h2>Learned<span class="sub">design theory, day by day</span></h2>
+    <div class="grid" id="learn"></div>
+  </section>
+  <section>
+    <h2>Design picks</h2>
+    <div class="grid" id="design"></div>
+  </section>
+  <section>
+    <h2>Quotes</h2>
+    <div class="grid" id="quotes"></div>
+  </section>
+  <section id="songsBlock" hidden>
+    <h2>Songs of the day</h2>
+    <div id="songs"></div>
+  </section>
+  <section>
+    <h2>Saved stories<span class="sub">from this browser's reading list</span></h2>
+    <div id="saved"></div>
+  </section>
+  <footer>Built from the daily archive. Each day's full page is at its own link from the main page.</footer>
+</div>
+
+<script>
+(function () {
+  const $ = id => document.getElementById(id);
+  function el(tag, attrs, ...kids) {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") n.className = v; else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) n.appendChild(typeof kid === "string" ? document.createTextNode(kid) : kid);
+    return n;
+  }
+  const safeUrl = u => (typeof u === "string" && /^https:\/\//i.test(u)) ? u : null;
+  const NAMES = ["UPDATED", "QUOTE", "LEARN", "DESIGN", "PRIVATE"];
+  const parse = text => new Function(text + ";return {" + NAMES.map(n => n + ": typeof " + n + " !== 'undefined' ? " + n + " : null").join(",") + "}")();
+  const nice = iso => new Date(iso + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
+  const firstSentence = s => (String(s || "").match(/^.*?[.!?](\s|$)/) || [s])[0];
+
+  // optional: decrypt songs if this browser has been unlocked on the main page
+  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+  async function unseal(sealed, pass) {
+    const enc = new TextEncoder();
+    const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
+    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64(sealed.salt), iterations: sealed.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(sealed.iv) }, key, b64(sealed.data))));
+  }
+  let pass = null; try { pass = localStorage.getItem("abhik-daily-pass"); } catch (e) {}
+
+  async function days() {
+    let dates = [];
+    try { const t = await (await fetch("archive/list.js", { cache: "no-store" })).text(); dates = new Function(t + ";return typeof ARCHIVE_DATES!=='undefined'?ARCHIVE_DATES:[]")(); } catch (e) {}
+    const out = [];
+    for (const d of dates.slice(0, 7)) {
+      try { out.push({ date: d, ...parse(await (await fetch("archive/" + d + ".js", { cache: "no-store" })).text()) }); } catch (e) {}
+    }
+    if (!out.length) {   // no archive yet: use today's page
+      try { out.push({ date: new Date().toISOString().slice(0, 10), ...parse(await (await fetch("data.js", { cache: "no-store" })).text()) }); } catch (e) {}
+    }
+    return out;
+  }
+
+  days().then(async list => {
+    if (list.length) $("range").textContent = nice(list[list.length - 1].date) + " – " + nice(list[0].date) + " · " + list.length + (list.length === 1 ? " day" : " days");
+    const none = id => $(id).replaceChildren(el("p", { class: "empty" }, "Nothing yet."));
+
+    const L = list.filter(d => d.LEARN);
+    L.length ? $("learn").replaceChildren(...L.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)), el("p", { class: "term" }, d.LEARN.term), el("p", { class: "body" }, firstSentence(d.LEARN.body))))) : none("learn");
+
+    const D = list.filter(d => d.DESIGN);
+    D.length ? $("design").replaceChildren(...D.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)),
+      safeUrl(d.DESIGN.img) ? el("img", { class: "img", src: d.DESIGN.img, alt: d.DESIGN.name, loading: "lazy", referrerpolicy: "no-referrer", onerror: e => e.target.remove() }) : null,
+      el("p", { class: "term" }, d.DESIGN.name), el("p", { class: "body" }, [d.DESIGN.designer, d.DESIGN.year].filter(Boolean).join(", "))))) : none("design");
+
+    const Q = list.filter(d => d.QUOTE);
+    Q.length ? $("quotes").replaceChildren(...Q.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)), el("p", { class: "quote" }, "“" + d.QUOTE.text + "”"), el("div", { class: "by" }, "— " + d.QUOTE.author)))) : none("quotes");
+
+    if (pass && window.crypto && crypto.subtle) {
+      const rows = [];
+      for (const d of list) {
+        if (!d.PRIVATE) continue;
+        try { const p = await unseal(d.PRIVATE, pass); const s = p.MUSIC && p.MUSIC.song; if (s && /^[A-Za-z0-9]{22}$/.test(s.id || "")) rows.push(el("div", { class: "row" }, el("div", { class: "k" }, nice(d.date)), el("a", { href: "https://open.spotify.com/track/" + s.id, target: "_blank", rel: "noopener" }, s.title + " — " + s.artist))); } catch (e) {}
+      }
+      if (rows.length) { $("songs").replaceChildren(...rows); $("songsBlock").hidden = false; }
+    }
+
+    let saved = []; try { saved = JSON.parse(localStorage.getItem("abhik-daily-saved")) || []; } catch (e) {}
+    saved.length ? $("saved").replaceChildren(...saved.slice(0, 30).map(s => el("div", { class: "row" }, el("div", { class: "k" }, s.source || ""), safeUrl(s.url) ? el("a", { href: s.url, target: "_blank", rel: "noopener" }, s.title) : el("span", {}, s.title)))) : $("saved").replaceChildren(el("p", { class: "empty" }, "Nothing saved yet. Tap “save” on a story on the main page."));
+  });
+})();
+</script>
+</body>
+</html>

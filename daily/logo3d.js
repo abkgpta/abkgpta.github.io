@@ -89,20 +89,20 @@
     }
     const toIn = edt(1), toOut = edt(0);
     // exact distances near the boundary, using a bucket grid of segments
-    const CELL = 8, GW = Math.ceil(W / CELL), GH = Math.ceil(H / CELL), grid = Array.from({ length: GW * GH }, () => []);
+    const CELL = 16, GW = Math.ceil(W / CELL), GH = Math.ceil(H / CELL), grid = Array.from({ length: GW * GH }, () => []);
     segs.forEach((g, idx) => {
       const x0 = Math.floor(Math.min(g[0], g[2]) / CELL), x1 = Math.floor(Math.max(g[0], g[2]) / CELL);
       const y0 = Math.floor(Math.min(g[1], g[3]) / CELL), y1 = Math.floor(Math.max(g[1], g[3]) / CELL);
       for (let gy = Math.max(0, y0); gy <= Math.min(GH - 1, y1); gy++) for (let gx = Math.max(0, x0); gx <= Math.min(GW - 1, x1); gx++) grid[gy * GW + gx].push(idx);
     });
-    const BAND = 6, out = new Float32Array(W * H);
+    const BAND = Math.ceil((FILLET + 3) * s), RC = Math.ceil((BAND + 2) / CELL), out = new Float32Array(W * H);
     for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
       const i = y * W + x, ins = inside[i] === 1;
       let dpx = ins ? Math.sqrt(toOut[i]) : Math.sqrt(toIn[i]);
       if (dpx < BAND + 1) {
         const px = x + 0.5, py = y + 0.5, cx = Math.floor(px / CELL), cy = Math.floor(py / CELL);
         let best = INF;
-        for (let gy = cy - 1; gy <= cy + 1; gy++) for (let gx = cx - 1; gx <= cx + 1; gx++) {
+        for (let gy = cy - RC; gy <= cy + RC; gy++) for (let gx = cx - RC; gx <= cx + RC; gx++) {
           if (gx < 0 || gy < 0 || gx >= GW || gy >= GH) continue;
           for (const idx of grid[gy * GW + gx]) {
             const [x1, y1, x2, y2] = segs[idx], dx = x2 - x1, dy = y2 - y1, L = dx * dx + dy * dy;
@@ -190,7 +190,7 @@
   let prog, uRot, uAspect, uDist, uPx;
   try {
     // Distance field texture (half float, filterable in WebGL2)
-    const TW = 1024, TH = Math.round(TW * (VH + 2 * PAD) / (VW + 2 * PAD));
+    const TW = window.LOGO_TEX || 1024, TH = Math.round(TW * (VH + 2 * PAD) / (VW + 2 * PAD));
     const sdf = buildSDF(TW, TH);
     const flip = new Float32Array(TW * TH);       // texture row 0 = top of SVG
     flip.set(sdf);

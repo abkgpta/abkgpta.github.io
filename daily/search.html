@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Searching…</title>
+<style>html,body{margin:0;background:#000;color:#f7f2ef;font:13px "IBM Plex Mono",ui-monospace,monospace}p{padding:24px}a{color:#fb0068}</style>
+</head>
+<body>
+<p id="m">Searching…</p>
+<script>
+  // Forwarding from a page load (rather than a direct tap on a google.com link) keeps iOS
+  // from handing the search to the Google app, so results open in Safari.
+  (function () {
+    var q = new URLSearchParams(location.search).get("q") || "";
+    var url = q.trim() ? "https://www.google.com/search?q=" + encodeURIComponent(q) : "./";
+    document.getElementById("m").innerHTML = 'Searching… <a href="' + url.replace(/"/g, "&quot;") + '">continue</a>';
+    location.replace(url);
+  })();
+</script>
+</body>
+</html>

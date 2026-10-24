@@ -1,1 +1,1 @@
-const ARCHIVE_DATES = [];
+const ARCHIVE_DATES = ["2026-10-25"];
