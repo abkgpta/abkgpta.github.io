@@ -4,8 +4,11 @@ const UPDATED = "25 Oct 2026, 12:40 AM IST";
 const QUOTE = { text: "The best way to predict the future is to invent it.", author: "Alan Kay" };
 
 const NOW = [
+  { name: "Ideakicks", note: "Brand system v2, a brand film plan and a pre-launch social media strategy." },
+  { name: "We Are All Nodes", note: "An interactive five-slide story about mesh networks, made for nNode." },
+  { name: "nNode", note: "Online store, ecommerce logistics, city maps and a promo video plan." },
   { name: "Celestial", note: "A 3D research tool that maps a question as a solar system of related topics.", url: "https://abkgpta.github.io/celestial/" },
-  { name: "portfolio.27", note: "Industrial design portfolio: DASH, overgrwth, cortX." }
+  { name: "TVET Gujarat", note: "System design research: scope and stakeholder map for technical and vocational education in Gujarat." }
 ];
 
 const NEWS = [
