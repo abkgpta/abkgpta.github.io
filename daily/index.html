@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Abhik — Daily</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Daily">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -22,7 +28,7 @@
   html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
   body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
   a { color: inherit; }
-  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: env(safe-area-inset-top) max(24px, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(24px, env(safe-area-inset-left)); }
   [hidden] { display: none !important; }
 
   /* Header */
