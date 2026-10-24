@@ -148,8 +148,14 @@
 <script>
   // ---- Render ----
   document.getElementById("updated").textContent = UPDATED;
-  document.getElementById("quote").innerHTML =
-    `“${QUOTE.text}” <span style="color:var(--paper);opacity:0.6;font-family:'IBM Plex Mono',monospace;font-size:12px">— ${QUOTE.author}</span>`;
+  (function () {
+    const q = document.getElementById("quote");
+    q.textContent = "\u201C" + QUOTE.text + "\u201D ";
+    const a = document.createElement("span");
+    a.style.cssText = "color:var(--paper);opacity:0.6;font-family:'IBM Plex Mono',monospace;font-size:12px";
+    a.textContent = "\u2014 " + QUOTE.author;
+    q.appendChild(a);
+  })();
   const esc = s => s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
 
   document.getElementById("today").textContent = new Date().toLocaleDateString("en-IN", {
