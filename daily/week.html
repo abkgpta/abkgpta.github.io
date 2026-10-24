@@ -64,41 +64,23 @@
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 12px; color: var(--dim); }
 
   :focus-visible { outline: 2px solid #fb0068; outline-offset: 2px; }
-  :root[data-theme="light"] :is(.range, .day) { display: inline-block; background: #000000; color: #fb0068; padding: 1px 6px; }
-  :root[data-theme="light"] h2 .sub { background: #000000; color: #fb0068; padding: 1px 6px; }
-  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] :is(.range, .day) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] h2 .sub { background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #f7f2ef; padding: 1px 6px; }
   @media (pointer: coarse) { .back, .row a { display: inline-block; padding: 12px 4px; margin: -12px -4px; } }
 
-  /* ---- Dynamic magenta glow on the main rules ---- */
+
+  /* ---- Dynamic magenta glow around the edges of the screen ---- */
   @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
-  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.6; } }
-  @keyframes sweep { 0% { background-position: -40% 0; } 60%, 100% { background-position: 140% 0; } }
+  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.55; } }
   :root { --glow-k: 1; }
-  :root[data-theme="light"] { --glow-k: 0.7; }
-  h2, header, footer { position: relative; }
-  h2, footer, header { --g: 0.35; animation: breathe 7s ease-in-out infinite; }
-  h2 { box-shadow: 0 9px 9px -9px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  header { box-shadow: 0 12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  footer { box-shadow: 0 -12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  .search { --g: 0.35; animation: breathe 7s ease-in-out infinite; box-shadow: 0 0 10px rgba(251, 0, 104, calc(var(--g) * 0.6 * var(--glow-k))); }
-  h2::after, header::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
-    background: linear-gradient(90deg, transparent, #fb0068, transparent) no-repeat; background-size: 35% 100%;
-    background-position: -40% 0; opacity: calc(0.75 * var(--glow-k));
-    filter: drop-shadow(0 0 3px #fb0068);
-    animation: sweep 11s ease-in-out infinite;
+  :root[data-theme="light"] { --glow-k: 0.42; }
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    --g: 0.35; animation: breathe 7s ease-in-out infinite;
+    box-shadow: inset 0 0 48px 4px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))), inset 0 0 6px 0 rgba(251, 0, 104, calc(var(--g) * 0.8 * var(--glow-k)));
   }
-  /* stagger so the lines don't pulse in lockstep */
-  section:nth-of-type(2n) h2 { animation-delay: -2.3s; }
-  section:nth-of-type(3n) h2 { animation-delay: -4.1s; }
-  section:nth-of-type(2n) h2::after { animation-delay: -3.7s; }
-  section:nth-of-type(3n) h2::after { animation-delay: -6.2s; }
-  section:nth-of-type(5n) h2::after { animation-delay: -8.9s; }
-  header::after { animation-delay: -1.5s; }
-  @media (prefers-reduced-motion: reduce) {
-    h2, header, footer, .search, h2::after, header::after { animation: none; }
-    h2::after, header::after { display: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
   .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
   .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }

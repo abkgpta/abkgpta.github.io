@@ -175,14 +175,14 @@
   .search:focus-within { outline: 2px solid #fb0068; outline-offset: 2px; }
 
   /* Light mode: small magenta text sits in a black enclosure (magenta on black passes contrast) */
-  :root[data-theme="light"] .tagline { display: inline-block; background: #000000; padding: 4px 10px; }
+  :root[data-theme="light"] .tagline { display: inline-block; background: #000000; color: #f7f2ef; padding: 4px 10px; }
   :root[data-theme="light"] .tagline .by { color: rgba(247, 242, 239, 0.75); }
-  :root[data-theme="light"] :is(.hdr-updated, .now-date, .label, .archive-note, .lockmsg) { display: inline-block; background: #000000; color: #fb0068; padding: 1px 6px; }
+  :root[data-theme="light"] :is(.hdr-updated, .now-date, .label, .archive-note, .lockmsg) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
   :root[data-theme="light"] .now-date { display: table; margin-top: 4px; }
-  :root[data-theme="light"] h2 .sub { background: #000000; color: #fb0068; padding: 1px 6px; }
-  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #fb0068; padding: 1px 6px; }
-  :root[data-theme="light"] td.num span { background: #000000; color: #fb0068; padding: 1px 6px; }
-  :root[data-theme="light"] .save.on { background: #000000; color: #fb0068; border-color: #000000; }
+  :root[data-theme="light"] h2 .sub { background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] td.num span { background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] .save.on { background: #000000; color: #f7f2ef; border-color: #000000; }
 
   /* Bigger tap areas on touch screens without moving the layout */
   @media (pointer: coarse) {
@@ -205,36 +205,18 @@
     #calendarBlock { order: 5; } #racingBlock { order: 6; } #savedBlock { order: 7; }
   }
 
-  /* ---- Dynamic magenta glow on the main rules ---- */
+
+  /* ---- Dynamic magenta glow around the edges of the screen ---- */
   @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
-  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.6; } }
-  @keyframes sweep { 0% { background-position: -40% 0; } 60%, 100% { background-position: 140% 0; } }
+  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.55; } }
   :root { --glow-k: 1; }
-  :root[data-theme="light"] { --glow-k: 0.7; }
-  h2, header, footer { position: relative; }
-  h2, footer, header { --g: 0.35; animation: breathe 7s ease-in-out infinite; }
-  h2 { box-shadow: 0 9px 9px -9px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  header { box-shadow: 0 12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  footer { box-shadow: 0 -12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
-  .search { --g: 0.35; animation: breathe 7s ease-in-out infinite; box-shadow: 0 0 10px rgba(251, 0, 104, calc(var(--g) * 0.6 * var(--glow-k))); }
-  h2::after, header::after {
-    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
-    background: linear-gradient(90deg, transparent, #fb0068, transparent) no-repeat; background-size: 35% 100%;
-    background-position: -40% 0; opacity: calc(0.75 * var(--glow-k));
-    filter: drop-shadow(0 0 3px #fb0068);
-    animation: sweep 11s ease-in-out infinite;
+  :root[data-theme="light"] { --glow-k: 0.42; }
+  body::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
+    --g: 0.35; animation: breathe 7s ease-in-out infinite;
+    box-shadow: inset 0 0 48px 4px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))), inset 0 0 6px 0 rgba(251, 0, 104, calc(var(--g) * 0.8 * var(--glow-k)));
   }
-  /* stagger so the lines don't pulse in lockstep */
-  section:nth-of-type(2n) h2 { animation-delay: -2.3s; }
-  section:nth-of-type(3n) h2 { animation-delay: -4.1s; }
-  section:nth-of-type(2n) h2::after { animation-delay: -3.7s; }
-  section:nth-of-type(3n) h2::after { animation-delay: -6.2s; }
-  section:nth-of-type(5n) h2::after { animation-delay: -8.9s; }
-  header::after { animation-delay: -1.5s; }
-  @media (prefers-reduced-motion: reduce) {
-    h2, header, footer, .search, h2::after, header::after { animation: none; }
-    h2::after, header::after { display: none; }
-  }
+  @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
   .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
   .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
@@ -242,8 +224,8 @@
   .row { grid-template-columns: minmax(90px, max-content) 1fr; }
   .row .k { white-space: nowrap; }
   /* diagram colours follow the theme live */
-  :root { --hl-fill: rgba(251, 0, 104, 0.16); --hl-text: #f7f2ef; }
-  :root[data-theme="light"] { --hl-fill: #000000; --hl-text: #f7f2ef; }
+  :root { --hl-fill: rgba(251, 0, 104, 0.16); --hl-text: #f7f2ef; --hl-label: #fb0068; }
+  :root[data-theme="light"] { --hl-fill: #000000; --hl-text: #f7f2ef; --hl-label: #f7f2ef; }
 
   .meta-actions { display: flex; gap: 14px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px; }
   .meta-actions .week-link, .meta-actions .theme-toggle { margin-top: 0; }
@@ -462,7 +444,7 @@
         (p.layers || []).slice(0, 8).forEach((l, j) => {
           const y = y0 + th + j * (lh + 6);
           svg.appendChild(s("rect", { x, y, width: pw, height: lh, fill: l.hl ? hlFill : "none", stroke: l.hl ? accent : dim, "stroke-width": 1 }));
-          svg.appendChild(s("text", { x: x + 10, y: y + lh / 2 + fs * 0.35, fill: l.hl ? accent : paper, "font-family": font, "font-size": fs }, fitText(l.label, Math.floor((pw - 20) / (fs * 0.62)))));
+          svg.appendChild(s("text", { x: x + 10, y: y + lh / 2 + fs * 0.35, fill: l.hl ? "var(--hl-label)" : paper, "font-family": font, "font-size": fs }, fitText(l.label, Math.floor((pw - 20) / (fs * 0.62)))));
         });
       });
       if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 6, fill: dim, "font-family": font, "font-size": fs }, fitText(d.caption, Math.floor(W / (fs * 0.62)))));
@@ -477,7 +459,7 @@
       steps.forEach((st, i) => {
         const r = Math.floor(i / perRow), c = i % perRow, x = c * (bw + gap), y = r * (bh + 18);
         svg.appendChild(s("rect", { x, y, width: bw, height: bh, fill: st.hl ? hlFill : "none", stroke: st.hl ? accent : dim }));
-        svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? accent : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
+        svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? "var(--hl-label)" : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
         const words = String(st.note || "").split(/\s+/).filter(Boolean), lines = [""];
         words.forEach(w => { const t = (lines[lines.length - 1] + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
         lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: st.hl ? "var(--hl-text)" : paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
