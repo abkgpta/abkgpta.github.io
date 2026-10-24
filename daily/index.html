@@ -100,6 +100,10 @@
   .term { font-family: "Michroma", sans-serif; font-size: 18px; margin: 0 0 8px; }
   .body { font-size: 13px; margin: 0 0 8px; }
   .past { margin-top: 12px; font-size: 12px; color: var(--dim); }
+  .diagram { width: 100%; height: auto; display: block; margin: 4px 0 16px; }
+  .design-img { width: 100%; height: 280px; object-fit: cover; display: block; margin: 4px 0 6px; background: #111; }
+  .credit { font-size: 10px; color: var(--dim); margin-bottom: 14px; }
+  .credit a { color: var(--dim); }
 
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 11px; color: var(--dim); }
   footer a { color: var(--dim); margin-right: 10px; }
@@ -239,6 +243,62 @@
     }).catch(() => { $("weather").textContent = ""; });
   }
 
+  // ---- Diagrams for "Learn today" (drawn from plain data, in brand style) ----
+  // { type: "layers", panels: [ { title, layers: [ { label, hl } ] } ], caption }
+  // { type: "flow", steps: [ { label, note, hl } ], caption }
+  const SVGNS = "http://www.w3.org/2000/svg";
+  function s(tag, attrs, text) {
+    const n = document.createElementNS(SVGNS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function fitText(label, max) { label = String(label); return label.length > max ? label.slice(0, max - 1) + "…" : label; }
+  function diagram(d) {
+    if (!d || typeof d !== "object") return null;
+    const paper = "#f7f2ef", accent = "#fb0068", dim = "rgba(247,242,239,0.35)";
+    const font = "IBM Plex Mono, ui-monospace, monospace";
+    let svg, W = 560;
+    if (d.type === "layers" && Array.isArray(d.panels) && d.panels.length) {
+      const panels = d.panels.slice(0, 3), gap = 24, pw = (W - gap * (panels.length - 1)) / panels.length;
+      const rows = Math.max(...panels.map(p => (p.layers || []).length)), lh = 34, top = 30;
+      const H = top + rows * (lh + 6) + (d.caption ? 24 : 4);
+      svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "diagram", role: "img", "aria-label": d.caption || "Diagram" });
+      panels.forEach((p, i) => {
+        const x = i * (pw + gap);
+        svg.appendChild(s("text", { x, y: 16, fill: paper, "font-family": "Michroma, sans-serif", "font-size": 11 }, fitText(p.title || "", 34)));
+        (p.layers || []).slice(0, 8).forEach((l, j) => {
+          const y = top + j * (lh + 6);
+          svg.appendChild(s("rect", { x, y, width: pw, height: lh, fill: l.hl ? "rgba(251,0,104,0.16)" : "none", stroke: l.hl ? accent : dim, "stroke-width": 1 }));
+          svg.appendChild(s("text", { x: x + 10, y: y + lh / 2 + 4, fill: l.hl ? accent : paper, "font-family": font, "font-size": 11 }, fitText(l.label, Math.floor(pw / 7))));
+        });
+      });
+      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": 10 }, fitText(d.caption, 90)));
+    } else if (d.type === "flow" && Array.isArray(d.steps) && d.steps.length) {
+      // step: { label: short title, note: one short line, hl: highlight }
+      const steps = d.steps.slice(0, 8), narrow = window.innerWidth < 600;
+      const perRow = Math.min(narrow ? 2 : 4, steps.length), gap = 26;
+      const bw = (W - gap * (perRow - 1)) / perRow, bh = narrow ? 96 : 106, rowsN = Math.ceil(steps.length / perRow);
+      const fs = narrow ? 15 : 11, ts = narrow ? 20 : 15, lineH = fs + 4, max = Math.floor((bw - 16) / (fs * 0.62));
+      const H = rowsN * (bh + 18) + (d.caption ? 22 : 0);
+      svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "diagram", role: "img", "aria-label": d.caption || "Diagram" });
+      steps.forEach((st, i) => {
+        const r = Math.floor(i / perRow), c = i % perRow, x = c * (bw + gap), y = r * (bh + 18);
+        svg.appendChild(s("rect", { x, y, width: bw, height: bh, fill: st.hl ? "rgba(251,0,104,0.16)" : "none", stroke: st.hl ? accent : dim }));
+        svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? accent : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
+        const words = String(st.note || "").split(/\s+/).filter(Boolean), lines = [""];
+        words.forEach(w => { const t = (lines[lines.length - 1] + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
+        lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
+        if (i < steps.length - 1 && c < perRow - 1) {
+          const ax = x + bw + 4, ay = y + bh / 2;
+          svg.appendChild(s("path", { d: `M${ax} ${ay} H${ax + gap - 8} M${ax + gap - 13} ${ay - 5} L${ax + gap - 8} ${ay} L${ax + gap - 13} ${ay + 5}`, stroke: accent, fill: "none" }));
+        }
+      });
+      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": narrow ? 12 : 10 }, fitText(d.caption, narrow ? 72 : 90)));
+    } else return null;
+    return svg;
+  }
+
   // ---- Render everything from the data file ----
   function render(isArchive, day) {
     $("today").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -280,11 +340,14 @@
       S.latest ? el("div", { class: "row" }, el("div", { class: "k" }, S.latest.date), el("div", {}, `${S.latest.km} km · ${S.latest.pace}/km`)) : null].filter(Boolean));
 
     const L = get("LEARN");
-    if (L) show("learn", [el("p", { class: "term" }, L.term), el("p", { class: "body" }, L.body), srcLine(L.source),
+    if (L) show("learn", [el("p", { class: "term" }, L.term), diagram(L.diagram), el("p", { class: "body" }, L.body), srcLine(L.source),
       (L.past && L.past.length) ? el("div", { class: "past" }, "Earlier: " + L.past.join(" · ")) : null].filter(Boolean));
 
     const D = get("DESIGN");
-    if (D) show("design", [el("p", { class: "term" }, D.name), el("div", { class: "label" }, [D.designer, D.year].filter(Boolean).join(", ")),
+    if (D) show("design", [
+      safeUrl(D.img) ? el("img", { class: "design-img", src: D.img, alt: D.name, loading: "lazy", referrerpolicy: "no-referrer", onerror: e => { const c = e.target.nextElementSibling; if (c && c.classList.contains("credit")) c.remove(); e.target.remove(); } }) : null,
+      safeUrl(D.img) && D.imgCredit ? el("div", { class: "credit" }, "Photo: ", link(D.imgCredit.url, D.imgCredit.name)) : null,
+      el("p", { class: "term" }, D.name), el("div", { class: "label" }, [D.designer, D.year].filter(Boolean).join(", ")),
       el("p", { class: "body" }, D.why), srcLine(D.source)].filter(Boolean));
 
     const F = get("FUNDING");

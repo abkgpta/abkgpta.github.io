@@ -12,21 +12,25 @@ const NEWS = [
   {
     topic: "Startups & Indian startups",
     stories: [
-      { title: "From Navi To BookMyShow — Indian Startups Raised Over $233 Mn This Week", source: "Inc42", url: "https://inc42.com/buzz/from-navi-to-bookmyshow-indian-startups-raised-over-233-mn-this-week/", img: "https://asset.inc42.com/2026/08/Social-100-1-1.jpg", why: "Inc42's weekly roundup of Indian funding rounds." },
-      { title: "Funding and acquisitions in Indian startups this week [Oct 19 – Oct 24]", source: "Entrackr", url: "https://entrackr.com/report/weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-19-oct-24-12744844", img: "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/23/feature-image-2026-10-23-21-08-45.png", why: "$133.9M across 15 startups, down 56% from the week before." }
+      { title: "From Even Health To The Pant Project — Indian Startups Raised Over $184 Mn This Week", source: "Inc42", url: "https://inc42.com/buzz/from-even-health-to-the-pant-project-indian-startups-raised-over-184-mn-this-week/", img: "https://asset.inc42.com/2026/10/FG_Oct-23-Soc-100.jpg", why: "Over $184M across 17 deals in the week of 19–23 Oct, about a fifth less than the week before." },
+      { title: "Funding and acquisitions in Indian startups this week [Oct 19 – Oct 24]", source: "Entrackr", url: "https://entrackr.com/report/weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-19-oct-24-12744844", img: "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/23/feature-image-2026-10-23-21-08-45.png", why: "$133.9M across 15 startups by Entrackr's count, down 56% from the week before." },
+      { title: "OpenAI working on new $30B raise at $1.25T valuation ahead of IPO", source: "TechCrunch", url: "https://techcrunch.com/2026/10/22/openai-working-on-new-30b-raise-at-1-25t-valuation-ahead-of-ipo", img: "https://techcrunch.com/wp-content/uploads/2023/11/Sam-Altman-OpenAI.jpg?resize=1200,680", why: "Reportedly seeking up to $30B at a $1.25 trillion valuation." }
     ]
   },
   {
     topic: "Deep tech",
     stories: [
-      { title: "DeepSeek reportedly raises $15B days after US restrictions", source: "TechCrunch", url: "https://techcrunch.com/2026/10/22/deepseek-reportedly-raises-15b-days-after-us-restrictions/", img: "https://techcrunch.com/wp-content/uploads/2025/01/deepseek-2.jpg?resize=1200,800" }
+      { title: "DeepSeek reportedly raises $15B days after US restrictions", source: "TechCrunch", url: "https://techcrunch.com/2026/10/22/deepseek-reportedly-raises-15b-days-after-us-restrictions/", img: "https://techcrunch.com/wp-content/uploads/2025/01/deepseek-2.jpg?resize=1200,800", why: "A reported raise of about $15B (roughly 100 billion yuan); no valuation was given." },
+      { title: "Eka is worth $1.45B thanks to a physical AI model that has experts raving", source: "TechCrunch", url: "https://techcrunch.com/2026/10/20/eka-is-worth-1-45-billion-thanks-to-a-physical-ai-model-that-has-experts-raving/", img: "https://techcrunch.com/wp-content/uploads/2026/10/Screenshot-2026-10-19-at-1.21.23-PM.png?resize=1200,974", why: "Robotics startup Eka raised a $150M Series A led by a16z and F-Prime." },
+      { title: "Anglo-Finnish Oxford University quantum spinout QuantrolOx raises €12M", source: "Tech.eu", url: "https://tech.eu/2026/10/22/anglo-finnish-oxford-university-quantum-spinout-raises-eur12m", img: "https://cdn.tech.eu/uploads/2026/10/smart-2-516.jpg", why: "Series A to grow its software for calibrating and running quantum hardware." }
     ]
   },
   {
     topic: "Motorcycles",
     stories: [
-      { title: "CFMoto motorcycle sales jump 30 per cent in first half of 2026", source: "Visordown", url: "https://www.visordown.com/news/cfmoto-motorcycle-sales-jump-30-cent-first-half-2026", img: "https://www.visordown.com/sites/default/files/2026-06/cfmoto-1000-mt-x-review18.jpg?width=1600&aspect_ratio=16:9" },
-      { title: "Adventure motorcycle sales “well ahead of market trend”", source: "Visordown", url: "https://www.visordown.com/news/adventure-motorcycle-sales-well-ahead-market-trend", img: "https://www.visordown.com/sites/default/files/2026-04/site-image-resize-2026-04-10t104929.813.png?width=1600&aspect_ratio=16:9" }
+      { title: "Bajaj Pulsar N250SS launched at Rs 1.59 lakh", source: "Autocar India", url: "https://autocarindia.com/bike-news/bajaj-pulsar-n250ss-launched-at-rs-159-lakh-441093", img: "https://asset.autocarindia.com/static/news/images/20261021_074233_4d021b76.jpg", why: "The range-topping N250 gets a four-valve engine, six-speed gearbox and a standard quickshifter, for about ₹14,000 more." },
+      { title: "Aprilia RS 660 Phillip Island Tribute celebrates “unbreakable bond” as MotoGP leaves circuit", source: "Visordown", url: "https://www.visordown.com/news/aprilia-rs-660-phillip-island-tribute-celebrates-unbreakable-bond-motogp-leaves-circuit", img: "https://www.visordown.com/sites/default/files/2026-10/07-aprilia-rs660-phillip-island-tribute.jpg?width=1600&aspect_ratio=16:9", why: "A limited edition marking MotoGP's move from Phillip Island to Adelaide in 2027." },
+      { title: "September 2026 two-wheeler sales: Hero reclaims top spot", source: "Autocar India", url: "https://www.autocarindia.com/industry/september-2026-two-wheeler-sales-hero-reclaims-top-spot-440944", img: "https://asset.autocarindia.com/static/news/images/20261007_074919_63c46e84.jpeg", why: "Hero sold 7,66,348 units, up 12% year on year, ahead of Honda's 7,06,266." }
     ]
   }
 ];
@@ -57,14 +61,26 @@ const STRAVA = {
 };
 
 const LEARN = {
-  term: "Solid-state batteries",
-  body: "They replace the liquid electrolyte inside a lithium-ion cell with a solid one, such as a ceramic, glass, sulfide or polymer. The solid layer is far less flammable and can make a lithium-metal anode practical, which promises more energy in the same space. The hard parts are keeping the solid layers in tight contact as the cell swells and shrinks, and making them cheaply at scale.",
+  term: "Surface continuity: G0 to G3",
+  body: "Continuity describes how smoothly two surfaces meet at a shared edge. G0 means the edges simply touch, so there can be a sharp crease. G1 matches the tangent direction, so there is no crease, but reflections still show a visible kink where the curvature suddenly changes. G2 matches curvature as well, so highlights flow across the join unbroken; this is the usual baseline for Class-A automotive and product surfaces. G3 also matches how fast curvature is changing, giving even softer, more liquid reflections at the cost of heavier geometry.",
+  diagram: {
+    type: "flow",
+    steps: [
+      { label: "G0", note: "Position. Edges touch; a crease is allowed." },
+      { label: "G1", note: "Tangent. No crease, but highlights kink." },
+      { label: "G2", note: "Curvature. Highlights flow across.", hl: true },
+      { label: "G3", note: "Curvature rate. Softest reflections." }
+    ],
+    caption: "Each level adds one more match. Pink = Class-A baseline."
+  },
   past: []
 };
 
 const DESIGN = {
   name: "Ducati Monster (M900)",
   designer: "Miguel Galluzzi",
+  img: "https://commons.wikimedia.org/wiki/Special:FilePath/Ducati_Monster_900_del_1993.jpg?width=1200",
+  imgCredit: { name: "Wikimedia Commons", url: "https://commons.wikimedia.org/wiki/File:Ducati_Monster_900_del_1993.jpg" },
   year: "1993",
   why: "It stripped a sportbike down to an exposed trellis frame, a big tank and a round headlight, and turned the 'naked' bike into a category of its own. A lesson in getting character from structure you would normally hide."
 };
