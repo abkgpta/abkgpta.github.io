@@ -72,13 +72,13 @@
 
   /* ---- Dynamic magenta glow around the edges of the screen ---- */
   @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
-  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.55; } }
+  @keyframes breathe { 0%, 100% { --g: 0.1; } 50% { --g: 0.24; } }
   :root { --glow-k: 1; }
-  :root[data-theme="light"] { --glow-k: 0.42; }
+  :root[data-theme="light"] { --glow-k: 0.6; }
   body::after {
     content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
     --g: 0.35; animation: breathe 7s ease-in-out infinite;
-    box-shadow: inset 0 0 48px 4px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))), inset 0 0 6px 0 rgba(251, 0, 104, calc(var(--g) * 0.8 * var(--glow-k)));
+    box-shadow: inset 0 0 70px 0 rgba(251, 0, 104, calc(var(--g) * var(--glow-k)));
   }
   @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
