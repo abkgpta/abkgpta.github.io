@@ -174,14 +174,8 @@
   :focus-visible { outline: 2px solid #fb0068; outline-offset: 2px; }
   .search:focus-within { outline: 2px solid #fb0068; outline-offset: 2px; }
 
-  /* Light mode: small magenta text sits in a black enclosure (magenta on black passes contrast) */
-  :root[data-theme="light"] .tagline { display: inline-block; background: #000000; color: #f7f2ef; padding: 4px 10px; }
-  :root[data-theme="light"] .tagline .by { color: rgba(247, 242, 239, 0.75); }
-  :root[data-theme="light"] :is(.hdr-updated, .now-date, .label, .archive-note, .lockmsg) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] .now-date { display: table; margin-top: 4px; }
-  :root[data-theme="light"] h2 .sub { background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] td.num span { background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  /* Light mode: state messages that stay magenta sit in a black enclosure */
+  :root[data-theme="light"] :is(.archive-note, .lockmsg) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
   :root[data-theme="light"] .save.on { background: #000000; color: #f7f2ef; border-color: #000000; }
 
   /* Bigger tap areas on touch screens without moving the layout */
@@ -191,18 +185,12 @@
     .saved-item button { min-width: 44px; min-height: 44px; }
   }
 
-  /* Phones: projects stack, tables tighten, Listening and Running come first */
+  /* Phones: projects stack, tables tighten */
   @media (max-width: 600px) {
     .now-item { grid-template-columns: 1fr; gap: 4px; }
     .now-name { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
     .ftable th:nth-child(4), .ftable td:nth-child(4) { display: none; }
     .ftable td:nth-child(3), td.num { white-space: nowrap; }
-  }
-  @media (max-width: 860px) {
-    .layout { gap: 0; }
-    .layout > main, .layout > aside { display: contents; }
-    #musicBlock { order: 1; } #stravaBlock { order: 2; } #nowBlock { order: 3; } #newsBlock { order: 4; margin-bottom: 36px; }
-    #calendarBlock { order: 5; } #racingBlock { order: 6; } #savedBlock { order: 7; }
   }
 
 
@@ -230,6 +218,86 @@
   .meta-actions { display: flex; gap: 14px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px; }
   .meta-actions .week-link, .meta-actions .theme-toggle { margin-top: 0; }
   @media (max-width: 860px) { .meta-actions { justify-content: flex-start; } }
+
+  /* ================= Version E: zones, type scale, structural magenta, leads, panels, jump bar ================= */
+  :root { --inv-bg: var(--paper); --inv-fg: var(--black); --inv-dim: rgba(0, 0, 0, 0.6); }
+  :root[data-theme="light"] { --inv-dim: rgba(247, 242, 239, 0.6); }
+
+  /* Type scale */
+  .name { font-size: 30px; }
+  .story-title { font-size: 15.5px; font-weight: 500; line-height: 1.4; }
+  .term { font-size: 22px; }
+  .body { font-size: 14px; }
+  .stat div { font-size: 26px; }
+  .now-name { font-size: 13px; }
+
+  /* Magenta only for structure */
+  .tagline { color: var(--paper); }
+  .tagline .q { color: var(--accent); }
+  .hdr-updated { color: var(--dim); }
+  .now-date { color: var(--dim); display: table; margin-top: 4px; }
+  .row .k { color: var(--paper); }
+  td.num span { color: var(--dim); }
+  h2 .sub { color: var(--dim); }
+  .label { color: var(--paper); }
+  .key { color: var(--accent); }
+
+  /* Zones */
+  .jump { display: flex; gap: 8px; flex-wrap: wrap; padding-block: 18px 0; }
+  .jump a { font-size: 12px; text-decoration: none; border: 1px solid var(--rule); padding: 8px 12px; min-height: 36px; display: inline-flex; align-items: center; gap: 8px; }
+  .jump a span { color: var(--accent); font-family: "Michroma", sans-serif; }
+  .jump a:hover { border-color: var(--accent); }
+  @media (pointer: coarse) { .jump a { min-height: 44px; } }
+  .zone { margin-top: 72px; scroll-margin-top: 16px; }
+  .zone:first-of-type, .jump + .zone { margin-top: 32px; }
+  .zone-band { display: grid; grid-template-columns: 96px 1fr auto; background: var(--inv-bg); color: var(--inv-fg); margin-bottom: 28px; }
+  .zone-band > * { padding: 14px 18px; display: flex; align-items: center; min-width: 0; }
+  .zone-band .zn { font-family: "Michroma", sans-serif; font-size: 30px; color: var(--accent); border-right: 1px solid var(--accent); justify-content: center; }
+  .zone-band .zt { font-family: "Michroma", sans-serif; font-size: 26px; letter-spacing: 0.02em; text-transform: uppercase; }
+  .zone-band .zs { font-size: 12px; color: var(--inv-dim); }
+  .zgrid { display: grid; gap: 40px; }
+  .zgrid > * { min-width: 0; }
+  .zgrid.c2 { grid-template-columns: 2fr 1fr; }
+  .zgrid.c2e { grid-template-columns: 1fr 1fr; }
+  .zgrid.c3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .block { margin-bottom: 44px; }
+  .topic { margin-bottom: 36px; }
+
+  /* Dashboard panels for the personal zone */
+  .zone-you .block { border: 1px solid var(--rule); padding: 16px; margin-bottom: 0; }
+  .zone-you .zgrid { gap: 16px; margin-bottom: 16px; }
+  .zone-you h2 { border-bottom: 0; padding-bottom: 0; margin-bottom: 12px; }
+  .zone-you .player { margin-top: 2px; }
+
+  /* Leads: one big story, a large Learn today */
+  .story { grid-template-columns: 120px 1fr; }
+  .story-img { width: 120px; height: 76px; }
+  .story.lead { grid-template-columns: 1.3fr 1fr; gap: 24px; padding: 0 0 22px; margin-bottom: 12px; border-bottom: 1px solid var(--rule); }
+  .story.lead .story-img { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  .story.lead .story-title { font-family: "Michroma", sans-serif; font-weight: 400; font-size: 22px; line-height: 1.3; margin-bottom: 10px; }
+  .story.lead .why { font-size: 13px; }
+  .lead-tag { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim); margin-bottom: 8px; }
+  .learn-lead .term { font-size: 30px; }
+
+  @media (max-width: 860px) {
+    .zgrid.c2, .zgrid.c2e, .zgrid.c3 { grid-template-columns: 1fr; gap: 0; }
+    .zone-you .zgrid { gap: 12px; margin-bottom: 12px; }
+    .story.lead { grid-template-columns: 1fr; gap: 12px; }
+  }
+  @media (max-width: 600px) {
+    .zone { margin-top: 56px; }
+    .zone-band { grid-template-columns: 64px 1fr; }
+    .zone-band .zn { font-size: 22px; } .zone-band .zt { font-size: 18px; } .zone-band .zs { display: none; }
+    .learn-lead .term { font-size: 22px; }
+    .story.lead .story-title { font-size: 18px; }
+    .jump { display: grid; grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 520px) {
+    .story { grid-template-columns: 92px 1fr; }
+    .story-img { width: 92px; height: 62px; }
+    .story.lead { grid-template-columns: 1fr; }
+    .story.lead .story-img { width: 100%; height: auto; }
+  }
 </style>
 </head>
 <body>
@@ -255,18 +323,13 @@
     </form>
   </header>
 
-  <div class="layout">
-    <main>
-      <section class="block" id="nowBlock" hidden>
-        <h2>Now<span class="sub">recent projects</span></h2>
-        <div id="now"></div>
-      </section>
-      <section id="newsBlock">
-        <h2>News<span class="sub">for my interests</span></h2>
-        <div id="news"></div>
-      </section>
-    </main>
-    <aside>
+  <nav class="jump" aria-label="Jump to a section">
+    <a href="#z-you"><span>01</span>You</a><a href="#z-today"><span>02</span>Today</a><a href="#z-news"><span>03</span>News</a><a href="#z-industry"><span>04</span>Industry</a>
+  </nav>
+
+  <div class="zone zone-you" id="z-you">
+    <div class="zone-band"><span class="zn">01</span><span class="zt">You</span><span class="zs">your day: music, running, calendar, work</span></div>
+    <div class="zgrid c3" id="youTop">
       <section class="block" id="musicBlock" hidden>
         <h2>Listening<span class="sub">song of the day</span></h2>
         <div id="music"></div>
@@ -279,34 +342,57 @@
         <h2>Calendar</h2>
         <div id="calendar"></div>
       </section>
-      <section class="block" id="racingBlock" hidden>
-        <h2>Racing</h2>
-        <div id="racing"></div>
+    </div>
+    <div class="zgrid c2">
+      <section class="block" id="nowBlock" hidden>
+        <h2>Projects<span class="sub">most recent first</span></h2>
+        <div id="now"></div>
       </section>
       <section class="block" id="savedBlock">
         <h2>Reading list<span class="sub">saved in this browser</span></h2>
         <div id="saved"></div>
       </section>
-    </aside>
+    </div>
   </div>
 
-  <div class="full">
-    <section class="block" id="learnBlock" hidden>
-      <h2>Learn today</h2>
-      <div id="learn"></div>
+  <div class="zone" id="z-today">
+    <div class="zone-band"><span class="zn">02</span><span class="zt">Today</span><span class="zs">one idea and one object to study</span></div>
+    <div class="zgrid c2e">
+      <section class="block learn-lead" id="learnBlock" hidden>
+        <h2>Learn today<span class="sub">design theory</span></h2>
+        <div id="learn"></div>
+      </section>
+      <section class="block" id="designBlock" hidden>
+        <h2>Design pick</h2>
+        <div id="design"></div>
+      </section>
+    </div>
+  </div>
+
+  <div class="zone" id="z-news">
+    <div class="zone-band"><span class="zn">03</span><span class="zt">News</span><span class="zs">motorcycles, cars, deep tech, startups, business</span></div>
+    <section class="block" id="newsBlock">
+      <h2>News<span class="sub">for my interests</span></h2>
+      <div id="news"></div>
     </section>
-    <section class="block" id="designBlock" hidden>
-      <h2>Design pick</h2>
-      <div id="design"></div>
-    </section>
-    <section class="block" id="fundingBlock" hidden>
-      <h2>Funding this week</h2>
-      <div id="funding"></div>
-    </section>
-    <section class="block" id="launchesBlock" hidden>
-      <h2>Upcoming launches</h2>
-      <div id="launches"></div>
-    </section>
+  </div>
+
+  <div class="zone" id="z-industry">
+    <div class="zone-band"><span class="zn">04</span><span class="zt">Industry</span><span class="zs">racing, money and launches</span></div>
+    <div class="zgrid c3">
+      <section class="block" id="racingBlock" hidden>
+        <h2>Racing</h2>
+        <div id="racing"></div>
+      </section>
+      <section class="block" id="fundingBlock" hidden>
+        <h2>Funding this week</h2>
+        <div id="funding"></div>
+      </section>
+      <section class="block" id="launchesBlock" hidden>
+        <h2>Upcoming launches</h2>
+        <div id="launches"></div>
+      </section>
+    </div>
   </div>
 
   <footer>
@@ -480,19 +566,22 @@
     if (isArchive) { const n = $("archiveNote"); n.hidden = false; n.replaceChildren("Archive: " + day + " · ", el("a", { href: "./" }, "back to today")); }
 
     const Q = get("QUOTE");
-    if (Q) $("quote").replaceChildren("“" + Q.text + "” ", el("span", { class: "by" }, "— " + Q.author));
+    if (Q) $("quote").replaceChildren(el("span", { class: "q" }, "\u201C"), Q.text, el("span", { class: "q" }, "\u201D"), " ", el("span", { class: "by" }, "\u2014 " + Q.author));
 
     const NOW = get("NOW");
     if (NOW && NOW.length) show("now", NOW.map(p => el("div", { class: "now-item" },
       el("div", { class: "now-name" }, p.url ? link(p.url, p.name) : p.name, p.date ? el("div", { class: "now-date" }, p.date) : null), el("div", { class: "now-note" }, p.note))));
 
     const NEWS = get("NEWS") || [];
+    let leadDone = false;
     $("news").replaceChildren(...NEWS.map(t => el("section", { class: "topic" },
       el("div", { class: "label" }, t.topic),
       ...t.stories.map(s => {
         const img = safeUrl(s.img) ? el("img", { class: "story-img", src: s.img, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: e => { e.target.closest(".story").classList.add("noimg"); e.target.remove(); } }) : null;
-        return el("div", { class: "story" + (img ? "" : " noimg") }, img,
-          el("div", {},
+        const isLead = !leadDone; leadDone = true;
+        return el("div", { class: "story" + (isLead ? " lead" : "") + (img ? "" : " noimg") }, img,
+          el("div", { style: "min-width:0" },
+            isLead ? el("div", { class: "lead-tag" }, "Lead story") : null,
             link(s.url, s.title, "story-title"),
             s.why ? el("p", { class: "why" }, s.why) : null,
             el("div", { class: "story-foot" }, el("span", { class: "src" }, s.source),
@@ -519,7 +608,7 @@
 
     const S = get("STRAVA");
     if (S) show("strava", [
-      el("div", { class: "stat" }, el("div", {}, S.runs, el("small", {}, "runs, " + S.period)), el("div", {}, S.km, el("small", {}, "km, " + S.period))),
+      el("div", { class: "stat" }, el("div", {}, S.runs, el("small", {}, "runs, " + S.period)), el("div", { class: "key" }, S.km, el("small", {}, "km, " + S.period))),
       S.latest ? el("div", { class: "row" }, el("div", { class: "k" }, S.latest.date), el("div", {}, `${S.latest.km} km · ${S.latest.pace}/km`)) : null].filter(Boolean));
 
     const M = get("MUSIC");
@@ -569,6 +658,7 @@
   load(isArchive ? "archive/" + day + ".js" : "data.js", async () => {
     const unlocked = await tryUnlock();
     render(isArchive, day);
+    const top = $("youTop"); if (top) top.hidden = ![...top.children].some(c => !c.hidden);
     lockbar(unlocked);
     load("archive/list.js", renderArchive);
   });

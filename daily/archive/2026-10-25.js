@@ -1,5 +1,4 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-// CALENDAR, STRAVA, MUSIC and MUSIC_HISTORY are encrypted in PRIVATE (see tools/seal.mjs).
 const UPDATED = "25 Oct 2026, 1:15 AM IST";
 
 const QUOTE = {
@@ -117,6 +116,74 @@ const NEWS = [
   }
 ];
 
+const CALENDAR = [
+  {
+    "day": "Sun 25 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Mon 26 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Tue 27 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Wed 28 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Thu 29 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  }
+];
+
 const RACING = {
   "items": [
     {
@@ -137,6 +204,39 @@ const RACING = {
     "name": "RTR Sports, MotoGP 2026 calendar",
     "url": "https://rtrsports.com/en/blog/calendar-motogp-2026/"
   }
+};
+
+const STRAVA = {
+  "period": "last 30 days",
+  "runs": 2,
+  "km": "4.1",
+  "latest": {
+    "date": "11 Oct",
+    "km": "2.0",
+    "pace": "7:40"
+  }
+};
+
+const MUSIC = {
+  "song": {
+    "title": "Never Come Back",
+    "artist": "Caribou",
+    "id": "0Ej6OBBtMvhjaJvtt1vtUt",
+    "why": "Warm, euphoric house from Caribou's 2020 album Suddenly, in the same lane as your recent Overmono, Bicep and Fred again.. plays."
+  },
+  "playlist": {
+    "name": "Weekly UK Electronic Discovery",
+    "url": "https://open.spotify.com/playlist/56rZTdOy5kEwHq12HLmThZ",
+    "date": "2026-10-25"
+  },
+  "lately": [
+    "Overmono",
+    "Jamie xx",
+    "Fred again..",
+    "Bicep",
+    "For Those I Love",
+    "Conducta"
+  ]
 };
 
 const LEARN = {
@@ -250,4 +350,3 @@ const LAUNCHES = {
   }
 };
 
-const PRIVATE = {"v":1,"iter":250000,"salt":"7pbiQ14hsWwV1P/FAKwXJQ==","iv":"O8f8MFDyzwUryxZX","data":"lrgMLJ6PC4gGv1wmmweYylZAnzrFtGwXaeOuG8butOYn31jwu81lOeFIgniZISkolVhCiwwEYdTMpOBTVzNI4fxSFUwatlfvb1IzaEI/AKRtB+KQedRfMx7vrgFXhVqBmcmiUN8QwXFtmzmdzYd9COF7W7KupAi9EA5UICLhSemNg6eEmhFyfuJ82mar5KF4CuiopaBzjz3uxtm9ThsZIOceyf3JVewnHHmq9nBkc2WKY5HvqEq4XJUmsFr56kQBymVH2FndtAXDuKx9w9I/jS/uuqIQFXqr0bZ3QXvkbnY9GAyo0lnTGM+1LHatJjx74mGCfG3ViK6xEuXziC2UOp7pPKPdCZSdqkStLwkfMClD/rnMzdvyZUYj5lXp0vOM2bNMHLoWc/TLUMb+Jw+p2E5q9J11R/tBADNkoKY8Vp+2OcbVTe0XVTy3YPcPnw6ujJPKe7fC0aQ18J9ESxk8rcibmA14z4mSZUT6w8fCRIAMg3tx1qM2jGigu5ObFg8GqhihJdfvxOqrS+XATb0YW6uvWoIiltVXuqEARJ1Ae2JfzL1QvP08Khi68lHTt6/tTXXr5hMbpmpuu5dRguIsRlI4okhMDkSKcLwiDlbBwgpqrnz+Scn0pK17oAOf0/UL4sw2+sdWhKXxJ/sSJf7DGYP88KM3Rs9iWUBi4W4fHTUUANy+aEwGeHxNmACkgNRKm14udBK6ODZna1YUqDyOUwQgrB5j/xCBQoIEysmbmFcISy04M3R21GbdQmp7t97FXuVNgs8ASLuVSQPab2BKdufelCiLjiW1qb2X4O7V9Aowrn9vaGwhfdT/KGmG6e/kKvarhvlfpQOJOOm53Hu3ooVdPiFYB31jySFqr7ivEcAawzBRYNuLlXgWsabXcwZjA32EYr2rT9QNbfpeog7WSFJPZc/mkaTz0qFDmTZpknCt93pfnYZqDF5/bYKVCM0qJN+efYEXZGaVMJqBy81Kdbg6mprA+cM9ie5mzxaqzgdjhx3fIHOLzYmHHjB1uxwdCjOdP2supMtcoFlw8ugkyjIYizy/gSD8Ib7ctsY1/eBJN57h2EBzEClCBAdB4sb/2OS/8yjX8qgE2omahhSDbNNtGEsYN4VNi/n5DJ4M7hBE9s1z7NI3a3HWnX6xCYntmM91F2ZknQjPzYnsrNcC2g60iXAx2eJNAPiCpxfsm4cZvFQK2mNelNNWHdL8ROr1GcFvevOZ3xay5xJwRRm47C3WMmu86ejE3EC3unHzuUmeGfAjLhI79iHzf2bX8Xwz9xQTzE0NgzKqnK8Y+Ry7Z6/dYAvvW3eyxVoUghWL7tc+NySRBt4GyTv6tE6TPuOa2kO7uSK3iyWN6CRW+4dL2Ihv1qsiprcScH+sA6CPZmTHyuwMdnDtOIum90zVp6dkFSSwtB97dR1Wq1uP37ZlnDTeRDmcwXSPs7bmKLY8dtDH5ezDEyIihR0BZk1G8X3BPU3Sf7RlEa9hBEvXCBPfiMDZ4P6BfG9ynQ+Gn6ydJCRQesavVqauiIMwRBsoQwh2Yj57sRPdQwipTuGcM1Ea8h0mMgsMN3KHVho8zxKRXFXhTE+m4VgbjqeONibGivuoDThEIr4CRreZqQovMIkqDb0AFSBopexZVl8/JvsIlRpCh6AbOm4i3j8VDRFb9E2VVy+UIBh2ovpSbE0b7xP3eKaF4oduWysAD9G7UOkSgGtkyUINJG9t6vhvICiFqCXhed88ZS19N5RjX0td"};

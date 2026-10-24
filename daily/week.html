@@ -138,7 +138,7 @@
     return n;
   }
   const safeUrl = u => (typeof u === "string" && /^https:\/\//i.test(u)) ? u : null;
-  const NAMES = ["UPDATED", "QUOTE", "LEARN", "DESIGN", "PRIVATE"];
+  const NAMES = ["UPDATED", "QUOTE", "LEARN", "DESIGN", "MUSIC"];
   const parse = text => new Function(text + ";return {" + NAMES.map(n => n + ": typeof " + n + " !== 'undefined' ? " + n + " : null").join(",") + "}")();
   const nice = iso => new Date(iso + "T00:00:00").toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
   const firstSentence = s => (String(s || "").match(/^.*?[.!?](\s|$)/) || [s])[0];
@@ -181,14 +181,8 @@
     const Q = list.filter(d => d.QUOTE);
     Q.length ? $("quotes").replaceChildren(...Q.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)), el("p", { class: "quote" }, "“" + d.QUOTE.text + "”"), el("div", { class: "by" }, "— " + d.QUOTE.author)))) : none("quotes");
 
-    if (pass && window.crypto && crypto.subtle) {
-      const rows = [];
-      for (const d of list) {
-        if (!d.PRIVATE) continue;
-        try { const p = await unseal(d.PRIVATE, pass); const s = p.MUSIC && p.MUSIC.song; if (s && /^[A-Za-z0-9]{22}$/.test(s.id || "")) rows.push(el("div", { class: "row" }, el("div", { class: "k" }, nice(d.date)), el("a", { href: "https://open.spotify.com/track/" + s.id, target: "_blank", rel: "noopener" }, s.title + " — " + s.artist))); } catch (e) {}
-      }
-      if (rows.length) { $("songs").replaceChildren(...rows); $("songsBlock").hidden = false; }
-    }
+    const songs = list.filter(d => d.MUSIC && d.MUSIC.song && /^[A-Za-z0-9]{22}$/.test(d.MUSIC.song.id || ""));
+    if (songs.length) { $("songs").replaceChildren(...songs.map(d => el("div", { class: "row" }, el("div", { class: "k" }, nice(d.date)), el("a", { href: "https://open.spotify.com/track/" + d.MUSIC.song.id, target: "_blank", rel: "noopener" }, d.MUSIC.song.title + " \u2014 " + d.MUSIC.song.artist)))); $("songsBlock").hidden = false; }
 
     let saved = []; try { saved = JSON.parse(localStorage.getItem("abhik-daily-saved")) || []; } catch (e) {}
     saved.length ? $("saved").replaceChildren(...saved.slice(0, 30).map(s => el("div", { class: "row" }, el("div", { class: "k" }, s.source || ""), safeUrl(s.url) ? el("a", { href: s.url, target: "_blank", rel: "noopener" }, s.title) : el("span", {}, s.title)))) : $("saved").replaceChildren(el("p", { class: "empty" }, "Nothing saved yet. Tap “save” on a story on the main page."));
