@@ -4,8 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
+<meta name="theme-color" content="#000000">
+<script>
+  // Light from 7 AM to 7 PM (your local time when the page opens), dark otherwise.
+  (function () {
+    var h = new Date().getHours(), t = (h >= 7 && h < 19) ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
+  })();
+</script>
 <title>Searching…</title>
-<style>html,body{margin:0;background:#000;color:#f7f2ef;font:13px "IBM Plex Mono",ui-monospace,monospace}p{padding:24px}a{color:#fb0068}</style>
+<style>html,body{margin:0;background:#000;color:#f7f2ef;}:root[data-theme="light"] body{background:#f7f2ef;color:#000}html,body{font:13px "IBM Plex Mono",ui-monospace,monospace}p{padding:24px}a{color:#fb0068}</style>
 </head>
 <body>
 <p id="m">Searching…</p>

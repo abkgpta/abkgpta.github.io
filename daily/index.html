@@ -19,6 +19,15 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
+<script>
+  // Light from 7 AM to 7 PM (your local time when the page opens), dark otherwise.
+  (function () {
+    var h = new Date().getHours(), t = (h >= 7 && h < 19) ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
+  })();
+</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily">
@@ -34,6 +43,14 @@
     --rule: rgba(247, 242, 239, 0.22);
     --dim: rgba(247, 242, 239, 0.6);
   }
+  :root { --well: #111111; }
+  :root[data-theme="light"] {
+    --black: #f7f2ef;
+    --paper: #000000;
+    --rule: rgba(0, 0, 0, 0.18);
+    --dim: rgba(0, 0, 0, 0.6);
+    --well: #e6e0dc;
+  }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
   body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
@@ -47,6 +64,7 @@
   .logo3d { flex: 0 0 auto; width: 220px; height: 104px; position: relative; }
   .logo3d canvas, .logo3d img { width: 100%; height: 100%; display: block; }
   .logo-fallback { object-fit: contain; filter: invert(0.95); padding: 10px; }
+  :root[data-theme="light"] .logo-fallback { filter: none; }
   @media (max-width: 600px) { .brand { flex-direction: column; align-items: flex-start; gap: 12px; } .logo3d { width: 220px; height: 104px; align-self: center; } }
   .name { font-family: "Michroma", sans-serif; font-size: 28px; font-weight: 400; margin: 0; }
   .name span { color: var(--accent); }
@@ -90,7 +108,7 @@
   .topic { margin-bottom: 32px; }
   .story { display: grid; grid-template-columns: 160px 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px dashed var(--rule); }
   .story:last-child { border-bottom: 0; }
-  .story-img { width: 160px; height: 100px; object-fit: cover; display: block; background: #111; }
+  .story-img { width: 160px; height: 100px; object-fit: cover; display: block; background: var(--well); }
   .story-title { font-size: 14px; margin: 0 0 4px; text-decoration: none; display: block; }
   .story-title:hover { color: var(--accent); }
   .why { font-size: 12px; color: var(--dim); margin: 0 0 6px; }
@@ -113,7 +131,7 @@
   .stat div { font-family: "Michroma", sans-serif; font-size: 20px; }
   .stat small { display: block; font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--dim); }
   .empty { color: var(--dim); font-size: 13px; }
-  .player { width: 100%; height: 152px; border: 0; border-radius: 12px; display: block; margin: 2px 0 8px; background: #111; }
+  .player { width: 100%; height: 152px; border: 0; border-radius: 12px; display: block; margin: 2px 0 8px; background: var(--well); }
   .lately { font-size: 12px; color: var(--dim); margin-top: 10px; }
   .lately b { color: var(--paper); font-weight: 400; }
   .saved-item { padding: 6px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
@@ -132,7 +150,7 @@
   .body { font-size: 13px; margin: 0 0 8px; }
   .past { margin-top: 12px; font-size: 12px; color: var(--dim); }
   .diagram { width: 100%; height: auto; display: block; margin: 4px 0 16px; }
-  .design-img { width: 100%; height: 280px; object-fit: cover; display: block; margin: 4px 0 6px; background: #111; }
+  .design-img { width: 100%; height: 280px; object-fit: cover; display: block; margin: 4px 0 6px; background: var(--well); }
   .credit { font-size: 10px; color: var(--dim); margin-bottom: 14px; }
   .credit a { color: var(--dim); }
 
@@ -339,7 +357,8 @@
   function fitText(label, max) { label = String(label); return label.length > max ? label.slice(0, max - 1) + "…" : label; }
   function diagram(d) {
     if (!d || typeof d !== "object") return null;
-    const paper = "#f7f2ef", accent = "#fb0068", dim = "rgba(247,242,239,0.35)";
+    const light = document.documentElement.getAttribute("data-theme") === "light";
+    const paper = light ? "#000000" : "#f7f2ef", accent = "#fb0068", dim = light ? "rgba(0,0,0,0.35)" : "rgba(247,242,239,0.35)";
     const font = "IBM Plex Mono, ui-monospace, monospace";
     let svg, W = 560;
     if (d.type === "layers" && Array.isArray(d.panels) && d.panels.length) {
@@ -425,7 +444,7 @@
 
     const M = get("MUSIC");
     if (M && M.song && /^[A-Za-z0-9]{22}$/.test(M.song.id || "")) show("music", [
-      el("iframe", { class: "player", src: "https://open.spotify.com/embed/track/" + M.song.id + "?theme=0", title: M.song.title + " by " + M.song.artist, allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", loading: "lazy" }),
+      el("iframe", { class: "player", src: "https://open.spotify.com/embed/track/" + M.song.id + (document.documentElement.getAttribute("data-theme") === "light" ? "" : "?theme=0"), title: M.song.title + " by " + M.song.artist, allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", loading: "lazy" }),
       M.song.why ? el("p", { class: "why" }, M.song.why) : null,
       (M.playlist && safeUrl(M.playlist.url)) ? el("div", { class: "lately" }, "This week: ", link(M.playlist.url, M.playlist.name), " (opens in Spotify)") : null,
       (M.lately && M.lately.length) ? el("div", { class: "lately" }, "On repeat lately: ", el("b", {}, M.lately.join(", "))) : null].filter(Boolean));
