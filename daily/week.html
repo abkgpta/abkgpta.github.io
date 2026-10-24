@@ -9,10 +9,13 @@
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="theme-color" content="#000000">
 <script>
-  // Light from 7 AM to 7 PM (your local time when the page opens), dark otherwise.
+  // Theme: the viewer's choice (Auto / Light / Dark) is remembered per browser.
+  // Auto = light from 7 AM to 7 PM local time, dark otherwise.
   (function () {
-    var h = new Date().getHours(), t = (h >= 7 && h < 19) ? "light" : "dark";
+    var pref = "auto"; try { pref = localStorage.getItem("abhik-daily-theme") || "auto"; } catch (e) {}
+    var h = new Date().getHours(), t = pref === "light" || pref === "dark" ? pref : ((h >= 7 && h < 19) ? "light" : "dark");
     document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.setAttribute("data-theme-pref", pref);
     var m = document.querySelector('meta[name="theme-color"]');
     if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
   })();
@@ -65,6 +68,46 @@
   :root[data-theme="light"] h2 .sub { background: #000000; color: #fb0068; padding: 1px 6px; }
   :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #fb0068; padding: 1px 6px; }
   @media (pointer: coarse) { .back, .row a { display: inline-block; padding: 12px 4px; margin: -12px -4px; } }
+
+  /* ---- Dynamic magenta glow on the main rules ---- */
+  @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
+  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.6; } }
+  @keyframes sweep { 0% { background-position: -40% 0; } 60%, 100% { background-position: 140% 0; } }
+  :root { --glow-k: 1; }
+  :root[data-theme="light"] { --glow-k: 0.7; }
+  h2, header, footer { position: relative; }
+  h2, footer, header { --g: 0.35; animation: breathe 7s ease-in-out infinite; }
+  h2 { box-shadow: 0 9px 9px -9px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  header { box-shadow: 0 12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  footer { box-shadow: 0 -12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  .search { --g: 0.35; animation: breathe 7s ease-in-out infinite; box-shadow: 0 0 10px rgba(251, 0, 104, calc(var(--g) * 0.6 * var(--glow-k))); }
+  h2::after, header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, #fb0068, transparent) no-repeat; background-size: 35% 100%;
+    background-position: -40% 0; opacity: calc(0.75 * var(--glow-k));
+    filter: drop-shadow(0 0 3px #fb0068);
+    animation: sweep 11s ease-in-out infinite;
+  }
+  /* stagger so the lines don't pulse in lockstep */
+  section:nth-of-type(2n) h2 { animation-delay: -2.3s; }
+  section:nth-of-type(3n) h2 { animation-delay: -4.1s; }
+  section:nth-of-type(2n) h2::after { animation-delay: -3.7s; }
+  section:nth-of-type(3n) h2::after { animation-delay: -6.2s; }
+  section:nth-of-type(5n) h2::after { animation-delay: -8.9s; }
+  header::after { animation-delay: -1.5s; }
+  @media (prefers-reduced-motion: reduce) {
+    h2, header, footer, .search, h2::after, header::after { animation: none; }
+    h2::after, header::after { display: none; }
+  }
+
+  .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
+  .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
+  @media (pointer: coarse) { .theme-toggle { min-height: 44px; } }
+  .row { grid-template-columns: minmax(90px, max-content) 1fr; }
+  .row .k { white-space: nowrap; }
+  /* diagram colours follow the theme live */
+  :root { --hl-fill: rgba(251, 0, 104, 0.16); --hl-text: #f7f2ef; }
+  :root[data-theme="light"] { --hl-fill: #000000; --hl-text: #f7f2ef; }
 </style>
 </head>
 <body>
@@ -74,7 +117,7 @@
       <h1>THIS <span>WEEK</span></h1>
       <div class="range" id="range"></div>
     </div>
-    <a class="back" href="./">← Back to today</a>
+    <div style="text-align:right"><a class="back" href="./">← Back to today</a><div><button class="theme-toggle" id="themeToggle" type="button">Theme: Auto</button></div></div>
   </header>
 
   <section>
@@ -169,6 +212,27 @@
     saved.length ? $("saved").replaceChildren(...saved.slice(0, 30).map(s => el("div", { class: "row" }, el("div", { class: "k" }, s.source || ""), safeUrl(s.url) ? el("a", { href: s.url, target: "_blank", rel: "noopener" }, s.title) : el("span", {}, s.title)))) : $("saved").replaceChildren(el("p", { class: "empty" }, "Nothing saved yet. Tap “save” on a story on the main page."));
   });
 })();
+</script>
+<script>
+  (function () {
+    var btn = document.getElementById("themeToggle"); if (!btn) return;
+    var order = ["auto", "light", "dark"], names = { auto: "Auto", light: "Light", dark: "Dark" };
+    function apply(pref) {
+      var h = new Date().getHours(), t = pref === "auto" ? ((h >= 7 && h < 19) ? "light" : "dark") : pref;
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.setAttribute("data-theme-pref", pref);
+      var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
+      btn.textContent = "Theme: " + names[pref];
+      btn.setAttribute("aria-label", "Theme: " + names[pref] + ". Tap to change.");
+    }
+    var cur = document.documentElement.getAttribute("data-theme-pref") || "auto";
+    apply(cur);
+    btn.addEventListener("click", function () {
+      cur = order[(order.indexOf(cur) + 1) % order.length];
+      try { localStorage.setItem("abhik-daily-theme", cur); } catch (e) {}
+      apply(cur);
+    });
+  })();
 </script>
 </body>
 </html>

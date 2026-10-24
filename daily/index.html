@@ -20,10 +20,13 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
 <script>
-  // Light from 7 AM to 7 PM (your local time when the page opens), dark otherwise.
+  // Theme: the viewer's choice (Auto / Light / Dark) is remembered per browser.
+  // Auto = light from 7 AM to 7 PM local time, dark otherwise.
   (function () {
-    var h = new Date().getHours(), t = (h >= 7 && h < 19) ? "light" : "dark";
+    var pref = "auto"; try { pref = localStorage.getItem("abhik-daily-theme") || "auto"; } catch (e) {}
+    var h = new Date().getHours(), t = pref === "light" || pref === "dark" ? pref : ((h >= 7 && h < 19) ? "light" : "dark");
     document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.setAttribute("data-theme-pref", pref);
     var m = document.querySelector('meta[name="theme-color"]');
     if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
   })();
@@ -200,6 +203,50 @@
     #musicBlock { order: 1; } #stravaBlock { order: 2; } #nowBlock { order: 3; } #newsBlock { order: 4; margin-bottom: 36px; }
     #calendarBlock { order: 5; } #racingBlock { order: 6; } #savedBlock { order: 7; }
   }
+
+  /* ---- Dynamic magenta glow on the main rules ---- */
+  @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
+  @keyframes breathe { 0%, 100% { --g: 0.22; } 50% { --g: 0.6; } }
+  @keyframes sweep { 0% { background-position: -40% 0; } 60%, 100% { background-position: 140% 0; } }
+  :root { --glow-k: 1; }
+  :root[data-theme="light"] { --glow-k: 0.7; }
+  h2, header, footer { position: relative; }
+  h2, footer, header { --g: 0.35; animation: breathe 7s ease-in-out infinite; }
+  h2 { box-shadow: 0 9px 9px -9px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  header { box-shadow: 0 12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  footer { box-shadow: 0 -12px 12px -12px rgba(251, 0, 104, calc(var(--g) * var(--glow-k))); }
+  .search { --g: 0.35; animation: breathe 7s ease-in-out infinite; box-shadow: 0 0 10px rgba(251, 0, 104, calc(var(--g) * 0.6 * var(--glow-k))); }
+  h2::after, header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; pointer-events: none;
+    background: linear-gradient(90deg, transparent, #fb0068, transparent) no-repeat; background-size: 35% 100%;
+    background-position: -40% 0; opacity: calc(0.75 * var(--glow-k));
+    filter: drop-shadow(0 0 3px #fb0068);
+    animation: sweep 11s ease-in-out infinite;
+  }
+  /* stagger so the lines don't pulse in lockstep */
+  section:nth-of-type(2n) h2 { animation-delay: -2.3s; }
+  section:nth-of-type(3n) h2 { animation-delay: -4.1s; }
+  section:nth-of-type(2n) h2::after { animation-delay: -3.7s; }
+  section:nth-of-type(3n) h2::after { animation-delay: -6.2s; }
+  section:nth-of-type(5n) h2::after { animation-delay: -8.9s; }
+  header::after { animation-delay: -1.5s; }
+  @media (prefers-reduced-motion: reduce) {
+    h2, header, footer, .search, h2::after, header::after { animation: none; }
+    h2::after, header::after { display: none; }
+  }
+
+  .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
+  .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
+  @media (pointer: coarse) { .theme-toggle { min-height: 44px; } }
+  .row { grid-template-columns: minmax(90px, max-content) 1fr; }
+  .row .k { white-space: nowrap; }
+  /* diagram colours follow the theme live */
+  :root { --hl-fill: rgba(251, 0, 104, 0.16); --hl-text: #f7f2ef; }
+  :root[data-theme="light"] { --hl-fill: #000000; --hl-text: #f7f2ef; }
+
+  .meta-actions { display: flex; gap: 14px; align-items: center; justify-content: flex-end; flex-wrap: wrap; margin-top: 6px; }
+  .meta-actions .week-link, .meta-actions .theme-toggle { margin-top: 0; }
+  @media (max-width: 860px) { .meta-actions { justify-content: flex-start; } }
 </style>
 </head>
 <body>
@@ -215,11 +262,11 @@
     <div class="meta">
       <div id="today"></div>
       <div class="hdr-updated" id="hdrUpdated"></div>
-      <a class="week-link" href="week.html">This week →</a>
+      <div class="meta-actions"><a class="week-link" href="week.html">This week →</a><button class="theme-toggle" id="themeToggle" type="button">Theme: Auto</button></div>
       <div class="weather" id="weather"></div>
       <div class="archive-note" id="archiveNote" hidden></div>
     </div>
-    <form class="search" action="search.html" method="get" role="search">
+    <form class="search" action="https://www.google.com/search" method="get" role="search">
       <input name="q" placeholder="Search the web" aria-label="Search the web" autocomplete="off">
       <button type="submit">Go</button>
     </form>
@@ -386,16 +433,18 @@
   const SVGNS = "http://www.w3.org/2000/svg";
   function s(tag, attrs, text) {
     const n = document.createElementNS(SVGNS, tag);
-    for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if ((k === "fill" || k === "stroke") && String(v).startsWith("var(")) n.style.setProperty(k, v); else n.setAttribute(k, v);
+    }
     if (text != null) n.textContent = text;
     return n;
   }
   function fitText(label, max) { label = String(label); return label.length > max ? label.slice(0, max - 1) + "…" : label; }
   function diagram(d) {
     if (!d || typeof d !== "object") return null;
-    const light = document.documentElement.getAttribute("data-theme") === "light";
-    const paper = light ? "#000000" : "#f7f2ef", accent = "#fb0068", dim = light ? "rgba(0,0,0,0.6)" : "rgba(247,242,239,0.6)";
-    const hlFill = light ? "#000000" : "rgba(251,0,104,0.16)";
+    const light = false; // colours come from CSS variables so a theme switch restyles the diagram live
+    const paper = "var(--paper)", accent = "#fb0068", dim = "var(--dim)";
+    const hlFill = "var(--hl-fill)";
     const font = "IBM Plex Mono, ui-monospace, monospace";
     let svg, W = 560;
     if (d.type === "layers" && Array.isArray(d.panels) && d.panels.length) {
@@ -430,7 +479,7 @@
         svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? accent : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
         const words = String(st.note || "").split(/\s+/).filter(Boolean), lines = [""];
         words.forEach(w => { const t = (lines[lines.length - 1] + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
-        lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: (st.hl && light) ? "#f7f2ef" : paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
+        lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: st.hl ? "var(--hl-text)" : paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
         if (i < steps.length - 1 && c < perRow - 1) {
           const ax = x + bw + 4, ay = y + bh / 2;
           svg.appendChild(s("path", { d: `M${ax} ${ay} H${ax + gap - 8} M${ax + gap - 13} ${ay - 5} L${ax + gap - 8} ${ay} L${ax + gap - 13} ${ay + 5}`, stroke: accent, fill: "none" }));
@@ -543,5 +592,26 @@
 })();
 </script>
 <script src="logo3d.js"></script>
+<script>
+  (function () {
+    var btn = document.getElementById("themeToggle"); if (!btn) return;
+    var order = ["auto", "light", "dark"], names = { auto: "Auto", light: "Light", dark: "Dark" };
+    function apply(pref) {
+      var h = new Date().getHours(), t = pref === "auto" ? ((h >= 7 && h < 19) ? "light" : "dark") : pref;
+      document.documentElement.setAttribute("data-theme", t);
+      document.documentElement.setAttribute("data-theme-pref", pref);
+      var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
+      btn.textContent = "Theme: " + names[pref];
+      btn.setAttribute("aria-label", "Theme: " + names[pref] + ". Tap to change.");
+    }
+    var cur = document.documentElement.getAttribute("data-theme-pref") || "auto";
+    apply(cur);
+    btn.addEventListener("click", function () {
+      cur = order[(order.indexOf(cur) + 1) % order.length];
+      try { localStorage.setItem("abhik-daily-theme", cur); } catch (e) {}
+      apply(cur);
+    });
+  })();
+</script>
 </body>
 </html>
