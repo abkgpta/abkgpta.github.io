@@ -65,6 +65,8 @@
   .now-item:last-child { border-bottom: 0; }
   .now-name { font-family: "Michroma", sans-serif; font-size: 12px; }
   .now-note { font-size: 13px; }
+  .now-date { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent); margin-top: 2px; }
+  .hdr-updated { color: var(--accent); margin-top: 2px; }
 
   /* News */
   .topic { margin-bottom: 32px; }
@@ -133,6 +135,7 @@
     </div>
     <div class="meta">
       <div id="today"></div>
+      <div class="hdr-updated" id="hdrUpdated"></div>
       <div class="weather" id="weather"></div>
       <div class="archive-note" id="archiveNote" hidden></div>
     </div>
@@ -321,6 +324,7 @@
   function render(isArchive, day) {
     $("today").textContent = new Date().toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
     $("updated").textContent = get("UPDATED") || "";
+    if (get("UPDATED")) $("hdrUpdated").textContent = "Last updated " + get("UPDATED");
     if (isArchive) { const n = $("archiveNote"); n.hidden = false; n.replaceChildren("Archive: " + day + " · ", el("a", { href: "./" }, "back to today")); }
 
     const Q = get("QUOTE");
@@ -328,7 +332,7 @@
 
     const NOW = get("NOW");
     if (NOW && NOW.length) show("now", NOW.map(p => el("div", { class: "now-item" },
-      el("div", { class: "now-name" }, p.url ? link(p.url, p.name) : p.name), el("div", { class: "now-note" }, p.note))));
+      el("div", { class: "now-name" }, p.url ? link(p.url, p.name) : p.name, p.date ? el("div", { class: "now-date" }, p.date) : null), el("div", { class: "now-note" }, p.note))));
 
     const NEWS = get("NEWS") || [];
     $("news").replaceChildren(...NEWS.map(t => el("section", { class: "topic" },
