@@ -109,5 +109,6 @@ const LAUNCHES = {
 
 const MUSIC = {
   song: { title: "Never Come Back", artist: "Caribou", id: "0Ej6OBBtMvhjaJvtt1vtUt", why: "Warm, euphoric house from Caribou's 2020 album Suddenly, in the same lane as your recent Overmono, Bicep and Fred again.. plays." },
+  playlist: { name: "Weekly UK Electronic Discovery", url: "https://open.spotify.com/playlist/56rZTdOy5kEwHq12HLmThZ", date: "2026-10-25" },
   lately: ["Overmono", "Jamie xx", "Fred again..", "Bicep", "For Those I Love", "Conducta"]
 };

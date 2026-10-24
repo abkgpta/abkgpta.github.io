@@ -350,6 +350,7 @@
     if (M && M.song && /^[A-Za-z0-9]{22}$/.test(M.song.id || "")) show("music", [
       el("iframe", { class: "player", src: "https://open.spotify.com/embed/track/" + M.song.id + "?theme=0", title: M.song.title + " by " + M.song.artist, allow: "autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture", loading: "lazy" }),
       M.song.why ? el("p", { class: "why" }, M.song.why) : null,
+      (M.playlist && safeUrl(M.playlist.url)) ? el("div", { class: "lately" }, "This week: ", link(M.playlist.url, M.playlist.name), " (opens in Spotify)") : null,
       (M.lately && M.lately.length) ? el("div", { class: "lately" }, "On repeat lately: ", el("b", {}, M.lately.join(", "))) : null].filter(Boolean));
 
     const L = get("LEARN");
