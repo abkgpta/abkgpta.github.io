@@ -2,13 +2,47 @@
   "updated": "2026-10-25",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
-    { "topic": "Motorcycle industry", "source": "stated", "weight": 1.0 },
-    { "topic": "Automotive industry", "source": "stated", "weight": 1.0 },
-    { "topic": "Deep tech", "source": "stated", "weight": 1.0 },
-    { "topic": "Startups", "source": "stated", "weight": 1.0 },
-    { "topic": "Indian startups", "source": "stated", "weight": 1.0 },
-    { "topic": "Indian business", "source": "stated", "weight": 1.0 },
-    { "topic": "Industrial and product design", "source": "inferred", "weight": 0.6, "why": "industrial design portfolio, nNode branding work" },
-    { "topic": "Sneaker and footwear design", "source": "inferred", "weight": 0.4, "why": "portfolio: sketching sneakers, adidas DASH project" }
+    {
+      "topic": "Motorcycle industry",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Automotive industry",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Deep tech",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Startups",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Indian startups",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Indian business",
+      "source": "stated",
+      "weight": 1
+    },
+    {
+      "topic": "Industrial and product design",
+      "source": "inferred",
+      "weight": 0.6,
+      "why": "industrial design portfolio, nNode branding work"
+    },
+    {
+      "topic": "Sneaker and footwear design",
+      "source": "inferred",
+      "weight": 0.4,
+      "why": "portfolio: sketching sneakers, adidas DASH project"
+    }
   ]
 }

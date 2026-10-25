@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "25 Oct 2026, 1:15 AM IST";
+const UPDATED = "25 Oct 2026, 6:55 AM IST";
 
 const QUOTE = {
-  "text": "The best way to predict the future is to invent it.",
-  "author": "Alan Kay"
+  "text": "The details are not the details. They make the design.",
+  "author": "Charles Eames"
 };
 
 const NOW = [
@@ -37,28 +37,54 @@ const NOW = [
 
 const NEWS = [
   {
-    "topic": "Startups & Indian startups",
+    "topic": "Motorcycles",
     "stories": [
       {
-        "title": "From Even Health To The Pant Project — Indian Startups Raised Over $184 Mn This Week",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/from-even-health-to-the-pant-project-indian-startups-raised-over-184-mn-this-week/",
-        "img": "https://asset.inc42.com/2026/10/FG_Oct-23-Soc-100.jpg",
-        "why": "Over $184M across 17 deals in the week of 19–23 Oct, about a fifth less than the week before."
+        "title": "Jorge Martin ruled out of Australian GP after Sprint crash",
+        "source": "motogp.com",
+        "url": "https://www.motogp.com/en/news/2026/10/24/jorge-martin-ruled-out-of-australian-gp-after-sprint-crash/1180521",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/10/24/a3bef971-6f46-4b4d-bde7-67506e620ff5/LGZ_1468.jpg?width=1200&height=630",
+        "why": "Martin fractured his radius fighting Marquez for the Sprint lead, misses Sunday's race and lost the title lead."
       },
       {
-        "title": "Funding and acquisitions in Indian startups this week [Oct 19 – Oct 24]",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/report/weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-19-oct-24-12744844",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/23/feature-image-2026-10-23-21-08-45.png",
-        "why": "$133.9M across 15 startups by Entrackr's count, down 56% from the week before."
+        "title": "New Ultraviolette X-47 Venom launched at Rs 2.65 lakh onwards",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/new-ultraviolette-x-47-venom-launch-price-rs-2-65-lakh-onwards-12559248.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-ultraviolette-x-47-venom-electric-launch-price-3.jpg",
+        "why": "Electric bike with up to 343 km claimed range and 0–100 km/h in 5.9s; introductory price for the first 5,000 units."
       },
       {
-        "title": "OpenAI working on new $30B raise at $1.25T valuation ahead of IPO",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/22/openai-working-on-new-30b-raise-at-1-25t-valuation-ahead-of-ipo",
-        "img": "https://techcrunch.com/wp-content/uploads/2023/11/Sam-Altman-OpenAI.jpg?resize=1200,680",
-        "why": "Reportedly seeking up to $30B at a $1.25 trillion valuation."
+        "title": "New KTM 200 Duke launched at Rs 2.09 lakh with ETB, TCS, ride modes and quickshifter",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/new-ktm-200-duke-launch-price-rs-2-09-l-etb-tcs-ride-modes-quickshifter-12559419.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-updated-2026-ktm-200-duke-launched.jpg",
+        "why": "Ride-by-wire, traction control, a bi-directional quickshifter and Rain/Street modes; the engine is unchanged."
+      }
+    ]
+  },
+  {
+    "topic": "Automotive",
+    "stories": [
+      {
+        "title": "Car Sales H1 FY 2027 – Maruti and Tata grow market share",
+        "source": "Rushlane",
+        "url": "https://rushlane.com/car-sales-h1-fy-2027-maruti-and-tata-grow-market-share-12559326.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/02/2026-tata-punch-ev-facelift-first-drive-review.jpg",
+        "why": "H1 sales rose 27.16% to 26.37 lakh units; Tata passed Mahindra for second and Maruti's share rose to 40.97%."
+      },
+      {
+        "title": "BYD Denza luxury brand India debut confirmed for 13th Nov 2026",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/byd-denza-luxury-brand-india-debut-confirmed-for-13th-nov-2026-12559377.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/byd-denza-teased-for-india-cover.jpg",
+        "why": "BYD's premium EV brand targets the Rs 80 lakh–1.5 crore segment; the D9 electric MPV is expected first."
+      },
+      {
+        "title": "Hyundai Bayon variant-wise features and dimensions leak before launch",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/hyundai-bayon-variant-wise-features-dimensions-leak-before-launch-12559375.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/hyundai-bayon-new-colours.jpg",
+        "why": "A leak ahead of the 26 Oct launch shows seven trims, a 1.5L petrol and Level 2 ADAS on the top trim."
       }
     ]
   },
@@ -66,51 +92,77 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "DeepSeek reportedly raises $15B days after US restrictions",
+        "title": "Hottest toy for Christmas? Nvidia CEO plays with adorable Microduck robots, 20,000 sell",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/22/deepseek-reportedly-raises-15b-days-after-us-restrictions/",
-        "img": "https://techcrunch.com/wp-content/uploads/2025/01/deepseek-2.jpg?resize=1200,800",
-        "why": "A reported raise of about $15B (roughly 100 billion yuan); no valuation was given."
+        "url": "https://techcrunch.com/2026/10/23/hottest-toy-for-christmas-nvidia-ceo-plays-with-adorable-microduck-robots-20000-sell/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/microduck-kickabout.jpg",
+        "why": "Pollen Robotics' open-source Microduck passed 20,000 preorders after a viral video of Jensen Huang at GTC Berlin."
       },
       {
-        "title": "Eka is worth $1.45B thanks to a physical AI model that has experts raving",
+        "title": "Commonwealth Fusion Systems gets $85M to build better fusion-ready semiconductors",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/20/eka-is-worth-1-45-billion-thanks-to-a-physical-ai-model-that-has-experts-raving/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/Screenshot-2026-10-19-at-1.21.23-PM.png?resize=1200,974",
-        "why": "Robotics startup Eka raised a $150M Series A led by a16z and F-Prime."
+        "url": "https://techcrunch.com/2026/10/23/commonwealth-fusion-systems-gets-85m-to-build-better-fusion-ready-semiconductors/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/CFS-Brandon-Sorbom-Disrupt-2026.jpg",
+        "why": "A US CHIPS award, with a government stake, funds silicon carbide power electronics and radiation-hardened controls."
       },
       {
-        "title": "Anglo-Finnish Oxford University quantum spinout QuantrolOx raises €12M",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/10/22/anglo-finnish-oxford-university-quantum-spinout-raises-eur12m",
-        "img": "https://cdn.tech.eu/uploads/2026/10/smart-2-516.jpg",
-        "why": "Series A to grow its software for calibrating and running quantum hardware."
+        "title": "Tonbo Imaging shares end debut session at 62% premium to IPO price",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/tonbo-imaging-makes-strong-market-debut-lists-at-66-premium-to-ipo-price/",
+        "img": "https://asset.inc42.com/2026/10/Tonbo-FTR-1-760x570.jpg",
+        "why": "The defence imaging firm listed at ₹1,162 against a ₹700 IPO price after a 135.9x subscribed issue."
       }
     ]
   },
   {
-    "topic": "Motorcycles",
+    "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Bajaj Pulsar N250SS launched at Rs 1.59 lakh",
-        "source": "Autocar India",
-        "url": "https://autocarindia.com/bike-news/bajaj-pulsar-n250ss-launched-at-rs-159-lakh-441093",
-        "img": "https://asset.autocarindia.com/static/news/images/20261021_074233_4d021b76.jpg",
-        "why": "The range-topping N250 gets a four-valve engine, six-speed gearbox and a standard quickshifter, for about ₹14,000 more."
+        "title": "Zetwerk shares list at over 5% premium in stock market debut",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/zetwerk-shares-list-at-over-5-premium-in-stock-market-debut-12740395",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/23/zetwerk-listing-2026-10-23-11-21-26.png",
+        "why": "The manufacturing startup opened at Rs 159.25 against a Rs 151 issue price; FY26 revenue rose 40.4%."
       },
       {
-        "title": "Aprilia RS 660 Phillip Island Tribute celebrates “unbreakable bond” as MotoGP leaves circuit",
-        "source": "Visordown",
-        "url": "https://www.visordown.com/news/aprilia-rs-660-phillip-island-tribute-celebrates-unbreakable-bond-motogp-leaves-circuit",
-        "img": "https://www.visordown.com/sites/default/files/2026-10/07-aprilia-rs660-phillip-island-tribute.jpg?width=1600&aspect_ratio=16:9",
-        "why": "A limited edition marking MotoGP's move from Phillip Island to Adelaide in 2027."
+        "title": "Y Combinator-backed Firstwork nets $15 Mn to expand across US and Europe",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/y-combinator-backed-firstwork-nets-15-mn-to-expand-footprint-across-us-and-europe/",
+        "img": "https://asset.inc42.com/2026/10/Untitled-Design-22.png",
+        "why": "Earlybird led the Series A for its AI agents that automate HR operations for frontline workers."
       },
       {
-        "title": "September 2026 two-wheeler sales: Hero reclaims top spot",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/industry/september-2026-two-wheeler-sales-hero-reclaims-top-spot-440944",
-        "img": "https://asset.autocarindia.com/static/news/images/20261007_074919_63c46e84.jpeg",
-        "why": "Hero sold 7,66,348 units, up 12% year on year, ahead of Honda's 7,06,266."
+        "title": "Daytona hits $1B valuation with $60M Series B for AI agent cloud",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/10/20/daytona-hits-1b-valuation-with-60m-series-b-for-ai-agent-cloud/",
+        "img": "https://cdn.tech.eu/uploads/2026/10/daytona-featured-149.png",
+        "why": "FirstMark led the round for the maker of sandboxed clouds for AI agents; run-rate revenue grew 25x this year."
+      }
+    ]
+  },
+  {
+    "topic": "Indian business",
+    "stories": [
+      {
+        "title": "Jio Platforms IPO rides institutional demand to 22.19 times subscription",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/markets/news/jio-platforms-ipo-rides-institutional-demand-to-22-19-times-subscription-126102301595_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-04/22/thumb/fitandfill/1200X628/1713808608-4766.jpg",
+        "why": "India's largest IPO, at ₹30,213 crore, was subscribed 22.19x; listing is set for 28 October."
+      },
+      {
+        "title": "JSW Steel Q2 profit jumps; board approves Utkal Phase-II expansion",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/jsw-steel-q2fy27-result-net-profit-rises-14-1-to-5-359-crore-126102300833_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-09/26/thumb/fitandfill/1200X628/1758868544-2245.JPG",
+        "why": "Record 7.27 mt output; a 5 mtpa Odisha expansion was approved at ₹16,150 crore."
+      },
+      {
+        "title": "Infosys cuts FY27 guidance; Q2 net profit rises 6.2%",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/infosys-q2-results-net-profit-rises-6-2-to-7-823-cr-revenue-up-10-2-126102300941_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/23/thumb/fitandfill/1200X628/1792778815-4648.jpg",
+        "why": "Revenue guidance cut to 1–2% constant-currency growth from 1.5–3%; profit missed estimates."
       }
     ]
   }
@@ -120,6 +172,10 @@ const CALENDAR = [
   {
     "day": "Sun 25 Oct",
     "items": [
+      {
+        "time": "9:30 AM",
+        "title": "Run 2k"
+      },
       {
         "time": "9:00 PM",
         "title": "Leave office"
@@ -188,7 +244,7 @@ const RACING = {
   "items": [
     {
       "when": "23–25 Oct",
-      "what": "MotoGP: Australian GP, Phillip Island"
+      "what": "MotoGP: Australian GP, Phillip Island (race today)"
     },
     {
       "when": "30 Oct–1 Nov",
@@ -197,12 +253,16 @@ const RACING = {
     {
       "when": "6–8 Nov",
       "what": "MotoGP: Qatar GP, Lusail (rescheduled)"
+    },
+    {
+      "when": "20–22 Nov",
+      "what": "MotoGP: Portuguese GP, Portimão"
     }
   ],
-  "note": "Qatar's new date was still awaiting final confirmation in late September.",
+  "note": "Marc Marquez won Saturday's Australian Sprint; Jorge Martin crashed and misses Sunday's race. WorldSBK's 2026 season has ended.",
   "source": {
-    "name": "RTR Sports, MotoGP 2026 calendar",
-    "url": "https://rtrsports.com/en/blog/calendar-motogp-2026/"
+    "name": "Crash.net, updated 2026 MotoGP calendar",
+    "url": "https://www.crash.net/motogp/news/1091546/1/updated-2026-motogp-schedule-full-after-qatar-postponement"
   }
 };
 
@@ -219,10 +279,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Never Come Back",
-    "artist": "Caribou",
-    "id": "0Ej6OBBtMvhjaJvtt1vtUt",
-    "why": "Warm, euphoric house from Caribou's 2020 album Suddenly, in the same lane as your recent Overmono, Bicep and Fred again.. plays."
+    "title": "Innerbloom",
+    "artist": "RÜFÜS DU SOL",
+    "id": "6CGMZijOAZvTXG21T8t6R0",
+    "why": "A nine-and-a-half-minute melodic house slow-burner from the 2016 album Bloom, for the Bicep and Overmono side of your listening."
   },
   "playlist": {
     "name": "Weekly UK Electronic Discovery",
@@ -230,54 +290,60 @@ const MUSIC = {
     "date": "2026-10-25"
   },
   "lately": [
-    "Overmono",
-    "Jamie xx",
-    "Fred again..",
-    "Bicep",
-    "For Those I Love",
-    "Conducta"
+    "Cartoon",
+    "Coldplay",
+    "Loud Luxury",
+    "Calvin Harris",
+    "David Guetta",
+    "G-Eazy"
   ]
 };
 
 const LEARN = {
-  "term": "Surface continuity: G0 to G3",
-  "body": "Continuity describes how smoothly two surfaces meet at a shared edge. G0 means the edges simply touch, so there can be a sharp crease. G1 matches the tangent direction, so there is no crease, but reflections still show a visible kink where the curvature suddenly changes. G2 matches curvature as well, so highlights flow across the join unbroken; this is the usual baseline for Class-A automotive and product surfaces. G3 also matches how fast curvature is changing, giving even softer, more liquid reflections at the cost of heavier geometry.",
+  "term": "Draft angles and the parting line",
+  "body": "Draft is the taper given to faces that run parallel to the mould's opening direction, so a moulded part can release without scraping, sticking or ejector-pin marks. Common guidance for injection moulding is at least 0.5–1° on smooth faces, plus roughly 1–1.5° for every 0.025 mm of texture depth, so heavily grained surfaces can need 3–5°. Draft is always measured from the pull direction, and every face must slope away from the parting line, the boundary where the two mould halves meet. Placing that line is a design decision, not just a tooling one: it leaves a visible witness mark and decides which features become undercuts, so designers often hide it on a crisp edge or a deliberate feature line. Truly vertical walls need side actions or very short, polished cores, which is why perfectly straight CAD sides rarely survive into production.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "G0",
-        "note": "Position. Edges touch; a crease is allowed."
+        "label": "Pull",
+        "note": "The mould opens along one pull direction."
       },
       {
-        "label": "G1",
-        "note": "Tangent. No crease, but highlights kink."
+        "label": "Parting",
+        "note": "The line where the two mould halves meet."
       },
       {
-        "label": "G2",
-        "note": "Curvature. Highlights flow across.",
+        "label": "Draft",
+        "note": "Faces taper away from the parting line.",
         "hl": true
       },
       {
-        "label": "G3",
-        "note": "Curvature rate. Softest reflections."
+        "label": "Texture",
+        "note": "Add ~1–1.5° per 0.025 mm of grain depth."
       }
     ],
-    "caption": "Each level adds one more match. Pink = Class-A baseline."
+    "caption": "Releasing a part: direction, split, taper, texture."
   },
-  "past": []
+  "source": {
+    "name": "Wikipedia: Draft (engineering)",
+    "url": "https://en.wikipedia.org/wiki/Draft_(engineering)"
+  },
+  "past": [
+    "Surface continuity: G0 to G3"
+  ]
 };
 
 const DESIGN = {
-  "name": "Ducati Monster (M900)",
-  "designer": "Miguel Galluzzi",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Ducati_Monster_900_del_1993.jpg?width=1200",
+  "name": "Piaggio Vespa 98",
+  "designer": "Corradino D'Ascanio",
+  "year": "1946",
+  "why": "An aeronautical engineer who disliked motorcycles designed it from scratch: a stressed pressed-steel monocoque instead of a frame, a step-through floor, and the engine tucked beside the rear wheel under a cowl. Every visible surface does a job, from the legshield that keeps clothes clean to the single-sided front arm that makes tyre changes easy.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1947_Vespa_98_100cc.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Ducati_Monster_900_del_1993.jpg"
-  },
-  "year": "1993",
-  "why": "It stripped a sportbike down to an exposed trellis frame, a big tank and a round headlight, and turned the 'naked' bike into a category of its own. A lesson in getting character from structure you would normally hide."
+    "url": "https://commons.wikimedia.org/wiki/File:1947_Vespa_98_100cc.jpg"
+  }
 };
 
 const FUNDING = {
@@ -329,6 +395,16 @@ const FUNDING = {
 const LAUNCHES = {
   "items": [
     {
+      "model": "Hyundai Bayon",
+      "when": "26 Oct 2026",
+      "price": "₹9.49–14.90 lakh"
+    },
+    {
+      "model": "Mercedes-Benz GLC Electric",
+      "when": "4 Nov 2026",
+      "price": "₹85 lakh"
+    },
+    {
       "model": "Honda Rebel 500",
       "when": "Nov 2026",
       "price": "₹4.40–4.60 lakh"
@@ -339,13 +415,18 @@ const LAUNCHES = {
       "price": "₹19–22 lakh"
     },
     {
+      "model": "JSW Motors Combat (hybrid SUV)",
+      "when": "4 Dec 2026",
+      "price": "₹38 lakh"
+    },
+    {
       "model": "Royal Enfield Himalayan 750",
       "when": "Dec 2026",
       "price": "₹4.50–5.00 lakh"
     }
   ],
   "source": {
-    "name": "Autocar India, upcoming bikes",
+    "name": "Autocar India, upcoming bikes and cars",
     "url": "https://www.autocarindia.com/upcoming-bikes"
   }
 };
