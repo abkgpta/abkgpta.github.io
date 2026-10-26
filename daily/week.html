@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Abhik — This week</title>
+<title>This week · Abhik Gupta</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -179,7 +179,7 @@
       el("p", { class: "term" }, d.DESIGN.name), el("p", { class: "body" }, [d.DESIGN.designer, d.DESIGN.year].filter(Boolean).join(", "))))) : none("design");
 
     const Q = list.filter(d => d.QUOTE);
-    Q.length ? $("quotes").replaceChildren(...Q.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)), el("p", { class: "quote" }, "“" + d.QUOTE.text + "”"), el("div", { class: "by" }, "— " + d.QUOTE.author)))) : none("quotes");
+    Q.length ? $("quotes").replaceChildren(...Q.map(d => el("div", { class: "card" }, el("div", { class: "day" }, nice(d.date)), el("p", { class: "quote" }, "“" + d.QUOTE.text + "”"), el("div", { class: "by" }, d.QUOTE.author)))) : none("quotes");
 
     const songs = list.filter(d => d.MUSIC && d.MUSIC.song && /^[A-Za-z0-9]{22}$/.test(d.MUSIC.song.id || ""));
     if (songs.length) { $("songs").replaceChildren(...songs.map(d => el("div", { class: "row" }, el("div", { class: "k" }, nice(d.date)), el("a", { href: "https://open.spotify.com/track/" + d.MUSIC.song.id, target: "_blank", rel: "noopener" }, d.MUSIC.song.title + " \u2014 " + d.MUSIC.song.artist)))); $("songsBlock").hidden = false; }

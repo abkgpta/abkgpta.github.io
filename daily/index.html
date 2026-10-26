@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Abhik — Daily</title>
+<title>Daily · Abhik Gupta</title>
 <meta name="description" content="Abhik Gupta, industrial designer. A daily page of design theory, projects and news on motorcycles, cars, deep tech and Indian startups.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Abhik Gupta — Daily">
+<meta property="og:title" content="Daily · Abhik Gupta">
 <meta property="og:description" content="Industrial designer. Design theory, projects and the day's news on motorcycles, cars, deep tech and Indian startups.">
 <meta property="og:url" content="https://abkgpta.github.io/daily/">
 <meta property="og:image" content="https://abkgpta.github.io/daily/og.png">
@@ -172,13 +172,8 @@
 
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 12px; color: var(--dim); }
   footer a { color: var(--dim); margin-right: 10px; }
-  .lockbar { margin-top: 10px; }
   .linkish { background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
   .linkish:hover { color: var(--accent); }
-  .unlock { display: inline-flex; gap: 8px; margin-left: 12px; align-items: center; flex-wrap: wrap; }
-  .unlock input { background: transparent; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 8px; }
-  .unlock button { background: var(--accent); color: #000000; border: 0; font: inherit; font-size: 12px; padding: 5px 10px; cursor: pointer; }
-  .lockmsg { color: var(--accent); }
   footer a:hover { color: var(--accent); }
 
   /* ---- Audit fixes ---- */
@@ -187,7 +182,7 @@
   .search:focus-within { outline: 2px solid #fb0068; outline-offset: 2px; }
 
   /* Light mode: state messages that stay magenta sit in a black enclosure */
-  :root[data-theme="light"] :is(.archive-note, .lockmsg) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :root[data-theme="light"] .archive-note { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
   :root[data-theme="light"] .save.on { background: #000000; color: #f7f2ef; border-color: #000000; }
 
   /* Bigger tap areas on touch screens without moving the layout */
@@ -205,18 +200,6 @@
     .ftable td:nth-child(3), td.num { white-space: nowrap; }
   }
 
-
-  /* ---- Dynamic magenta glow around the edges of the screen ---- */
-  @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
-  @keyframes breathe { 0%, 100% { --g: 0.1; } 50% { --g: 0.24; } }
-  :root { --glow-k: 1; }
-  :root[data-theme="light"] { --glow-k: 0.6; }
-  body::after {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
-    --g: 0.35; animation: breathe 7s ease-in-out infinite;
-    box-shadow: inset 0 0 70px 0 rgba(251, 0, 104, calc(var(--g) * var(--glow-k)));
-  }
-  @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
   .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
   .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
@@ -310,6 +293,53 @@
     .story.lead { grid-template-columns: 1fr; }
     .story.lead .story-img { width: 100%; height: auto; }
   }
+
+  /* ================= Proposal: audit fixes ================= */
+  :root { --accent-ink: #fb0068; --line: #232221; }
+  :root[data-theme="light"] { --accent-ink: #c8005a; --line: #dedad7; }
+  /* 5: sentence-case section titles, no tracking */
+  h2, .zone-band .zt, .label, .lead-tag, th, .np-tag { text-transform: none; letter-spacing: 0; }
+  h2 { font-size: 15px; }
+  .zone-band .zt { font-size: 20px; }
+  .label { font-family: "Michroma", sans-serif; font-size: 13px; color: var(--paper); }
+  .lead-tag { font-size: 13px; }
+  th { font-size: 12px; }
+  /* 9: no index numbers */
+  .zone-band { grid-template-columns: 1fr auto; }
+  .jump a { gap: 0; }
+  /* 2: small accent text uses the darker ink in light mode */
+  .tagline .q, .key, .zone-band .zn { color: var(--accent-ink); }
+  /* 6: cards keep their own height */
+  .zone-you .zgrid { align-items: start; }
+  /* 11: whisper borders, solid row rules */
+  .zone-you .block, .jump a, .save, .theme-toggle, .search { border-color: var(--line); }
+  .zone-band { border-top-color: var(--rule); }
+  .now-item, .story, .row, td, .saved-item, .np { border-bottom-style: solid; border-bottom-color: var(--line); }
+  h2 { border-bottom-color: var(--line); }
+  /* 10: tabular, right-aligned figures */
+  .stat div, td.num, .row .k, .now-date, .meta, .np-artist { font-variant-numeric: tabular-nums; }
+  .ftable td:nth-child(2), .ftable th:nth-child(2) { text-align: right; padding-right: 16px; }
+  .nil { color: var(--dim); }
+  /* 12: pink on the action and live state only */
+  .key { color: var(--paper); }
+  /* 13: square embed */
+  .player { border-radius: 0; }
+  /* 3: states */
+  .state { color: var(--dim); font-size: 13px; padding: 12px 0; margin: 0; }
+  .dg { margin: 4px 0 16px; } .dg .diagram { margin: 0; } .dg-cap { font-size: 12px; color: var(--dim); margin-top: 6px; }
+  /* 8: compact phone header */
+  @media (max-width: 600px) {
+    header { padding: 20px 0 16px; gap: 12px; }
+    .brand { flex-direction: row; align-items: center; gap: 12px; }
+    .logo3d { width: 96px; height: 46px; align-self: center; }
+    .name { font-size: 22px; }
+    .tagline { font-size: 12px; margin-top: 6px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 2px 12px; align-items: center; }
+    .meta-actions { flex-basis: 100%; margin-top: 6px; }
+    .jump { display: flex; flex-wrap: nowrap; overflow-x: auto; padding-top: 12px; }
+    .jump a { flex: 0 0 auto; }
+    .zone { margin-top: 40px; }
+  }
 </style>
 </head>
 <body>
@@ -336,11 +366,11 @@
   </header>
 
   <nav class="jump" aria-label="Jump to a section">
-    <a href="#z-you"><span>01</span>You</a><a href="#z-today"><span>02</span>Today</a><a href="#z-news"><span>03</span>News</a><a href="#z-industry"><span>04</span>Industry</a>
+    <a href="#z-you">You</a><a href="#z-today">Today</a><a href="#z-news">News</a><a href="#z-industry">Industry</a>
   </nav>
 
   <div class="zone zone-you" id="z-you">
-    <div class="zone-band"><span class="zn">01</span><span class="zt">You</span><span class="zs">your day: music, running, calendar, work</span></div>
+    <div class="zone-band"><span class="zt">You</span><span class="zs">your day: music, running, calendar, work</span></div>
     <div class="zgrid c3" id="youTop">
       <section class="block" id="musicBlock" hidden>
         <h2>Listening<span class="sub">song of the day</span></h2>
@@ -369,7 +399,7 @@
   </div>
 
   <div class="zone" id="z-today">
-    <div class="zone-band"><span class="zn">02</span><span class="zt">Today</span><span class="zs">one idea and one object to study</span></div>
+    <div class="zone-band"><span class="zt">Today</span><span class="zs">one idea and one object to study</span></div>
     <div class="zgrid c2e">
       <section class="block learn-lead" id="learnBlock" hidden>
         <h2>Learn today<span class="sub">design theory</span></h2>
@@ -383,15 +413,15 @@
   </div>
 
   <div class="zone" id="z-news">
-    <div class="zone-band"><span class="zn">03</span><span class="zt">News</span><span class="zs">motorcycles, cars, deep tech, startups, business</span></div>
+    <div class="zone-band"><span class="zt">News</span><span class="zs">motorcycles, cars, deep tech, startups, business</span></div>
     <section class="block" id="newsBlock">
       <h2>News<span class="sub">for my interests</span></h2>
-      <div id="news"></div>
+      <div id="news"><p class="state">Loading today's stories…</p></div>
     </section>
   </div>
 
   <div class="zone" id="z-industry">
-    <div class="zone-band"><span class="zn">04</span><span class="zt">Industry</span><span class="zs">racing, money and launches</span></div>
+    <div class="zone-band"><span class="zt">Industry</span><span class="zs">racing, money and launches</span></div>
     <div class="zgrid c3">
       <section class="block" id="racingBlock" hidden>
         <h2>Racing</h2>
@@ -411,7 +441,6 @@
   <footer>
     <div>Headlines link to their sources.</div>
     <div id="archive" style="margin-top:8px"></div>
-    <div id="lockbar" class="lockbar"></div>
   </footer>
 </div>
 
@@ -419,42 +448,7 @@
 (function () {
   const $ = id => document.getElementById(id);
   const has = name => { try { return typeof eval(name) !== "undefined"; } catch (e) { return false; } };
-  const get = name => (window.__PRIV && name in window.__PRIV) ? window.__PRIV[name] : (has(name) ? eval(name) : undefined);
-
-  // ---- Private sections (calendar, running, listening) ----
-  // They are published encrypted (AES-GCM, key from a passphrase via PBKDF2) and only
-  // decrypted in browsers where Abhik has entered the passphrase.
-  const PASS_KEY = "abhik-daily-pass";
-  const b64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-  async function unseal(sealed, pass) {
-    const enc = new TextEncoder();
-    const base = await crypto.subtle.importKey("raw", enc.encode(pass), "PBKDF2", false, ["deriveKey"]);
-    const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: b64(sealed.salt), iterations: sealed.iter, hash: "SHA-256" }, base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
-    const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64(sealed.iv) }, key, b64(sealed.data));
-    return JSON.parse(new TextDecoder().decode(plain));
-  }
-  const readPass = () => { try { return localStorage.getItem(PASS_KEY); } catch (e) { return null; } };
-  async function tryUnlock() {
-    const sealed = get("PRIVATE"), pass = readPass();
-    if (!sealed || !pass || !(window.crypto && crypto.subtle)) return false;
-    try { window.__PRIV = await unseal(sealed, pass); return true; } catch (e) { return false; }
-  }
-  function lockbar(unlocked) {
-    const bar = $("lockbar");
-    if (!get("PRIVATE")) return;
-    if (unlocked) {
-      bar.replaceChildren(el("button", { class: "linkish", onclick: () => { try { localStorage.removeItem(PASS_KEY); } catch (e) {} location.reload(); } }, "Lock this browser"));
-      return;
-    }
-    const input = el("input", { type: "password", placeholder: "Passphrase", autocomplete: "current-password", "aria-label": "Passphrase" });
-    const msg = el("span", { class: "lockmsg" });
-    const form = el("form", { class: "unlock", hidden: true, onsubmit: async e => {
-      e.preventDefault();
-      try { await unseal(get("PRIVATE"), input.value); try { localStorage.setItem(PASS_KEY, input.value); } catch (x) {} location.reload(); }
-      catch (x) { msg.textContent = "That passphrase didn't work."; }
-    } }, input, el("button", { type: "submit" }, "Unlock"), msg);
-    bar.replaceChildren(el("button", { class: "linkish", onclick: () => { form.hidden = false; input.focus(); } }, "Owner unlock"), form);
-  }
+  const get = name => has(name) ? eval(name) : undefined;
 
   // Small DOM helper: el("div", {class: "x"}, child, "text", ...)
   function el(tag, attrs, ...kids) {
@@ -600,23 +594,23 @@
       const steps = d.steps.slice(0, 8), narrow = window.innerWidth < 600;
       const perRow = Math.min(narrow ? 2 : 4, steps.length), gap = 26;
       const bw = (W - gap * (perRow - 1)) / perRow, bh = narrow ? 122 : 112, rowsN = Math.ceil(steps.length / perRow);
-      const fs = narrow ? 20 : 13, ts = narrow ? 26 : 17, lineH = fs + 4, max = Math.floor((bw - 16) / (fs * 0.62));
-      const H = rowsN * (bh + 18) + (d.caption ? (narrow ? 30 : 24) : 0);
+      const fs = narrow ? 20 : 12, ts = narrow ? 22 : 12, lineH = fs + 4, max = Math.floor((bw - 16) / (fs * 0.62));
+      const H = rowsN * (bh + 18);
       svg = s("svg", { viewBox: `0 0 ${W} ${H}`, class: "diagram", role: "img", "aria-label": d.caption || "Diagram" });
       steps.forEach((st, i) => {
         const r = Math.floor(i / perRow), c = i % perRow, x = c * (bw + gap), y = r * (bh + 18);
         svg.appendChild(s("rect", { x, y, width: bw, height: bh, fill: st.hl ? hlFill : "none", stroke: st.hl ? accent : dim }));
-        svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? "var(--hl-label)" : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.75)))));
-        const words = String(st.note || "").split(/\s+/).filter(Boolean), lines = [""];
-        words.forEach(w => { const t = (lines[lines.length - 1] + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
+        svg.appendChild(s("text", { x: x + 10, y: y + ts + 8, fill: st.hl ? "var(--hl-label)" : paper, "font-family": "Michroma, sans-serif", "font-size": ts }, fitText(st.label, Math.floor((bw - 16) / (ts * 0.95)))));
+        const words = String(st.note || "").split(/\s+|(?<=-)/).filter(Boolean), lines = [""];
+        words.forEach(w => { const prev = lines[lines.length - 1], t = (prev.endsWith("-") ? prev + w : prev + " " + w).trim(); if (t.length > max && lines[lines.length - 1]) lines.push(w); else lines[lines.length - 1] = t; });
         lines.slice(0, narrow ? 3 : 4).forEach((ln, k) => svg.appendChild(s("text", { x: x + 10, y: y + ts + 14 + (k + 1) * lineH, fill: st.hl ? "var(--hl-text)" : paper, "font-family": font, "font-size": fs }, fitText(ln, max))));
         if (i < steps.length - 1 && c < perRow - 1) {
           const ax = x + bw + 4, ay = y + bh / 2;
           svg.appendChild(s("path", { d: `M${ax} ${ay} H${ax + gap - 8} M${ax + gap - 13} ${ay - 5} L${ax + gap - 8} ${ay} L${ax + gap - 13} ${ay + 5}`, stroke: accent, fill: "none" }));
         }
       });
-      if (d.caption) svg.appendChild(s("text", { x: 0, y: H - 4, fill: dim, "font-family": font, "font-size": narrow ? 20 : 13 }, fitText(d.caption, narrow ? 44 : 68)));
     } else return null;
+    if (d.caption) { const wrapEl = document.createElement("figure"); wrapEl.className = "dg"; wrapEl.append(svg, el("figcaption", { class: "dg-cap" }, d.caption)); return wrapEl; }
     return svg;
   }
 
@@ -627,15 +621,16 @@
     if (isArchive) { const n = $("archiveNote"); n.hidden = false; n.replaceChildren("Archive: " + day + " · ", el("a", { href: "./" }, "back to today")); }
 
     const Q = get("QUOTE");
-    if (Q) $("quote").replaceChildren(el("span", { class: "q" }, "\u201C"), Q.text, el("span", { class: "q" }, "\u201D"), " ", el("span", { class: "by" }, "\u2014 " + Q.author));
+    if (Q) $("quote").replaceChildren(el("span", { class: "q" }, "\u201C"), Q.text, el("span", { class: "q" }, "\u201D"), " ", el("span", { class: "by" }, Q.author));
 
     const NOW = get("NOW");
     if (NOW && NOW.length) show("now", NOW.map(p => el("div", { class: "now-item" },
       el("div", { class: "now-name" }, p.url ? link(p.url, p.name) : p.name, p.date ? el("div", { class: "now-date" }, p.date) : null), el("div", { class: "now-note" }, p.note))));
 
     const NEWS = get("NEWS") || [];
+    if (!NEWS.length) $("news").replaceChildren(el("p", { class: "state" }, window.__DATA_FAILED ? "Couldn't load today's page. " : "No stories today yet. ", el("button", { class: "linkish", onclick: () => location.reload() }, "Try again")));
     let leadDone = false;
-    $("news").replaceChildren(...NEWS.map(t => el("section", { class: "topic" },
+    if (NEWS.length) $("news").replaceChildren(...NEWS.map(t => el("section", { class: "topic" },
       el("div", { class: "label" }, t.topic),
       ...t.stories.map(s => {
         const img = safeUrl(s.img) ? el("img", { class: "story-img", src: s.img, alt: "", loading: "lazy", referrerpolicy: "no-referrer", onerror: e => { e.target.closest(".story").classList.add("noimg"); e.target.remove(); } }) : null;
@@ -694,13 +689,13 @@
     if (F) show("funding", [
       F.summary ? el("p", { class: "body" }, F.summary) : null,
       el("table", { class: "ftable" }, el("thead", {}, el("tr", {}, el("th", {}, "Company"), el("th", {}, "Amount"), el("th", {}, "Stage"), el("th", {}, "Sector"))),
-        el("tbody", {}, ...F.rounds.map(r => el("tr", {}, el("td", {}, r.company), el("td", { class: "num" }, el("span", {}, r.amount)), el("td", {}, r.stage || "—"), el("td", {}, r.sector || "—"))))),
+        el("tbody", {}, ...F.rounds.map(r => el("tr", {}, el("td", {}, r.company), el("td", { class: "num" }, el("span", {}, r.amount)), el("td", {}, r.stage || el("span", { class: "nil" }, "-")), el("td", {}, r.sector || el("span", { class: "nil" }, "-")))))),
       srcLine(F.source)].filter(Boolean));
 
     const LA = get("LAUNCHES");
     if (LA) show("launches", [
       el("table", {}, el("thead", {}, el("tr", {}, el("th", {}, "Model"), el("th", {}, "Expected"), el("th", {}, "Price (est.)"))),
-        el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, el("span", {}, r.when)), el("td", {}, r.price || "—"))))),
+        el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, el("span", {}, r.when)), el("td", {}, r.price || el("span", { class: "nil" }, "-")))))),
       srcLine(LA.source)].filter(Boolean));
 
     renderSaved(); syncSaveButtons(); loadWeather(); loadNowPlaying();
@@ -713,16 +708,14 @@
     $("archive").replaceChildren("Past days: ", ...dates.map(d => el("a", { href: "?d=" + d }, d)));
   }
 
-  function load(src, cb) { const s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = cb; document.body.appendChild(s); }
+  function load(src, cb, onFail) { const s = document.createElement("script"); s.src = src; s.onload = cb; s.onerror = () => { if (onFail) onFail(); cb(); }; document.body.appendChild(s); }
   const day = new URLSearchParams(location.search).get("d");
   const isArchive = !!(day && /^\d{4}-\d{2}-\d{2}$/.test(day));
-  load(isArchive ? "archive/" + day + ".js" : "data.js", async () => {
-    const unlocked = await tryUnlock();
+  load(isArchive ? "archive/" + day + ".js" : "data.js", () => {
     render(isArchive, day);
     const top = $("youTop"); if (top) top.hidden = ![...top.children].some(c => !c.hidden);
-    lockbar(unlocked);
     load("archive/list.js", renderArchive);
-  });
+  }, () => { window.__DATA_FAILED = true; });
 })();
 </script>
 <script src="logo3d.js"></script>
@@ -744,6 +737,7 @@
       cur = order[(order.indexOf(cur) + 1) % order.length];
       try { localStorage.setItem("abhik-daily-theme", cur); } catch (e) {}
       apply(cur);
+      var f = document.querySelector("iframe.player"); if (f) { var u = f.src.replace("?theme=0", ""); f.src = document.documentElement.getAttribute("data-theme") === "light" ? u : u + "?theme=0"; }
     });
   })();
 </script>
