@@ -1,5 +1,5 @@
 {
-  "updated": "2026-10-25",
+  "updated": "2026-10-26",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
     {
@@ -43,6 +43,12 @@
       "source": "inferred",
       "weight": 0.4,
       "why": "portfolio: sketching sneakers, adidas DASH project"
+    },
+    {
+      "topic": "Wearable tech and neurotech",
+      "source": "inferred",
+      "weight": 0.4,
+      "why": "portfolio: EEG/fNIRS athlete project, Dash MP3 player for runners"
     }
   ]
 }
