@@ -20,19 +20,11 @@
     if (m) m.setAttribute("content", t === "light" ? "#f7f2ef" : "#000000");
   })();
 </script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="../abk/fonts/Michroma-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../abk/tokens.css">
 <style>
-  :root { --black: #000000; --paper: #f7f2ef; --accent: #fb0068; --rule: rgba(247, 242, 239, 0.22);  --dim: rgba(247, 242, 239, 0.6); }
-  :root { --well: #111111; }
-  :root[data-theme="light"] {
-    --black: #f7f2ef;
-    --paper: #000000;
-    --rule: rgba(0, 0, 0, 0.18);
-    --dim: rgba(0, 0, 0, 0.6);
-    --well: #e6e0dc;
-  }
+  /* Colours come from the ABK tokens (../abk/tokens.css). These are Daily's older names for them. */
+  :root { --black: var(--ground); --paper: var(--ink); --dim: var(--ink-muted); }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
   body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
@@ -63,43 +55,40 @@
   [hidden] { display: none !important; }
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 12px; color: var(--dim); }
 
-  :focus-visible { outline: 2px solid #fb0068; outline-offset: 2px; }
-  :root[data-theme="light"] :is(.range, .day) { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] h2 .sub { background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] .row .k { justify-self: start; align-self: start; background: #000000; color: #f7f2ef; padding: 1px 6px; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
   @media (pointer: coarse) { .back, .row a { display: inline-block; padding: 12px 4px; margin: -12px -4px; } }
 
 
-  /* ---- Dynamic magenta glow around the edges of the screen ---- */
-  @property --g { syntax: "<number>"; inherits: false; initial-value: 0.35; }
-  @keyframes breathe { 0%, 100% { --g: 0.1; } 50% { --g: 0.24; } }
-  :root { --glow-k: 1; }
-  :root[data-theme="light"] { --glow-k: 0.6; }
-  body::after {
-    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 50;
-    --g: 0.35; animation: breathe 7s ease-in-out infinite;
-    box-shadow: inset 0 0 70px 0 rgba(251, 0, 104, calc(var(--g) * var(--glow-k)));
-  }
-  @media (prefers-reduced-motion: reduce) { body::after { animation: none; } }
 
   .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
-  .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
   @media (pointer: coarse) { .theme-toggle { min-height: 44px; } }
   .row { grid-template-columns: minmax(90px, max-content) 1fr; }
   .row .k { white-space: nowrap; }
   /* diagram colours follow the theme live */
   :root { --hl-fill: rgba(251, 0, 104, 0.16); --hl-text: #f7f2ef; }
   :root[data-theme="light"] { --hl-fill: #000000; --hl-text: #f7f2ef; }
+
+  /* ABK: sentence-case headings, solid whisper lines, pink only for act or live */
+  h2 { font-size: 15px; letter-spacing: 0; text-transform: none; border-bottom-color: var(--line); }
+  h2 .sub, .range, .day, .row .k { color: var(--dim); letter-spacing: 0; text-transform: none; }
+  .row .k { color: var(--paper); font-variant-numeric: tabular-nums; }
+  .card { border-top: var(--border-w) solid var(--line); }
+  .row { border-bottom: var(--border-w) solid var(--line); }
+  header, footer { border-color: var(--rule); }
+  .theme-toggle { border-color: var(--line); }
+  .back:hover, .row a:hover { color: var(--accent-ink); }
+  .range, .day { font-variant-numeric: tabular-nums; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div>
-      <h1>THIS <span>WEEK</span></h1>
+      <h1>This week</h1>
       <div class="range" id="range"></div>
     </div>
-    <div style="text-align:right"><a class="back" href="./">← Back to today</a><div><button class="theme-toggle" id="themeToggle" type="button">Theme: Auto</button></div></div>
+    <div style="text-align:right"><a class="back" href="./">Back to today →</a><div><button class="theme-toggle" id="themeToggle" type="button">Theme: Auto</button></div></div>
   </header>
 
   <section>
