@@ -138,6 +138,18 @@
   .player { width: 100%; height: 152px; border: 0; border-radius: 12px; display: block; margin: 2px 0 8px; background: var(--well); }
   .lately { font-size: 12px; color: var(--dim); margin-top: 10px; }
   .lately b { color: var(--paper); font-weight: 400; }
+  /* Now playing, live from Discord via Lanyard */
+  .np { display: grid; grid-template-columns: 56px 1fr; gap: 12px; align-items: center; padding: 0 0 12px; margin-bottom: 12px; border-bottom: 1px dashed var(--rule); }
+  .np-art { width: 56px; height: 56px; object-fit: cover; display: block; background: var(--well); }
+  .np-tag { font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim); display: flex; align-items: center; gap: 6px; }
+  .np-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: np-pulse 1.6s ease-in-out infinite; }
+  @keyframes np-pulse { 50% { opacity: 0.3; } }
+  @media (prefers-reduced-motion: reduce) { .np-dot { animation: none; } }
+  .np-title { font-size: 14px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-title:hover { color: var(--accent); }
+  .np-artist { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-bar { height: 2px; background: var(--rule); margin-top: 6px; }
+  .np-bar span { display: block; height: 100%; background: var(--accent); width: 0; }
   .saved-item { padding: 6px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
   .saved-item a { text-decoration: none; }
   .saved-item a:hover { color: var(--accent); }
@@ -332,6 +344,7 @@
     <div class="zgrid c3" id="youTop">
       <section class="block" id="musicBlock" hidden>
         <h2>Listening<span class="sub">song of the day</span></h2>
+        <div id="nowPlaying" hidden></div>
         <div id="music"></div>
       </section>
       <section class="block" id="stravaBlock" hidden>
@@ -496,6 +509,54 @@
     }).catch(() => { $("weather").textContent = ""; });
   }
 
+  // ---- Now playing (live Discord presence via Lanyard, api.lanyard.rest) ----
+  // Needs the Discord account to be in the Lanyard Discord server (discord.gg/lanyard).
+  const DISCORD_ID = "";
+  function loadNowPlaying() {
+    if (!/^\d{17,20}$/.test(DISCORD_ID)) return;
+    const box = $("nowPlaying");
+    let track = null, bar = null;
+    function paint() {
+      if (!track) { box.hidden = true; box.replaceChildren(); return; }
+      const t = track; bar = el("span");
+      const art = safeUrl(t.art) ? el("img", { class: "np-art", src: t.art, alt: "", referrerpolicy: "no-referrer", onerror: e => e.target.removeAttribute("src") }) : el("div", { class: "np-art" });
+      box.replaceChildren(el("div", { class: "np" }, art, el("div", { style: "min-width:0" },
+        el("div", { class: "np-tag" }, el("span", { class: "np-dot" }), "Now playing" + (t.app ? " on " + t.app : "")),
+        t.url ? link(t.url, t.song, "np-title") : el("span", { class: "np-title" }, t.song),
+        t.artist ? el("div", { class: "np-artist" }, t.artist) : null,
+        (t.start && t.end) ? el("div", { class: "np-bar" }, bar) : null)));
+      tick();
+      box.hidden = false;
+      const b = $("musicBlock"); if (b) b.hidden = false;
+      const top = $("youTop"); if (top) top.hidden = false;
+    }
+    function tick() {
+      if (bar && track && track.start && track.end) bar.style.width = Math.min(100, Math.max(0, (Date.now() - track.start) / (track.end - track.start) * 100)) + "%";
+    }
+    function read(d) {
+      const sp = d && d.listening_to_spotify && d.spotify;
+      if (sp) {
+        track = { song: sp.song, artist: (sp.artist || "").replace(/;/g, ","), art: sp.album_art_url, app: "Spotify",
+          url: /^[A-Za-z0-9]{22}$/.test(sp.track_id || "") ? "https://open.spotify.com/track/" + sp.track_id : null,
+          start: sp.timestamps && sp.timestamps.start, end: sp.timestamps && sp.timestamps.end };
+      } else {
+        // Other players that report a "Listening to" activity (type 2)
+        const a = ((d && d.activities) || []).find(x => x.type === 2 && x.details);
+        track = a ? { song: a.details, artist: a.state, app: a.name, start: a.timestamps && a.timestamps.start, end: a.timestamps && a.timestamps.end } : null;
+      }
+      paint();
+    }
+    function poll() {
+      if (document.hidden) return;
+      fetch("https://api.lanyard.rest/v1/users/" + DISCORD_ID).then(r => r.ok ? r.json() : Promise.reject())
+        .then(j => read(j.success ? j.data : null)).catch(() => {});
+    }
+    poll();
+    setInterval(poll, 20000);
+    setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", poll);
+  }
+
   // ---- Diagrams for "Learn today" (drawn from plain data, in brand style) ----
   // { type: "layers", panels: [ { title, layers: [ { label, hl } ] } ], caption }
   // { type: "flow", steps: [ { label, note, hl } ], caption }
@@ -642,7 +703,7 @@
         el("tbody", {}, ...LA.items.map(r => el("tr", {}, el("td", {}, r.model), el("td", { class: "num" }, el("span", {}, r.when)), el("td", {}, r.price || "—"))))),
       srcLine(LA.source)].filter(Boolean));
 
-    renderSaved(); syncSaveButtons(); loadWeather();
+    renderSaved(); syncSaveButtons(); loadWeather(); loadNowPlaying();
   }
 
   // ---- Archive list ----
