@@ -1,0 +1,113 @@
+/* ABK components. Every value comes from tokens.css; nothing here declares a colour. */
+.abk { background: var(--ground); color: var(--ink); font: 400 14px/1.55 var(--font-text); -webkit-font-smoothing: antialiased; }
+.abk *, .abk *::before, .abk *::after { box-sizing: border-box; }
+.abk :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.abk a { color: inherit; }
+.abk-num { font-variant-numeric: tabular-nums; }
+.abk-muted { color: var(--ink-muted); }
+
+/* Wordmark: ABHIK in ink, GUPTA in accent, no space. A logotype, so GUPTA may sit under 4.5:1 on Day. */
+.abk-wordmark { font-family: var(--font-display); font-weight: 400; font-size: 30px; line-height: 1.2; margin: 0; color: var(--ink); white-space: nowrap; }
+.abk-wordmark span { color: var(--accent); }
+/* Michroma sets ABHIKGUPTA at about 9.1em wide, so this fills the frame exactly at every width. */
+.abk-wordmark.is-monument { font-size: calc((min(100vw, var(--frame-max)) - 2 * var(--frame-gutter)) / 9.2); line-height: .9; letter-spacing: -0.02em; }
+.abk-wordmark.is-small { font-size: 15px; }
+
+/* Buttons: square, one fill. */
+.abk-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: var(--control-min); padding: 0 16px; font: 400 14px/1 var(--font-text); border: var(--border-w) solid var(--line); border-radius: var(--radius-0); background: transparent; color: var(--ink); cursor: pointer; text-decoration: none; transition: border-color .18s, color .18s, background .18s; }
+.abk-btn:hover { border-color: var(--accent); color: var(--accent-ink); }
+.abk-btn:active { transform: translateY(1px); }
+.abk-btn.is-primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.abk-btn.is-primary:hover { background: var(--ink); border-color: var(--ink); color: var(--ground); }
+.abk-btn.is-on { background: var(--inverse-ground); border-color: var(--inverse-ground); color: var(--inverse-ink); }
+.abk-btn:disabled { color: var(--ink-muted); border-color: var(--line); cursor: not-allowed; }
+.abk-linkout { color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--accent); padding-bottom: 1px; font-size: 12px; }
+.abk-linkout:hover { color: var(--accent-ink); }
+@media (pointer: coarse) { .abk-btn { min-height: var(--tap-min); } }
+
+/* Search */
+.abk-search { display: flex; border: var(--border-w) solid var(--line); }
+.abk-search:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
+.abk-search input { flex: 1; min-width: 0; background: transparent; border: 0; color: var(--ink); font: inherit; padding: 10px 12px; outline: none; }
+.abk-search input::placeholder { color: var(--ink-muted); }
+.abk-search button { background: var(--accent); color: var(--on-accent); border: 0; font: inherit; padding: 0 16px; cursor: pointer; min-height: 40px; }
+
+/* Jump bar */
+.abk-jump { display: flex; gap: var(--space-8); flex-wrap: wrap; }
+.abk-jump a { font-size: 12px; text-decoration: none; border: var(--border-w) solid var(--line); padding: 8px 12px; min-height: 36px; display: inline-flex; align-items: center; }
+.abk-jump a:hover, .abk-jump a[aria-current] { border-color: var(--accent); }
+
+/* Zone band: the one strong rule, then a title and a muted sub. */
+.abk-zone-band { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: var(--space-16); border-top: var(--border-w) solid var(--rule); padding-top: 10px; margin-bottom: 22px; }
+.abk-zone-band h2 { font: 400 20px/1.3 var(--font-display); margin: 0; }
+.abk-zone-band p { margin: 0; font-size: 12px; color: var(--ink-muted); }
+@media (max-width: 600px) { .abk-zone-band { grid-template-columns: 1fr; } .abk-zone-band p { display: none; } }
+
+/* Panel: whisper border, no fill, no shadow. Only in the You zone. */
+.abk-panel { border: var(--border-w) solid var(--line); padding: var(--space-16); min-width: 0; }
+.abk-heading { font: 400 15px/1.35 var(--font-display); margin: 0 0 12px; }
+.abk-heading .sub { font: 400 12px/1 var(--font-text); color: var(--ink-muted); margin-left: 8px; }
+
+/* Stat */
+.abk-stats { display: flex; gap: var(--space-24); flex-wrap: wrap; }
+.abk-stat b { display: block; font: 400 26px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.abk-stat small { display: block; font-size: 12px; color: var(--ink-muted); margin-top: var(--space-4); }
+
+/* Rows: label / value pairs with solid whisper rules */
+.abk-row { display: grid; grid-template-columns: minmax(90px, max-content) 1fr; gap: var(--space-12); padding: 8px 0; border-bottom: var(--border-w) solid var(--line); font-size: 13px; }
+.abk-row:last-child { border-bottom: 0; }
+.abk-row .k { white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Story */
+.abk-story { display: grid; grid-template-columns: 120px 1fr; gap: var(--space-16); padding: 12px 0; border-bottom: var(--border-w) solid var(--line); }
+.abk-story:last-child { border-bottom: 0; }
+.abk-story .thumb { width: 120px; aspect-ratio: 120 / 76; background: var(--well); display: block; object-fit: cover; }
+.abk-story .title { font: 500 15.5px/1.4 var(--font-text); margin: 0 0 4px; text-decoration: none; display: block; }
+.abk-story .title:hover { color: var(--accent-ink); }
+.abk-story .why { font-size: 13px; color: var(--ink-muted); margin: 0 0 6px; }
+.abk-story .foot { display: flex; gap: var(--space-12); align-items: center; font-size: 12px; color: var(--ink-muted); }
+.abk-story.is-lead { grid-template-columns: 1.3fr 1fr; gap: var(--space-24); padding: 0 0 22px; }
+.abk-story.is-lead .thumb { width: 100%; aspect-ratio: 16 / 9; }
+.abk-story.is-lead .title { font: 400 22px/1.3 var(--font-display); margin-bottom: 10px; }
+@media (max-width: 520px) { .abk-story { grid-template-columns: 92px 1fr; gap: var(--space-12); } .abk-story .thumb { width: 92px; } .abk-story.is-lead { grid-template-columns: 1fr; } }
+
+/* Table */
+.abk-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+.abk-table th { font-weight: 400; font-size: 12px; color: var(--ink-muted); text-align: left; padding: 0 16px 8px 0; border-bottom: var(--border-w) solid var(--line); }
+.abk-table td { padding: 8px 16px 8px 0; border-bottom: var(--border-w) solid var(--line); vertical-align: top; }
+.abk-table .num { text-align: right; white-space: nowrap; }
+.abk-table .nil { color: var(--ink-muted); }
+
+/* Now playing: the live dot is the only round thing in the system */
+.abk-np { display: grid; grid-template-columns: 56px 1fr; gap: var(--space-12); align-items: center; }
+.abk-np .art { width: 56px; height: 56px; background: var(--well); display: block; }
+.abk-np .tag { font-size: 12px; color: var(--ink-muted); display: flex; align-items: center; gap: 6px; }
+.abk-dot { width: 7px; height: 7px; border-radius: var(--radius-dot); background: var(--accent); display: inline-block; animation: abk-pulse 1.6s ease-in-out infinite; }
+@keyframes abk-pulse { 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .abk-dot { animation: none; } }
+.abk-np .t { font-weight: 500; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.abk-np .a { font-size: 12px; color: var(--ink-muted); }
+.abk-bar { height: 2px; background: var(--line); margin-top: 6px; }
+.abk-bar span { display: block; height: 100%; background: var(--accent); }
+
+/* Edition stamp: every page says when it was made */
+.abk-stamp { font-size: 12px; line-height: 1.6; color: var(--ink-muted); font-variant-numeric: tabular-nums; text-align: right; }
+.abk-stamp b { font-weight: 400; color: var(--ink); }
+.abk-stamp .archive { display: inline-block; background: var(--inverse-ground); color: var(--inverse-ink); padding: 1px 6px; margin-top: 4px; }
+
+/* States */
+.abk-state { font-size: 13px; color: var(--ink-muted); padding: 12px 0; margin: 0; display: flex; gap: var(--space-12); align-items: center; flex-wrap: wrap; }
+.abk-state .linkish { background: none; border: 0; padding: 0; color: var(--ink); font: inherit; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; cursor: pointer; }
+
+/* Room door: a full-bleed field of a room colour on the hub */
+.abk-door { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: var(--space-24); padding: var(--space-24); min-height: 168px; text-decoration: none; transition: transform .24s cubic-bezier(.2,.7,.2,1); }
+.abk-door:hover { transform: translateY(-6px); }
+@media (prefers-reduced-motion: reduce) { .abk-door, .abk-door:hover { transition: none; transform: none; } }
+.abk-door h3 { font: 400 clamp(28px, 5vw, 56px)/1 var(--font-display); letter-spacing: -0.02em; margin: 0; }
+.abk-door p { margin: 10px 0 0; font-size: 14px; max-width: 46ch; }
+.abk-door .live { font-size: 12px; text-align: right; font-variant-numeric: tabular-nums; max-width: 30ch; }
+.abk-door.is-daily { background: var(--room-daily); color: var(--on-accent); }
+.abk-door.is-celestial { background: var(--room-celestial); color: var(--room-celestial-ink); }
+.abk-door.is-work { background: var(--room-work); color: var(--room-work-ink); }
+.abk-door.is-quiet { background: var(--room-quiet); color: var(--ink); }
+@media (max-width: 600px) { .abk-door { grid-template-columns: 1fr; } .abk-door .live { text-align: left; } }

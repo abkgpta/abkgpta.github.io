@@ -1,0 +1,57 @@
+/* ABK tokens for abkgpta.github.io. Source: the ABK design system (tokens.json).
+   Themes: Day is data-theme="light", Night is data-theme="dark". Each page sets
+   data-theme from the clock (Day 7 AM to 7 PM) or the viewer's choice. */
+@font-face { font-family: "Michroma"; src: url("fonts/Michroma-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("fonts/IBMPlexMono-Regular.woff2") format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "IBM Plex Mono"; src: url("fonts/IBMPlexMono-Medium.woff2") format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+
+:root {
+  --font-display: "Michroma", Eurostile, "Arial Black", sans-serif;
+  --font-text: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --space-4: 4px; --space-8: 8px; --space-12: 12px; --space-16: 16px;
+  --space-24: 24px; --space-40: 40px; --space-64: 64px; --space-120: 120px;
+  --radius-0: 0; --radius-dot: 50%;
+  --frame-max: 1160px; --frame-gutter: 24px;
+  --tap-min: 44px; --control-min: 32px; --border-w: 1px;
+
+  /* Colours that don't change between Day and Night */
+  --accent: #fb0068;
+  --on-accent: #000000;
+  --focus: #fb0068;
+  --cobalt: #003a8c;
+  --on-cobalt: #f7f2ef;
+  --room-daily: #fb0068;
+  --room-work: var(--cobalt);
+  --room-work-ink: var(--on-cobalt);
+
+  /* Night (also the default before a theme is set) */
+  --ground: #000000;
+  --well: #111111;
+  --ink: #f7f2ef;
+  --ink-muted: #94918f;
+  --line: #232221;
+  --rule: #363535;
+  --accent-ink: #fb0068;
+  --room-celestial: #0d1615;
+  --room-celestial-ink: #e4eeeb;
+  --room-quiet: #1a1918;
+  --inverse-ground: var(--ink);
+  --inverse-ink: var(--ground);
+}
+@media (max-width: 600px) { :root { --frame-gutter: 16px; } }
+
+:root[data-theme="light"] {
+  --ground: #f7f2ef;
+  --well: #e6e0dc;
+  --ink: #000000;
+  --ink-muted: #636160;
+  --line: #dedad7;
+  --rule: #cbc6c4;
+  --accent-ink: #c8005a;
+  --room-celestial: #e3ebe8;
+  --room-celestial-ink: #15201d;
+  --room-quiet: #fcede6;
+  --inverse-ground: var(--ink);
+  --inverse-ink: var(--ground);
+}

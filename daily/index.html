@@ -35,25 +35,11 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Daily">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Michroma&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="../abk/fonts/Michroma-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../abk/tokens.css">
 <style>
-  :root {
-    --black: #000000;
-    --paper: #f7f2ef;
-    --accent: #fb0068;
-    --rule: rgba(247, 242, 239, 0.22);
-    --dim: rgba(247, 242, 239, 0.6);
-  }
-  :root { --well: #111111; }
-  :root[data-theme="light"] {
-    --black: #f7f2ef;
-    --paper: #000000;
-    --rule: rgba(0, 0, 0, 0.18);
-    --dim: rgba(0, 0, 0, 0.6);
-    --well: #e6e0dc;
-  }
+  /* Colours come from the ABK tokens (../abk/tokens.css). These are Daily's older names for them. */
+  :root { --black: var(--ground); --paper: var(--ink); --dim: var(--ink-muted); }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: var(--black); color: var(--paper); }
   body { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 14px; line-height: 1.55; }
@@ -79,7 +65,7 @@
   .search { grid-column: 1 / -1; display: flex; border: 1px solid var(--rule); }
   .search input { flex: 1; background: transparent; border: 0; color: var(--paper); font: inherit; padding: 10px 12px; outline: none; }
   .search input::placeholder { color: var(--dim); }
-  .search button { background: var(--accent); color: #000000; border: 0; font: inherit; padding: 0 16px; cursor: pointer; }
+  .search button { background: var(--accent); color: var(--on-accent); border: 0; font: inherit; padding: 0 16px; cursor: pointer; }
 
   /* Layout */
   .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding: 32px 0 16px; }
@@ -105,7 +91,7 @@
   .now-date { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--accent); margin-top: 2px; }
   .hdr-updated { color: var(--accent); margin-top: 2px; }
   .week-link { display: inline-block; margin-top: 6px; color: var(--paper); font-size: 12px; text-decoration: none; border-bottom: 1px solid var(--accent); }
-  .week-link:hover { color: var(--accent); }
+  .week-link:hover { color: var(--accent-ink); }
 
   /* News */
   .topic { margin-bottom: 32px; }
@@ -113,11 +99,11 @@
   .story:last-child { border-bottom: 0; }
   .story-img { width: 160px; height: 100px; object-fit: cover; display: block; background: var(--well); }
   .story-title { font-size: 14px; margin: 0 0 4px; text-decoration: none; display: block; }
-  .story-title:hover { color: var(--accent); }
+  .story-title:hover { color: var(--accent-ink); }
   .why { font-size: 12px; color: var(--dim); margin: 0 0 6px; }
   .story-foot { display: flex; gap: 12px; align-items: center; }
   .save { background: none; border: 1px solid var(--rule); color: var(--dim); font: inherit; font-size: 12px; padding: 5px 12px; min-height: 32px; cursor: pointer; }
-  .save:hover, .save.on { border-color: var(--accent); color: var(--accent); }
+  .save:hover { border-color: var(--accent); color: var(--accent-ink); }
   .story.noimg { grid-template-columns: 1fr; }
   @media (max-width: 520px) {
     .story { grid-template-columns: 92px 1fr; gap: 12px; align-items: start; }
@@ -146,13 +132,13 @@
   @keyframes np-pulse { 50% { opacity: 0.3; } }
   @media (prefers-reduced-motion: reduce) { .np-dot { animation: none; } }
   .np-title { font-size: 14px; font-weight: 500; text-decoration: none; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .np-title:hover { color: var(--accent); }
+  .np-title:hover { color: var(--accent-ink); }
   .np-artist { font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .np-bar { height: 2px; background: var(--rule); margin-top: 6px; }
   .np-bar span { display: block; height: 100%; background: var(--accent); width: 0; }
   .saved-item { padding: 6px 0; border-bottom: 1px dashed var(--rule); font-size: 13px; display: flex; justify-content: space-between; gap: 8px; }
   .saved-item a { text-decoration: none; }
-  .saved-item a:hover { color: var(--accent); }
+  .saved-item a:hover { color: var(--accent-ink); }
   .saved-item button { background: none; border: 0; color: var(--dim); cursor: pointer; font: inherit; }
 
   /* Tables */
@@ -173,17 +159,18 @@
   footer { border-top: 1px solid var(--rule); padding: 20px 0 40px; font-size: 12px; color: var(--dim); }
   footer a { color: var(--dim); margin-right: 10px; }
   .linkish { background: none; border: 0; padding: 0; color: var(--dim); font: inherit; font-size: 12px; text-decoration: underline; cursor: pointer; }
-  .linkish:hover { color: var(--accent); }
-  footer a:hover { color: var(--accent); }
+  .linkish:hover { color: var(--accent-ink); }
+  footer a:hover { color: var(--accent-ink); }
 
   /* ---- Audit fixes ---- */
   /* Visible keyboard focus */
-  :focus-visible { outline: 2px solid #fb0068; outline-offset: 2px; }
-  .search:focus-within { outline: 2px solid #fb0068; outline-offset: 2px; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .search:focus-within { outline: 2px solid var(--focus); outline-offset: 2px; }
 
-  /* Light mode: state messages that stay magenta sit in a black enclosure */
-  :root[data-theme="light"] .archive-note { display: inline-block; background: #000000; color: #f7f2ef; padding: 1px 6px; }
-  :root[data-theme="light"] .save.on { background: #000000; color: #f7f2ef; border-color: #000000; }
+  /* The archive note and a saved story are inverted chips in both themes */
+  .archive-note { display: inline-block; background: var(--inverse-ground); color: var(--inverse-ink); padding: 1px 6px; margin-top: 4px; }
+  .archive-note a { color: inherit; }
+  .save.on, .save.on:hover { background: var(--inverse-ground); color: var(--inverse-ink); border-color: var(--inverse-ground); }
 
   /* Bigger tap areas on touch screens without moving the layout */
   @media (pointer: coarse) {
@@ -202,7 +189,7 @@
 
 
   .theme-toggle { background: none; border: 1px solid var(--rule); color: var(--paper); font: inherit; font-size: 12px; padding: 4px 10px; margin-top: 8px; cursor: pointer; min-height: 32px; }
-  .theme-toggle:hover { border-color: #fb0068; color: #fb0068; }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent-ink); }
   @media (pointer: coarse) { .theme-toggle { min-height: 44px; } }
   .row { grid-template-columns: minmax(90px, max-content) 1fr; }
   .row .k { white-space: nowrap; }
@@ -295,8 +282,6 @@
   }
 
   /* ================= Proposal: audit fixes ================= */
-  :root { --accent-ink: #fb0068; --line: #232221; }
-  :root[data-theme="light"] { --accent-ink: #c8005a; --line: #dedad7; }
   /* 5: sentence-case section titles, no tracking */
   h2, .zone-band .zt, .label, .lead-tag, th, .np-tag { text-transform: none; letter-spacing: 0; }
   h2 { font-size: 15px; }
@@ -439,7 +424,7 @@
   </div>
 
   <footer>
-    <div>Headlines link to their sources.</div>
+    <div>Headlines link to their sources. <a href="../">abkgpta.github.io →</a></div>
     <div id="archive" style="margin-top:8px"></div>
   </footer>
 </div>
