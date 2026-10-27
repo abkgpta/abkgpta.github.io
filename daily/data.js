@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "26 Oct 2026, 7:15 AM IST";
+const UPDATED = "27 Oct 2026, 7:00 AM IST";
 
 const QUOTE = {
-  "text": "Design is not just what it looks like and feels like. Design is how it works.",
-  "author": "Steve Jobs"
+  "text": "Design is a plan for arranging elements in such a way as best to accomplish a particular purpose.",
+  "author": "Charles Eames"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "MotoGP Australian GP cancelled due to weather",
-        "source": "Motorsport Week",
-        "url": "https://www.motorsportweek.com/2026/10/25/final-motogp-australian-gp-cancelled-phillip-island-weather/",
-        "img": "https://www.motorsportweek.com/wp-content/uploads/2026/10/SI202610240245_hires_jpeg_24bit_rgb.jpg",
-        "why": "Low visibility grounded the medical helicopter; only Sprint points count and Marc Marquez leaves with a 10-point lead."
+        "title": "Ather turns profitable in Q2, posts ₹1.3 Cr PAT",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/ather-turns-profitable-in-q2-posts-%E2%82%B91-3-cr-pat/",
+        "img": "https://asset.inc42.com/2026/08/ather-NIIF-exit-social-.jpg",
+        "why": "A first net profit, against a ₹154 Cr loss a year ago; revenue rose 62.9% to ₹1,464 Cr, helped by other income."
       },
       {
-        "title": "TVS sales breakup Sep 2026: Jupiter, Apache, XL, iQube, Raider, Ntorq, Radeon",
+        "title": "Harley-Davidson Sprint 440 cruiser spied undisguised, launch soon",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/tvs-sales-breakup-sep-2026-jupiter-apache-xl-iqube-raider-ntorq-radeon-12559465.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/08/new-tvs-jupiter-sales-record.jpg",
-        "why": "Domestic sales rose 16.65% to 4,82,073 units and exports 29.74%; Jupiter alone was 32% of domestic volume."
+        "url": "https://www.rushlane.com/harley-davidson-sprint-440-cruiser-spied-undisguised-launch-soon-12559576.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/harley-davidson-sprint-440-cruiser-spied-launch-soon-price-colours-4.jpg",
+        "why": "A traditional cruiser on the X440's 440cc engine, built by Hero MotoCorp, now reaching dealerships."
       },
       {
-        "title": "New Ducati Hypermotard V2 launched at Rs 16.53 lakh: 120 bhp, 94 Nm, 177 kg",
+        "title": "New KTM 200 Duke launch price Rs 2.09 L: ETB, TCS, ride modes, quickshifter",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-ducati-hypermotard-v2-launch-price-rs-16-53-l-120-bhp-94-nm-177-kg-12559331.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-ducati-hypermotard-v2-india-launch-3.jpg",
-        "why": "Replaces the Hypermotard 950 with a new 890cc V-twin and monocoque chassis; the SP costs Rs 20.78 lakh."
+        "url": "https://rushlane.com/new-ktm-200-duke-launch-price-rs-2-09-l-etb-tcs-ride-modes-quickshifter-12559419.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-updated-2026-ktm-200-duke-launched.jpg",
+        "why": "Ride-by-wire, traction control and a bi-directional quickshifter come to the 200 Duke, per dealer pricing."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "TechCrunch Mobility: Blue-green is the color of autonomy",
+        "title": "Hyundai Bayon launched at Rs 10 lakh",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/hyundai-bayon-launched-at-rs-10-lakh-441124",
+        "img": "https://asset.autocarindia.com/static/news/images/20261026_080054_ab3e7bc4.png",
+        "why": "A Chennai-built midsize SUV below the Creta, Rs 10 to 18 lakh, with Level 2 ADAS and exports planned."
+      },
+      {
+        "title": "Tata Motors CV swings to ₹1,257 crore profit in Q2; revenue rises 36%",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/tata-motors-swings-to-q2-profit-of-2-138-crore-on-strong-cv-demand-126102300904_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-08/12/thumb/fitandfill/1200X628/1786556236-3809.jpg",
+        "why": "Truck and bus wholesales rose 42% to 135,100 units, with exports up 177%, against a loss a year ago."
+      },
+      {
+        "title": "Tesla turns to Turo to boost adoption of Full Self-Driving (Supervised)",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/25/techcrunch-mobility-blue-green-is-the-color-of-autonomy/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/tesla-cybercab-getty.jpg",
-        "why": "NHTSA proposed optional steady cyan lights, visible from all sides, to show a vehicle is driving itself."
-      },
-      {
-        "title": "Top 50 car exports H1 FY2027: Maruti takes 51% share, Fronx and Jimny lead",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/top-50-car-exports-h1-fy2027-maruti-takes-51-share-fronx-and-jimny-lead-12559439.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/08/maruti-fronx-exports-fastest-india-2-lakh-5.jpg",
-        "why": "Exports rose only 1.25% to 4.51 lakh units, but Maruti grew 12%; e Vitara exports jumped 261%."
-      },
-      {
-        "title": "Mahindra Vision S design patented: new SUV launch likely in 2027",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/mahindra-vision-s-design-patented-new-suv-launch-likely-in-2027-12558245.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/Mahindra-Vision-S-Design-Patented-10.jpg",
-        "why": "The last of four NU_IQ Vision concepts to be patented: an upright, Jimny-rivalling sub-4m monocoque SUV."
+        "url": "https://techcrunch.com/2026/10/26/tesla-turns-to-turo-to-boost-adoption-of-full-self-driving-supervised/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/06/tesla-fsd-GettyImages-2277686230.jpg",
+        "why": "Turo will flag FSD-equipped Teslas; Tesla says about 1.7 million customers have paid for FSD."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Mistral boss and Yann LeCun back Swiss robotics startup Enact in $30M pre-seed round",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/10/22/mistral-boss-and-yann-lecun-back-swiss-robotics-startup-enact-in-30m-pre-seed-round/",
-        "img": "https://cdn.tech.eu/uploads/2026/10/enact-708.png",
-        "why": "Enact builds general-purpose robot tech that relies on force and touch sensing rather than mainly cameras."
-      },
-      {
-        "title": "Anglo-Finnish Oxford University quantum spinout QuantrolOx raises €12M",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/10/22/anglo-finnish-oxford-university-quantum-spinout-raises-eur12m/",
-        "img": "https://cdn.tech.eu/uploads/2026/10/smart-2-516.jpg",
-        "why": "Its software automates tuning and control of quantum computers, a bottleneck; IW Capital led the Series A."
-      },
-      {
-        "title": "SpaceX alum's aviation startup, Reliable Robotics, lands $115M, topping $1B valuation",
+        "title": "This startup's self-driving excavators help dig up $600M in new funding",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/20/spacex-alums-aviation-startup-reliable-robotics-lands-115m-topping-1b-valuation/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/Autonomous-Flight_820-Autoland_2026-09.jpg",
-        "why": "Retrofit autonomous flight for existing aircraft; first FAA certification expected in 18 to 24 months."
+        "url": "https://techcrunch.com/2026/10/26/this-startups-self-driving-excavators-help-dig-up-600m-in-new-funding/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/bedrock-robotics-excavators.jpg",
+        "why": "Bedrock Robotics' retrofit autonomy kit for excavators is valued at $4.1B, citing a skilled-operator shortage."
+      },
+      {
+        "title": "Fusion startups are giving the government shares in exchange for awards. Is it worth it?",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/26/fusion-startups-are-giving-the-government-shares-in-exchange-for-awards-is-it-worth-it",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/01/cfs-sparc-digital-twin.jpeg",
+        "why": "Helion and CFS took $260M in CHIPS Act money for reactor semiconductors in return for non-voting equity."
+      },
+      {
+        "title": "Former OpenAI science lead launches Warp Science to automate wet labs with robots",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/22/former-openai-science-lead-launches-warp-science-to-automate-wet-labs-with-robots/",
+        "img": "https://techcrunch.com/wp-content/uploads/2016/10/4528869007_4484c3d401_b-1.jpg",
+        "why": "Robots trained by chemists in sensor gloves make and test drug compounds; it raised $215M, says Kevin Weil."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "From Even Health to The Pant Project: Indian startups raised over $184 Mn this week",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/from-even-health-to-the-pant-project-indian-startups-raised-over-184-mn-this-week/",
-        "img": "https://asset.inc42.com/2026/10/FG_Oct-23-Soc-100.jpg",
-        "why": "17 deals, with funding down 22% week on week; AI startup Different raised a $48 Mn seed round."
+        "title": "Social gaming startup Matiks raises $10 Mn in Pre-Series A led by General Catalyst",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/social-gaming-startup-matiks-raises-10-mn-in-pre-series-a-led-by-general-catalyst-12754114",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/matiks-2026-10-26-18-56-47.png",
+        "why": "Started as a mental maths game; daily users doubled since June to over 300,000, and it will push into the US."
       },
       {
-        "title": "Blacksmith raises $66 Mn at $1 Bn valuation led by Sequoia",
+        "title": "Healthcare startup BioStack raises $9.5 Mn in seed funding led by Peak XV",
         "source": "Entrackr",
-        "url": "https://entrackr.com/news/blacksmith-raises-66-mn-at-1-bn-valuation-led-by-sequoia-12696481",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/08/13/blacksmith-2026-08-13-10-23-10.png",
-        "why": "The 2024-founded CI and code-testing platform says ARR grew 17x since January; over 10,000 companies use it."
+        "url": "https://entrackr.com/snippets/healthcare-startup-biostack-raises-95-mn-in-seed-funding-led-by-peak-xv-12753841",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/biostack-2026-10-26-16-30-17.png",
+        "why": "Builds de-identified clinical datasets for research and healthcare AI across the US, India, Brazil and Argentina."
       },
       {
-        "title": "Mygate, Adonmo set to merge; Eternal to hold 4.4% stake in combined entity",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/mygate-adonmo-set-to-merge-eternal-to-hold-44-stake-in-combined-entity-12695913",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/21/adonmo-mygate-eternal-2026-10-21-16-53-50.png",
-        "why": "Eternal swaps its Adonmo holding for a Rs 156 crore Mygate stake; Mygate's FY26 turnover rose 34%."
+        "title": "Europe's biggest seed rounds of Q3 2026: Top tech startups to watch",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/10/26/europes-biggest-seed-rounds-of-q3-2026-top-tech-startups-to-watch",
+        "img": "https://cdn.tech.eu/uploads/2026/10/q32026-featured-395.png",
+        "why": "European tech raised €27.8B in Q3, up 32.4%; seed leaders include industrial-robotics AI and trapped-ion quantum."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "AU Small Finance Bank Q2FY27 result: Net profit jumps 53% to ₹858 crore",
+        "title": "Paytm Q2FY27 net profit jumps 10-fold to ₹225 crore, revenue up 28%",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/au-small-finance-bank-q2fy27-result-net-profit-jumps-53-to-858-crore-126102400743_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-04/27/thumb/fitandfill/1200X628/1777291070-0818.jpg",
-        "why": "Net interest income rose 32% and gross NPAs fell to 1.99% from 2.41%."
+        "url": "https://www.business-standard.com/companies/quarterly-results/paytm-q2fy27-net-profit-jumps-10-fold-to-225-crore-revenue-up-28-126102601539_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/26/thumb/fitandfill/1200X628/1793038143-492.jpg",
+        "why": "A sixth straight profitable quarter and a first double-digit EBITDA margin; monthly users reached 8.5 crore."
       },
       {
-        "title": "JK Cement Q2FY27 result: Profit rises 6.3% to ₹169 cr; revenue jumps 23.7%",
+        "title": "Tata Consumer Products Q2 net profit rises 16% to ₹469 cr, sales up 14%",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/jk-cement-q2fy27-result-profit-rises-6-3-pc-to-rs-169-cr-126102400740_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/24/thumb/fitandfill/1200X628/1792841266-8595.jpg",
-        "why": "Grey cement volume rose 21%; the board approved a ₹130 crore paint plant in Telangana."
+        "url": "https://www.business-standard.com/amp/companies/quarterly-results/tata-consumer-products-q2-net-profit-rises-16-to-469-cr-sales-up-14-126102601505_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-07/08/thumb/fitandfill/1200X628/1720431964-3491.jpg",
+        "why": "Growth businesses rose 40% to 38% of India sales; tea volumes were flat on weak demand."
       },
       {
-        "title": "MCA extends annual filing deadlines, waives extra fees for FY26 filings",
+        "title": "ITC Hotels Q2 net profit rises 52% to ₹202.6 crore, revenue up 26%",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/finance/news/mca-extends-annual-filing-deadlines-waives-extra-fees-for-fy26-filings-126102401098_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2021-06/02/thumb/fitandfill/1200X628/1622572536-5553.jpg",
-        "why": "Financial statements now due 31 Dec and annual returns 31 Jan, after glitches on the MCA-21 V3 portal."
+        "url": "https://www.business-standard.com/companies/quarterly-results/itc-hotels-q2-net-profit-rises-52-to-202-6-crore-revenue-up-26-126102600976_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-01/30/thumb/fitandfill/1200X628/1738177869-8806.jpg",
+        "why": "RevPAR rose 21% and the EBITDA margin hit 32%; the board approved a Dubai subsidiary."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Mon 26 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Tue 27 Oct",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Sat 31 Oct",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -249,12 +249,16 @@ const RACING = {
     {
       "when": "20–22 Nov",
       "what": "MotoGP: Portuguese GP, Portimão"
+    },
+    {
+      "when": "27–29 Nov",
+      "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "Sunday's Australian GP was cancelled for low visibility, so no race winner; Marc Marquez leaves Phillip Island 10 points ahead of Jorge Martin on Sprint points. WorldSBK's 2026 season has ended.",
+  "note": "Sunday's Australian GP was cancelled for low visibility, so there was no race winner; Marc Marquez heads to Sepang 10 points ahead of Jorge Martin. WorldSBK's 2026 season has ended.",
   "source": {
-    "name": "Crash.net, updated 2026 MotoGP calendar",
-    "url": "https://www.crash.net/motogp/news/1091546/1/updated-2026-motogp-schedule-full-after-qatar-postponement"
+    "name": "motogp.com, Qatar GP new date and end-of-season calendar",
+    "url": "https://www.motogp.com/en/news/2026/03/15/motogp-confirms-new-date-for-the-qatar-grand-prix/1005668"
   }
 };
 
@@ -271,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Gosh",
-    "artist": "Jamie xx",
-    "id": "79Jl8KMvmnXedTjjW6pJan",
-    "why": "The opening track of Jamie xx's 2015 solo debut In Colour: UK rave nostalgia that sits next to your Fred again.. plays."
+    "title": "Both Of Us",
+    "artist": "Jayda G",
+    "id": "7q584VOAZLMPaIQ9pedKFl",
+    "why": "Jayda G's 2019 house single: a long, soulful, disco-tinged groove that sits next to your Modjo and Daft Punk plays."
   },
   "playlist": {
     "name": "Weekly Discovery Mix",
@@ -283,59 +287,60 @@ const MUSIC = {
   },
   "lately": [
     "Fred again..",
-    "Outkast",
-    "Marshmello",
-    "Jake Antonio",
+    "Modjo",
+    "DreamKiller",
+    "Daft Punk",
     "X CLUB.",
-    "Basement Jaxx"
+    "Saint Etienne"
   ]
 };
 
 const LEARN = {
-  "term": "The golden ratio: use and myth",
-  "body": "The golden ratio φ ≈ 1.618 is the proportion where the whole is to the larger part as the larger part is to the smaller, (1+√5)/2, and ratios of consecutive Fibonacci numbers converge on it. Many famous claims are post-hoc fitting: the Parthenon, the Mona Lisa and modern logos only 'match' once you choose convenient measuring points, and the nautilus shell is a logarithmic spiral whose growth rate is not φ. Fechner's 19th-century preference tests seemed to favour golden rectangles, but later studies have not reliably reproduced a special preference over nearby ratios. Where φ earns its place is as a deliberate proportion system, as in Le Corbusier's Modulor, giving a family of related sizes rather than a magic number. In practice √2 (the ISO A-paper ratio), simple ratios like 3:2 and a strict grid do the same job, so pick a system for consistency, then let function and ergonomics override it.",
+  "term": "Gestalt principles in product form",
+  "body": "Gestalt psychology (Wertheimer, Köhler and Koffka, 1910s–20s) describes how the visual system organises parts into wholes before we consciously inspect them: proximity, similarity, closure, continuity, common region and figure-ground. Koffka's line is usually misquoted as 'the whole is greater than the sum of its parts'; he said the whole is other than the sum, meaning perception creates a new structure rather than adding things up. On a product, proximity and common region decide which buttons read as one group, so spacing and a shared bezel do more than labels; similarity of colour, finish or radius tells users which elements behave alike. Continuity is why a highlight or shut line that runs unbroken across two parts makes them read as one volume, and a misaligned split breaks the form. The principles describe tendencies, not laws: they compete with each other and with learned conventions, so test layouts with real users rather than treating a Gestalt checklist as proof.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "1.618",
-        "note": "Whole : large part = large : small."
-      },
-      {
-        "label": "Fibonacci",
-        "note": "Consecutive-term ratios converge on φ."
-      },
-      {
-        "label": "Myth",
-        "note": "Parthenon, nautilus: fitted after the fact."
-      },
-      {
-        "label": "System",
-        "note": "Useful as one proportion system among many.",
+        "label": "Proximity",
+        "note": "Close parts read as one group.",
         "hl": true
+      },
+      {
+        "label": "Similarity",
+        "note": "Same colour, finish or radius = same role."
+      },
+      {
+        "label": "Continuity",
+        "note": "Unbroken lines join parts into one volume."
+      },
+      {
+        "label": "Figure",
+        "note": "Contrast sets what pops from the ground."
       }
     ],
-    "caption": "φ is a tool for consistency, not a law of beauty."
+    "caption": "Spacing and alignment group controls before labels do."
   },
   "source": {
-    "name": "Wikipedia: Golden ratio",
-    "url": "https://en.wikipedia.org/wiki/Golden_ratio"
+    "name": "Wikipedia: Gestalt psychology",
+    "url": "https://en.wikipedia.org/wiki/Gestalt_psychology"
   },
   "past": [
+    "The golden ratio: use and myth",
     "Draft angles and the parting line",
     "Surface continuity: G0 to G3"
   ]
 };
 
 const DESIGN = {
-  "name": "Braun SK 4 radio-phonograph",
-  "designer": "Dieter Rams and Hans Gugelot",
-  "year": "1956",
-  "why": "It replaced the wooden radio cabinet with white-painted sheet steel, wooden end panels and a clear acrylic lid, so the controls and turntable are laid out like a clean diagram you can read at a glance. That transparent lid, nicknamed 'Snow White's Coffin', set the language of rational, quiet product design that shaped Braun for decades.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1956_Braun_Phonosuper_SK4_Schneewittchensarg.JPG?width=1200",
+  "name": "Olivetti Valentine typewriter",
+  "designer": "Ettore Sottsass with Perry King",
+  "year": "1969",
+  "why": "Sottsass turned an office machine into a bright red ABS portable whose case doubles as its carrying bucket, pitching the typewriter as a personal, everyday object rather than workplace equipment. Its single-colour moulded shell, round orange spool caps and handle built into the case show how material, colour and form can carry a product's whole attitude.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Olivetti_Valentine.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:1956_Braun_Phonosuper_SK4_Schneewittchensarg.JPG"
+    "url": "https://commons.wikimedia.org/wiki/File:Olivetti_Valentine.jpg"
   }
 };
 
@@ -387,11 +392,6 @@ const FUNDING = {
 
 const LAUNCHES = {
   "items": [
-    {
-      "model": "Hyundai Bayon",
-      "when": "26 Oct 2026",
-      "price": "₹9.49–14.90 lakh"
-    },
     {
       "model": "Mercedes-Benz GLC Electric",
       "when": "4 Nov 2026",
