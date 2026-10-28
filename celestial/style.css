@@ -433,6 +433,8 @@ button, input { font: inherit; color: inherit; }
 .menu-btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; }
 .menu-btn:hover { border-color: var(--ink-soft); }
 .menu-btn[aria-expanded="true"] { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+/* The speaker shows sound waves when on, a cross when off */
+#sound-toggle[aria-pressed="true"] .icon-off, #sound-toggle[aria-pressed="false"] .icon-on { display: none; }
 .panel {
   position: fixed;
   z-index: 4;
@@ -462,8 +464,8 @@ button, input { font: inherit; color: inherit; }
 .panel-body { overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 16px; scrollbar-width: thin; }
 
 /* Settings: tabs across the top, one subject per tab */
-.view-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; margin: 12px 16px 0; padding: 3px; border-radius: 10px; background: var(--bg); }
-.view-tab { padding: 6px 4px; border: 0; border-radius: 8px; background: none; font-size: 13px; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
+.view-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: auto; gap: 2px; margin: 12px 16px 0; padding: 3px; border-radius: 10px; background: var(--bg); }
+.view-tab { padding: 6px 3px; border: 0; border-radius: 8px; background: none; font-size: 13px; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
 .view-tab:hover { color: var(--ink); }
 .view-tab[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
 .view-pane { display: grid; gap: 2px; }
@@ -885,7 +887,7 @@ button, input { font: inherit; color: inherit; }
 .lc-meter output { font-family: var(--font-data); font-size: 11px; text-align: right; color: var(--ink-soft); }
 
 /* ── Smaller screens ──────────────────────────── */
-@media (max-width: 1080px) {
+@media (max-width: 1200px) {
   .top { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand prompt menus" "trail trail trail" "about about about" "status status status"; gap: 8px 12px; }
   .menu-btn .menu-label { display: none; }
   .menu-btn { padding: 9px; }

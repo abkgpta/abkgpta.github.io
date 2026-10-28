@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <!-- ?v= is a version tag: change it on each release so browsers fetch fresh files -->
-<link rel="stylesheet" href="style.css?v=202610281430">
+<link rel="stylesheet" href="style.css?v=202610281500">
 </head>
 <body>
 
@@ -29,6 +29,11 @@
     <span id="brand-stage" class="brand-stage">Example</span>
   </div>
   <div class="menus">
+    <button id="sound-toggle" class="menu-btn" type="button" aria-pressed="false" title="Sound: a soundtrack made from the map">
+      <svg class="icon-on" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6h2.5l3.5-3v10L5 10H2.5z"/><path d="M10.8 5.6a3.4 3.4 0 0 1 0 4.8M12.6 3.8a6 6 0 0 1 0 8.4"/></svg>
+      <svg class="icon-off" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6h2.5l3.5-3v10L5 10H2.5z"/><path d="M11 6l3 4M14 6l-3 4"/></svg>
+      <span class="menu-label">Sound</span>
+    </button>
     <button id="reason-toggle" class="menu-btn" type="button" aria-pressed="false" title="Reasoning: watch the map being built and see why each line exists">
       <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.7"/><circle cx="12.5" cy="3.5" r="1.7"/><circle cx="12.5" cy="12.5" r="1.7"/><path d="M5.1 7.2 10.9 4.3M5.1 8.8l5.8 2.9"/></svg>
       <span class="menu-label">Reasoning</span>
@@ -127,6 +132,9 @@
       <dt>Hover</dt><dd>Preview an orb, or (with Reasoning on) see why a line exists</dd>
       <dt>Esc</dt><dd>Close whatever is open</dd>
     </dl>
+
+    <p class="view-group">Sound</p>
+    <p class="view-note">Off until you press the speaker at the top. Each orb rings as it appears: causes low, effects high, and stronger links closer to the home note. Settings › Sound sets the volume and what plays.</p>
   </div>
 </section>
 
@@ -164,15 +172,78 @@
 
 <p id="toast" class="toast" role="status" hidden></p>
 
-<script src="data.js?v=202610281430"></script>
-<script src="illustrations.js?v=202610281430"></script>
-<script src="research.js?v=202610281430"></script>
+<!-- Only on this site: the demo notice. Hidden once a key is saved, or for the rest of the visit once closed. -->
+<aside id="demo-notice" class="demo-notice" aria-label="Demo version" hidden>
+  <p><b>This is a demo version.</b> It shows one example map. Add your own Claude API key to use the full version: ask any question and research any topic live.</p>
+  <div class="demo-actions">
+    <button id="demo-key" type="button" class="demo-key">Add your API key</button>
+    <button id="demo-close" type="button" class="demo-close" aria-label="Close">&times;</button>
+  </div>
+</aside>
+<style>
+.demo-notice {
+  position: fixed;
+  z-index: 3;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  transform: translateX(-50%);
+  width: min(500px, calc(100% - 32px));
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 12px 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  animation: rise 0.35s ease-out;
+}
+.demo-notice p { margin: 0; flex: 1; min-width: 0; font-size: 13.5px; line-height: 1.45; }
+.demo-notice b { font-weight: 600; }
+.demo-actions { display: flex; align-items: center; gap: 6px; flex: none; }
+.demo-key { padding: 7px 14px; border: 0; border-radius: 999px; background: var(--ink); color: var(--panel); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.demo-close { width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%; background: none; font-size: 18px; line-height: 1; color: var(--ink-soft); cursor: pointer; }
+.demo-close:hover { background: var(--bg); color: var(--ink); }
+@media (max-width: 640px) {
+  .demo-notice { flex-direction: column; align-items: stretch; gap: 10px; }
+  .demo-actions { justify-content: space-between; }
+}
+</style>
+<script>
+(() => {
+  const box = document.getElementById('demo-notice');
+  const has = (store, key) => { try { return Boolean(store.getItem(key)); } catch { return false; } };
+  box.hidden = has(localStorage, 'celestial.key') || has(sessionStorage, 'celestial.demoClosed');
+  document.getElementById('demo-close').addEventListener('click', () => {
+    box.hidden = true;
+    try { sessionStorage.setItem('celestial.demoClosed', '1'); } catch { /* fine: it shows again next time */ }
+  });
+  // Opens Settings at the key field
+  document.getElementById('demo-key').addEventListener('click', () => {
+    const panel = document.getElementById('view-panel');
+    if (panel.hidden) document.getElementById('view-toggle').click();
+    document.getElementById('view-tab-Research')?.click();
+    document.getElementById('api-key')?.focus();
+  });
+  // A saved key unlocks the full version, so the notice has done its job
+  document.getElementById('key-form').addEventListener('submit', () => setTimeout(() => {
+    if (has(localStorage, 'celestial.key')) box.hidden = true;
+  }));
+})();
+</script>
+
+<script src="data.js?v=202610281500"></script>
+<script src="illustrations.js?v=202610281500"></script>
+<script src="research.js?v=202610281500"></script>
+<script src="sound.js?v=202610281500"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
-<script type="module" src="app.js?v=202610281430"></script>
+<script type="module" src="app.js?v=202610281500"></script>
 </body>
 </html>

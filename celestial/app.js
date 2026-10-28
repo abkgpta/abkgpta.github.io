@@ -95,12 +95,18 @@ const VIEW_DEFAULTS = {
   orbSize: 1,
   reasoning: false,       // Reasoning mode: the map builds step by step and every line explains itself
   traceSpeed: 1,          // index into TRACE_SPEEDS
+  sound: false,           // off until you switch it on (browsers block sound before a click anyway)
+  volume: 0.6,
+  music: true,            // the background drone
+  bells: true,            // a note as each orb appears, and when you mark one
+  cues: true,             // Reasoning mode: notes for links between orbs and lines you hover
 };
 // The Settings panel, one tab per question you might have:
 //   Research   – how Claude answers, how you learn from it, the connection
 //   Appearance – colours and what each orb shows
 //   Map        – layout, lines and depth
 //   Motion     – everything that moves, in one place
+//   Sound      – the soundtrack the map plays
 // { tab } starts a tab, { group } a small heading within it.
 // needs: the setting only matters while that other switch is on (greyed out otherwise).
 // format: 'percent' shows a 0–1 slider as 0–100%.
@@ -166,6 +172,14 @@ const VIEW_SETTINGS = [
   { key: 'streamSpeed', label: 'Stream speed', needs: 'streams', min: 0.4, max: 2, step: 0.1, unit: '×' },
   { group: 'Background' },
   { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
+  { tab: 'Sound' },
+  { group: 'Playback' },
+  { key: 'sound', label: 'Sound on', hint: 'Off until you switch it on. Same as the speaker button at the top' },
+  { key: 'volume', label: 'Volume', needs: 'sound', format: 'percent', min: 0, max: 1, step: 0.05 },
+  { group: 'What plays' },
+  { key: 'music', label: 'Background drone', needs: 'sound', hint: 'A slow chord that follows the theme' },
+  { key: 'bells', label: 'Orb bells', needs: 'sound', hint: 'A note as each orb appears: causes low, effects high, stronger links nearer the home note. Ticks and crosses answer too' },
+  { key: 'cues', label: 'Reasoning cues', needs: 'sound', hint: 'In Reasoning mode, links between orbs and lines you hover play their two notes' },
 ];
 const STORE_KEY = 'celestial.view';
 let viewTab = 'Research';
@@ -702,6 +716,7 @@ function addQuickOrb(centreId, spec) {
   o.hub = orbs[0];
   orbs.push(o);
   if (view.reasoning) traceSketch(o);
+  else S?.orb(o);
   tween(TUNING.expand.arrive, (t) => { o.grow = t; o.obj.position.lerpVectors(o.start, o.target, t); }, null, { ease: easeOut, owner: o });
   scheduleFit();
   return true;
@@ -1164,6 +1179,7 @@ function showSystem(sunId) {
       return c;
     });
   fitCamera();
+  if (!chosen?.isSun && !view.reasoning) S?.centre();
 
   const fresh = orbs.filter((o) => !o.kept && !o.isSun).sort((x, y) => y.relevance - x.relevance);
   let settled = E.move;
@@ -1183,6 +1199,7 @@ function showSystem(sunId) {
         o.obj.position.lerpVectors(from.set(0, 0, 0), o.target, t);
       }, null, { ease: easeOut, delay, owner: o });
       settled = Math.max(settled, delay + E.arrive);
+      if (!o.isSun && !view.reasoning) S?.orb(o, delay + E.arrive * 0.25);
     }
   }
   renderTrail();
@@ -1664,6 +1681,7 @@ function setVerdict(o, v) {
   if (next) { verdicts[o.id] = next; verdictOrder.push(o.id); }
   else delete verdicts[o.id];
   saveFeedback();
+  S?.mark(next);
   relayout(900);
   // A crossed orb has said what it needed to: close it and let it drift off
   if (next === 'no' && selected === o) closeFocus();
@@ -1923,6 +1941,7 @@ function applyView() {
   if (!view.reasoning) trace.playing = false;
   renderTrace();
   if ($('plan-note') && R) updateLiveState(false);
+  applySound();
 }
 darkDevice.addEventListener('change', applyView);
 // If the page host switches light/dark itself, keep our theme and follow its mode
@@ -1952,6 +1971,20 @@ $('view-reset').addEventListener('click', () => {
   for (const k of keys) view[k] = VIEW_DEFAULTS[k];
   if (view.reasoning !== wasReasoning) setReasoning(view.reasoning);
   afterViewChange({ relayout: viewTab === 'Map' });
+});
+
+// ─── Sound (see the SOUND script) ────────────────────────────
+const S = window.CELESTIAL_SOUND;
+function applySound() {
+  S?.configure({ on: view.sound, volume: view.volume, music: view.music, bells: view.bells, cues: view.cues, theme: view.theme });
+  $('sound-toggle').setAttribute('aria-pressed', String(view.sound));
+}
+$('sound-toggle').addEventListener('click', () => {
+  view.sound = !view.sound;
+  storeView();
+  syncViewPanel();
+  applySound();
+  if (view.sound) toast('Sound on. Settings › Sound sets the volume and what plays.');
 });
 
 // ─── Prompt line ─────────────────────────────────────────────
@@ -2262,6 +2295,7 @@ function renderTrace() {
   $('reason-toggle').setAttribute('aria-pressed', String(view.reasoning));
   queueMicrotask(() => { const w = uiRight(); if (w !== traceWidth) { traceWidth = w; scheduleFit(); } });
   if (box.hidden) return;
+  soundStep();
   const n = trace.steps.length, last = n - 1, done = trace.at >= last && !trace.playing && !trace.live;
   box.classList.toggle('is-collapsed', trace.collapsed);
   $('trace-toggle').textContent = trace.collapsed ? '▸' : '▾';
@@ -2290,6 +2324,19 @@ function renderTrace() {
   traceRendered = html;
   $('trace-log').innerHTML = html;
   $('trace-log').querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' });
+}
+
+// Each step plays its note as the build reaches it (stepping back is silent)
+let soundedSteps = null, soundedAt = -1;
+function soundStep() {
+  if (trace.steps !== soundedSteps) { soundedSteps = trace.steps; soundedAt = -1; }
+  const forward = trace.at > soundedAt;
+  soundedAt = trace.at;
+  const s = forward && trace.steps[trace.at];
+  if (!s) return;
+  if (s.kind === 'start') S?.centre();
+  else if (s.kind === 'orb') S?.orb(s.orb);
+  else S?.pair(s.c.a, s.c.b);
 }
 
 // Turned on or off from the button at the top or the Settings panel
@@ -2359,7 +2406,7 @@ glow.visible = false;
 world.add(glow);
 
 // The line card: what the hovered line, the tapped line or the current step means
-let cardKey = '';
+let cardKey = '', hoverSoundKey = '';
 function cardHTML(d) {
   const tier = d.tier >= 1 && d.tier <= 6 ? `<span class="tier tier-${d.tier}" title="Reliability tier ${d.tier} of 6">${d.tier}</span>` : '';
   return `<span class="lc-kicker">${esc(d.kicker)}</span>
@@ -2371,6 +2418,11 @@ function cardHTML(d) {
 function updateReasoning(sw, h) {
   const card = $('link-card');
   hoverLink = view.reasoning && pointer && !hovered ? lineAt(pointer.x, pointer.y) : null;
+  if (linkKey(hoverLink) !== hoverSoundKey) {
+    hoverSoundKey = linkKey(hoverLink);
+    if (hoverLink?.kind === 'orb') S?.pair(orbs[0], hoverLink.orb);
+    else if (hoverLink?.kind === 'cross') S?.pair(hoverLink.c.a, hoverLink.c.b);
+  }
   stage.style.cursor = hoverLink ? 'help' : '';
   const step = trace.steps[trace.at];
   const following = trace.playing || trace.manual || trace.live || trace.at < trace.steps.length - 1;
