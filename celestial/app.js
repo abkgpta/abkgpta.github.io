@@ -19,10 +19,11 @@ import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
 import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 const DATA = window.CELESTIAL_DATA;
+DATA.reasons ||= {};
 
 // ─── Fixed numbers ───────────────────────────────────────────
 // The shape of the system. Several of these can be adjusted live
-// from the View panel; these are the starting points.
+// from the Settings panel; these are the starting points.
 const TUNING = {
   nearestOrbit: 9,        // distance of an orb with link = 1 (scene units)
   farthestOrbit: 24,      // distance of an orb with link = 0
@@ -45,6 +46,7 @@ const TUNING = {
   centreLine: 0.16,       // strength of the faint cause/effect lines to the centre
   crossLine: 0.14,        // strength of the faint lines between linked orbs
   crossLinkMin: 0.6,      // links between orbs weaker than this aren't drawn
+  reasonLine: 0.32,       // strength of every line in Reasoning mode, so each can be found and hovered
   // Motion
   cameraGlide: 0.55,      // seconds: how softly the camera glides to a new view (higher = softer)
   expand: {
@@ -66,7 +68,7 @@ const TUNING = {
   },
 };
 
-// ─── View settings: the controls in the View panel ───────────
+// ─── Settings: the controls in the Settings panel ────────────
 const VIEW_DEFAULTS = {
   model: 'claude-opus-5-5',
   tier: 'default',
@@ -87,34 +89,45 @@ const VIEW_DEFAULTS = {
   sameSize: true,
   depthFade: true,
   fillScreen: true,
-  sway: true,
-  spin: false,
+  mapMotion: 'sway',      // 'still' | 'sway' | 'spin'
   streamSpeed: 1,
   spacing: 1,
   orbSize: 1,
+  reasoning: false,       // Reasoning mode: the map builds step by step and every line explains itself
+  traceSpeed: 1,          // index into TRACE_SPEEDS
 };
-// { tab } starts a tab in the View panel, { group } a small heading within it
+// The Settings panel, one tab per question you might have:
+//   Research   – how Claude answers, how you learn from it, the connection
+//   Appearance – colours and what each orb shows
+//   Map        – layout, lines and depth
+//   Motion     – everything that moves, in one place
+// { tab } starts a tab, { group } a small heading within it.
+// needs: the setting only matters while that other switch is on (greyed out otherwise).
+// format: 'percent' shows a 0–1 slider as 0–100%.
 const VIEW_SETTINGS = [
-  { tab: 'Claude' },
-  { connection: true },
-  { group: 'How Claude works' },
-  { key: 'model', label: 'Model (your API key)', options: [
-    ['claude-opus-5-5', 'Opus 5.5', 'Best · $4 / $20'],
-    ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster · $2 / $10'],
-    ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
+  { tab: 'Research' },
+  { group: 'Your questions' },
+  { key: 'reading', label: 'Treat what you type as', options: [
+    ['auto', 'Auto', 'Guess from the words'],
+    ['diagnose', 'A problem', 'Trace causes'],
+    ['explore', 'A topic', 'Map the subject'],
   ] },
   { key: 'tier', label: 'How hard Claude thinks', options: [
     ['quick', 'Fast', 'Lightest'],
     ['default', 'Balanced', 'Recommended'],
     ['complex', 'Thorough', 'Slower, deeper'],
   ] },
-  { key: 'reading', label: 'Treat what you type as', options: [
-    ['auto', 'Auto'],
-    ['diagnose', 'A problem'],
-    ['explore', 'A topic'],
+  { key: 'model', label: 'Model (with your API key)', options: [
+    ['claude-opus-5-5', 'Opus 5.5', 'Most capable'],
+    ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster'],
+    ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
   ] },
-  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. About $0.01 per search' },
-  { tab: 'Look' },
+  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. Each search adds a small cost to your key' },
+  { group: 'Learning' },
+  { key: 'reasoning', label: 'Reasoning mode', hint: 'Build each map step by step and explain every line. Same as the Reasoning button' },
+  { key: 'traceSpeed', label: 'Step speed', needs: 'reasoning', options: [[0, 'Slow'], [1, 'Normal'], [2, 'Fast']] },
+  { connection: true },
+  { tab: 'Appearance' },
   { group: 'Colours' },
   { key: 'theme', label: 'Theme', swatches: true, options: [
     ['tide', 'Tide', 'Teal and bottle green'],
@@ -125,37 +138,43 @@ const VIEW_SETTINGS = [
     ['light', 'Light'],
     ['dark', 'Dark'],
   ] },
-  { key: 'relationColour', label: 'Colour outlines by cause and effect' },
-  { group: 'Background' },
-  { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
-  { key: 'lineArt', label: 'Patterned border' },
-  { tab: 'Map' },
+  { key: 'relationColour', label: 'Colour outlines by cause and effect', hint: 'Off: every orb gets the same grey outline' },
   { group: 'Orbs' },
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
   { key: 'leadGlow', label: 'Glow around hidden leads' },
-  { key: 'hierarchy', label: 'Emphasis on relevance', min: 0, max: 1, step: 0.05, unit: '', relayout: true },
+  { group: 'Background' },
+  { key: 'lineArt', label: 'Patterned border' },
+  { tab: 'Map' },
+  { group: 'Size and spacing' },
+  { key: 'hierarchy', label: 'Size orbs by relevance', format: 'percent', min: 0, max: 1, step: 0.05, relayout: true },
   { key: 'orbSize', label: 'Orb size', min: 0.6, max: 1.5, step: 0.05, unit: '×', relayout: true },
   { key: 'spacing', label: 'Spacing', min: 0.6, max: 1.6, step: 0.05, unit: '×', relayout: true },
+  { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
   { group: 'Lines' },
   { key: 'streams', label: 'Cause and effect streams' },
   { key: 'centreLines', label: 'Faint lines to the centre' },
-  { key: 'crossLinks', label: 'Faint lines between linked orbs' },
+  { key: 'crossLinks', label: 'Faint lines between linked orbs', hint: 'Reasoning mode always shows every line' },
   { group: 'Depth' },
-  { key: 'sameSize', label: 'Same size at any depth', hint: 'Off: farther orbs look smaller' },
+  { key: 'sameSize', label: 'Keep orbs the same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
-  { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
   { tab: 'Motion' },
-  { group: 'Orbs' },
-  { key: 'organic', label: 'Gently warping, drifting orbs' },
-  { key: 'streamSpeed', label: 'Stream speed', min: 0.4, max: 2, step: 0.1, unit: '×' },
+  { reducedNote: true },
   { group: 'Whole map' },
-  { key: 'sway', label: 'Gentle sway until you grab it' },
-  { key: 'spin', label: 'Slow spin' },
+  { key: 'mapMotion', label: 'Until you grab it, the map', options: [['still', 'Stays still'], ['sway', 'Sways'], ['spin', 'Spins']] },
+  { group: 'Orbs and streams' },
+  { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'streamSpeed', label: 'Stream speed', needs: 'streams', min: 0.4, max: 2, step: 0.1, unit: '×' },
+  { group: 'Background' },
+  { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
 ];
 const STORE_KEY = 'celestial.view';
-let viewTab = 'Claude';
-const view = { ...VIEW_DEFAULTS, ...readStoredView() };
+let viewTab = 'Research';
+const storedView = readStoredView();
+const view = { ...VIEW_DEFAULTS, ...storedView };
 if (!['tide', 'dusk'].includes(view.theme)) view.theme = VIEW_DEFAULTS.theme;
+// Sway and spin used to be two switches; they're now one choice
+if (!storedView.mapMotion) view.mapMotion = storedView.spin ? 'spin' : storedView.sway === false ? 'still' : 'sway';
+delete view.sway; delete view.spin;
 function readStoredView() {
   try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch { return {}; }
 }
@@ -172,7 +191,9 @@ let bars = null;   // measured at most once per frame
 function measureBars() {
   if (bars && bars.at === frameCount) return bars;
   const top = Math.max(90, (document.querySelector('.top')?.getBoundingClientRect().bottom || 130) + 10);
-  const f = document.getElementById('findings');
+  // On a phone the findings bar and the reasoning panel sit at the bottom (the
+  // reasoning panel hides the findings while it's open)
+  const f = document.body.classList.contains('tracing') ? document.getElementById('trace') : document.getElementById('findings');
   const bottom = !narrow() || !f || f.hidden ? 40 : Math.max(40, innerHeight - f.getBoundingClientRect().top + 12);
   return (bars = { top, bottom, at: frameCount });
 }
@@ -183,6 +204,11 @@ const uiBottom = () => measureBars().bottom;
 const uiLeft = () => {
   const f = document.getElementById('findings');
   return f && !f.hidden && !f.classList.contains('is-collapsed') && innerWidth > 900 ? f.offsetWidth + 24 : 0;
+};
+// ...and the reasoning panel on the right
+const uiRight = () => {
+  const t = document.getElementById('trace');
+  return t && !t.hidden && innerWidth > 900 ? t.offsetWidth + 24 : 0;
 };
 const lerp = THREE.MathUtils.lerp;
 const clamp = THREE.MathUtils.clamp;
@@ -675,6 +701,7 @@ function addQuickOrb(centreId, spec) {
   const o = makeOrb({ ...spec, target: placeAmong(spec, orbs.slice(1).map((x) => x.target)), cameFrom: spec.to === previous });
   o.hub = orbs[0];
   orbs.push(o);
+  if (view.reasoning) traceSketch(o);
   tween(TUNING.expand.arrive, (t) => { o.grow = t; o.obj.position.lerpVectors(o.start, o.target, t); }, null, { ease: easeOut, owner: o });
   scheduleFit();
   return true;
@@ -685,8 +712,8 @@ function fitCamera(animate = true) {
   if (!orbs.length) return;
   const w = stage.clientWidth, h = stage.clientHeight;
   const fy = (h - uiTop() - uiBottom()) / h;
-  const left = uiLeft();
-  const fx = (w - 60 - left) / w;
+  const left = uiLeft(), right = uiRight();
+  const fx = (w - 60 - left - right) / w;
   systemRadius = Math.max(...orbs.map((o) => o.target.length()), 10);
   let dist = 20;
   for (const o of orbs) {
@@ -697,8 +724,8 @@ function fitCamera(animate = true) {
   }
   // Shift the view so the system sits in the space between the bars
   const shift = ((uiTop() - uiBottom()) / 2 / h) * 2 * tanV * dist;
-  // ...and to the right of the findings panel when it's open
-  const shiftX = -(left / 2 / w) * 2 * tanV * camera.aspect * dist;
+  // ...and between the findings and reasoning panels when they're open
+  const shiftX = -((left - right) / 2 / w) * 2 * tanV * camera.aspect * dist;
   const to = new THREE.Vector3(shiftX, dist * 0.05 + shift, dist);
   const look = new THREE.Vector3(shiftX, shift, 0);
   controls.minDistance = dist * 0.25;
@@ -864,7 +891,7 @@ function fillOrb(o) {
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
-  else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in the View panel to research any topic in depth.'}</p>`;
+  else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in Settings to research any topic in depth.'}</p>`;
   const sourceLine = (src) => {
     const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
     return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
@@ -947,7 +974,23 @@ function setLine(line, a, b) {
   p.setXYZ(0, a.x, a.y, a.z);
   p.setXYZ(1, b.x, b.y, b.z);
   p.needsUpdate = true;
+  // Kept so Reasoning mode can find the line under the mouse and light it up
+  const u = line.userData;
+  (u.a ||= new THREE.Vector3()).copy(a);
+  (u.b ||= new THREE.Vector3()).copy(b);
+  u.p1 = toScreen(a, u.p1);
+  u.p2 = toScreen(b, u.p2);
 }
+// A point inside the 3D world, in pixels on screen
+const screenScratch = new THREE.Vector3();
+function toScreen(v, out = {}) {
+  screenScratch.copy(v);
+  world.localToWorld(screenScratch).project(camera);
+  out.x = (screenScratch.x + 1) / 2 * screenSize.w;
+  out.y = (1 - screenScratch.y) / 2 * screenSize.h;
+  return out;
+}
+const screenSize = { w: 1, h: 1 };   // the stage in pixels, kept by resize()
 
 function makeOrb(spec) {
   const o = {
@@ -966,6 +1009,7 @@ function makeOrb(spec) {
     phase: Math.random() * 10,   // so each orb's shape drifts differently
     exit: 0,       // 0 → 1 as the orb drifts away when you leave its system
     nx: 0, ny: 0,  // a gentle nudge that keeps an opened card on screen
+    reveal: view.reasoning && !spec.isSun ? 0 : 1,   // 0 → 1 as Reasoning mode reaches this orb's step
   };
   o.verdict = spec.verdict || null;
   o.lead = !o.isSun && !o.verdict && isHiddenLead(o);
@@ -1142,6 +1186,7 @@ function showSystem(sunId) {
     }
   }
   renderTrail();
+  if (view.reasoning) startTrace();
   return wait(settled * 0.8);
 }
 
@@ -1209,7 +1254,12 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     feedback: feedbackTitles(),
   };
   let fullDone = false, sketched = 0;
-  if (cameFromId) addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
+  trace.live = view.reasoning;
+  DATA.reasons[centreId] = {};
+  if (cameFromId) {
+    DATA.reasons[centreId][cameFromId] = cameFromReason(centreId, cameFromId, cameFromRel);
+    addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
+  }
   const quick = R.quickMap({
     ...args,
     onCentre: (c) => {
@@ -1224,6 +1274,7 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
       if (id === centreId || id === cameFromId || verdicts[id] === 'no') return;
       if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
       liveIds.add(id);
+      if (orb.why) (DATA.reasons[centreId] ||= {})[id] = { why: orb.why, from: 'Quick first pass, before the full map', tier: 6 };
       if (addQuickOrb(centreId, { to: id, rel: orb.rel, link: orb.link, relevance: orb.relevance })) sketched++;
     },
   }).catch(() => null);   // the sketch is a bonus; the full map decides
@@ -1248,8 +1299,17 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     return false;
   } finally {
     pending.delete(centreId);
+    trace.live = false;
+    renderTrace();
     updateSpend();
   }
+}
+
+// The orb you came from stays on the new map; say so in its reasoning
+function cameFromReason(centreId, cameFromId, rel) {
+  const centre = DATA.topics[centreId].title, came = DATA.topics[cameFromId].title;
+  const role = { cause: 'one of its causes', effect: 'one of its effects', related: 'a related topic' }[rel] || 'a related topic';
+  return { why: `You opened “${centre}” from “${came}”, so “${came}” stays on the map. Seen from this side it becomes ${role}.`, from: 'Your path through the map', tier: null };
 }
 
 const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'topic';
@@ -1263,10 +1323,13 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
   const byTitle = new Map();
   const seen = new Set([centreId]);
   const system = [];
+  const reasons = DATA.reasons[centreId] = { _centre: out.centre.reading || '' };
+  const reason = (r) => ({ why: r.why, from: r.basis, tier: r.tier });
   if (cameFromId) {
     system.push({ to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
     seen.add(cameFromId);
     byTitle.set(DATA.topics[cameFromId].title.toLowerCase(), cameFromId);
+    reasons[cameFromId] = cameFromReason(centreId, cameFromId, cameFromRel);
   }
   for (const orb of out.orbs.slice(0, 20)) {
     const known = byTitle.get(orb.title.toLowerCase());
@@ -1278,11 +1341,16 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
     if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
     liveIds.add(id);
     system.push({ to: id, rel: orb.rel, link: orb.link, relevance: orb.relevance });
+    if (orb.why) reasons[id] = reason(orb);
   }
   DATA.systems[centreId] = system;
   DATA.crossLinks[centreId] = out.links
-    .map((l) => [byTitle.get(l.a.toLowerCase()), byTitle.get(l.b.toLowerCase()), l.strength])
-    .filter(([a, b]) => a && b && a !== b);
+    .map((l) => [byTitle.get(l.a.toLowerCase()), byTitle.get(l.b.toLowerCase()), l.strength, l])
+    .filter(([a, b]) => a && b && a !== b)
+    .map(([a, b, strength, l]) => {
+      if (l.why) reasons[`${a}~${b}`] = reason(l);
+      return [a, b, strength];
+    });
 }
 
 // Start a new investigation from the prompt line
@@ -1295,12 +1363,12 @@ function modeFor(q) {
 async function explore(query) {
   if (!live()) {
     setViewPanel(true);
-    showViewTab('Claude');
+    showViewTab('Research');
     if (!inViewer) $('api-key').focus();
     if (inViewer) {
       // Ask claude.ai once more before giving up
       if (await R.planAvailable(true)) { planReady = true; updateLiveState(); return explore(query); }
-      toast(planBlocked === 'denied' ? 'Claude is switched off for this page. Use “Allow Claude” in the View panel.' : 'Claude isn’t available to this page here. See the View panel for what to try.');
+      toast(planBlocked === 'denied' ? 'Claude is switched off for this page. Use “Allow Claude” in Settings.' : 'Claude isn’t available to this page here. See Settings for what to try.');
     } else {
       toast('Add your Claude API key here to explore your own questions.');
     }
@@ -1397,7 +1465,7 @@ function saveCache() {
   const pick = (table) => Object.fromEntries([...liveIds].filter((id) => table[id] && !table[id].loading).map((id) => [id, table[id]]));
   try {
     localStorage.setItem(CACHE_STORE, JSON.stringify({
-      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks),
+      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks), reasons: pick(DATA.reasons),
       details: Object.fromEntries(Object.entries(pick(DATA.details)).filter(([, d]) => !d.error)),
     }));
   } catch { /* storage full or blocked: research still works, it just won't be remembered */ }
@@ -1408,7 +1476,7 @@ function saveSession() {
 function loadCache() {
   try {
     const c = JSON.parse(localStorage.getItem(CACHE_STORE) || 'null');
-    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'details']) {
+    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'reasons', 'details']) {
       Object.assign(DATA[table], c[table] || {});
       Object.keys(c[table] || {}).forEach((id) => liveIds.add(id));
     }
@@ -1565,6 +1633,9 @@ function relationText(o) {
 
 function openFocus(o) {
   if (selected === o) return;
+  // Opening an orb the step-by-step build hasn't reached yet jumps ahead to it
+  if (view.reasoning && o.step != null && o.step > trace.at) { trace.at = o.step; trace.playing = false; renderTrace(); }
+  pinned = null;
   selected = o;
   updateDimming();
   if (live() && !DATA.details[o.id]?.about) loadDetails(o);
@@ -1608,6 +1679,7 @@ function updateDimming() {
 
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
+  pinned = null;
   closeFocus();
   setPanel(null, false);
 });
@@ -1628,7 +1700,11 @@ stage.addEventListener('pointerup', (e) => {
   if (!d || e.button !== 0 || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 5) return;
   if (d.action && d.orb) runAction(d.action, d.orb, d.id);
   else if (d.orb) openFocus(d.orb);
-  else closeFocus();
+  else {
+    // In Reasoning mode, tapping a line keeps its reasoning open (how touch screens "hover")
+    pinned = view.reasoning ? lineAt(e.clientX, e.clientY) : null;
+    if (!pinned) closeFocus();
+  }
 });
 
 // ─── Trail (breadcrumb) ──────────────────────────────────────
@@ -1656,7 +1732,7 @@ function renderTrail() {
   });
 }
 
-// ─── View panel ──────────────────────────────────────────────
+// ─── Settings panel ──────────────────────────────────────────
 function buildViewPanel() {
   const tabs = $('view-tabs');
   let list = null;
@@ -1681,6 +1757,15 @@ function buildViewPanel() {
       continue;
     }
     if (s.connection) { list.append($('connection')); continue; }
+    if (s.reducedNote) {
+      // Settings here can't override the device asking for less motion
+      if (!reduceMotion) continue;
+      const p = document.createElement('p');
+      p.className = 'view-note';
+      p.textContent = 'Your device asks for reduced motion, so these stay still whatever is set here.';
+      list.append(p);
+      continue;
+    }
     if (s.group) {
       const h = document.createElement('p');
       h.className = 'view-group';
@@ -1693,6 +1778,7 @@ function buildViewPanel() {
       // A row of choices, like radio buttons, with a small caption
       const wrap = document.createElement('div');
       wrap.id = id;
+      wrap.className = 'view-option';
       if (!s.swatches) {
         const cap = document.createElement('p');
         cap.className = 'view-caption';
@@ -1743,6 +1829,16 @@ function buildViewPanel() {
     }
     list.append(row);
   }
+  // Tabs follow the usual keyboard pattern: arrows move between them
+  tabs.addEventListener('keydown', (e) => {
+    const names = [...tabs.children].map((b) => b.textContent);
+    const i = names.indexOf(viewTab);
+    const to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: names.length - 1 }[e.key];
+    if (to == null) return;
+    e.preventDefault();
+    showViewTab(names[(to + names.length) % names.length]);
+    $('view-tab-' + viewTab).focus();
+  });
   showViewTab(viewTab);
   syncViewPanel();
 }
@@ -1755,26 +1851,51 @@ function showViewTab(name) {
     b.tabIndex = on ? 0 : -1;
     $('view-pane-' + b.textContent).hidden = !on;
   }
+  $('view-reset').textContent = `Reset ${name.toLowerCase()} settings`;
   $('view-list').scrollTop = 0;
+}
+
+// The settings that live on a tab, for "Reset" (the connection is left alone)
+function tabKeys(name) {
+  const keys = [];
+  let current = null;
+  for (const s of VIEW_SETTINGS) {
+    if (s.tab) current = s.tab;
+    else if (s.key && current === name) keys.push(s.key);
+  }
+  return keys;
 }
 
 function syncViewPanel() {
   for (const s of VIEW_SETTINGS) {
     if (!s.key) continue;
     const el = $('view-' + s.key);
+    // Greyed out while the setting it depends on is off
+    const off = Boolean(s.needs && !view[s.needs]);
+    (el.closest('label') || el).classList.toggle('is-off', off);
     if (s.options) {
-      for (const b of el.querySelectorAll('.choice')) b.setAttribute('aria-checked', String(b.dataset.value === view[s.key]));
+      for (const b of el.querySelectorAll('.choice')) {
+        b.setAttribute('aria-checked', String(b.dataset.value === String(view[s.key])));
+        b.disabled = off;
+      }
     } else if (el.type === 'checkbox') {
       el.checked = view[s.key];
+      el.disabled = off;
     } else {
       el.value = view[s.key];
-      el.parentElement.querySelector('output').textContent = view[s.key].toFixed(s.step < 0.1 ? 2 : 1) + (s.unit || '');
+      el.disabled = off;
+      el.parentElement.querySelector('output').textContent = s.format === 'percent'
+        ? Math.round(view[s.key] * 100) + '%'
+        : view[s.key].toFixed(s.step < 0.1 ? 2 : 1) + (s.unit || '');
     }
   }
 }
 
 let relayoutTimer;
 function afterViewChange(s) {
+  // Choices store numbers as numbers, even though buttons hand back text
+  if (s?.key && typeof VIEW_DEFAULTS[s.key] === 'number') view[s.key] = Number(view[s.key]);
+  if (s?.key === 'reasoning') setReasoning(view.reasoning);
   storeView();
   syncViewPanel();
   applyView();
@@ -1797,8 +1918,10 @@ function applyView() {
   b.toggle('no-lead-glow', !view.leadGlow);
   $('art').hidden = !view.lineArt;
   b.toggle('still', !view.backdropMotion);
-  controls.autoRotate = view.spin && !reduceMotion;
+  controls.autoRotate = view.mapMotion === 'spin' && !reduceMotion;
   readPalette();
+  if (!view.reasoning) trace.playing = false;
+  renderTrace();
   if ($('plan-note') && R) updateLiveState(false);
 }
 darkDevice.addEventListener('change', applyView);
@@ -1810,7 +1933,7 @@ new MutationObserver(() => {
   applyView();
 }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
-// The View and How to use panels: one open at a time
+// The Settings and How to use panels: one open at a time
 function setPanel(name, open) {
   for (const n of ['view', 'help']) {
     const on = n === name && open;
@@ -1822,9 +1945,13 @@ const setViewPanel = (open) => setPanel('view', open);
 $('view-toggle').addEventListener('click', () => setPanel('view', $('view-panel').hidden));
 $('help-toggle').addEventListener('click', () => setPanel('help', $('help-panel').hidden));
 for (const b of document.querySelectorAll('[data-close]')) b.addEventListener('click', () => setPanel(b.dataset.close, false));
+// Reset puts back only the tab you're looking at
 $('view-reset').addEventListener('click', () => {
-  Object.assign(view, VIEW_DEFAULTS);
-  afterViewChange({ relayout: true });
+  const keys = tabKeys(viewTab);
+  const wasReasoning = view.reasoning;
+  for (const k of keys) view[k] = VIEW_DEFAULTS[k];
+  if (view.reasoning !== wasReasoning) setReasoning(view.reasoning);
+  afterViewChange({ relayout: viewTab === 'Map' });
 });
 
 // ─── Prompt line ─────────────────────────────────────────────
@@ -1961,7 +2088,7 @@ function edgePoints(a, b) {
 
 function updatePulse(o, sun, approach) {
   const P = TUNING.pulses;
-  const show = view.streams && !reduceMotion && o.grow > 0.99 && !busy && !o.leaving && sun;
+  const show = view.streams && !reduceMotion && o.grow > 0.99 && o.reveal > 0.99 && !busy && !o.leaving && sun;
   // Streams fade in and out instead of switching on and off
   o.flow += ((show ? 1 : 0) - o.flow) * approach * 0.4;
   if (o.flow < 0.01 || !sun) { for (const s of o.pulse) s.visible = false; return; }
@@ -1985,6 +2112,312 @@ function updatePulse(o, sun, approach) {
     const fade = Math.sin(Math.PI * Math.min(1, head / (1 + len)));
     streak.material.opacity = Math.min(1, fade * streak.userData.strength * dimmed) * o.flow;
   }
+}
+
+// ─── Reasoning mode: watch the map being built ───────────────
+// A toggle at the top. When it's on, a system doesn't appear all at once:
+// it's rebuilt one step at a time, in the order the reasoning goes. First
+// how the question was read, then causes (strongest first), effects and
+// related topics, each joined to the centre with a line. A link between two
+// orbs appears as soon as both are on the map ("noticing a connection").
+// Every line can be hovered (or tapped) to see why it exists and where that
+// reasoning comes from, and the panel bottom right lists the steps so far.
+const TRACE_SPEEDS = [['Slow', 3800], ['Normal', 2400], ['Fast', 1200]];   // ms per step
+const trace = {
+  steps: [],          // { kind: 'start' | 'orb' | 'cross', orb, c, phase }
+  at: 0,              // the step reached so far
+  playing: false,
+  nextAt: 0,
+  manual: false,      // you stepped or picked a step yourself
+  live: false,        // Claude is still mapping: steps arrive as orbs do
+  collapsed: innerWidth < 640,   // on a phone the line card tells the story; the list waits
+};
+let pinned = null;    // a line you tapped, whose reasoning stays open
+let pointer = null;   // the mouse, when it's over the map (not an orb)
+let hoverLink = null;
+const traceSpeed = () => TRACE_SPEEDS[view.traceSpeed]?.[1] || 2400;
+
+// Hidden until the build reaches it
+function revealGoal(x) {
+  if (!view.reasoning || x.isSun || x.step == null) return 1;
+  return x.step <= trace.at ? 1 : 0;
+}
+
+// The recorded reasoning for a line, as { why, from, tier }, or null
+function reasonFor(sunId, a, b) {
+  const table = DATA.reasons[sunId] || {};
+  const r = b == null ? table[a] : table[`${a}~${b}`] || table[`${b}~${a}`];
+  if (Array.isArray(r)) return { tier: r[0], from: r[1], why: r[2] };
+  return r?.why ? r : null;
+}
+
+function defaultReading() {
+  const centre = DATA.topics[trail[trail.length - 1]].title;
+  if (trail.length > 1) return `You expanded “${centre}” from “${DATA.topics[trail[trail.length - 2]].title}”. I looked for what leads to it, what it leads to and what sits beside it, strongest links first.`;
+  return session.mode === 'explore'
+    ? `You typed a topic, so I mapped the subject around “${centre}”: its key ideas, parts and neighbours, strongest links first.`
+    : `You described a problem, so I treated “${centre}” as something to diagnose: causes first, strongest first, then what it leads to, then tools and related topics.`;
+}
+
+// Everything the card and the step list say about one line (or the start)
+function describe(l) {
+  const sunId = trail[trail.length - 1];
+  const centre = DATA.topics[sunId].title;
+  if (l.kind === 'start') {
+    const asked = trail[0] === DATA.start ? DATA.prompt : $('prompt-input').value.trim() || DATA.topics[trail[0]].title;
+    return {
+      kicker: 'Step 1 · Reading the question', rel: 'sun', title: centre,
+      why: DATA.reasons[sunId]?._centre || defaultReading(),
+      fromLabel: trail.length > 1 ? 'Your path' : 'Your question',
+      from: trail.length > 1 ? trail.map((id) => DATA.topics[id].title).join(' › ') : `“${asked}”`,
+      tier: null,
+    };
+  }
+  if (l.kind === 'orb') {
+    const o = l.orb, r = reasonFor(sunId, o.id);
+    const verb = { cause: 'Cause of', effect: 'Effect of', related: 'Related to' }[o.rel] || 'Related to';
+    return {
+      kicker: `${o.lead ? 'Hidden lead · ' : ''}${verb} ${centre}`, rel: o.rel, title: DATA.topics[o.id].title,
+      why: r?.why || `No reasoning was recorded for this line. The orb’s own summary: ${DATA.topics[o.id].liner}`,
+      fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength: o.link,
+    };
+  }
+  const { a, b, strength } = l.c, r = reasonFor(sunId, a.id, b.id);
+  return {
+    kicker: 'Noticing a connection', rel: 'cross', title: `${DATA.topics[a.id].title} ↔ ${DATA.topics[b.id].title}`,
+    why: r?.why || 'These two were marked as strongly linked, but no reasoning was recorded for the line.',
+    fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength,
+  };
+}
+const linkKey = (l) => !l ? '' : l.kind === 'start' ? 'start' : l.kind === 'orb' ? 'o:' + l.orb.id : `c:${l.c.a.id}~${l.c.b.id}`;
+
+// The order the map is rebuilt in: causes, effects, related, strongest
+// first within each, with each cross-link right after its second orb
+function startTrace() {
+  const rank = { cause: 0, effect: 1, related: 2 };
+  const planets = orbs.slice(1).sort((x, y) => (rank[x.rel] ?? 2) - (rank[y.rel] ?? 2) || y.link - x.link);
+  const steps = [{ kind: 'start', orb: orbs[0], phase: 'start' }];
+  const shown = new Set();
+  let waiting = [...crossLines];
+  for (const o of orbs) o.step = null;
+  for (const o of planets) {
+    steps.push({ kind: 'orb', orb: o, phase: o.rel });
+    shown.add(o);
+    const ready = waiting.filter((c) => shown.has(c.a) && shown.has(c.b));
+    waiting = waiting.filter((c) => !ready.includes(c));
+    for (const c of ready.sort((x, y) => y.strength - x.strength)) steps.push({ kind: 'cross', c, phase: o.rel });
+  }
+  steps.forEach((s, i) => { if (s.kind === 'cross') s.c.step = i; else s.orb.step = i; });
+  Object.assign(trace, { steps, at: 0, manual: false, playing: steps.length > 1, nextAt: performance.now() + traceSpeed() + 900 });
+  pinned = null;
+  renderTrace();
+}
+
+// While Claude is still mapping, each orb that arrives is the next step
+function traceSketch(o) {
+  if (trace.steps[0]?.orb !== orbs[0]) return;
+  o.reveal = 0;
+  o.step = trace.steps.length;
+  trace.steps.push({ kind: 'orb', orb: o, phase: 'sketch' });
+  Object.assign(trace, { at: o.step, playing: false, manual: false });
+  renderTrace();
+}
+
+function advanceTrace(now) {
+  if (!view.reasoning || !trace.playing || now < trace.nextAt) return;
+  if (trace.at < trace.steps.length - 1) { trace.at++; trace.nextAt = now + traceSpeed(); }
+  else trace.playing = false;
+  renderTrace();
+}
+
+function goToStep(i, { play = false } = {}) {
+  trace.at = clamp(i, 0, trace.steps.length - 1);
+  trace.playing = play;
+  trace.manual = !play;
+  trace.nextAt = performance.now() + traceSpeed();
+  pinned = null;
+  renderTrace();
+}
+
+// The steps panel, bottom right
+const PHASES = {
+  start: 'Starting point',
+  cause: 'Looking for causes',
+  effect: 'Following the effects',
+  related: 'Related ideas, tools and checks',
+  sketch: 'First pass, while the full map loads',
+};
+const ICONS = {
+  play: '<path d="M5 3v10l8-5z" fill="currentColor"/>',
+  pause: '<path d="M5.5 3.5v9M10.5 3.5v9"/>',
+};
+const icon = (name) => `<svg viewBox="0 0 16 16" aria-hidden="true">${ICONS[name]}</svg>`;
+let traceWidth = 0, traceRendered = '';
+
+function renderTrace() {
+  const box = $('trace');
+  if (!box) return;
+  box.hidden = !view.reasoning;
+  document.body.classList.toggle('tracing', view.reasoning);
+  $('reason-toggle').setAttribute('aria-pressed', String(view.reasoning));
+  queueMicrotask(() => { const w = uiRight(); if (w !== traceWidth) { traceWidth = w; scheduleFit(); } });
+  if (box.hidden) return;
+  const n = trace.steps.length, last = n - 1, done = trace.at >= last && !trace.playing && !trace.live;
+  box.classList.toggle('is-collapsed', trace.collapsed);
+  $('trace-toggle').textContent = trace.collapsed ? '▸' : '▾';
+  $('trace-toggle').setAttribute('aria-expanded', String(!trace.collapsed));
+  $('trace-kicker').textContent = trace.live ? `Thinking · step ${trace.at + 1}` : `Step ${Math.min(trace.at + 1, n)} of ${n}${done ? ' · map complete' : ''}`;
+  $('trace-play').innerHTML = icon(trace.playing ? 'pause' : 'play');
+  $('trace-play').setAttribute('aria-label', trace.playing ? 'Pause' : done ? 'Replay from the start' : 'Play');
+  $('trace-back').disabled = trace.at <= 0;
+  $('trace-next').disabled = $('trace-end').disabled = trace.at >= last;
+  $('trace-speed').textContent = TRACE_SPEEDS[view.traceSpeed][0];
+  // The steps so far (later ones stay hidden, so the map is discovered in order)
+  let phase = null;
+  const items = [];
+  trace.steps.slice(0, trace.at + 1).forEach((s, i) => {
+    if (s.phase !== phase && s.kind !== 'cross') {
+      phase = s.phase;
+      items.push(`<li class="trace-phase">${PHASES[phase] || ''}</li>`);
+    }
+    const d = describe(s);
+    items.push(`<li><button type="button" class="trace-step" data-step="${i}" ${i === trace.at ? 'aria-current="step"' : ''}>
+      <span class="trace-dot dot-${d.rel}" aria-hidden="true"></span>
+      <span><b>${esc(d.title)}</b><small>${esc(d.why)}</small></span></button></li>`);
+  });
+  const html = items.join('');
+  if (html === traceRendered) return;
+  traceRendered = html;
+  $('trace-log').innerHTML = html;
+  $('trace-log').querySelector('[aria-current]')?.scrollIntoView({ block: 'nearest' });
+}
+
+// Turned on or off from the button at the top or the Settings panel
+function setReasoning(on) {
+  view.reasoning = on;
+  if (on && orbs.length) startTrace();
+  if (!on) { trace.playing = false; trace.live = false; pinned = null; }
+  renderTrace();
+}
+$('reason-toggle').addEventListener('click', () => {
+  setReasoning(!view.reasoning);
+  storeView();
+  syncViewPanel();
+});
+$('trace-head').addEventListener('click', (e) => {
+  if (e.target.closest('.trace-controls')) return;
+  trace.collapsed = !trace.collapsed;
+  renderTrace();
+});
+$('trace-restart').addEventListener('click', () => goToStep(0, { play: true }));
+$('trace-back').addEventListener('click', () => goToStep(trace.at - 1));
+$('trace-next').addEventListener('click', () => goToStep(trace.at + 1));
+$('trace-end').addEventListener('click', () => { goToStep(trace.steps.length - 1); trace.manual = false; renderTrace(); });
+$('trace-play').addEventListener('click', () => {
+  if (trace.playing) { trace.playing = false; trace.manual = true; renderTrace(); }
+  else goToStep(trace.at >= trace.steps.length - 1 ? 0 : trace.at + 1, { play: true });
+});
+$('trace-speed').addEventListener('click', () => {
+  view.traceSpeed = (view.traceSpeed + 1) % TRACE_SPEEDS.length;
+  storeView();
+  renderTrace();
+});
+$('trace-log').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-step]');
+  if (b) goToStep(Number(b.dataset.step));
+});
+
+// Which line is under a point on screen, if any
+function segDist(x, y, p, q) {
+  const dx = q.x - p.x, dy = q.y - p.y, len2 = dx * dx + dy * dy;
+  const t = len2 ? clamp(((x - p.x) * dx + (y - p.y) * dy) / len2, 0, 1) : 0;
+  return Math.hypot(x - (p.x + t * dx), y - (p.y + t * dy));
+}
+function lineAt(x, y) {
+  let best = null, bestD = 9;
+  const consider = (line, link) => {
+    if (!line?.visible || !line.userData.p1) return;
+    const d = segDist(x, y, line.userData.p1, line.userData.p2);
+    if (d < bestD) { bestD = d; best = link; }
+  };
+  for (const o of orbs) if (!o.isSun && o.reveal > 0.5) consider(o.line, { kind: 'orb', orb: o });
+  for (const c of crossLines) if ((c.reveal ?? 1) > 0.5) consider(c.line, { kind: 'cross', c });
+  return best;
+}
+stage.addEventListener('pointermove', (e) => {
+  pointer = view.reasoning && e.pointerType !== 'touch' && !down && !e.target.closest?.('.orb') ? { x: e.clientX, y: e.clientY } : null;
+});
+stage.addEventListener('pointerleave', () => { pointer = null; });
+
+// The line being explained lights up with a thicker stroke drawn over it
+const glowMaterial = new LineMaterial({ linewidth: 3.2, transparent: true, depthWrite: false });
+glowMaterial.resolution.set(stage.clientWidth, stage.clientHeight);
+streakMaterials.add(glowMaterial);
+const glow = new Line2(STREAK, glowMaterial);
+glow.frustumCulled = false;
+glow.visible = false;
+world.add(glow);
+
+// The line card: what the hovered line, the tapped line or the current step means
+let cardKey = '';
+function cardHTML(d) {
+  const tier = d.tier >= 1 && d.tier <= 6 ? `<span class="tier tier-${d.tier}" title="Reliability tier ${d.tier} of 6">${d.tier}</span>` : '';
+  return `<span class="lc-kicker">${esc(d.kicker)}</span>
+    <b class="lc-title">${esc(d.title)}</b>
+    <p class="lc-why">${esc(d.why)}</p>
+    <div class="lc-from"><span class="lc-label">${esc(d.fromLabel)}</span><span class="lc-source">${tier}<span>${esc(d.from)}</span></span></div>
+    ${d.strength != null ? `<div class="lc-meter"><span class="lc-label">Link</span><span class="bar"><i style="width:${Math.round(d.strength * 100)}%"></i></span><output>${Math.round(d.strength * 100)}</output></div>` : ''}`;
+}
+function updateReasoning(sw, h) {
+  const card = $('link-card');
+  hoverLink = view.reasoning && pointer && !hovered ? lineAt(pointer.x, pointer.y) : null;
+  stage.style.cursor = hoverLink ? 'help' : '';
+  const step = trace.steps[trace.at];
+  const following = trace.playing || trace.manual || trace.live || trace.at < trace.steps.length - 1;
+  const active = !view.reasoning ? null : hoverLink || pinned || (following && !selected && (trace.live || !busy) ? step : null);
+  // Light up its line
+  const line = active?.kind === 'orb' ? active.orb.line : active?.kind === 'cross' ? active.c.line : null;
+  glow.visible = Boolean(line?.visible && line.userData.a);
+  if (glow.visible) {
+    const { a, b } = line.userData;
+    glow.position.copy(a);
+    glow.lookAt(world.localToWorld(lookAt.copy(b)));
+    glow.scale.set(1, 1, Math.max(a.distanceTo(b), 0.001));
+    glowMaterial.color.copy(active.kind === 'orb' ? relationColour(active.orb) : palette.line);
+    glowMaterial.opacity = 0.85 * Math.min(1, line.material.opacity * 4);
+  }
+  if (!active || (active.kind !== 'start' && !glow.visible)) { card.hidden = true; cardKey = ''; return; }
+  const key = linkKey(active);
+  if (key !== cardKey) {
+    cardKey = key;
+    const d = describe(active);
+    card.dataset.rel = d.rel;
+    card.innerHTML = cardHTML(d);
+    card.hidden = false;
+  }
+  // Next to the mouse when hovering; otherwise beside the line (or under the sun)
+  const cw = card.offsetWidth, ch = card.offsetHeight;
+  let x, y;
+  if (active === hoverLink) {
+    x = pointer.x + 18; y = pointer.y + 18;
+    if (x + cw > sw - 12) x = pointer.x - cw - 18;
+    if (y + ch > h - 12) y = pointer.y - ch - 18;
+  } else if (active.kind === 'start') {
+    const r = orbs[0].el.getBoundingClientRect();
+    x = r.left + r.width / 2 - cw / 2; y = r.bottom + 14;
+  } else {
+    const { p1, p2 } = line.userData;
+    const mx = (p1.x + p2.x) / 2, my = (p1.y + p2.y) / 2;
+    x = mx - cw / 2; y = my - ch - 16;
+    if (y < uiTop()) y = my + 16;
+  }
+  // Keep a card that isn't following the mouse clear of the bars and panels
+  const pinnedCard = active !== hoverLink;
+  const minX = pinnedCard ? Math.max(12, uiLeft()) : 12, maxX = sw - cw - 12 - (pinnedCard ? uiRight() : 0);
+  const minY = pinnedCard ? uiTop() : 12, maxY = h - ch - 12 - (pinnedCard ? uiBottom() - 40 : 0);
+  x = clamp(x, minX, Math.max(minX, maxX));
+  y = clamp(y, minY, Math.max(minY, maxY));
+  card.style.transform = `translate(${x.toFixed(0)}px, ${y.toFixed(0)}px)`;
 }
 
 // ─── Orb shape: a softly shifting circle that becomes a card ──
@@ -2024,9 +2457,11 @@ function frame(now) {
     tw.step(tw.ease(t));
     if (t >= 1) { tweens.splice(i, 1); tw.done?.(); }
   }
-  if (view.sway && !view.spin && !grabbed && !reduceMotion) world.rotation.y = Math.sin(now / 4000) * 0.12;
+  if (view.mapMotion === 'sway' && !grabbed && !reduceMotion) world.rotation.y = Math.sin(now / 4000) * 0.12;
   glideCamera(dt);
   controls.update();
+  world.updateMatrixWorld();
+  advanceTrace(now);
 
   // How far to move towards an orb's open/closed state this frame
   // (based on time, so it feels the same on fast and slow machines)
@@ -2035,7 +2470,11 @@ function frame(now) {
   const h = stage.clientHeight, sw = stage.clientWidth;
   const focusDist = camera.position.distanceTo(controls.target);
   const all = leaving.length ? orbs.concat(leaving) : orbs;
+  const revealRate = reduceMotion ? 1 : 1 - Math.exp(-dt * 5);
   for (const o of all) {
+    // Reasoning mode: an orb comes out of the sun when the build reaches its step
+    o.reveal += (revealGoal(o) - o.reveal) * revealRate;
+    if (o.reveal < 0.999 && o.hub && !o.leaving) o.obj.position.copy(o.target).multiplyScalar(o.reveal);
     o.obj.getWorldPosition(worldPos);
     const camDist = camera.position.distanceTo(worldPos);
     // Open up smoothly on hover (preview) or click (full)
@@ -2055,7 +2494,7 @@ function frame(now) {
     const rest = Math.max(lerp(TUNING.minDiameter[0], TUNING.minDiameter[1], o.rank) * small, 2 * o.size * view.orbSize * pxPerUnit * small);
     // Cards never get wider than the screen
     const cardW = Math.min(lerp(Math.max(rest, TUNING.hoverWidth), Math.max(rest, TUNING.openWidth), o.f), sw - 24);
-    const w = lerp(rest, cardW, open) * o.grow * (1 - 0.3 * o.exit);
+    const w = lerp(rest, cardW, open) * o.grow * (1 - 0.3 * o.exit) * o.reveal;
     const pad = lerp(rest * 0.15, TUNING.cardPadding, open);
     o.el.style.setProperty('--iw', Math.max(8, w - 2 * pad).toFixed(1) + 'px');
     let hgt = w;
@@ -2087,8 +2526,8 @@ function frame(now) {
       projected.copy(worldPos).project(camera);
       const x = (projected.x + 1) / 2 * sw, y = (1 - projected.y) / 2 * h;
       const rx = w / 2 + 12, ry = hgt / 2 + 12;
-      const left = uiLeft();
-      nx = (left + rx <= sw - rx ? clamp(x, left + rx, sw - rx) : clamp(x, rx, sw - rx)) - x;
+      const left = uiLeft(), right = sw - uiRight();
+      nx = (left + rx <= right - rx ? clamp(x, left + rx, right - rx) : clamp(x, rx, sw - rx)) - x;
       // Keep it between the top bar and the bottom edge
       const top = uiTop() + ry - 12, bottom = h - uiBottom() - ry + 12;
       ny = (top <= bottom ? clamp(y, top, bottom) : (top + bottom) / 2) - y;
@@ -2107,7 +2546,7 @@ function frame(now) {
     if (!o.isSun) fade *= lerp(1, lerp(TUNING.leastRelevantFade, 1, o.relevance), view.hierarchy);
     if (o.verdict === 'no') fade *= 0.6;   // ruled out: fades back
     if (o.verdict === 'yes') fade = Math.max(fade, 0.95);   // relevant: stays clear
-    o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5) * (1 - o.exit);
+    o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5) * (1 - o.exit) * o.reveal;
     o.el.style.opacity = o.fade.toFixed(3);
     // The orb's radius in scene units, so lines and streams meet its edge
     o.surface = (Math.min(w, hgt) / 2) * (2 * tanV * camDist) / h;
@@ -2117,7 +2556,8 @@ function frame(now) {
     const sun = o.hub;
     o.linkIn += ((o.leaving ? 0 : 1) - o.linkIn) * settle;
     if (o.line) {
-      const faint = view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine : 0;
+      const faint = view.reasoning ? TUNING.reasonLine
+        : view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine : 0;
       const dim = selected && selected !== o ? 0.4 : 1;
       const strength = Math.max(faint * o.fade * dim, 0.6 * o.k) * o.grow * o.linkIn;
       o.line.visible = strength > 0.005 && Boolean(sun);
@@ -2130,15 +2570,18 @@ function frame(now) {
     if (o.pulse) updatePulse(o, sun, approach);
   }
   for (const c of fadingLines.length ? crossLines.concat(fadingLines) : crossLines) {
+    c.reveal = (c.reveal ?? 1) + (revealGoal(c) - (c.reveal ?? 1)) * revealRate;
     const lit = Math.max(c.a.k, c.b.k);
     const dim = selected && selected !== c.a && selected !== c.b ? 0.4 : 1;
-    const strength = Math.max(TUNING.crossLine * c.strength * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow) * (c.life ?? 1);
-    c.line.visible = view.crossLinks && strength > 0.005;
+    const faint = view.reasoning ? TUNING.reasonLine : TUNING.crossLine * c.strength;
+    const strength = Math.max(faint * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow) * (c.life ?? 1) * c.reveal;
+    c.line.visible = (view.crossLinks || view.reasoning) && strength > 0.005;
     if (!c.line.visible) continue;
     edgePoints(c.a, c.b);
     setLine(c.line, pathFrom, pathTo);
     c.line.material.opacity = strength;
   }
+  updateReasoning(sw, h);
 
   backdropUniforms.uTime.value = backdropClock;
   backdrop.render(backdropScene, backdropCamera);
@@ -2156,6 +2599,7 @@ const projected = new THREE.Vector3();
 let resizeTimer;
 function resize() {
   const w = stage.clientWidth, h = stage.clientHeight;
+  Object.assign(screenSize, { w, h });
   renderer.setSize(w, h);
   labelRenderer.setSize(w, h);
   backdrop.setSize(w, h);
@@ -2193,3 +2637,4 @@ $('plan-allow').addEventListener('click', async () => {
   try { await R.openPermissions(); } catch { toast('Open the page’s Permissions menu on claude.ai and switch Claude on.'); }
   checkPlan();
 });
+

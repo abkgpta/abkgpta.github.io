@@ -413,7 +413,7 @@ button, input { font: inherit; color: inherit; }
 .trail .depth { font-family: var(--font-data); font-size: 10.5px; color: var(--ink-soft); margin-right: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
 .about { grid-area: about; margin: -4px 0 0; text-align: center; font-size: 13px; color: var(--ink-soft); text-wrap: balance; }
 
-/* ── Menus: View and How to use ───────────────────
+/* ── Menus: Settings and How to use ───────────────
    Two buttons at the top right. Each opens a panel under it; only one
    is open at a time. */
 .menu-btn {
@@ -461,7 +461,7 @@ button, input { font: inherit; color: inherit; }
 .panel-close:hover { background: var(--bg); color: var(--ink); }
 .panel-body { overflow-y: auto; overscroll-behavior: contain; padding: 4px 16px 16px; scrollbar-width: thin; }
 
-/* View: tabs across the top, one subject per tab */
+/* Settings: tabs across the top, one subject per tab */
 .view-tabs { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; margin: 12px 16px 0; padding: 3px; border-radius: 10px; background: var(--bg); }
 .view-tab { padding: 6px 4px; border: 0; border-radius: 8px; background: none; font-size: 13px; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
 .view-tab:hover { color: var(--ink); }
@@ -540,7 +540,13 @@ button, input { font: inherit; color: inherit; }
   cursor: pointer;
 }
 .view-reset:hover { border-color: var(--ink); }
-.connection { display: grid; gap: 8px; padding: 12px; margin-top: 12px; border-radius: 10px; background: var(--bg); }
+.connection { display: grid; gap: 8px; padding: 12px; margin-top: 16px; border-radius: 10px; background: var(--bg); }
+.example-link { justify-self: start; }
+/* A setting that only matters while another is on */
+.is-off { opacity: 0.45; }
+.is-off input, .is-off .choice { cursor: default; }
+.choice:disabled { cursor: default; }
+.view-note { margin: 12px 0 0; padding: 8px 10px; border-radius: 8px; background: var(--bg); font-size: 12.5px; line-height: 1.4; color: var(--ink-soft); }
 .connection .view-group { margin: 0; }
 
 /* How to use: short numbered steps, then the map key in small groups */
@@ -765,6 +771,119 @@ button, input { font: inherit; color: inherit; }
 .orb.rank-low { border-width: 1px; }
 .orb.rank-low .t { font-weight: 500; color: var(--ink-soft); }
 
+/* ── Reasoning mode ─────────────────────────────────
+   The toggle sits with the menus. The steps panel mirrors the findings
+   panel on the other side, edged in violet like the streams; the line card
+   follows the mouse or sits beside the line being explained. */
+.menu-btn[aria-pressed="true"] { border-color: var(--ink); background: var(--ink); color: var(--panel); }
+.trace {
+  position: fixed;
+  z-index: 2;
+  right: 20px; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  width: 340px;
+  max-height: calc(100% - 210px);
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--cause);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: rise 0.35s ease-out;
+}
+.trace-head { display: grid; grid-template-columns: 1fr auto; align-items: start; gap: 8px; padding: 12px 12px 0 16px; cursor: pointer; }
+.trace-kicker { display: block; font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); }
+.trace-head h2 { margin: 2px 0 0; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+.trace-controls { display: flex; align-items: center; gap: 6px; padding: 10px 16px 8px; }
+.trace-btn {
+  display: grid; place-items: center;
+  width: 32px; height: 32px; padding: 0;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: var(--panel);
+  cursor: pointer;
+}
+.trace-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.trace-btn:hover:not(:disabled) { border-color: var(--ink-soft); }
+.trace-btn:disabled { opacity: 0.35; cursor: default; }
+.trace-play { width: 38px; height: 38px; border-color: var(--ink); background: var(--ink); color: var(--panel); }
+.trace-play:hover:not(:disabled) { border-color: var(--ink); }
+.trace-speed { margin-left: auto; }
+.trace-log { list-style: none; margin: 0; padding: 0 10px 12px; overflow-y: auto; overscroll-behavior: contain; display: grid; gap: 1px; scrollbar-width: thin; }
+.trace.is-collapsed .trace-log { display: none; }
+.trace-phase {
+  margin: 10px 6px 2px;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.trace-step {
+  display: grid;
+  grid-template-columns: 12px 1fr;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.trace-step:hover { background: color-mix(in srgb, var(--bg) 60%, transparent); }
+.trace-step[aria-current] { background: var(--bg); animation: rise 0.3s ease-out; }
+.trace-step b { display: block; font-size: 13.5px; font-weight: 600; line-height: 1.3; }
+.trace-step small {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+.trace-step[aria-current] small { -webkit-line-clamp: unset; color: var(--ink); }
+.trace-dot { width: 9px; height: 9px; margin-top: 4px; border-radius: 50%; border: 1.5px solid var(--orb-line); }
+.trace-dot.dot-sun { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 25%, transparent); }
+.trace-dot.dot-cause { border-color: var(--cause); }
+.trace-dot.dot-effect { border-color: var(--effect); }
+.trace-dot.dot-cross { width: 12px; height: 2px; margin-top: 8px; border: 0; border-radius: 1px; background: var(--orb-line); }
+
+.link-card {
+  --line: var(--orb-line);
+  position: fixed;
+  z-index: 3;
+  left: 0; top: 0;
+  width: min(320px, calc(100vw - 32px));
+  box-sizing: border-box;
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px 12px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  pointer-events: none;
+}
+.link-card[data-rel="cause"] { --line: var(--cause); }
+.link-card[data-rel="effect"] { --line: var(--effect); }
+.link-card[data-rel="sun"] { --line: var(--accent); }
+.lc-kicker { font-family: var(--font-data); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--line); }
+.link-card[data-rel="related"] .lc-kicker, .link-card[data-rel="cross"] .lc-kicker { color: var(--ink-soft); }
+.lc-title { font-family: var(--font-display); font-size: 15px; font-weight: 600; line-height: 1.25; }
+.lc-why { margin: 0; font-size: 13.5px; line-height: 1.5; text-wrap: pretty; }
+.lc-from { display: grid; gap: 3px; padding-top: 8px; border-top: 1px solid var(--rule); }
+.lc-label { font-family: var(--font-data); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); }
+.lc-source { display: flex; align-items: start; gap: 7px; font-size: 12.5px; line-height: 1.35; }
+.lc-source .tier { flex: none; }
+.lc-meter { display: grid; grid-template-columns: auto 1fr 2.5ch; align-items: center; gap: 8px; }
+.lc-meter .bar { height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
+.lc-meter .bar i { display: block; height: 100%; background: var(--line); }
+.lc-meter output { font-family: var(--font-data); font-size: 11px; text-align: right; color: var(--ink-soft); }
+
 /* ── Smaller screens ──────────────────────────── */
 @media (max-width: 1080px) {
   .top { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand prompt menus" "trail trail trail" "about about about" "status status status"; gap: 8px 12px; }
@@ -787,8 +906,14 @@ button, input { font: inherit; color: inherit; }
   .verdict-btn { padding: 10px; }
   .panel { top: auto; bottom: 16px; left: 16px; right: 16px; width: auto; max-height: 70%; }
   .findings { left: 16px; right: 16px; width: auto; bottom: 16px; max-height: 45%; }
+  /* The steps panel takes the bottom of a phone; the findings wait until it closes */
+  .trace { left: 16px; right: 16px; width: auto; bottom: 16px; max-height: 38%; }
+  .tracing .findings { display: none; }
+  .trace-btn { width: 36px; height: 36px; }
+  .trace-play { width: 40px; height: 40px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .orb { transition: none; }
   .art * { animation: none !important; }
 }
+
