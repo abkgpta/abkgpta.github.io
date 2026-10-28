@@ -38,10 +38,13 @@ Orbiting topics (return 12 to 18):
 - relevance (0 to 1): how much it matters for THIS line of reasoning, given the path. Spread the values out: only a few above 0.8, several below 0.4. The most relevant topics should clearly stand out.
 - Include one to three hidden leads: topics with a low general link (0.4 or less) but high relevance here (0.65 or more). Non-obvious but plausible, worth checking.
 - If a "came from" topic is given, include it with its exact title.
+- why: one or two plain sentences giving your reasoning for linking it to the centre: the mechanism, evidence or logic that connects them. The person reads this to follow how the map was built, so make each step easy to follow and remember.
+- basis: a few words saying where that reasoning comes from: the field, kind of source or body of evidence it rests on (e.g. "Heat-transfer physics", "Cohort studies of shift workers", "Common troubleshooting practice"). Write "My inference" when it is your own reasoning step rather than established knowledge.
+- tier (1 to 6): how reliable that basis is. 1 primary evidence (standards, systematic reviews, official data); 2 peer-reviewed work and academic textbooks; 3 encyclopedias, reputable journalism, official documentation; 4 expert but unvetted material; 5 opinion and community knowledge; 6 your own inference.
 
-links: 4 to 12 pairs of orbiting topics (by exact title) that are strongly connected to each other, with strength 0.6 to 1.
+links: 4 to 12 pairs of orbiting topics (by exact title) that are strongly connected to each other, with strength 0.6 to 1, and a why, basis and tier as above explaining what connects the two.
 
-centre: a short title for the centre topic (rewrite a question as the thing being investigated, e.g. "Why is my bread dense?" becomes "Dense bread") and a one-sentence liner.
+centre: a short title for the centre topic (rewrite a question as the thing being investigated, e.g. "Why is my bread dense?" becomes "Dense bread"), a one-sentence liner, and reading: one or two sentences, in the first person, on how you read the request: what you decided to investigate and which kinds of topics you looked for first.
 
 Be accurate. Prefer specific, checkable topics over vague ones. When unsure about a connection, give it a lower link rather than leaving it out.`;
 
@@ -146,21 +149,24 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
       centre: {
         type: 'object',
         additionalProperties: false,
-        required: ['title', 'liner'],
-        properties: { title: { type: 'string' }, liner: { type: 'string' } },
+        required: ['title', 'liner', 'reading'],
+        properties: { title: { type: 'string' }, liner: { type: 'string' }, reading: { type: 'string' } },
       },
       orbs: {
         type: 'array',
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['title', 'liner', 'rel', 'link', 'relevance'],
+          required: ['title', 'liner', 'rel', 'link', 'relevance', 'why', 'basis', 'tier'],
           properties: {
             title: { type: 'string' },
             liner: { type: 'string' },
             rel: { type: 'string', enum: ['cause', 'effect', 'related'] },
             link: { type: 'number' },
             relevance: { type: 'number' },
+            why: { type: 'string' },
+            basis: { type: 'string' },
+            tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] },
           },
         },
       },
@@ -169,8 +175,11 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
         items: {
           type: 'object',
           additionalProperties: false,
-          required: ['a', 'b', 'strength'],
-          properties: { a: { type: 'string' }, b: { type: 'string' }, strength: { type: 'number' } },
+          required: ['a', 'b', 'strength', 'why', 'basis', 'tier'],
+          properties: {
+            a: { type: 'string' }, b: { type: 'string' }, strength: { type: 'number' },
+            why: { type: 'string' }, basis: { type: 'string' }, tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] },
+          },
         },
       },
     },
@@ -204,7 +213,7 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   }
 
   // How a reply should look, spelled out for requests made on your plan
-  const MAP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5}],"links":[{"a":"orb title","b":"orb title","strength":0.7}]}';
+  const MAP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":"","reading":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5,"why":"","basis":"","tier":3}],"links":[{"a":"orb title","b":"orb title","strength":0.7,"why":"","basis":"","tier":3}]}';
   const PLAN_DETAILS = `You research one topic for Celestial, a 3D research explorer. You cannot browse the web here, so draw on what you know and be honest about it.
 
 - about: two to four plain sentences explaining what it is or how the mechanism works, in context.
@@ -289,7 +298,7 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
       return PLAN_ERRORS[err.code] || 'Couldn’t reach Claude just now. Try again in a moment.';
     }
     const E = sdk?.default;
-    if (E && err instanceof E.AuthenticationError) return 'Your API key was rejected. Check it in the View panel.';
+    if (E && err instanceof E.AuthenticationError) return 'Your API key was rejected. Check it in Settings.';
     if (E && err instanceof E.PermissionDeniedError) return 'This API key isn’t allowed to use that model.';
     if (E && err instanceof E.RateLimitError) return 'Claude is rate-limiting this key. Wait a minute and try again.';
     if (E && err instanceof E.BadRequestError) return 'Claude couldn’t process the request: ' + (err.message || 'bad request');
@@ -381,9 +390,11 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
     return tidyMap(out);
   }
 
+  // Reasoning fields are optional to the app: a link without them still shows
+  const tidyReason = (r) => ({ why: String(r.why || ''), basis: String(r.basis || ''), tier: Math.min(6, Math.max(1, Math.round(r.tier) || 6)) });
   function tidyMap(out) {
-    out.orbs = (out.orbs || []).map((o) => ({ ...o, link: clamp01(o.link), relevance: clamp01(o.relevance) }));
-    out.links = (out.links || []).filter((l) => l && l.a && l.b).map((l) => ({ ...l, strength: clamp01(l.strength) }));
+    out.orbs = (out.orbs || []).map((o) => ({ ...o, ...tidyReason(o), link: clamp01(o.link), relevance: clamp01(o.relevance) }));
+    out.links = (out.links || []).filter((l) => l && l.a && l.b).map((l) => ({ ...l, ...tidyReason(l), strength: clamp01(l.strength) }));
     return out;
   }
 
@@ -461,7 +472,7 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
 Write one JSON object per line and nothing else: no code fence, no commentary.
 Line 1: {"centre":{"title":"short name","liner":"one sentence"}}
 Then 12 to 16 lines, the most relevant first, each:
-{"title":"1 to 5 words","liner":"one plain sentence linking it to the centre","rel":"cause|effect|related","link":0.0,"relevance":0.0}
+{"title":"1 to 5 words","liner":"one plain sentence linking it to the centre","rel":"cause|effect|related","link":0.0,"relevance":0.0,"why":"under 16 words: your reason for linking it to the centre"}
 rel: cause if it can cause the centre, effect if the centre leads to it, otherwise related.
 link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how much it matters for this line of reasoning; spread the values, only a few above 0.8.`;
 
@@ -527,6 +538,7 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
           rel: ['cause', 'effect', 'related'].includes(v.rel) ? v.rel : 'related',
           link: clamp01(v.link),
           relevance: clamp01(v.relevance),
+          why: String(v.why || ''),
         });
       }
     });
@@ -557,3 +569,4 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
 
   window.CELESTIAL_RESEARCH = { MODELS, map, details, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();
+
