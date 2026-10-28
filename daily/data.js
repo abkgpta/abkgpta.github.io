@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "27 Oct 2026, 7:00 AM IST";
+const UPDATED = "28 Oct 2026, 7:00 AM IST";
 
 const QUOTE = {
-  "text": "Design is a plan for arranging elements in such a way as best to accomplish a particular purpose.",
-  "author": "Charles Eames"
+  "text": "Good design is as little design as possible.",
+  "author": "Dieter Rams"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Ather turns profitable in Q2, posts ₹1.3 Cr PAT",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ather-turns-profitable-in-q2-posts-%E2%82%B91-3-cr-pat/",
-        "img": "https://asset.inc42.com/2026/08/ather-NIIF-exit-social-.jpg",
-        "why": "A first net profit, against a ₹154 Cr loss a year ago; revenue rose 62.9% to ₹1,464 Cr, helped by other income."
+        "title": "Bajaj Auto Q2 net profit rises 35% as revenue tops Rs 20,000 crore",
+        "source": "Autocar Professional",
+        "url": "https://www.autocarpro.in/news/bajaj-auto-q2-net-profit-rises-35-percent-to-rs-3354-crore-as-revenue-crosses-rs-20000-crore-135494",
+        "img": "https://img.autocarpro.in/autocarpro/e9f6c398-7308-4c16-bede-9f302257f93f_bajaj-dealer.avif",
+        "why": "Exports rose 40% to 778,528 units while domestic two-wheelers grew only 2%; electric sales neared 200,000."
       },
       {
-        "title": "Harley-Davidson Sprint 440 cruiser spied undisguised, launch soon",
+        "title": "Royal Enfield Himalayan 750 first teaser out, EICMA debut expected",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/harley-davidson-sprint-440-cruiser-spied-undisguised-launch-soon-12559576.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/harley-davidson-sprint-440-cruiser-spied-launch-soon-price-colours-4.jpg",
-        "why": "A traditional cruiser on the X440's 440cc engine, built by Hero MotoCorp, now reaching dealerships."
+        "url": "https://www.rushlane.com/royal-enfield-himalayan-750-first-teaser-out-eicma-debut-confirmed-12559610.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/royal-enfield-himalayan-750-teased-launch-eicma-global-2.jpg",
+        "why": "Teaser points to Milan before EICMA (3–8 Nov); RE's above-350cc sales fell 26% in September."
       },
       {
-        "title": "New KTM 200 Duke launch price Rs 2.09 L: ETB, TCS, ride modes, quickshifter",
+        "title": "New Honda CB350C Black Edition launched: first look",
         "source": "Rushlane",
-        "url": "https://rushlane.com/new-ktm-200-duke-launch-price-rs-2-09-l-etb-tcs-ride-modes-quickshifter-12559419.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-updated-2026-ktm-200-duke-launched.jpg",
-        "why": "Ride-by-wire, traction control and a bi-directional quickshifter come to the 200 Duke, per dealer pricing."
+        "url": "https://www.rushlane.com/new-honda-cb350c-black-edition-launched-first-look-12559632.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-honda-cb350c-black-edition-launched-7.jpg",
+        "why": "A colour-only variant at about Rs 2.32 lakh on-road, blacking out the cowl, fork lowers and mirrors."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Hyundai Bayon launched at Rs 10 lakh",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/hyundai-bayon-launched-at-rs-10-lakh-441124",
-        "img": "https://asset.autocarindia.com/static/news/images/20261026_080054_ab3e7bc4.png",
-        "why": "A Chennai-built midsize SUV below the Creta, Rs 10 to 18 lakh, with Level 2 ADAS and exports planned."
+        "title": "Defender 110 India price cut by up to Rs 34 lakh",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/defender-110-india-price-cut-by-up-to-rs-34-lakh-heres-why-12559623.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/land-rover-defender-110-india-price-cut-2.jpg",
+        "why": "Local CKD assembly in Pune brings it to Rs 99 lakh; it was JLR India's bestseller in FY2026."
       },
       {
-        "title": "Tata Motors CV swings to ₹1,257 crore profit in Q2; revenue rises 36%",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/tata-motors-swings-to-q2-profit-of-2-138-crore-on-strong-cv-demand-126102300904_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-08/12/thumb/fitandfill/1200X628/1786556236-3809.jpg",
-        "why": "Truck and bus wholesales rose 42% to 135,100 units, with exports up 177%, against a loss a year ago."
+        "title": "Mid SUV sales H1 FY2027: Creta leads, Maruti gains share, Bayon joins the race",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/mid-suv-sales-h1-fy-2027-creta-leads-maruti-gains-share-bayon-12559594.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/05/new-creta-hyundai-black-colour-sales-1.jpeg",
+        "why": "The segment grew 52% to 4.72 lakh units; Hyundai's share fell from 32% to 19% as Maruti hit 27%."
       },
       {
-        "title": "Tesla turns to Turo to boost adoption of Full Self-Driving (Supervised)",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/26/tesla-turns-to-turo-to-boost-adoption-of-full-self-driving-supervised/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/06/tesla-fsd-GettyImages-2277686230.jpg",
-        "why": "Turo will flag FSD-equipped Teslas; Tesla says about 1.7 million customers have paid for FSD."
+        "title": "Tata Motors, Amazon partner to deploy 3,000 electric trucks",
+        "source": "Autocar Professional",
+        "url": "https://www.autocarpro.in/news/tata-motors-amazon-partner-to-deploy-3000-electric-trucks-135493",
+        "img": "https://img.autocarpro.in/autocarpro/1bd0e09e-8741-4c22-95a9-920c2352c7fd_Untitled-Design-_2_.png",
+        "why": "Light and medium e-trucks like the Ultra E.7 start in Delhi, then the Delhi–Bengaluru–Chennai NH48 corridor."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "This startup's self-driving excavators help dig up $600M in new funding",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/26/this-startups-self-driving-excavators-help-dig-up-600m-in-new-funding/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/bedrock-robotics-excavators.jpg",
-        "why": "Bedrock Robotics' retrofit autonomy kit for excavators is valued at $4.1B, citing a skilled-operator shortage."
+        "title": "Q3 robotics startup funding jumps as US and China lead physical AI push",
+        "source": "Crunchbase News",
+        "url": "https://news.crunchbase.com/venture/q3-2026-us-china-robotics-startup-funding-jumps-physical-ai-push",
+        "img": "https://news.crunchbase.com/wp-content/uploads/physical-ai.jpg",
+        "why": "Robotics startups raised $9.9B in Q3, over double a year ago; China leads year to date with $13.2B."
       },
       {
-        "title": "Fusion startups are giving the government shares in exchange for awards. Is it worth it?",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/26/fusion-startups-are-giving-the-government-shares-in-exchange-for-awards-is-it-worth-it",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/01/cfs-sparc-digital-twin.jpeg",
-        "why": "Helion and CFS took $260M in CHIPS Act money for reactor semiconductors in return for non-voting equity."
+        "title": "Nova Spectral AI raises ₹21.2 Cr to build indigenous infrared sensor chips",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/nova-spectral-ai-raises-%e2%82%b921-2-cr-to-build-indigenous-infrared-sensor-chips/",
+        "img": "https://asset.inc42.com/2026/10/stakcbox-funding-featured-1-1-1-1.jpg",
+        "why": "Quantum-dot SWIR sensors on standard CMOS, an alternative to costly InGaAs, for drones, robots and vehicles."
       },
       {
-        "title": "Former OpenAI science lead launches Warp Science to automate wet labs with robots",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/22/former-openai-science-lead-launches-warp-science-to-automate-wet-labs-with-robots/",
-        "img": "https://techcrunch.com/wp-content/uploads/2016/10/4528869007_4484c3d401_b-1.jpg",
-        "why": "Robots trained by chemists in sensor gloves make and test drug compounds; it raised $215M, says Kevin Weil."
+        "title": "Ex-Pixxel engineer Effy John's Parsec Aerospace in talks to raise $10 Mn",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/ex-pixxel-engineer-effy-johns-parsec-aerospace-in-talks-to-raise-10-mn/",
+        "img": "https://asset.inc42.com/2026/10/Parsec-Aerospace-Funding-social.jpg",
+        "why": "A stealth Bengaluru startup building next-generation aerospace engines; Nexus is expected to lead, per sources."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Social gaming startup Matiks raises $10 Mn in Pre-Series A led by General Catalyst",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/social-gaming-startup-matiks-raises-10-mn-in-pre-series-a-led-by-general-catalyst-12754114",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/matiks-2026-10-26-18-56-47.png",
-        "why": "Started as a mental maths game; daily users doubled since June to over 300,000, and it will push into the US."
+        "title": "Re:Build, which spun out Slate Auto, raises $2.1B",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/27/rebuild-which-spun-out-slate-auto-raises-2-1b/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/06/slate-auto-truck-tesla-charging.jpg",
+        "why": "A US manufacturing accelerator, led by General Catalyst and JPMorganChase, expanding hard-tech production and new startups."
       },
       {
-        "title": "Healthcare startup BioStack raises $9.5 Mn in seed funding led by Peak XV",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/healthcare-startup-biostack-raises-95-mn-in-seed-funding-led-by-peak-xv-12753841",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/biostack-2026-10-26-16-30-17.png",
-        "why": "Builds de-identified clinical datasets for research and healthcare AI across the US, India, Brazil and Argentina."
+        "title": "Protectt.ai to acquire controlling stake in Bosch's AIShield",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/protectt-ai-to-acquire-controlling-stake-in-boschs-aishield/",
+        "img": "https://asset.inc42.com/2026/10/Prottect-ai-Soc.jpg",
+        "why": "Protectt.ai's first acquisition: an AI-model security platform incubated at Bosch, which keeps a minority stake."
       },
       {
-        "title": "Europe's biggest seed rounds of Q3 2026: Top tech startups to watch",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/10/26/europes-biggest-seed-rounds-of-q3-2026-top-tech-startups-to-watch",
-        "img": "https://cdn.tech.eu/uploads/2026/10/q32026-featured-395.png",
-        "why": "European tech raised €27.8B in Q3, up 32.4%; seed leaders include industrial-robotics AI and trapped-ion quantum."
+        "title": "Pronto founder Anjali Sardana sets up physical AI venture Provision Labs in US",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/pronto-founder-anjali-sardana-sets-up-physical-ai-venture-provision-labs-in-us-12753088",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/pronto-2026-10-26-14-22-59.png",
+        "why": "It will collect real-world data to train and test AI that runs robots, backed by Pronto's investors."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Paytm Q2FY27 net profit jumps 10-fold to ₹225 crore, revenue up 28%",
+        "title": "L&T Q2 net profit rises 33% to ₹5,202 crore on strong order inflows",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/paytm-q2fy27-net-profit-jumps-10-fold-to-225-crore-revenue-up-28-126102601539_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/26/thumb/fitandfill/1200X628/1793038143-492.jpg",
-        "why": "A sixth straight profitable quarter and a first double-digit EBITDA margin; monthly users reached 8.5 crore."
+        "url": "https://www.business-standard.com/companies/quarterly-results/l-t-q2-net-profit-rises-33-to-5-202-crore-on-strong-order-inflows-126102701204_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-08/21/thumb/fitandfill/1200X628/1724223808-4603.jpg",
+        "why": "Up from ₹3,926 crore, helped by infrastructure spending and reconstruction work in West Asia."
       },
       {
-        "title": "Tata Consumer Products Q2 net profit rises 16% to ₹469 cr, sales up 14%",
+        "title": "Tata Capital Q2FY27 net profit surges 51% to ₹1,660 crore",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/amp/companies/quarterly-results/tata-consumer-products-q2-net-profit-rises-16-to-469-cr-sales-up-14-126102601505_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-07/08/thumb/fitandfill/1200X628/1720431964-3491.jpg",
-        "why": "Growth businesses rose 40% to 38% of India sales; tea volumes were flat on weak demand."
+        "url": "https://www.business-standard.com/companies/quarterly-results/tata-capital-q2fy27-results-net-profit-surges-51-to-1-660-crore-126102701217_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-10/29/thumb/fitandfill/1200X628/1761735776-1144.JPG",
+        "why": "AUM rose 26% to over ₹3 trillion; the board raised its note programme from $2 billion to $3 billion."
       },
       {
-        "title": "ITC Hotels Q2 net profit rises 52% to ₹202.6 crore, revenue up 26%",
+        "title": "Cipla Q2 net profit falls 35% to ₹878 cr as US business weighs on sales",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/itc-hotels-q2-net-profit-rises-52-to-202-6-crore-revenue-up-26-126102600976_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-01/30/thumb/fitandfill/1200X628/1738177869-8806.jpg",
-        "why": "RevPAR rose 21% and the EBITDA margin hit 32%; the board approved a Dubai subsidiary."
+        "url": "https://www.business-standard.com/amp/companies/quarterly-results/cipla-q2-net-profit-falls-35-to-878-cr-as-us-business-weighs-on-sales-126102701381_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-09/05/thumb/fitandfill/1200X628/1693926768-8959.jpg",
+        "why": "North America revenue fell 19% to $172 million, while India sales rose 12% on chronic therapies."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Tue 27 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Wed 28 Oct",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Sun 1 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -255,7 +255,7 @@ const RACING = {
       "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "Sunday's Australian GP was cancelled for low visibility, so there was no race winner; Marc Marquez heads to Sepang 10 points ahead of Jorge Martin. WorldSBK's 2026 season has ended.",
+  "note": "Last Sunday's Australian GP was cancelled for low visibility, so there was no race winner; Marc Marquez heads to Sepang this weekend 10 points ahead of Jorge Martin. WorldSBK's 2026 season has ended.",
   "source": {
     "name": "motogp.com, Qatar GP new date and end-of-season calendar",
     "url": "https://www.motogp.com/en/news/2026/03/15/motogp-confirms-new-date-for-the-qatar-grand-prix/1005668"
@@ -264,8 +264,8 @@ const RACING = {
 
 const STRAVA = {
   "period": "last 30 days",
-  "runs": 3,
-  "km": "6.2",
+  "runs": 2,
+  "km": "4.1",
   "latest": {
     "date": "25 Oct",
     "km": "2.1",
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Both Of Us",
-    "artist": "Jayda G",
-    "id": "7q584VOAZLMPaIQ9pedKFl",
-    "why": "Jayda G's 2019 house single: a long, soulful, disco-tinged groove that sits next to your Modjo and Daft Punk plays."
+    "title": "Cassius 1999",
+    "artist": "Cassius",
+    "id": "2R53yign0dvy3i4TLAr2Ud",
+    "why": "Filtered-disco French house from Philippe Zdar and Boombass, the same 1999 Paris sound as your Daft Punk and Modjo plays."
   },
   "playlist": {
     "name": "Weekly Discovery Mix",
@@ -286,46 +286,47 @@ const MUSIC = {
     "date": "2026-10-26"
   },
   "lately": [
-    "Fred again..",
-    "Modjo",
     "DreamKiller",
     "Daft Punk",
-    "X CLUB.",
-    "Saint Etienne"
+    "Modjo",
+    "Fred again..",
+    "Saint Etienne",
+    "X CLUB."
   ]
 };
 
 const LEARN = {
-  "term": "Gestalt principles in product form",
-  "body": "Gestalt psychology (Wertheimer, Köhler and Koffka, 1910s–20s) describes how the visual system organises parts into wholes before we consciously inspect them: proximity, similarity, closure, continuity, common region and figure-ground. Koffka's line is usually misquoted as 'the whole is greater than the sum of its parts'; he said the whole is other than the sum, meaning perception creates a new structure rather than adding things up. On a product, proximity and common region decide which buttons read as one group, so spacing and a shared bezel do more than labels; similarity of colour, finish or radius tells users which elements behave alike. Continuity is why a highlight or shut line that runs unbroken across two parts makes them read as one volume, and a misaligned split breaks the form. The principles describe tendencies, not laws: they compete with each other and with learned conventions, so test layouts with real users rather than treating a Gestalt checklist as proof.",
+  "term": "Affordances and signifiers",
+  "body": "James J. Gibson coined 'affordance' in ecological psychology (1977, 1979) for the action possibilities an environment offers an animal, whether or not they are noticed: a flat, knee-high, rigid surface affords sitting. Don Norman brought the word into design in The Psychology of Everyday Things (1988), but designers began using it for any on-screen cue, so in the 2013 edition of The Design of Everyday Things he added 'signifier' for the perceivable mark that tells people where and how to act. The distinction matters in product form: a flat push plate on a door affords pushing and signals it, while a pull handle on a push door is a signifier that lies, the classic 'Norman door'. Good industrial design makes the affordance real, makes the signifier honest, and closes the loop with feedback such as a detent, click or light. A common overstatement is that good form needs no labels; cultural conventions and learned behaviour shape what people read as a signifier, so test with real users.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Proximity",
-        "note": "Close parts read as one group.",
+        "label": "Affordance",
+        "note": "What the object physically allows."
+      },
+      {
+        "label": "Signifier",
+        "note": "The visible cue for where and how to act.",
         "hl": true
       },
       {
-        "label": "Similarity",
-        "note": "Same colour, finish or radius = same role."
+        "label": "Mapping",
+        "note": "Control layout matches the effect."
       },
       {
-        "label": "Continuity",
-        "note": "Unbroken lines join parts into one volume."
-      },
-      {
-        "label": "Figure",
-        "note": "Contrast sets what pops from the ground."
+        "label": "Feedback",
+        "note": "Click, detent or light confirms the act."
       }
     ],
-    "caption": "Spacing and alignment group controls before labels do."
+    "caption": "Make the action possible, then make it visible."
   },
   "source": {
-    "name": "Wikipedia: Gestalt psychology",
-    "url": "https://en.wikipedia.org/wiki/Gestalt_psychology"
+    "name": "Wikipedia: Affordance",
+    "url": "https://en.wikipedia.org/wiki/Affordance"
   },
   "past": [
+    "Gestalt principles in product form",
     "The golden ratio: use and myth",
     "Draft angles and the parting line",
     "Surface continuity: G0 to G3"
@@ -333,14 +334,14 @@ const LEARN = {
 };
 
 const DESIGN = {
-  "name": "Olivetti Valentine typewriter",
-  "designer": "Ettore Sottsass with Perry King",
-  "year": "1969",
-  "why": "Sottsass turned an office machine into a bright red ABS portable whose case doubles as its carrying bucket, pitching the typewriter as a personal, everyday object rather than workplace equipment. Its single-colour moulded shell, round orange spool caps and handle built into the case show how material, colour and form can carry a product's whole attitude.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Olivetti_Valentine.jpg?width=1200",
+  "name": "Anglepoise 1227 lamp",
+  "designer": "George Carwardine",
+  "year": "1935",
+  "why": "Carwardine, an automotive engineer working on suspension, used constant-tension springs so the arm balances and holds any position without clamps or locks. The 1227 brought that mechanism into a three-spring domestic lamp, where the stepped base, jointed arm and bell shade all read directly as the way it works.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Anglepoise1227.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Olivetti_Valentine.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Anglepoise1227.jpg"
   }
 };
 
