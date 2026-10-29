@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
-// EXAMPLE CONTENT for the stage 1 sketch.
+// EXAMPLE CONTENT: the built-in warped-part map shown before you ask anything.
 //
-// This file is plain text you can safely edit. Change a title or a
-// one-liner, save, and refresh the page to see it.
+// Plain data you can safely edit. Change a title or a one-liner and
+// republish to see it.
 //
 // TOPICS   – every orb that can appear, with its name and one-liner.
 // SYSTEMS  – the "solar system" around a topic: which orbs orbit it,
@@ -419,6 +419,54 @@ window.CELESTIAL_DATA = {
     'inside-corners': {
       about: 'The inside corner of a box-shaped part is surrounded by steel on several sides and is hard to cool. It stays hot, shrinks more, and pulls the walls inward.',
       check: ['Check whether the walls of box shapes lean inwards.', 'Look for cooling in cores, such as baffles or bubblers.'],
+    },
+  },
+
+  // An example of "Go deeper": the inside of one topic, in the same shape a
+  // live deep research pass returns. Sub-systems each hold a few parts;
+  // connections are plausible links between parts; threads are where you
+  // could go next; cite points at entries in sources (0-based).
+  // Sources here are EXAMPLES of the rating system, like the ones above.
+  deep: {
+    'uneven-cooling': {
+      centre: {
+        title: 'Uneven cooling',
+        liner: 'How heat leaves a mould, broken into the parts that decide where a part cools fast or slow.',
+        reading: 'You went deeper into uneven cooling, so I split it into the three places heat has to travel through: the plastic itself, the mould steel, and the water that carries the heat away. Then I looked for connections between parts of different sub-systems, since those are easy to miss.',
+      },
+      subsystems: [
+        { title: 'Heat in the plastic', liner: 'How fast each region of the part can give up its heat.', why: 'Heat starts in the melt, so the part’s own geometry is the first thing that sets cooling speed.', basis: 'Heat-transfer physics', tier: 2, cite: [0], parts: [
+          { title: 'Section thickness', liner: 'Cooling time grows with the square of thickness.', why: 'Thick sections hold heat far longer than thin ones next to them.', basis: 'Heat-transfer physics', tier: 2, relevance: 0.9, cite: [0] },
+          { title: 'Melt temperature', liner: 'Hotter melt carries more heat to remove.', why: 'A higher melt setting raises the heat load everywhere, and exaggerates existing hot spots.', basis: 'Process guides', tier: 3, relevance: 0.55, cite: [1] },
+          { title: 'Crystallisation heat', liner: 'Semi-crystalline resins release extra heat as they crystallise.', why: 'This latent heat is released unevenly, so these resins are more sensitive to cooling layout.', basis: 'Polymer science textbooks', tier: 2, relevance: 0.6, cite: [0] },
+        ] },
+        { title: 'Heat in the steel', liner: 'How evenly the mould conducts heat from the part to the water.', why: 'The steel sits between part and water, so any uneven path through it becomes uneven cooling.', basis: 'Mould design textbooks', tier: 2, cite: [0], parts: [
+          { title: 'Channel distance', liner: 'How far cooling channels sit from the moulding surface.', why: 'Channels too far away, or unevenly spaced, leave warm zones in the steel.', basis: 'Mould design textbooks', tier: 2, relevance: 0.85, cite: [0] },
+          { title: 'Core cooling', liner: 'Baffles and bubblers that reach into tall cores.', why: 'Cores are surrounded by plastic and are the hardest place to cool.', basis: 'Mould design guides', tier: 3, relevance: 0.8, cite: [1] },
+          { title: 'Insert materials', liner: 'Copper alloy inserts pull heat out of hot spots faster than tool steel.', why: 'A more conductive insert can even out a hot spot without moving channels.', basis: 'Toolmakers’ literature', tier: 4, relevance: 0.45, cite: [2] },
+        ] },
+        { title: 'Heat in the water', liner: 'How much heat the coolant circuit can carry away.', why: 'The water is the last step; if it carries heat away unevenly, the rest can’t compensate.', basis: 'Maintenance guides', tier: 4, cite: [2], parts: [
+          { title: 'Turbulent flow', liner: 'Water moving fast enough to tumble removes heat far better.', why: 'Below turbulent flow, heat transfer drops sharply, often on one circuit only.', basis: 'Heat-transfer physics', tier: 2, relevance: 0.7, cite: [0] },
+          { title: 'Scale and blockage', liner: 'Mineral build-up narrows channels over months.', why: 'Explains warp that crept in slowly on a tool that used to run well.', basis: 'Maintenance guides', tier: 4, relevance: 0.75, cite: [2] },
+          { title: 'Circuit balancing', liner: 'Each half and zone getting its own controlled flow and temperature.', why: 'Shared circuits let one half run warmer than the other.', basis: 'Mould design guides', tier: 3, relevance: 0.65, cite: [1] },
+        ] },
+      ],
+      connections: [
+        { a: 'Section thickness', b: 'Channel distance', kind: 'compounds', confidence: 0.8, why: 'A thick section over a far-off channel is the worst case: the slowest part to cool sits on the slowest path out.', basis: 'Mould design textbooks', tier: 2 },
+        { a: 'Scale and blockage', b: 'Circuit balancing', kind: 'undermines', confidence: 0.65, why: 'A balanced circuit drifts out of balance as one branch scales up faster than another.', basis: 'My inference from maintenance reports', tier: 6 },
+        { a: 'Core cooling', b: 'Turbulent flow', kind: 'depends on', confidence: 0.7, why: 'Bubblers only work with enough flow; a low-flow core circuit runs hot even with good design.', basis: 'Mould design guides', tier: 3 },
+        { a: 'Crystallisation heat', b: 'Insert materials', kind: 'offset by', confidence: 0.5, why: 'A conductive insert at a crystalline hot spot could absorb the extra latent heat. Plausible, rarely documented.', basis: 'My inference', tier: 6 },
+      ],
+      threads: [
+        { title: 'Why do cores run hot?', question: 'Why are mould cores harder to cool than cavities, and what fixes work?', why: 'Core cooling scored high and links to two other sub-systems.' },
+        { title: 'Detecting scale in channels', question: 'How can you tell cooling channels are scaled or blocked without taking the tool apart?', why: 'A slow-onset cause that is cheap to check.' },
+        { title: 'Copper inserts for hot spots', question: 'When are copper alloy inserts worth using to fix hot spots in a mould?', why: 'A fix that avoids recutting channels.' },
+      ],
+      sources: [
+        { tier: 2, type: 'Textbook', title: 'A mould design textbook, chapter on cooling systems', url: '', flag: '' },
+        { tier: 3, type: 'Design guide', title: 'Resin supplier’s mould design guide', url: '', flag: 'Conflict of interest' },
+        { tier: 4, type: 'Trade article', title: 'Trade magazine article on cooling-line maintenance', url: '', flag: '' },
+      ],
     },
   },
 };
