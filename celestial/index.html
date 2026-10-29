@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <!-- ?v= is a version tag: change it on each release so browsers fetch fresh files -->
-<link rel="stylesheet" href="style.css?v=202610281500">
+<link rel="stylesheet" href="style.css?v=202610291200">
 </head>
 <body>
 
@@ -34,9 +34,10 @@
       <svg class="icon-off" viewBox="0 0 16 16" aria-hidden="true"><path d="M2.5 6h2.5l3.5-3v10L5 10H2.5z"/><path d="M11 6l3 4M14 6l-3 4"/></svg>
       <span class="menu-label">Sound</span>
     </button>
-    <button id="reason-toggle" class="menu-btn" type="button" aria-pressed="false" title="Reasoning: watch the map being built and see why each line exists">
-      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="3.5" cy="8" r="1.7"/><circle cx="12.5" cy="3.5" r="1.7"/><circle cx="12.5" cy="12.5" r="1.7"/><path d="M5.1 7.2 10.9 4.3M5.1 8.8l5.8 2.9"/></svg>
-      <span class="menu-label">Reasoning</span>
+    <button id="reason-toggle" class="menu-btn" type="button" aria-pressed="false" title="Progressive: watch the map being built step by step and see why each line exists">
+      <!-- A sun with its orbit three-quarters drawn; the dots are the steps still to come -->
+      <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2"/><path d="M8 1.8a6.2 6.2 0 1 1-6.2 6.2"/><circle cx="2.65" cy="4.9" r=".35"/><circle cx="4.9" cy="2.65" r=".35"/></svg>
+      <span class="menu-label">Progressive</span>
     </button>
     <button id="view-toggle" class="menu-btn" type="button" aria-expanded="false" aria-controls="view-panel" title="Settings">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7"/><circle cx="10.5" cy="4" r="1.6"/><circle cx="5.5" cy="12" r="1.6"/></svg>
@@ -49,6 +50,7 @@
   </div>
   <nav id="trail" class="trail" aria-label="Your path"></nav>
   <p id="about" class="about"></p>
+  <div id="threads" class="threads-bar" aria-label="Threads to explore next"></div>
   <p id="status" class="status" role="status" hidden></p>
 </header>
 
@@ -65,7 +67,7 @@
 <!-- Moved into the Settings panel's Research tab by the script -->
 <div id="connection" class="connection">
   <p class="view-group">Connection</p>
-  <p id="plan-note" class="key-note plan-note" hidden>Running on your Claude plan, no key needed. The first search asks your permission. Research here comes from Claude’s own knowledge (no web browsing), so sources are named but not linked.</p>
+  <p id="plan-note" class="key-note plan-note" hidden>Running on your Claude plan, no key needed. The first search asks your permission. Research here comes from Claude’s own knowledge (no web browsing), so sources are named, with search links, rather than linked.</p>
   <div class="key-actions plan-actions">
     <button type="button" id="plan-allow" class="link-btn" hidden>Allow Claude for this page</button>
     <button type="button" id="plan-retry" class="link-btn" hidden>Check again</button>
@@ -96,8 +98,10 @@
       <li><span><b>Click an orb</b> to open it and read what it is, what to check and where the information comes from.</span></li>
       <li><span><b>Mark it</b> <span class="mini-verdict yes">✓</span> relevant or <span class="mini-verdict no">✕</span> not relevant. The map rearranges around your answers: related orbs move closer, ruled-out ones fade away.</span></li>
       <li><span><b>Read the running answer</b> in the panel that appears bottom left after your first tick. It updates every time you mark an orb.</span></li>
-      <li><span><b>Expand</b> an orb to make it the new centre and dig a level deeper. The path at the top takes you back.</span></li>
-      <li><span><b>Turn on Reasoning</b> to watch the map being built one step at a time. Hover a line, or tap it, to see why it exists and where that comes from. Pause, step back or replay from the panel bottom right.</span></li>
+      <li><span><b>Expand</b> an orb to make it the new centre and see its neighbours: what causes it, what it causes, what sits beside it.</span></li>
+      <li><span><b>Go deeper</b> to open an orb up instead: a deeper research pass splits it into sub-systems and parts, draws plausible connections between them, and suggests threads to follow next. You pick the thread. The path at the top takes you back.</span></li>
+      <li><span><b>Sources</b>: open an orb and switch to its Sources tab to see where the information came from, with links and videos when the research found them.</span></li>
+      <li><span><b>Turn on Progressive</b> to watch the map being built one step at a time. Hover a line, or tap it, to see why it exists and where that comes from. Pause, step back or replay from the panel bottom right.</span></li>
     </ol>
 
     <p class="view-group">Where and how big</p>
@@ -106,6 +110,7 @@
       <li><span class="key key-size"></span><span><b>Bigger</b>: more relevant to your question</span></li>
       <li><span class="key key-glow"></span><span><b>Glow</b>: a hidden lead, loosely linked but worth checking</span></li>
       <li><span class="key key-ring"></span><span><b>Double outline</b>: can be expanded straight away</span></li>
+      <li><span class="key key-plain"></span><span><b>Inside a deep map</b>: thick double-ruled orbs are sub-systems; the small orbs around each are its parts</span></li>
     </ul>
 
     <p class="view-group">Colours</p>
@@ -122,6 +127,7 @@
       <li><span class="key key-stream"></span><span><b>Streams</b> flow into the centre from causes and out to effects. Longer and thicker means a stronger link</span></li>
       <li><span class="key key-centre"></span><span><b>Faint line to the centre</b>: a cause or effect link</span></li>
       <li><span class="key key-cross"></span><span><b>Faint line between orbs</b>: they are strongly linked to each other</span></li>
+      <li><span class="key key-threads"><svg viewBox="0 0 28 18" aria-hidden="true"><path d="M1 9C8 2 20 16 27 9M1 9C8 16 20 2 27 9M1 9C9 5 19 13 27 9"/></svg></span><span><b>Woven threads</b>: each line is a few strands that meet at the orbs. More strands, a stronger link. Click the map to send light along them</span></li>
     </ul>
 
     <p class="view-group">Moving around</p>
@@ -129,7 +135,7 @@
       <dt>Drag</dt><dd>Turn the map</dd>
       <dt>Scroll, pinch</dt><dd>Zoom</dd>
       <dt>Right-drag</dt><dd>Move the map sideways</dd>
-      <dt>Hover</dt><dd>Preview an orb, or (with Reasoning on) see why a line exists</dd>
+      <dt>Hover</dt><dd>Preview an orb, or (with Progressive on) see why a line exists</dd>
       <dt>Esc</dt><dd>Close whatever is open</dd>
     </dl>
 
@@ -172,9 +178,11 @@
 
 <p id="toast" class="toast" role="status" hidden></p>
 
+
+
 <!-- Only on this site: the demo notice. Hidden once a key is saved, or for the rest of the visit once closed. -->
 <aside id="demo-notice" class="demo-notice" aria-label="Demo version" hidden>
-  <p><b>This is a demo version.</b> It shows one example map. Add your own Claude API key to use the full version: ask any question and research any topic live.</p>
+  <p><b>This is a demo version.</b> Its research on the example question was prepared in advance and replays as if live. Add your own Claude API key to ask any question and research it for real.</p>
   <div class="demo-actions">
     <button id="demo-key" type="button" class="demo-key">Add your API key</button>
     <button id="demo-close" type="button" class="demo-close" aria-label="Close">&times;</button>
@@ -210,6 +218,65 @@
   .demo-notice { flex-direction: column; align-items: stretch; gap: 10px; }
   .demo-actions { justify-content: space-between; }
 }
+
+/* The guided tour (tour.js): a card at the bottom (or top) and a ring round what it describes */
+.tour {
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  transform: translateX(-50%);
+  width: min(420px, calc(100% - 32px));
+  box-sizing: border-box;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 14px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  animation: rise 0.35s ease-out;
+}
+.tour.at-top { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 120px); }
+.tour.beside { bottom: auto; transform: none; transition: left 0.25s, top 0.25s; }
+.tour-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tour-kicker { font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); }
+.tour-skip { padding: 2px 0; border: 0; background: none; font-size: 12.5px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.tour-skip:hover { color: var(--ink); }
+.tour-title { margin: 0; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+.tour-text { margin: 0; font-size: 14px; line-height: 1.5; text-wrap: pretty; }
+.tour-hint { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-soft); }
+.tour-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: tour-pulse 1.4s ease-in-out infinite; }
+@keyframes tour-pulse { 50% { opacity: 0.3; } }
+.tour-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.tour-dots { display: flex; gap: 5px; }
+.tour-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--rule); }
+.tour-dots i.done { background: var(--ink-soft); }
+.tour-dots i.on { background: var(--accent); }
+.tour-buttons { display: flex; gap: 6px; }
+.tour-next, .tour-back { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tour-next { border: 0; background: var(--ink); color: var(--panel); }
+.tour-back { border: 1px solid var(--rule); background: none; }
+.tour-back:hover { border-color: var(--ink-soft); }
+.tour-ring {
+  position: fixed;
+  z-index: 4;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 28px 6px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: left 0.25s, top 0.25s, width 0.25s, height 0.25s, border-radius 0.25s;
+}
+.tour-again { justify-self: start; margin: 12px 0 0; padding: 6px 12px; border: 1px solid var(--rule); border-radius: 999px; background: none; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.tour-again:hover { border-color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .tour, .tour-dot { animation: none; }
+  .tour-ring, .tour.beside { transition: none; }
+}
+@media (max-width: 640px) {
+  .tour.at-top { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+}
 </style>
 <script>
 (() => {
@@ -234,16 +301,22 @@
 })();
 </script>
 
-<script src="data.js?v=202610281500"></script>
-<script src="illustrations.js?v=202610281500"></script>
-<script src="research.js?v=202610281500"></script>
-<script src="sound.js?v=202610281500"></script>
+<script src="data.js?v=202610291200"></script>
+<script src="illustrations.js?v=202610291200"></script>
+<script src="research.js?v=202610291200"></script>
+<script src="sound.js?v=202610291200"></script>
+<!-- Only on this site: preloaded research the demo replays, and the first-visit tour -->
+<script src="demo-details.js?v=202610291200"></script>
+<script src="demo-maps.js?v=202610291200"></script>
+<script src="demo-deep.js?v=202610291200"></script>
+<script src="demo.js?v=202610291200"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
-<script type="module" src="app.js?v=202610281500"></script>
+<script type="module" src="app.js?v=202610291200"></script>
+<script src="tour.js?v=202610291200"></script>
 </body>
 </html>

@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
-// CELESTIAL · stage 1 sketch
+// CELESTIAL · the app
 // Draws one topic as a 3D solar system and lets you move through it.
-// The content lives in data.js; this file only decides how it looks
-// and behaves.
+// The content lives in the EXAMPLE CONTENT script above; this script
+// only decides how it looks and behaves.
 //
 // How it's drawn, back to front:
 //  1. Backdrop  – a slowly shifting gradient, drawn by a small shader
@@ -20,6 +20,8 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 const DATA = window.CELESTIAL_DATA;
 DATA.reasons ||= {};
+DATA.deep ||= {};       // example deep passes, as Claude would return them, by topic
+DATA.inside ||= {};     // deep passes that have been opened, by the id of their inside view
 
 // ─── Fixed numbers ───────────────────────────────────────────
 // The shape of the system. Several of these can be adjusted live
@@ -43,6 +45,7 @@ const TUNING = {
   gap: 1.4,               // minimum space between orbs
   widen: 1.8,             // most a system may stretch to fill a wide screen
   farthestFade: 0.35,     // opacity of the farthest orb when "fade with distance" is on
+  readable: 0.65,         // no orb's name fades below this (about 4.5:1); the outline fades further instead
   centreLine: 0.16,       // strength of the faint cause/effect lines to the centre
   crossLine: 0.14,        // strength of the faint lines between linked orbs
   crossLinkMin: 0.6,      // links between orbs weaker than this aren't drawn
@@ -66,6 +69,23 @@ const TUNING = {
     shortest: 1.4, longest: 6,     // stream length, in scene units
     thinnest: 1.2, thickest: 4.5,  // stream thickness, in pixels
   },
+  // Woven threads: each line drawn as a few glowing strands (see "Woven threads" below)
+  threads: {
+    fewest: 2, most: 6,   // strands for the weakest and the strongest link
+    spread: 0.06,         // how far the strands fan out mid-line, as a share of its length on screen
+    minSpread: 4, maxSpread: 13,   // ...kept between these, in pixels
+    pad: 10,              // pixels of room around the strands for their glow
+    wave: 150,            // pixels per full weave along a line
+    taper: 0.7,           // how much wider each next strand swings, nesting them
+    speed: 0.45,          // how fast the strands weave
+    width: 1.1,           // strand width in pixels
+    glow: 0.32,           // light around each strand
+    falloff: 1.25,        // how quickly the glow fades (higher is tighter)
+    brightness: 0.75,
+    boost: 2.2,           // threads carry less ink than a line, so they are drawn this much stronger
+    stagger: 0.12, stroke: 1.25,   // seconds: strands drawing in one after another, and each stroke
+    surge: 1.6,           // seconds a click's light takes to travel a line
+  },
 };
 
 // ─── Settings: the controls in the Settings panel ────────────
@@ -80,6 +100,7 @@ const VIEW_DEFAULTS = {
   backdropMotion: true,
   lineArt: true,
   streams: true,
+  threads: true,          // lines drawn as woven threads (plain lines without WebGL2)
   centreLines: true,
   crossLinks: true,
   relationColour: true,
@@ -126,11 +147,11 @@ const VIEW_SETTINGS = [
   { key: 'model', label: 'Model (with your API key)', options: [
     ['claude-opus-5-5', 'Opus 5.5', 'Most capable'],
     ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster'],
-    ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
+    ['claude-haiku-5-5', 'Haiku 5.5', 'Lowest cost'],
   ] },
-  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. Each search adds a small cost to your key' },
+  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens or you go deeper. Gives real links and videos in the Sources tab. Each search adds a small cost to your key' },
   { group: 'Learning' },
-  { key: 'reasoning', label: 'Reasoning mode', hint: 'Build each map step by step and explain every line. Same as the Reasoning button' },
+  { key: 'reasoning', label: 'Progressive mode', hint: 'Build each map step by step and explain every line. Claude writes the reasons only while this is on. Same as the Progressive button' },
   { key: 'traceSpeed', label: 'Step speed', needs: 'reasoning', options: [[0, 'Slow'], [1, 'Normal'], [2, 'Fast']] },
   { connection: true },
   { tab: 'Appearance' },
@@ -157,9 +178,10 @@ const VIEW_SETTINGS = [
   { key: 'spacing', label: 'Spacing', min: 0.6, max: 1.6, step: 0.05, unit: '×', relayout: true },
   { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
   { group: 'Lines' },
+  { key: 'threads', label: 'Woven threads', hint: 'Each line is a few glowing strands that meet at the orbs; stronger links get more. Off: plain straight lines' },
   { key: 'streams', label: 'Cause and effect streams' },
   { key: 'centreLines', label: 'Faint lines to the centre' },
-  { key: 'crossLinks', label: 'Faint lines between linked orbs', hint: 'Reasoning mode always shows every line' },
+  { key: 'crossLinks', label: 'Faint lines between linked orbs', hint: 'Progressive mode always shows every line' },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Keep orbs the same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
@@ -168,7 +190,7 @@ const VIEW_SETTINGS = [
   { group: 'Whole map' },
   { key: 'mapMotion', label: 'Until you grab it, the map', options: [['still', 'Stays still'], ['sway', 'Sways'], ['spin', 'Spins']] },
   { group: 'Orbs and streams' },
-  { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'organic', label: 'Gently warping, drifting orbs', hint: 'Also lets the threads between orbs weave' },
   { key: 'streamSpeed', label: 'Stream speed', needs: 'streams', min: 0.4, max: 2, step: 0.1, unit: '×' },
   { group: 'Background' },
   { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
@@ -179,7 +201,7 @@ const VIEW_SETTINGS = [
   { group: 'What plays' },
   { key: 'music', label: 'Background drone', needs: 'sound', hint: 'A slow chord that follows the theme' },
   { key: 'bells', label: 'Orb bells', needs: 'sound', hint: 'A note as each orb appears: causes low, effects high, stronger links nearer the home note. Ticks and crosses answer too' },
-  { key: 'cues', label: 'Reasoning cues', needs: 'sound', hint: 'In Reasoning mode, links between orbs and lines you hover play their two notes' },
+  { key: 'cues', label: 'Progressive cues', needs: 'sound', hint: 'In Progressive mode, links between orbs and lines you hover play their two notes' },
 ];
 const STORE_KEY = 'celestial.view';
 let viewTab = 'Research';
@@ -285,7 +307,7 @@ const backdropCamera = new THREE.Camera();
 // moon-phase stones at the sides, an astrolabe horizon along the bottom,
 // patterned friezes that slowly circle the frame, and twinkling stars.
 // Each moving part is its own layer, so the browser can move it cheaply.
-// A mask in style.css fades all of it out towards the middle of the screen.
+// A CSS mask (.art, in the style block) fades it out towards the middle of the screen.
 const n1 = (v) => v.toFixed(1);
 const polar = (r, deg) => [r * Math.cos(deg * Math.PI / 180), r * Math.sin(deg * Math.PI / 180)];
 const pts = (list) => list.map(([x, y]) => `${n1(x)} ${n1(y)}`).join('L');
@@ -480,7 +502,7 @@ controls.addEventListener('start', () => { grabbed = true; camGoal = null; camVe
 const world = new THREE.Group();
 scene.add(world);
 
-// ─── Colours come from the CSS tokens in style.css ───────────
+// ─── Colours come from the CSS tokens in the style block ─────
 const palette = {};
 const hexToVec = (hex) => {
   const v = hex.trim().replace('#', '');
@@ -491,6 +513,10 @@ function readPalette() {
   for (const name of ['line', 'cause', 'effect']) {
     palette[name] = new THREE.Color(css.getPropertyValue('--3d-' + name).trim());
   }
+  // Where threads overlap they run hot towards the ink colour; on light
+  // themes they're drawn as ink strokes instead of light
+  threadUniforms.uCore.value.set(css.getPropertyValue('--ink').trim());
+  threadUniforms.uLight.value = themeName().endsWith('light') ? 1 : 0;
   backdropUniforms.uBase.value = hexToVec(css.getPropertyValue('--sh-base'));
   backdropUniforms.uTintA.value = hexToVec(css.getPropertyValue('--sh-a'));
   backdropUniforms.uTintB.value = hexToVec(css.getPropertyValue('--sh-b'));
@@ -508,7 +534,7 @@ let busy = false;       // true while a transition is playing
 let systemRadius = 20;
 
 const isHiddenLead = (l) => l.link <= TUNING.hiddenLead.maxLink && l.relevance >= TUNING.hiddenLead.minRelevance;
-// ─── Live research with Claude (see research.js) ─────────────
+// ─── Live research with Claude (see the RESEARCH script) ─────
 const R = window.CELESTIAL_RESEARCH;
 const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
 const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
@@ -519,15 +545,19 @@ const inViewer = Boolean(window.claude?.use);
 let planReady = false;              // true when research can run on the viewer's Claude plan
 const BLOCKED_NOTE = 'claude.ai isn’t letting this page use Claude for you here, and doesn’t say why. Things to try: open the link in a web browser (not the mobile app) while signed in to claude.ai, then reload; check that your account or organisation allows artifacts to use Claude. Meanwhile you can explore the example.';
 let planBlocked = 'checking';       // on claude.ai without Claude: 'checking' | 'denied' | 'unavailable'
-const live = () => Boolean(R && (planReady || apiKey));
-const backend = () => (planReady ? 'plan' : 'api');
-const whoAnswers = () => (planReady ? 'your Claude plan' : R.MODELS[view.model].name);
+// Only on this site: with no key, research replays preloaded answers (demo.js)
+const DEMO = window.CELESTIAL_DEMO;
+const demo = () => Boolean(DEMO) && !inViewer && !apiKey;
+const live = () => Boolean(R && (planReady || apiKey || demo()));
+const backend = () => (planReady ? 'plan' : demo() ? 'demo' : 'api');
+const whoAnswers = () => (planReady ? 'your Claude plan' : demo() ? 'Claude' : R.MODELS[view.model].name);
+const DEMO_END = 'The demo’s preloaded research ends here. Add your Claude API key in Settings to keep going live.';
 const session = { mode: 'diagnose' };
 const liveIds = new Set();          // topics that came from Claude (saved between visits)
 const pending = new Set();          // systems being mapped right now
 const detailsLoading = new Set();
 
-const canExpand = (id) => Boolean(DATA.systems[id]) || live();
+const canExpand = (id) => Boolean(DATA.systems[id]) || (live() && (!demo() || DEMO.hasMap(DATA.topics[id]?.title)));
 const orbitOf = (l) => lerp(TUNING.nearestOrbit, TUNING.farthestOrbit, 1 - l.link) * view.spacing;
 // Size grows with relevance; "Emphasis on relevance" blends towards equal sizes
 const radiusFor = (relevance) => lerp((TUNING.smallestOrb + TUNING.largestOrb) / 2,
@@ -622,6 +652,57 @@ function suggestions(sunId, n = 3) {
 // Orbs are spread evenly in all three dimensions around the sun.
 // Distance from the sun comes from "link".
 function layout(links) {
+  const placed = links.some((l) => l.parent) ? layoutInside(links) : spread(links);
+  // 4. Optionally stretch sideways so a wide screen gets used
+  const widen = widenFactor();
+  const tall = tallFactor();
+  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; p.target.y *= tall; }
+  return placed;
+}
+
+// An inside view (Go deeper) reads like an exploded diagram: sub-systems
+// sit on a ring round the centre, facing you, and each one's parts fan out
+// beyond it, so every cluster is easy to tell apart
+function layoutInside(links) {
+  const subs = links.filter((l) => !l.parent).sort((a, b) => (b.order ?? b.relevance) - (a.order ?? a.relevance));
+  const placed = [];
+  subs.forEach((sub, i) => {
+    const a = Math.PI / 2 + (i / subs.length) * Math.PI * 2 + (subs.length % 2 ? 0 : Math.PI / subs.length);
+    const out = new THREE.Vector3(Math.cos(a), Math.sin(a) * 0.85, 0).normalize();
+    const target = out.clone().multiplyScalar(orbitOf(sub)).setZ(i % 2 ? -2 : 2);
+    placed.push({ ...sub, target });
+    const parts = links.filter((l) => l.parent === sub.to).sort((x, y) => y.relevance - x.relevance);
+    const fan = Math.min(Math.PI * 0.85, parts.length * 0.8);
+    parts.forEach((p, k) => {
+      const b = a + (parts.length > 1 ? (k / (parts.length - 1) - 0.5) * fan : 0);
+      const d = (sizeOf(sub) + sizeOf(p) + TUNING.gap) * 1.15 * view.spacing;
+      placed.push({ ...p, target: target.clone().add(new THREE.Vector3(Math.cos(b) * d, Math.sin(b) * d, k % 2 ? 2.5 : -2.5)) });
+    });
+  });
+  // Nudge apart anything that still overlaps; sub-systems stay put
+  const push = new THREE.Vector3();
+  for (let pass = 0; pass < 80; pass++) {
+    let moved = false;
+    for (let i = 0; i < placed.length; i++) {
+      for (let j = i + 1; j < placed.length; j++) {
+        const a = placed[i], b = placed[j];
+        const need = sizeOf(a) + sizeOf(b) + TUNING.gap, d = a.target.distanceTo(b.target);
+        if (d >= need) continue;
+        push.subVectors(a.target, b.target);
+        if (push.lengthSq() < 1e-6) push.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+        push.setLength((need - d) / (a.parent && b.parent ? 2 : 1));
+        if (a.parent) a.target.add(push);
+        if (b.parent) b.target.sub(push);
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return placed;
+}
+
+// Steps 1 to 3 of a normal layout: directions, then distances, then room
+function spread(links) {
   const n = links.length;
   // 1. Even directions over a sphere (a Fibonacci spiral, like seeds in a sunflower)
   const golden = Math.PI * (3 - Math.sqrt(5));
@@ -665,10 +746,6 @@ function layout(links) {
     }
     if (!moved) break;
   }
-  // 4. Optionally stretch sideways so a wide screen gets used
-  const widen = widenFactor();
-  const tall = tallFactor();
-  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; p.target.y *= tall; }
   return placed;
 }
 
@@ -760,6 +837,10 @@ function connectionsOf(id) {
     .map(([a, b, strength]) => [a === id ? b : a, strength])
     .sort((x, y) => y[1] - x[1]);
 }
+
+// Link, relevance and confidence are Claude's estimates, so they're shown as
+// a word and a rough bar rather than an exact-looking number
+const band = (v) => (v >= 0.8 ? 'Strong' : v >= 0.6 ? 'Clear' : v >= 0.4 ? 'Some' : 'Weak');
 
 // A small horizontal bar chart, drawn to scale
 function chartHTML(c) {
@@ -855,6 +936,7 @@ function orbClasses(o) {
     !o.isSun && DATA.systems[o.id] ? 'expandable' : '',
     o.isSun ? '' : o.relevance >= 0.75 ? 'rank-high' : o.relevance < 0.4 ? 'rank-low' : '',
     o.verdict ? 'v-' + o.verdict : '',
+    o.role === 'sub' ? 'role-sub' : '',
     ...keep,
   ].filter(Boolean).join(' ');
 }
@@ -871,15 +953,82 @@ function makeOrbElement(o) {
   // and dragging doesn't turn the view
   el.addEventListener('pointerdown', (e) => { o.wasOpen = o === selected; if (o.wasOpen) e.stopPropagation(); });
   el.addEventListener('click', (e) => {
-    // The card's buttons appear under your finger as it opens: don't press them by accident
-    if (!o.wasOpen) return;
+    // The card's buttons appear under your finger as it opens: don't press them by accident.
+    // A click from the keyboard (Enter or Space on a button) has no pointer, so it counts if the card is open
+    if (!(e.detail === 0 ? o === selected : o.wasOpen)) return;
     const btn = e.target.closest('[data-action]');
     if (btn) runAction(btn.dataset.action, o, btn.dataset.id);
+  });
+  // Tab reaches every orb; focusing one previews it, Enter or Space opens it
+  el.tabIndex = 0;
+  el.addEventListener('focus', () => { if (!busy && o !== selected) setHover(o); });
+  el.addEventListener('blur', () => { if (hovered === o) setHover(null); });
+  el.addEventListener('keydown', (e) => {
+    if (e.target !== el || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    if (o !== selected) openFocus(o);
   });
   el._orb = o;
   o.el = el;
   fillOrb(o);
   return el;
+}
+
+// ─── Sources: where an orb's information came from ──────────
+// Two places a source can come from: the orb's own research (opening it),
+// and, inside a deep map, the deeper pass that put the orb there (each part
+// cites the sources that back it). Nothing here is made up by the page:
+// it only shows what the research returned, and says how it was found.
+const SOURCE_NOTES = {
+  web: 'Found by web search while Claude researched this. Every link is a page the search actually returned; links Claude wrote that the search never returned are dropped.',
+  named: 'No web search was used here (on a Claude plan, Claude can’t browse the web from this page), so these are references Claude named from its own knowledge. They haven’t been checked online. Use “find” to look each one up.',
+  unlinked: 'Entries without a link are points Claude made without a page from its search to back them.',
+  demo: 'Preloaded for this demo: references Claude named from its own knowledge when the demo was made, without browsing the web. They haven’t been checked online. Use “find” to look each one up.',
+  example: 'These are examples showing how sources and their ratings look. Ask your own question to get real ones.',
+};
+const searchLink = (base, q) => base + encodeURIComponent(q);
+function sourceLine(src) {
+  const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
+  const find = !src.url && (src.checked === 'named' || src.checked === 'unlinked' || src.checked === 'demo')
+    ? ` <a class="src-search" href="${esc(searchLink('https://www.google.com/search?q=', src.title))}" target="_blank" rel="noopener noreferrer">find ↗</a>` : '';
+  return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span>${src.video ? '<em class="video-badge">▶ Video</em>' : ''}<b>${esc(src.type)}</b> ${title}${find}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}${src.host ? `<span class="src-host">${esc(src.host)}</span>` : ''}</span></li>`;
+}
+function sourcesFor(o) {
+  const sunId = trail[trail.length - 1];
+  const more = DATA.details?.[o.id] || {};
+  const own = (more.sources || []).map((s) => ({ checked: more.live ? 'named' : 'example', ...s }));
+  const inside = !o.isSun ? DATA.inside[sunId] : null;
+  const cited = inside ? (inside.cites?.[o.id] || []).map((i) => inside.sources[i]).filter(Boolean) : [];
+  const key = (s) => (s.url || s.title).toLowerCase();
+  const ownKeys = new Set(own.map(key));
+  const fromPass = cited.filter((s) => !ownKeys.has(key(s)));
+  const all = [...own, ...fromPass];
+  const videos = all.filter((s) => s.video);
+  const list = (items) => `<ul class="sources">${items.map(sourceLine).join('')}</ul>`;
+  const parts = [];
+  // How these were found, most trustworthy first
+  const kinds = [...new Set(all.map((s) => s.checked))].sort((a, b) => ['web', 'unlinked', 'named', 'demo', 'example'].indexOf(a) - ['web', 'unlinked', 'named', 'demo', 'example'].indexOf(b));
+  for (const k of kinds) if (SOURCE_NOTES[k]) parts.push(`<p class="src-note">${SOURCE_NOTES[k]}</p>`);
+  if (more.searched) parts.push(`<p class="src-note">Claude’s searches returned ${more.searched} page${more.searched === 1 ? '' : 's'}; these are the ones it used.</p>`);
+  if (videos.length) parts.push(`<section class="section"><h3>Videos</h3>${list(videos)}</section>`);
+  const ownText = own.filter((s) => !s.video), passText = fromPass.filter((s) => !s.video);
+  if (ownText.length) parts.push(`<section class="section"><h3>${more.live ? 'From researching this orb' : 'Sources <span>· examples of the rating system</span>'}</h3>${list(ownText)}</section>`);
+  if (passText.length) parts.push(`<section class="section"><h3>From the deeper pass on ${esc(DATA.topics[sunId].title)}</h3>${list(passText)}</section>`);
+  if (!all.length) {
+    parts.push(`<p class="src-note">${more.loading ? 'Researching… sources appear here when Claude finishes.'
+      : more.error ? 'The research didn’t finish, so there are no sources yet.'
+      : live() ? 'No sources yet. They appear here once Claude has researched this orb.'
+      : 'No sources for this example orb. With Claude on, opening an orb researches it and lists its sources here.'}</p>`);
+  }
+  if (all.length && !videos.length && kinds.includes('web')) parts.push('<p class="src-note">The web search didn’t turn up a video for this.</p>');
+  // Searches the person can run themselves, clearly not sources
+  const t = DATA.topics[o.id].title, context = o.isSun ? '' : ' ' + DATA.topics[sunId].title;
+  const q = (t + (o.role ? context : '')).trim();
+  parts.push(`<section class="section"><h3>Look further yourself <span>· searches, not sources</span></h3><div class="find-more">
+    <a href="${esc(searchLink('https://www.youtube.com/results?search_query=', q))}" target="_blank" rel="noopener noreferrer">▶ Videos on YouTube</a>
+    <a href="${esc(searchLink('https://scholar.google.com/scholar?q=', q))}" target="_blank" rel="noopener noreferrer">Papers on Google Scholar</a>
+    <a href="${esc(searchLink('https://en.wikipedia.org/w/index.php?search=', t))}" target="_blank" rel="noopener noreferrer">Wikipedia</a></div></section>`);
+  return { html: parts.join(''), count: all.length, videos: videos.length };
 }
 
 // Everything inside an orb. Called again when research arrives.
@@ -890,10 +1039,12 @@ function fillOrb(o) {
   if (o.verdict === 'yes') tag = '✓ Relevant';
   else if (o.verdict === 'no') tag = '✕ Not relevant';
   else if (o.cameFrom) tag = 'Came from';
+  else if (o.role === 'sub') tag = 'Sub-system';
   else if (o.lead) tag = 'Hidden lead';
+  else if (o.isSun && topic.inside) tag = 'Inside';
   const pressed = (v) => String(o.verdict === v);
   const meter = (name, value) =>
-    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
+    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${band(value)}</output></dd></div>`;
   const more = DATA.details?.[o.id] || {};
   const links = o.isSun ? [] : connectionsOf(o.id);
   // A hand-made drawing for the example topics, else one Claude described
@@ -902,15 +1053,40 @@ function fillOrb(o) {
   let body;
   if (more.loading) body = `<p class="about-text preview-text">${esc(more.preview || '')}</p><p class="researching"><span class="spinner"></span>${planReady
     ? 'Researching in depth on your plan…'
+    : demo() ? 'Researching in depth with Claude…'
     : `Researching in depth with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and the web' : ''}…`}</p>`;
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
+  else if (demo() && !DEMO.hasDetails(topic.title)) body = `<p class="slot">${DEMO_END}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
   else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in Settings to research any topic in depth.'}</p>`;
-  const sourceLine = (src) => {
-    const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
-    return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
-  };
+  const sources = sourcesFor(o);
+  const tab = o.tab === 'sources' ? 'sources' : 'about';
+  const deeperHere = canGoDeeper(o.id);
+  const actions = [
+    o.isSun ? '' : canExpand(o.id) ? '<button class="orb-expand" type="button" data-action="expand">Expand</button>' : '',
+    deeperHere ? '<button class="orb-deeper" type="button" data-action="deeper">Go deeper</button>' : '',
+  ].filter(Boolean).join('');
+  const actionNote = !actions && !o.isSun && !topic.inside
+    ? `<p class="slot">${demo() ? DEMO_END : inViewer ? 'Sign in to claude.ai to expand any orb or go deeper' : 'Connect Claude to expand any orb or go deeper'}</p>`
+    : deeperHere && !o.isSun ? '<p class="action-note">Expand shows its neighbours. Go deeper opens it up: sub-systems, parts and plausible connections, then you pick a thread.</p>'
+    : deeperHere ? '<p class="action-note">Go deeper opens the centre up into sub-systems, parts and plausible connections, then you pick a thread.</p>' : '';
+  const inside = o.isSun && topic.inside ? DATA.inside[o.id] : null;
+  const overview = `
+        ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
+        ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
+        ${body}
+        ${more.chart ? chartHTML(more.chart) : ''}
+        ${more.check?.length ? `<section class="section"><h3>${session.mode === 'explore' && more.live ? 'Worth exploring next' : 'What to check'}</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
+        ${inside?.threads?.length ? `<section class="section"><h3>Threads to follow next <span>· you choose</span></h3><div class="threads">${inside.threads.map((t, i) =>
+          `<button type="button" class="thread-btn" data-action="thread" data-id="${i}"><b>${esc(t.title)}</b>${t.why ? `<small>${esc(t.why)}</small>` : ''}</button>`).join('')}</div></section>` : ''}
+        ${o.isSun ? '' : `<dl class="meters">${o.role ? '' : meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
+        ${links.length ? `<section class="section"><h3>${DATA.inside[trail[trail.length - 1]] ? 'Plausibly connected to' : 'Strongly linked to'}</h3><div class="chips">${links.map(([id]) =>
+          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
+        ${actions ? `<div class="actions">${actions}</div>` : ''}
+        ${actionNote}`;
+  // Re-rendering replaces the card's buttons; keep keyboard focus on the same one
+  const focusedAction = el.contains(document.activeElement) && document.activeElement !== el ? document.activeElement.dataset?.action : null;
   el.innerHTML = `
     <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
     <div class="inner">
@@ -918,6 +1094,10 @@ function fillOrb(o) {
       <span class="rel"></span>
       <span class="t"></span>
       <span class="l"></span>
+      <div class="card-tabs" role="tablist" aria-label="What to show">
+        <button type="button" class="card-tab" role="tab" data-action="tab" data-id="about" aria-selected="${tab === 'about'}">Overview</button>
+        <button type="button" class="card-tab" role="tab" data-action="tab" data-id="sources" aria-selected="${tab === 'sources'}">Sources${sources.count ? ` · ${sources.count}` : ''}${sources.videos ? ` · ▶ ${sources.videos}` : ''}</button>
+      </div>
       ${o.isSun ? '' : `<div class="verdict" role="group" aria-label="Is this relevant?">
         <p class="verdict-q">${o.verdict ? 'Marked. Change your mind any time.' : 'Is this relevant to what you’re looking for?'}</p>
         <div class="verdict-row">
@@ -925,26 +1105,15 @@ function fillOrb(o) {
           <button type="button" class="verdict-btn no" data-action="cross" aria-pressed="${pressed('no')}"><span aria-hidden="true">✕</span>Not relevant</button>
         </div>
       </div>`}
-      <div class="more">
-        ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
-        ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
-        ${body}
-        ${more.chart ? chartHTML(more.chart) : ''}
-        ${more.check?.length ? `<section class="section"><h3>${session.mode === 'explore' && more.live ? 'Worth exploring next' : 'What to check'}</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
-        ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
-          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
-        ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : canExpand(o.id)
-          ? '<button class="orb-expand" type="button" data-action="expand">Expand</button>'
-          : `<p class="slot">${inViewer ? 'Sign in to claude.ai to expand any orb' : 'Connect Claude to expand any orb'}</p>`}
-      </div>
+      <div class="more">${tab === 'sources' ? sources.html : overview}</div>
     </div>`;
   el.querySelector('.rel').textContent = relationText(o);
   el.querySelector('.t').textContent = topic.title;
   el.querySelector('.l').textContent = topic.liner;
   o.inner = el.querySelector('.inner');   // measured every frame to fit the card
+  labelOrb(o);
   // The longest word sets a ceiling on text size, so long words never get cut off
+  if (focusedAction) el.querySelector(`[data-action="${focusedAction}"]`)?.focus({ preventScroll: true });
   el.style.setProperty('--longest', Math.max(7, ...topic.title.split(/\s+/).map((w) => w.length)));
   // Once a picture arrives the card may need to grow
   el.querySelector('.photo img')?.addEventListener('error', (e) => e.target.closest('figure').remove());
@@ -981,7 +1150,321 @@ function makeLine() {
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
   const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
   world.add(line);
+  makeThreads(line);
   return line;
+}
+function disposeLine(line) {
+  world.remove(line);
+  line.geometry.dispose();
+  line.material.dispose();
+  line.userData.weave?.mesh.material.dispose();
+}
+
+// ─── Woven threads: every line drawn as a few glowing strands ─
+// A port of the WebThreads component from React Bits (reactbits.dev), turned
+// from one full-screen weave into a small weave per line. Each line gets a
+// flat strip facing the screen, and the shader draws 2 to 6 strands inside it
+// that weave around the straight line and pinch together where it meets each
+// orb. Stronger links get more strands and more light. As in the original,
+// strands draw in one after another when a line appears, the strand under the
+// mouse lights up while its neighbours recede, and a click on the map sends
+// light along every thread. The plain line stays underneath, unseen, so line
+// hover and tap still work the same way. Original notice:
+//
+//   MIT + Commons Clause License Condition v1.0. Copyright (c) 2026 David Haz.
+//   Permission is hereby granted, free of charge, to any person obtaining a copy
+//   of this software and associated documentation files (the "Software"), to deal
+//   in the Software without restriction, including without limitation the rights
+//   to use, copy, modify, merge, publish, and distribute the Software as part of
+//   an application, website, or product, subject to the following conditions:
+//   The above copyright notice and this permission notice shall be included in all
+//   copies or substantial portions of the Software. Commons Clause: you may not
+//   sell, sublicense, or redistribute the components themselves, whether alone, in
+//   a bundle, or as a ported version. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT
+//   WARRANTY OF ANY KIND. Full text: github.com/DavidHDev/react-bits/blob/main/LICENSE.md
+const THREADS = TUNING.threads;
+const MAX_STRANDS = 6;
+const threadGeometry = new THREE.PlaneGeometry(1, 1);
+// Shared by every line: one clock, one weave, one look
+const threadUniforms = {
+  uRes: { value: new THREE.Vector2(1, 1) },
+  uPhase: { value: 0 },
+  uClock: { value: 0 },
+  uWaves: { value: (Math.PI * 2) / THREADS.wave },
+  uTaper: { value: THREADS.taper },
+  uWidth: { value: THREADS.width },
+  uFalloff: { value: THREADS.falloff },
+  uBrightness: { value: THREADS.brightness },
+  uLight: { value: 0 },
+  uCore: { value: new THREE.Color(1, 1, 1) },
+  uPad: { value: THREADS.pad },
+};
+// Threads need WebGL2; without it (or if the shader won't build) lines stay plain
+let threadsOk = renderer.capabilities.isWebGL2;
+const threadsOn = () => threadsOk && view.threads;
+renderer.debug.onShaderError = (gl, program, vs, fs) => {
+  console.error('Celestial: a shader failed to build.', gl.getProgramInfoLog(program), gl.getShaderInfoLog(vs), gl.getShaderInfoLog(fs));
+  if (gl.getShaderSource(fs)?.includes('uSurge')) { threadsOk = false; syncViewPanel(); }
+};
+let threadClock = 0;
+
+const THREAD_VERTEX = /* glsl */`
+  uniform vec3 uA, uB;
+  uniform vec2 uRes;
+  uniform float uHalf, uPad;
+  varying vec2 vLocal;   // pixels along the line from end A, and across it
+  varying float vLen;    // the line's length in pixels
+  void main() {
+    // Both ends on screen, then a strip around the line between them
+    vec4 ca = projectionMatrix * modelViewMatrix * vec4(uA, 1.0);
+    vec4 cb = projectionMatrix * modelViewMatrix * vec4(uB, 1.0);
+    vec2 a = (ca.xy / ca.w * 0.5 + 0.5) * uRes;
+    vec2 b = (cb.xy / cb.w * 0.5 + 0.5) * uRes;
+    float len = max(length(b - a), 0.001);
+    vec2 t = (b - a) / len, n = vec2(-t.y, t.x);
+    float along = mix(-uPad, len + uPad, uv.x);
+    float across = (uv.y * 2.0 - 1.0) * uHalf;
+    vLocal = vec2(along, across);
+    vLen = len;
+    gl_Position = vec4((a + t * along + n * across) / uRes * 2.0 - 1.0, 0.0, 1.0);
+  }`;
+const THREAD_FRAGMENT = /* glsl */`
+  #define MAX_STRANDS ${MAX_STRANDS}
+  uniform float uCount, uPhase, uClock, uSpread, uWaves, uTaper, uWidth, uGlow, uFalloff;
+  uniform float uBrightness, uOpacity, uLight, uLit, uFrom, uPad;
+  uniform vec3 uColA, uColB, uCore;
+  uniform vec4 uIntro;      // seconds since the line appeared, stagger, seconds per stroke, 1 while drawing in
+  uniform vec3 uSurge;      // seconds since a click, direction (1: A to B, -1: B to A), 1 while travelling
+  uniform float uFocus[MAX_STRANDS];
+  uniform vec2 uFocusState; // how present the mouse is, how far the other strands recede
+  varying vec2 vLocal;
+  varying float vLen;
+  const float PI = 3.14159265;
+  const float TAU = 6.28318530;
+
+  float easeInOut(float t) { return t < 0.5 ? 4.0 * t * t * t : 1.0 - pow(-2.0 * t + 2.0, 3.0) * 0.5; }
+
+  // Strand i's height above the straight line at x (0 at end A, 1 at end B),
+  // and its slope. The fan is widest mid-line and closes to a pinch at each end.
+  vec2 strand(float x, float i, float n) {
+    float env = uSpread * sin(PI * x);
+    float dEnv = uSpread * PI * cos(PI * x) / vLen;
+    float amp = (1.0 + i * uTaper) / (1.0 + (n - 1.0) * uTaper);
+    float angle = x * vLen * uWaves - uPhase + i * TAU / n;
+    return vec2(env * amp * sin(angle), amp * (dEnv * sin(angle) + env * cos(angle) * uWaves));
+  }
+
+  void main() {
+    float x = clamp(vLocal.x / vLen, 0.0, 1.0);
+    float beyond = vLocal.x - x * vLen;      // pixels past either end
+    float travel = mix(x, 1.0 - x, uFrom);   // how far along, in the direction strands draw in
+    // Nothing reaches this far from the bundle: skip the work
+    if (abs(vLocal.y) > uSpread * sin(PI * x) + uPad || abs(beyond) > uPad) discard;
+    float n = uCount;
+    float presence = uFocusState.x;
+    float settle = uFocusState.y;
+    vec3 color = vec3(0.0);
+    vec3 inkColor = vec3(0.0);
+    float energy = 0.0;
+    float ink = 0.0;
+
+    for (int k = 0; k < MAX_STRANDS; k++) {
+      float i = float(k);
+      if (i >= n) break;
+      float ci = n > 1.0 ? i / (n - 1.0) : 0.0;
+
+      float head = 2.0;
+      float bead = 0.0;
+      if (uIntro.w > 0.5) {
+        float progress = clamp((uIntro.x - i * uIntro.y) / uIntro.z, 0.0, 1.0);
+        head = mix(-0.06, 1.06, easeInOut(progress));
+        bead = sin(PI * progress);
+        if (progress <= 0.0 || travel > head) continue;
+      }
+
+      vec2 s = strand(x, i, n);
+      float d = length(vec2(beyond, (vLocal.y - s.x) / sqrt(1.0 + s.y * s.y)));
+      float focus = uFocus[k];
+      float width = uWidth * (1.0 + 0.4 * focus * presence + 0.3 * uLit);
+      float g = uGlow * pow(width / max(d, 0.3), uFalloff);
+      float onLine = exp(-d / width);
+
+      // A soft light leads each strand as it draws in
+      if (bead > 0.0) {
+        float ahead = (travel - head) * vLen;
+        g *= 1.0 + bead * 1.6 * exp(-(ahead * ahead + d * d) / 60.0);
+      }
+      // A click's light running along the strand
+      if (uSurge.z > 0.5) {
+        float p = clamp((uSurge.x - i * 0.05) / ${THREADS.surge.toFixed(2)}, 0.0, 1.0);
+        if (p > 0.0 && p < 1.0) {
+          float lead = uSurge.y > 0.0 ? mix(-0.12, 1.12, easeInOut(p)) : mix(1.12, -0.12, easeInOut(p));
+          float along = (x - lead) * uSurge.y * vLen;
+          float trail = along < 0.0 ? exp(along / 90.0) : exp(-along * along / 120.0);
+          g *= 1.0 + trail * sin(PI * p) * (0.12 + 2.8 * onLine);
+        }
+      }
+      // The strand under the mouse lifts, with a slow sheen; the rest recede
+      float sheen = pow(0.5 + 0.5 * sin(x * vLen * 0.05 - uClock * 1.4), 10.0);
+      float lift = focus * presence;
+      g *= (1.0 - settle * (1.0 - focus)) * (1.0 + lift * (0.9 + 1.4 * sheen * onLine)) * (1.0 + 0.6 * uLit);
+      g = min(g, 12.0);
+
+      vec3 tint = mix(mix(uColA, uColB, ci), uCore, 0.3 * lift);
+      color += g * tint;
+      energy += g;
+      float stroke = smoothstep(0.45, 1.3, g);
+      inkColor += tint * stroke;
+      ink += stroke;
+    }
+
+    if (uLight < 0.5) {
+      // Dark themes: light, running hot where strands cross and pinch
+      float core = smoothstep(0.5, 2.2, energy);
+      color = mix(color, uCore * energy, core * 0.5) * uBrightness;
+      float alpha = clamp(energy, 0.0, 1.0) * uOpacity;
+      gl_FragColor = vec4(min(color * alpha, vec3(1.0)), alpha);
+    } else {
+      // Light themes: crisp ink strokes with a faint haze
+      vec3 hue = ink > 0.0001 ? inkColor / ink : mix(uColA, uColB, 0.5);
+      float body = clamp(ink, 0.0, 1.0);
+      float haze = clamp(1.0 - exp(-energy * 0.3), 0.0, 1.0) * 0.12;
+      float cover = clamp(body * 0.9 + haze * (1.0 - body), 0.0, 0.95) * uOpacity;
+      gl_FragColor = vec4(hue * cover, cover);
+    }
+  }`;
+
+function makeThreads(line) {
+  const u = {
+    ...threadUniforms,
+    uA: { value: new THREE.Vector3() },
+    uB: { value: new THREE.Vector3() },
+    uHalf: { value: 1 },
+    uSpread: { value: 1 },
+    uCount: { value: 2 },
+    uGlow: { value: THREADS.glow },
+    uOpacity: { value: 0 },
+    uLit: { value: 0 },
+    uFrom: { value: 0 },
+    uColA: { value: new THREE.Color() },
+    uColB: { value: new THREE.Color() },
+    uIntro: { value: new THREE.Vector4() },
+    uSurge: { value: new THREE.Vector3() },
+    uFocus: { value: new Float32Array(MAX_STRANDS) },
+    uFocusState: { value: new THREE.Vector2() },
+  };
+  const mesh = new THREE.Mesh(threadGeometry, new THREE.ShaderMaterial({
+    uniforms: u,
+    vertexShader: THREAD_VERTEX,
+    fragmentShader: THREAD_FRAGMENT,
+    transparent: true,
+    premultipliedAlpha: true,   // the shader hands back light already multiplied by its cover
+    depthTest: false,
+    depthWrite: false,
+  }));
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -1;   // under the streams
+  mesh.visible = false;
+  line.add(mesh);
+  line.userData.weave = { mesh, u, born: -1, hiddenFor: 0, focus: u.uFocus.value, presence: 0, settle: 0, lit: 0, surge: null, spread: 0, count: 2 };
+}
+
+// Lines drawn as threads this frame, for the mouse and clicks to find
+let woven = [];
+const threadTint = new THREE.Color();
+
+// Draw one line as threads (call after setLine). show: whether the line is
+// on screen; opacity: how strong it is drawn; link: 0–1, sets the strands;
+// colA and colB: colours across the strands; fromB: strands draw in from end B
+function weave(line, show, dt, opacity = 0, link = 0, colA = null, colB = null, fromB = false) {
+  const w = line.userData.weave;
+  line.material.visible = !threadsOn();   // the plain line steps aside but still answers hover
+  if (!w) return;
+  if (!(show && threadsOn())) {
+    w.mesh.visible = false;
+    // Hidden for a moment: draw in again when it comes back
+    if ((w.hiddenFor += dt) > 0.4) w.born = -1;
+    return;
+  }
+  w.hiddenFor = 0;
+  if (w.born < 0) w.born = threadClock;
+  const { a, b, p1, p2 } = line.userData;
+  const u = w.u;
+  u.uA.value.copy(a);
+  u.uB.value.copy(b);
+  w.len = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+  w.spread = clamp(w.len * THREADS.spread, THREADS.minSpread, THREADS.maxSpread);
+  w.count = Math.round(lerp(THREADS.fewest, THREADS.most, clamp(link, 0, 1)));
+  u.uSpread.value = w.spread;
+  u.uHalf.value = w.spread + THREADS.pad;
+  u.uCount.value = w.count;
+  u.uGlow.value = THREADS.glow * (0.6 + 0.4 * link);   // stronger links shine brighter
+  u.uOpacity.value = clamp(opacity * THREADS.boost, 0, 1);
+  u.uColA.value.copy(colA);
+  u.uColB.value.copy(colB);
+  u.uFrom.value = fromB ? 1 : 0;
+  const since = threadClock - w.born;
+  const drawing = !reduceMotion && since < (w.count - 1) * THREADS.stagger + THREADS.stroke;
+  u.uIntro.value.set(since, THREADS.stagger, THREADS.stroke, drawing ? 1 : 0);
+  if (w.surge && threadClock - w.surge.at > THREADS.surge + (w.count - 1) * 0.05) w.surge = null;
+  u.uSurge.value.set(w.surge ? threadClock - w.surge.at : 0, w.surge?.dir || 1, w.surge ? 1 : 0);
+  w.mesh.visible = true;
+  woven.push(w);
+}
+// A strand's height above its line, in pixels: the same sum as in the shader
+function strandOffset(w, x, i) {
+  const n = w.count;
+  const amp = (1 + i * THREADS.taper) / (1 + (n - 1) * THREADS.taper);
+  const angle = x * w.len * threadUniforms.uWaves.value - threadUniforms.uPhase.value + (i * Math.PI * 2) / n;
+  return w.spread * Math.sin(Math.PI * x) * amp * Math.sin(angle);
+}
+// The strand nearest the mouse lights up while the others on its line
+// recede; the line being explained in Progressive mode glows
+let threadPointer = null;   // the mouse over the map (not touch, not an orb)
+let litLine = null;
+let focusTarget = null, focusStrand = -1;
+function focusThreads(dt) {
+  let target = null, strand = -1, best = Infinity;
+  const p = threadPointer && !hovered && !busy ? threadPointer : null;
+  if (p) {
+    const h = screenSize.h, py = h - p.y;   // the shader counts pixels upward
+    for (const w of woven) {
+      const { p1, p2 } = w.mesh.parent.userData;
+      const ax = p1.x, ay = h - p1.y, len = Math.max(w.len, 1);
+      const tx = (p2.x - p1.x) / len, ty = -(p2.y - p1.y) / len;
+      const along = (p.x - ax) * tx + (py - ay) * ty;
+      const across = -(p.x - ax) * ty + (py - ay) * tx;
+      if (along < 0 || along > len || Math.abs(across) > w.spread + 10) continue;
+      for (let i = 0; i < w.count; i++) {
+        const d = Math.abs(across - strandOffset(w, along / len, i));
+        const reach = w === focusTarget && i === focusStrand ? 9 : 7;   // a little sticky
+        if (d < reach && d < best) { best = d; target = w; strand = i; }
+      }
+    }
+  }
+  focusTarget = target;
+  focusStrand = strand;
+  const ease = 1 - Math.exp(-dt / 0.22), slow = 1 - Math.exp(-dt / 0.3);
+  for (const w of woven) {
+    let strongest = 0;
+    for (let i = 0; i < MAX_STRANDS; i++) {
+      w.focus[i] += ((w === target && i === strand ? 1 : 0) - w.focus[i]) * ease;
+      strongest = Math.max(strongest, w.focus[i]);
+    }
+    w.presence += ((w === target ? 1 : 0) - w.presence) * slow;
+    w.settle += (0.5 * 0.65 * strongest * w.presence - w.settle) * slow;
+    w.lit += ((w.mesh.parent === litLine ? 1 : 0) - w.lit) * slow;
+    w.u.uFocusState.value.set(w.presence * 0.7, w.settle);
+    w.u.uLit.value = w.lit;
+  }
+}
+// A click on the map sends light along every thread, from the end nearer the click
+function surgeThreads(x, y) {
+  if (!threadsOn() || reduceMotion) return;
+  for (const w of woven) {
+    const { p1, p2 } = w.mesh.parent.userData;
+    w.surge = { at: threadClock, dir: Math.hypot(x - p1.x, y - p1.y) <= Math.hypot(x - p2.x, y - p2.y) ? 1 : -1 };
+  }
 }
 
 function setLine(line, a, b) {
@@ -1015,6 +1498,8 @@ function makeOrb(spec) {
     relevance: spec.relevance ?? 1,
     isSun: Boolean(spec.isSun),
     cameFrom: spec.cameFrom,
+    role: spec.role || null,       // inside a deep map: 'sub' (a sub-system) or 'part'
+    parent: spec.parent || null,   // a part's sub-system
     target: spec.target || new THREE.Vector3(),
     start: new THREE.Vector3(),
     grow: 0,
@@ -1052,7 +1537,7 @@ function attachLinks(o) {
   }
 }
 function dropLinks(o) {
-  if (o.line) { world.remove(o.line); o.line.geometry.dispose(); o.line.material.dispose(); o.line = null; }
+  if (o.line) { disposeLine(o.line); o.line = null; }
   for (const s of o.pulse || []) { world.remove(s); s.material.dispose(); streakMaterials.delete(s.material); }
   o.pulse = null;
 }
@@ -1066,6 +1551,8 @@ function reshape(o, spec) {
     relevance: spec.relevance ?? 1,
     isSun: Boolean(spec.isSun),
     cameFrom: spec.cameFrom,
+    role: spec.role || null,
+    parent: spec.parent || null,
     target: spec.target || new THREE.Vector3(),
     verdict: spec.verdict || null,
     kept: true,
@@ -1115,6 +1602,7 @@ function retire(o, shift) {
   if (hovered === o) setHover(null);
   o.leaving = true;
   o.el.classList.add('is-leaving');
+  o.el.tabIndex = -1;
   leaving.push(o);
   const from = o.obj.position.clone();
   const to = from.clone().add(shift).multiplyScalar(TUNING.expand.drift);
@@ -1131,7 +1619,7 @@ function retireLine(c) {
   fadingLines.push(c);
   const from = c.life ?? 1;
   tween(TUNING.expand.leave * 0.6, (t) => { c.life = from * (1 - t); }, () => {
-    world.remove(c.line); c.line.geometry.dispose(); c.line.material.dispose();
+    disposeLine(c.line);
     fadingLines = fadingLines.filter((x) => x !== c);
   }, { ease: easeInOut, owner: c });
 }
@@ -1164,7 +1652,10 @@ function showSystem(sunId) {
     return o;
   });
   for (const o of old.values()) retire(o, shift);
-  for (const o of orbs) o.hub = o.isSun ? null : orbs[0];
+  // Lines run to the centre, or inside a deep map from each part to its sub-system
+  const hubs = new Map(orbs.map((o) => [o.id, o]));
+  for (const o of orbs) o.hub = o.isSun ? null : (o.parent && hubs.get(o.parent)) || orbs[0];
+  renderThreads();
   updateDimming();
 
   // Faint lines between orbiting topics that are strongly linked to each other
@@ -1269,10 +1760,11 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
     cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
     feedback: feedbackTitles(),
+    reasons: view.reasoning,   // Claude writes the reasoning behind each line only in Progressive mode
   };
   let fullDone = false, sketched = 0;
   trace.live = view.reasoning;
-  DATA.reasons[centreId] = {};
+  DATA.reasons[centreId] = view.reasoning ? {} : { _off: true };
   if (cameFromId) {
     DATA.reasons[centreId][cameFromId] = cameFromReason(centreId, cameFromId, cameFromRel);
     addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
@@ -1287,7 +1779,7 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     },
     onOrb: (orb) => {
       if (fullDone) return;
-      const id = slug(orb.title);
+      const id = topicId(orb.title);
       if (id === centreId || id === cameFromId || verdicts[id] === 'no') return;
       if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
       liveIds.add(id);
@@ -1330,6 +1822,8 @@ function cameFromReason(centreId, cameFromId, rel) {
 }
 
 const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'topic';
+// In the demo, a preloaded map that names an example topic lands on that same orb
+const topicId = (title) => (demo() && DEMO.idFor(title)) || slug(title);
 
 function storeMap(centreId, out, cameFromId, cameFromRel) {
   if (!trail.slice(0, -1).length) {
@@ -1340,7 +1834,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
   const byTitle = new Map();
   const seen = new Set([centreId]);
   const system = [];
-  const reasons = DATA.reasons[centreId] = { _centre: out.centre.reading || '' };
+  const reasons = DATA.reasons[centreId] = { _centre: out.centre.reading || '', ...(DATA.reasons[centreId]?._off ? { _off: true } : {}) };
   const reason = (r) => ({ why: r.why, from: r.basis, tier: r.tier });
   if (cameFromId) {
     system.push({ to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
@@ -1351,7 +1845,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
   for (const orb of out.orbs.slice(0, 20)) {
     const known = byTitle.get(orb.title.toLowerCase());
     if (known) continue;   // e.g. Claude's copy of the "came from" topic
-    const id = slug(orb.title);
+    const id = topicId(orb.title);
     if (seen.has(id) || verdicts[id] === 'no') continue;   // you ruled it out already
     seen.add(id);
     byTitle.set(orb.title.toLowerCase(), id);
@@ -1370,6 +1864,171 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
     });
 }
 
+// ─── Go deeper: open a topic up into its sub-systems ─────────
+// Expand moves sideways (a topic's neighbours). Go deeper moves inwards: a
+// deeper research pass splits the topic into sub-systems, the parts of each
+// and plausible connections between parts, and suggests threads to follow.
+// The result is its own map, "Inside <topic>", reached through the path at
+// the top like any other, and remembered with the rest of the research.
+const insideId = (id) => 'in:' + id;
+const canGoDeeper = (id) => !DATA.topics[id]?.inside
+  && Boolean(DATA.systems[insideId(id)] || DATA.deep[id] || (live() && (!demo() || DEMO.hasDeep(DATA.topics[id]?.title))));
+
+async function goDeeper(id) {
+  if (busy || !canGoDeeper(id)) return;
+  const deepId = insideId(id);
+  // The built-in example can be opened without Claude
+  if (!DATA.systems[deepId] && DATA.deep[id]) storeDeep(deepId, id, R.tidyDeep(DATA.deep[id], { example: true }), false);
+  const before = trail;
+  const at = trail.indexOf(deepId);
+  trail = at >= 0 ? trail.slice(0, at + 1) : [...trail, deepId];
+  // The new centre needs a name before the open card closes (closing relabels every orb)
+  if (!DATA.systems[deepId]) DATA.topics[deepId] ||= { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
+  closeFocus();
+  busy = true;
+  // The orb you chose glides into the centre and becomes the inside view's sun
+  const chosen = orbs.find((o) => o.id === id);
+  if (chosen && !DATA.systems[deepId]) DATA.topics[deepId] = { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
+  if (chosen && DATA.topics[deepId]) chosen.id = deepId;
+  if (!DATA.systems[deepId]) {
+    DATA.topics[deepId] ||= { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
+    const moved = showSystem(deepId);
+    const ok = await researchDeep(deepId, id);
+    await moved;
+    if (!ok) {
+      trail = before;
+      delete DATA.topics[deepId];
+      if (chosen) chosen.id = id;
+      await showSystem(trail[trail.length - 1]);
+      busy = false;
+      return;
+    }
+  }
+  await showSystem(deepId);
+  busy = false;
+  saveSession();
+}
+
+async function researchDeep(deepId, ofId) {
+  const topic = DATA.topics[ofId];
+  pending.add(deepId);
+  const web = !planReady && !demo() && view.webSearch;
+  setStatus(`Looking inside “${topic.title}” with ${whoAnswers()}${web ? ' and the web' : ''}. A deeper pass takes a minute or two…`);
+  try {
+    const out = await R.deep({
+      backend: backend(),
+      tier: view.tier,
+      key: apiKey,
+      model: view.model,
+      topic: topic.title,
+      liner: topic.liner,
+      mode: session.mode,
+      path: trail.slice(0, -1).map((t) => DATA.topics[t].title),
+      webSearch: web,
+      feedback: feedbackTitles(),
+    });
+    storeDeep(deepId, ofId, out, true);
+    setStatus('');
+    saveCache();
+    return true;
+  } catch (err) {
+    setStatus(R.explain(err), 'error');
+    return false;
+  } finally {
+    pending.delete(deepId);
+    updateSpend();
+  }
+}
+
+// Store a deep pass like any other system: sub-systems orbit the centre,
+// parts orbit their sub-system, plausible connections become cross-links
+function storeDeep(deepId, ofId, out, isLive) {
+  const of = DATA.topics[ofId];
+  const subs = out.subsystems;
+  DATA.topics[deepId] = { title: of.title, liner: out.centre.liner || of.liner, inside: ofId };
+  const reasons = DATA.reasons[deepId] = { _centre: out.centre.reading || '' };
+  const reason = (x) => ({ why: x.why, from: x.basis, tier: x.tier });
+  const used = new Set([deepId, ofId]);
+  const idFor = (title) => {
+    let id = slug(title), n = 2;
+    while (used.has(id)) id = `${slug(title)}-${n++}`;
+    used.add(id);
+    return id;
+  };
+  const put = (id, x) => {
+    if (!DATA.topics[id] || liveIds.has(id) || !isLive) DATA.topics[id] = { title: x.title, liner: x.liner };
+    if (isLive) liveIds.add(id);
+  };
+  const system = [], cites = {}, byTitle = new Map();
+  for (const sub of subs) {
+    const sid = idFor(sub.title);
+    put(sid, sub);
+    const top = Math.max(...sub.parts.map((p) => p.relevance));
+    system.push({ to: sid, rel: 'related', role: 'sub', link: 0.6, relevance: clamp(0.55 + top * 0.45, 0, 1) });
+    reasons[sid] = reason(sub);
+    cites[sid] = sub.cite;
+    for (const part of sub.parts) {
+      const pid = idFor(part.title);
+      put(pid, part);
+      byTitle.set(part.title.toLowerCase(), pid);
+      system.push({ to: pid, rel: 'related', role: 'part', parent: sid, link: 0.8, relevance: part.relevance });
+      reasons[pid] = reason(part);
+      cites[pid] = part.cite;
+    }
+  }
+  DATA.systems[deepId] = system;
+  DATA.crossLinks[deepId] = out.connections
+    .map((c) => [byTitle.get(c.a.toLowerCase()), byTitle.get(c.b.toLowerCase()), c])
+    .filter(([a, b]) => a && b && a !== b)
+    .map(([a, b, c]) => {
+      // Shown in Reasoning mode and on the line cards; strength follows confidence
+      reasons[`${a}~${b}`] = { why: `${DATA.topics[a].title} ${c.kind} ${DATA.topics[b].title}. ${c.why}`, from: `${c.basis} · ${c.confidence >= 0.7 ? 'likely' : c.confidence >= 0.5 ? 'plausible' : 'speculative'}`, tier: c.tier };
+      cites[`${a}~${b}`] = c.cite;
+      return [a, b, TUNING.crossLinkMin + (1 - TUNING.crossLinkMin) * c.confidence];
+    });
+  DATA.inside[deepId] = { of: ofId, threads: out.threads, sources: out.sources, cites, live: isLive };
+  DATA.details[deepId] = {
+    about: `Inside ${of.title}: ${subs.length} sub-systems (${subs.map((x) => x.title).join(', ')}), ${system.length - subs.length} parts and ${DATA.crossLinks[deepId].length} plausible connections between them.`,
+    sources: out.sources,
+    live: isLive,
+  };
+  if (isLive) liveIds.add(deepId);
+}
+
+// Pick a thread: it becomes the next deeper pass, one level further in
+function followThread(i) {
+  const sunId = trail[trail.length - 1];
+  const t = DATA.inside[sunId]?.threads?.[i];
+  if (!t || busy) return;
+  if (!live()) { toast(inViewer ? 'Following a thread needs Claude. Sign in to claude.ai and allow it for this page.' : 'Following a thread needs Claude. Add your API key in Settings.'); return; }
+  if (demo() && !DEMO.hasDeep(t.title)) { toast(DEMO_END); return; }
+  const id = 't-' + slug(t.title);
+  if (!DATA.topics[id]) DATA.topics[id] = { title: t.title, liner: t.question };
+  liveIds.add(id);
+  goDeeper(id);
+}
+
+// The threads bar under the path, while you're inside a deep map
+function renderThreads() {
+  const bar = $('threads');
+  const sunId = trail[trail.length - 1];
+  const threads = DATA.inside[sunId]?.threads || [];
+  bar.replaceChildren();
+  if (!threads.length) return;
+  const label = document.createElement('span');
+  label.className = 'threads-label';
+  label.textContent = 'Follow a thread';
+  bar.append(label);
+  threads.forEach((t, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = t.title;
+    b.title = t.question + (t.why ? '\n' + t.why : '');
+    b.addEventListener('click', () => followThread(i));
+    bar.append(b);
+  });
+}
+
 // Start a new investigation from the prompt line
 const DIAGNOSE_CUES = /^(why|how come|what causes|what's causing|what is causing)\b|\b(problem|issue|fail|failing|failure|broken|keeps|won't|doesn't|not working|declin|drop|dropping|slow|leak|crack|warp|error|wrong)\b/i;
 function modeFor(q) {
@@ -1378,6 +2037,14 @@ function modeFor(q) {
 }
 
 async function explore(query) {
+  if (demo()) {
+    // The demo only has research for the example question
+    setViewPanel(true);
+    showViewTab('Research');
+    $('api-key').focus();
+    toast('The demo runs on preloaded research for the example question. Add your Claude API key here to ask your own.');
+    return;
+  }
   if (!live()) {
     setViewPanel(true);
     showViewTab('Research');
@@ -1424,6 +2091,7 @@ async function explore(query) {
 async function loadDetails(o) {
   const id = o.id;
   if (!live() || detailsLoading.has(id)) return;
+  if (demo() && !DEMO.hasDetails(DATA.topics[id].title)) return;
   const known = DATA.details[id];
   if (known && !known.error) return;
   detailsLoading.add(id);
@@ -1464,7 +2132,7 @@ async function loadDetails(o) {
     liveIds.add(id);
     refill(id);
     // Pictures come from Wikipedia, which only your own site can reach
-    const image = backend() === 'api' ? await R.wikipediaImage(d.wikipedia) : null;
+    const image = backend() !== 'plan' ? await R.wikipediaImage(d.wikipedia) : null;
     if (image) { DATA.details[id].image = image; refill(id); }
     saveCache();
   } catch (err) {
@@ -1479,10 +2147,11 @@ const refill = (id) => { for (const o of orbs) if (o.id === id) fillOrb(o); };
 
 // ─── Remember research between visits (in this browser only) ─
 function saveCache() {
+  if (demo()) return;   // preloaded answers replay fresh on every visit
   const pick = (table) => Object.fromEntries([...liveIds].filter((id) => table[id] && !table[id].loading).map((id) => [id, table[id]]));
   try {
     localStorage.setItem(CACHE_STORE, JSON.stringify({
-      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks), reasons: pick(DATA.reasons),
+      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks), reasons: pick(DATA.reasons), inside: pick(DATA.inside),
       details: Object.fromEntries(Object.entries(pick(DATA.details)).filter(([, d]) => !d.error)),
     }));
   } catch { /* storage full or blocked: research still works, it just won't be remembered */ }
@@ -1493,7 +2162,7 @@ function saveSession() {
 function loadCache() {
   try {
     const c = JSON.parse(localStorage.getItem(CACHE_STORE) || 'null');
-    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'reasons', 'details']) {
+    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'reasons', 'details', 'inside']) {
       Object.assign(DATA[table], c[table] || {});
       Object.keys(c[table] || {}).forEach((id) => liveIds.add(id));
     }
@@ -1643,7 +2312,9 @@ function setHover(o) {
 // ─── Focus: a clicked orb opens up in place ─────────────────
 function relationText(o) {
   const sun = DATA.topics[trail[trail.length - 1]].title;
-  if (o.isSun) return 'Centre of this system';
+  if (o.isSun) return DATA.topics[o.id]?.inside ? 'Inside view · centre' : 'Centre of this system';
+  if (o.role === 'sub') return `Sub-system of ${sun}`;
+  if (o.role === 'part') return `Part of ${DATA.topics[o.parent]?.title || sun}`;
   const verb = { cause: 'Cause of', effect: 'Effect of', related: 'Related to' }[o.rel];
   return `${verb} ${sun}`;
 }
@@ -1654,6 +2325,7 @@ function openFocus(o) {
   if (view.reasoning && o.step != null && o.step > trace.at) { trace.at = o.step; trace.playing = false; renderTrace(); }
   pinned = null;
   selected = o;
+  if (o.tab !== 'about') { o.tab = 'about'; fillOrb(o); }
   updateDimming();
   if (live() && !DATA.details[o.id]?.about) loadDetails(o);
 }
@@ -1665,8 +2337,17 @@ function closeFocus() {
 }
 
 function runAction(action, o, id) {
-  if (action === 'close') closeFocus();
+  if (action === 'close') { closeFocus(); o.el.focus({ preventScroll: true }); }
   if (action === 'expand') expand(o.id);
+  if (action === 'deeper') goDeeper(o.id);
+  if (action === 'thread') followThread(Number(id));
+  if (action === 'tab') {
+    o.tab = id;
+    fillOrb(o);
+    o.inner.scrollTop = 0;
+    // Opening Sources on an orb that hasn't been researched yet starts the research
+    if (id === 'sources' && live() && !DATA.details[o.id]?.about) loadDetails(o);
+  }
   if (action === 'open') { const other = orbs.find((x) => x.id === id); if (other) openFocus(other); }
   if (action === 'retry') { delete DATA.details[o.id]; loadDetails(o); }
   if (action === 'tick') setVerdict(o, 'yes');
@@ -1692,13 +2373,24 @@ function updateDimming() {
   for (const o of orbs) {
     o.el.classList.toggle('is-dim', Boolean(selected) && o !== selected && !o.isSun);
     o.el.classList.toggle('is-selected', o === selected);
+    labelOrb(o);
   }
+}
+// What a screen reader hears: a button with the orb's name while closed,
+// a labelled group holding the card's own buttons once opened
+function labelOrb(o) {
+  const open = o === selected;
+  o.el.setAttribute('role', open ? 'group' : 'button');
+  o.el.setAttribute('aria-label', `${DATA.topics[o.id]?.title || ''}. ${relationText(o)}${o.verdict ? `. Marked ${o.verdict === 'yes' ? 'relevant' : 'not relevant'}` : ''}`);
+  if (open) o.el.removeAttribute('aria-expanded'); else o.el.setAttribute('aria-expanded', 'false');
 }
 
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   pinned = null;
+  const was = selected;
   closeFocus();
+  if (was && (was.el.contains(document.activeElement) || document.activeElement === document.body)) was.el.focus({ preventScroll: true });
   setPanel(null, false);
 });
 
@@ -1720,8 +2412,9 @@ stage.addEventListener('pointerup', (e) => {
   else if (d.orb) openFocus(d.orb);
   else {
     // In Reasoning mode, tapping a line keeps its reasoning open (how touch screens "hover")
-    pinned = view.reasoning ? lineAt(e.clientX, e.clientY) : null;
+    pinned = view.reasoning ? lineAt(e.clientX, e.clientY, e.pointerType === 'touch') : null;
     if (!pinned) closeFocus();
+    surgeThreads(e.clientX, e.clientY);
   }
 });
 
@@ -1744,6 +2437,12 @@ function renderTrail() {
     const b = document.createElement('button');
     b.type = 'button';
     b.textContent = DATA.topics[id].title;
+    if (DATA.topics[id].inside) {
+      const mark = document.createElement('span');
+      mark.className = 'inside';
+      mark.textContent = 'Inside';
+      b.prepend(mark);
+    }
     if (i === trail.length - 1) b.setAttribute('aria-current', 'step');
     else b.addEventListener('click', () => expand(id));
     nav.append(b);
@@ -1889,7 +2588,10 @@ function syncViewPanel() {
     if (!s.key) continue;
     const el = $('view-' + s.key);
     // Greyed out while the setting it depends on is off
-    const off = Boolean(s.needs && !view[s.needs]);
+    // Threads also grey out where the device can't draw them
+    const unsupported = s.key === 'threads' && !threadsOk;
+    const off = Boolean(s.needs && !view[s.needs]) || unsupported;
+    if (unsupported) el.closest('label').querySelector('small').textContent = 'This device can’t draw them (it needs WebGL2), so lines stay plain';
     (el.closest('label') || el).classList.toggle('is-off', off);
     if (s.options) {
       for (const b of el.querySelectorAll('.choice')) {
@@ -1897,7 +2599,7 @@ function syncViewPanel() {
         b.disabled = off;
       }
     } else if (el.type === 'checkbox') {
-      el.checked = view[s.key];
+      el.checked = view[s.key] && !unsupported;
       el.disabled = off;
     } else {
       el.value = view[s.key];
@@ -2007,13 +2709,14 @@ $('prompt').addEventListener('submit', (e) => {
 function updateLiveState(refill = true) {
   $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
     : inViewer ? (planBlocked === 'checking' ? 'Connecting to Claude…' : 'Example · Claude not available here')
+    : demo() ? 'Demo · preloaded research'
     : live() ? `Live · ${R.MODELS[view.model].name}`
     : 'Example · add a key to go live';
   // On claude.ai each viewer's own plan is used, so the key and API-only settings step aside
   const onClaude = planReady || inViewer;
   $('plan-note').hidden = !onClaude;
   $('plan-note').textContent = planReady
-    ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so sources are named but not linked.'
+    ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so each orb’s Sources tab lists references Claude named, with search links to find them, rather than links to pages it read.'
     : planBlocked === 'checking' ? 'Connecting to Claude…'
     : planBlocked === 'denied' ? 'Claude is switched off for this page in your settings. Turn it back on to research your own questions; it runs on your own Claude plan.'
     : BLOCKED_NOTE;
@@ -2038,7 +2741,7 @@ function updateSpend() {
   const s = R?.spend;
   $('spend').textContent = !s?.requests ? ''
     : planReady ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'} on your Claude plan`
-    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web searches` : ''}, about $${s.dollars.toFixed(2)}`;
+    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web search${s.searches === 1 ? '' : 'es'}` : ''}, ${s.tokens >= 1e6 ? (s.tokens / 1e6).toFixed(1) + 'M' : Math.max(1, Math.round(s.tokens / 1000)) + 'k'} tokens. Your Anthropic console shows the cost.`;
 }
 $('key-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -2147,7 +2850,8 @@ function updatePulse(o, sun, approach) {
   }
 }
 
-// ─── Reasoning mode: watch the map being built ───────────────
+// ─── Progressive mode: watch the map being built ─────────────
+// (Called "Reasoning" in the code and in stored settings, view.reasoning.)
 // A toggle at the top. When it's on, a system doesn't appear all at once:
 // it's rebuilt one step at a time, in the order the reasoning goes. First
 // how the question was read, then causes (strongest first), effects and
@@ -2206,19 +2910,23 @@ function describe(l) {
       tier: null,
     };
   }
+  // A map Claude made while the mode was off has no reasons; say so plainly
+  const OFF_NOTE = 'Progressive mode was off when Claude mapped this, so no reason was written for this line. Turn it on before asking a question to get one for every line.';
+  const off = Boolean(DATA.reasons[sunId]?._off);
   if (l.kind === 'orb') {
     const o = l.orb, r = reasonFor(sunId, o.id);
     const verb = { cause: 'Cause of', effect: 'Effect of', related: 'Related to' }[o.rel] || 'Related to';
+    const role = o.role === 'sub' ? `Sub-system of ${centre}` : o.role === 'part' ? `Part of ${DATA.topics[o.parent]?.title || centre}` : '';
     return {
-      kicker: `${o.lead ? 'Hidden lead · ' : ''}${verb} ${centre}`, rel: o.rel, title: DATA.topics[o.id].title,
-      why: r?.why || `No reasoning was recorded for this line. The orb’s own summary: ${DATA.topics[o.id].liner}`,
+      kicker: role || `${o.lead ? 'Hidden lead · ' : ''}${verb} ${centre}`, rel: o.rel, title: DATA.topics[o.id].title,
+      why: r?.why || (off ? `${OFF_NOTE} The orb’s own summary: ${DATA.topics[o.id].liner}` : `No reasoning was recorded for this line. The orb’s own summary: ${DATA.topics[o.id].liner}`),
       fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength: o.link,
     };
   }
   const { a, b, strength } = l.c, r = reasonFor(sunId, a.id, b.id);
   return {
-    kicker: 'Noticing a connection', rel: 'cross', title: `${DATA.topics[a.id].title} ↔ ${DATA.topics[b.id].title}`,
-    why: r?.why || 'These two were marked as strongly linked, but no reasoning was recorded for the line.',
+    kicker: DATA.inside[sunId] ? 'A plausible connection' : 'Noticing a connection', rel: 'cross', title: `${DATA.topics[a.id].title} ↔ ${DATA.topics[b.id].title}`,
+    why: r?.why || (off ? OFF_NOTE : 'These two were marked as strongly linked, but no reasoning was recorded for the line.'),
     fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength,
   };
 }
@@ -2228,13 +2936,17 @@ const linkKey = (l) => !l ? '' : l.kind === 'start' ? 'start' : l.kind === 'orb'
 // first within each, with each cross-link right after its second orb
 function startTrace() {
   const rank = { cause: 0, effect: 1, related: 2 };
-  const planets = orbs.slice(1).sort((x, y) => (rank[x.rel] ?? 2) - (rank[y.rel] ?? 2) || y.link - x.link);
+  const inside = orbs.some((o) => o.role === 'sub');
+  const byRelevance = (x, y) => y.relevance - x.relevance;
+  const planets = inside
+    ? orbs.filter((o) => o.role === 'sub').sort(byRelevance).flatMap((sub) => [sub, ...orbs.filter((o) => o.parent === sub.id).sort(byRelevance)])
+    : orbs.slice(1).sort((x, y) => (rank[x.rel] ?? 2) - (rank[y.rel] ?? 2) || y.link - x.link);
   const steps = [{ kind: 'start', orb: orbs[0], phase: 'start' }];
   const shown = new Set();
   let waiting = [...crossLines];
   for (const o of orbs) o.step = null;
   for (const o of planets) {
-    steps.push({ kind: 'orb', orb: o, phase: o.rel });
+    steps.push({ kind: 'orb', orb: o, phase: inside ? 'sub:' + (o.parent || o.id) : o.rel });
     shown.add(o);
     const ready = waiting.filter((c) => shown.has(c.a) && shown.has(c.b));
     waiting = waiting.filter((c) => !ready.includes(c));
@@ -2312,7 +3024,8 @@ function renderTrace() {
   trace.steps.slice(0, trace.at + 1).forEach((s, i) => {
     if (s.phase !== phase && s.kind !== 'cross') {
       phase = s.phase;
-      items.push(`<li class="trace-phase">${PHASES[phase] || ''}</li>`);
+      const label = PHASES[phase] || (phase.startsWith('sub:') ? `Inside ${DATA.topics[phase.slice(4)]?.title || ''}` : '');
+      items.push(`<li class="trace-phase">${esc(label)}</li>`);
     }
     const d = describe(s);
     items.push(`<li><button type="button" class="trace-step" data-step="${i}" ${i === trace.at ? 'aria-current="step"' : ''}>
@@ -2380,11 +3093,13 @@ function segDist(x, y, p, q) {
   const t = len2 ? clamp(((x - p.x) * dx + (y - p.y) * dy) / len2, 0, 1) : 0;
   return Math.hypot(x - (p.x + t * dx), y - (p.y + t * dy));
 }
-function lineAt(x, y) {
-  let best = null, bestD = 9;
+// touch: a fingertip gets a 44px-wide target; threads count their whole bundle
+function lineAt(x, y, touch = false) {
+  let best = null, bestD = touch ? 22 : 9;
   const consider = (line, link) => {
     if (!line?.visible || !line.userData.p1) return;
-    const d = segDist(x, y, line.userData.p1, line.userData.p2);
+    const w = line.userData.weave;
+    const d = segDist(x, y, line.userData.p1, line.userData.p2) - (threadsOn() && w?.mesh.visible ? w.spread * 0.7 : 0);
     if (d < bestD) { bestD = d; best = link; }
   };
   for (const o of orbs) if (!o.isSun && o.reveal > 0.5) consider(o.line, { kind: 'orb', orb: o });
@@ -2392,9 +3107,11 @@ function lineAt(x, y) {
   return best;
 }
 stage.addEventListener('pointermove', (e) => {
-  pointer = view.reasoning && e.pointerType !== 'touch' && !down && !e.target.closest?.('.orb') ? { x: e.clientX, y: e.clientY } : null;
+  const free = e.pointerType !== 'touch' && !down && !e.target.closest?.('.orb');
+  pointer = view.reasoning && free ? { x: e.clientX, y: e.clientY } : null;
+  threadPointer = free ? { x: e.clientX, y: e.clientY } : null;
 });
-stage.addEventListener('pointerleave', () => { pointer = null; });
+stage.addEventListener('pointerleave', () => { pointer = null; threadPointer = null; });
 
 // The line being explained lights up with a thicker stroke drawn over it
 const glowMaterial = new LineMaterial({ linewidth: 3.2, transparent: true, depthWrite: false });
@@ -2413,7 +3130,7 @@ function cardHTML(d) {
     <b class="lc-title">${esc(d.title)}</b>
     <p class="lc-why">${esc(d.why)}</p>
     <div class="lc-from"><span class="lc-label">${esc(d.fromLabel)}</span><span class="lc-source">${tier}<span>${esc(d.from)}</span></span></div>
-    ${d.strength != null ? `<div class="lc-meter"><span class="lc-label">Link</span><span class="bar"><i style="width:${Math.round(d.strength * 100)}%"></i></span><output>${Math.round(d.strength * 100)}</output></div>` : ''}`;
+    ${d.strength != null ? `<div class="lc-meter"><span class="lc-label">Link</span><span class="bar"><i style="width:${Math.round(d.strength * 100)}%"></i></span><output>${band(d.strength)}</output></div>` : ''}`;
 }
 function updateReasoning(sw, h) {
   const card = $('link-card');
@@ -2429,7 +3146,10 @@ function updateReasoning(sw, h) {
   const active = !view.reasoning ? null : hoverLink || pinned || (following && !selected && (trace.live || !busy) ? step : null);
   // Light up its line
   const line = active?.kind === 'orb' ? active.orb.line : active?.kind === 'cross' ? active.c.line : null;
-  glow.visible = Boolean(line?.visible && line.userData.a);
+  const shown = Boolean(line?.visible && line.userData.a);
+  // Threads light up the line themselves; plain lines get a thicker stroke drawn over them
+  litLine = shown ? line : null;
+  glow.visible = shown && !threadsOn();
   if (glow.visible) {
     const { a, b } = line.userData;
     glow.position.copy(a);
@@ -2438,7 +3158,7 @@ function updateReasoning(sw, h) {
     glowMaterial.color.copy(active.kind === 'orb' ? relationColour(active.orb) : palette.line);
     glowMaterial.opacity = 0.85 * Math.min(1, line.material.opacity * 4);
   }
-  if (!active || (active.kind !== 'start' && !glow.visible)) { card.hidden = true; cardKey = ''; return; }
+  if (!active || (active.kind !== 'start' && !shown)) { card.hidden = true; cardKey = ''; return; }
   const key = linkKey(active);
   if (key !== cardKey) {
     cardKey = key;
@@ -2500,6 +3220,11 @@ function frame(now) {
   lastNow = now;
   const seconds = now / 1000;
   streamClock += dt * view.streamSpeed;
+  // Threads weave unless motion is reduced or orb motion is off; the clock still runs for clicks and draw-ins
+  threadClock += dt;
+  if (!reduceMotion && view.organic) threadUniforms.uPhase.value += dt * THREADS.speed;
+  threadUniforms.uClock.value = reduceMotion ? 0 : threadClock;
+  woven = [];
   if (view.backdropMotion && !reduceMotion) backdropClock += dt;
 
   for (let i = tweens.length - 1; i >= 0; i--) {
@@ -2526,7 +3251,10 @@ function frame(now) {
   for (const o of all) {
     // Reasoning mode: an orb comes out of the sun when the build reaches its step
     o.reveal += (revealGoal(o) - o.reveal) * revealRate;
-    if (o.reveal < 0.999 && o.hub && !o.leaving) o.obj.position.copy(o.target).multiplyScalar(o.reveal);
+    if (o.reveal < 0.999 && o.hub && !o.leaving) {
+      if (o.hub.isSun) o.obj.position.copy(o.target).multiplyScalar(o.reveal);
+      else o.obj.position.lerpVectors(o.hub.target, o.target, o.reveal);
+    }
     o.obj.getWorldPosition(worldPos);
     const camDist = camera.position.distanceTo(worldPos);
     // Open up smoothly on hover (preview) or click (full)
@@ -2596,7 +3324,10 @@ function frame(now) {
     }
     // Less relevant orbs recede, so the eye lands on the relevant ones first
     if (!o.isSun) fade *= lerp(1, lerp(TUNING.leastRelevantFade, 1, o.relevance), view.hierarchy);
-    if (o.verdict === 'no') fade *= 0.6;   // ruled out: fades back
+    // The ring keeps the full fade, so depth and relevance still read at a glance
+    o.el.style.setProperty('--ring', clamp(fade / TUNING.readable, 0.2, 1).toFixed(2));
+    fade = Math.max(fade, TUNING.readable);
+    if (o.verdict === 'no') fade = 0.55;   // ruled out: fades back, still legible
     if (o.verdict === 'yes') fade = Math.max(fade, 0.95);   // relevant: stays clear
     o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5) * (1 - o.exit) * o.reveal;
     o.el.style.opacity = o.fade.toFixed(3);
@@ -2609,7 +3340,8 @@ function frame(now) {
     o.linkIn += ((o.leaving ? 0 : 1) - o.linkIn) * settle;
     if (o.line) {
       const faint = view.reasoning ? TUNING.reasonLine
-        : view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine : 0;
+        : view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine
+        : o.role ? TUNING.centreLine * 1.4 : 0;   // inside a deep map the structure always shows
       const dim = selected && selected !== o ? 0.4 : 1;
       const strength = Math.max(faint * o.fade * dim, 0.6 * o.k) * o.grow * o.linkIn;
       o.line.visible = strength > 0.005 && Boolean(sun);
@@ -2617,7 +3349,10 @@ function frame(now) {
         edgePoints(o, sun);
         setLine(o.line, pathFrom, pathTo);
         o.line.material.opacity = strength;
-      }
+        // Strands in the orb's colour, the outer ones warming towards the ink; drawn in from the centre outward
+        const col = relationColour(o);
+        weave(o.line, true, dt, strength, o.link, col, threadTint.copy(col).lerp(threadUniforms.uCore.value, 0.35), true);
+      } else weave(o.line, false, dt);
     }
     if (o.pulse) updatePulse(o, sun, approach);
   }
@@ -2628,12 +3363,15 @@ function frame(now) {
     const faint = view.reasoning ? TUNING.reasonLine : TUNING.crossLine * c.strength;
     const strength = Math.max(faint * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow) * (c.life ?? 1) * c.reveal;
     c.line.visible = (view.crossLinks || view.reasoning) && strength > 0.005;
-    if (!c.line.visible) continue;
+    if (!c.line.visible) { weave(c.line, false, dt); continue; }
     edgePoints(c.a, c.b);
     setLine(c.line, pathFrom, pathTo);
     c.line.material.opacity = strength;
+    // Strands shade from one orb's colour to the other's
+    weave(c.line, true, dt, strength, c.strength, relationColour(c.a), relationColour(c.b), false);
   }
   updateReasoning(sw, h);
+  focusThreads(dt);
 
   backdropUniforms.uTime.value = backdropClock;
   backdrop.render(backdropScene, backdropCamera);
@@ -2657,6 +3395,7 @@ function resize() {
   backdrop.setSize(w, h);
   backdropUniforms.uAspect.value = w / h;
   for (const m of streakMaterials) m.resolution.set(w, h);
+  threadUniforms.uRes.value.set(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   clearTimeout(resizeTimer);

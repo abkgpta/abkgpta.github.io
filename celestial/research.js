@@ -18,12 +18,13 @@
   // The official Anthropic SDK, loaded from a CDN only when first needed
   const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@0.128.0/+esm';
 
+  // No prices here: they change, and the page can't check them. Usage is
+  // counted in tokens and searches; the Anthropic console shows the real cost.
   const MODELS = {
-    'claude-opus-5-5': { name: 'Claude Opus 5.5', input: 4, output: 20, fallback: true },
-    'claude-sonnet-5-5': { name: 'Claude Sonnet 5.5', input: 2, output: 10, fallback: true },
-    'claude-haiku-5-5': { name: 'Claude Haiku 5.5', input: 0.1, output: 0.5, fallback: false },
+    'claude-opus-5-5': { name: 'Claude Opus 5.5', fallback: true },
+    'claude-sonnet-5-5': { name: 'Claude Sonnet 5.5', fallback: true },
+    'claude-haiku-5-5': { name: 'Claude Haiku 5.5', fallback: false },
   };
-  const WEB_SEARCH_COST = 10 / 1000;   // dollars per search
 
   // ─── Prompts ───────────────────────────────────────────────
   const MAP_SYSTEM = `You map topics for Celestial, a 3D research explorer. People use it mostly to diagnose problems (trace root causes) and sometimes to learn about a subject. It works for any field.
@@ -38,15 +39,20 @@ Orbiting topics (return 12 to 18):
 - relevance (0 to 1): how much it matters for THIS line of reasoning, given the path. Spread the values out: only a few above 0.8, several below 0.4. The most relevant topics should clearly stand out.
 - Include one to three hidden leads: topics with a low general link (0.4 or less) but high relevance here (0.65 or more). Non-obvious but plausible, worth checking.
 - If a "came from" topic is given, include it with its exact title.
-- why: one or two plain sentences giving your reasoning for linking it to the centre: the mechanism, evidence or logic that connects them. The person reads this to follow how the map was built, so make each step easy to follow and remember.
-- basis: a few words saying where that reasoning comes from: the field, kind of source or body of evidence it rests on (e.g. "Heat-transfer physics", "Cohort studies of shift workers", "Common troubleshooting practice"). Write "My inference" when it is your own reasoning step rather than established knowledge.
-- tier (1 to 6): how reliable that basis is. 1 primary evidence (standards, systematic reviews, official data); 2 peer-reviewed work and academic textbooks; 3 encyclopedias, reputable journalism, official documentation; 4 expert but unvetted material; 5 opinion and community knowledge; 6 your own inference.
 
-links: 4 to 12 pairs of orbiting topics (by exact title) that are strongly connected to each other, with strength 0.6 to 1, and a why, basis and tier as above explaining what connects the two.
+links: 4 to 12 pairs of orbiting topics (by exact title) that are strongly connected to each other, with strength 0.6 to 1.
 
-centre: a short title for the centre topic (rewrite a question as the thing being investigated, e.g. "Why is my bread dense?" becomes "Dense bread"), a one-sentence liner, and reading: one or two sentences, in the first person, on how you read the request: what you decided to investigate and which kinds of topics you looked for first.
+centre: a short title for the centre topic (rewrite a question as the thing being investigated, e.g. "Why is my bread dense?" becomes "Dense bread") and a one-sentence liner.
 
 Be accurate. Prefer specific, checkable topics over vague ones. When unsure about a connection, give it a lower link rather than leaving it out.`;
+
+  // Added only while Progressive mode is on: the person is watching the map
+  // being built and wants the reasoning behind every line
+  const MAP_REASONS = `Show your reasoning. The person is watching the map being built step by step and will read why each line exists, so give every orbiting topic and every link these three fields:
+- why: one or two plain sentences giving your reasoning for the connection: the mechanism, evidence or logic behind it. Make each step easy to follow and remember.
+- basis: a few words saying where that reasoning comes from: the field, kind of source or body of evidence it rests on (e.g. "Heat-transfer physics", "Cohort studies of shift workers", "Common troubleshooting practice"). Write "My inference" when it is your own reasoning step rather than established knowledge.
+- tier (1 to 6): how reliable that basis is. 1 primary evidence (standards, systematic reviews, official data); 2 peer-reviewed work and academic textbooks; 3 encyclopedias, reputable journalism, official documentation; 4 expert but unvetted material; 5 opinion and community knowledge; 6 your own inference.
+Also give the centre a reading: one or two sentences, in the first person, on how you read the request: what you decided to investigate and which kinds of topics you looked for first.`;
 
   const MODE_NOTES = {
     diagnose: 'Mode: diagnose. The person is investigating a problem. Make about half the topics causes (including root causes further upstream), some effects, and a few related methods, tests or tools.',
@@ -66,6 +72,7 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   5 opinion and community: opinion pieces, general blogs, podcasts, general YouTube, forums, social media
   6 unsourced: a claim you are making without a source (url empty)
   Adjust a tier up or down for an unusually strong or weak example. flag is "" or one of: "Conflict of interest", "Outdated", "Disputed", "Retracted".
+  If a search turns up a good video on the topic (a lecture, talk, demonstration or explainer from a credible channel), include it with type "Video".
 - diagram: a simple picture of the idea, which the app draws from your words. Choose the kind that explains it best:
   "chain" for a mechanism or process: 3 to 6 steps in order;
   "cycle" for a feedback loop: 3 to 5 steps, the last leading back to the first;
@@ -141,49 +148,23 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
     },
   };
 
-  const MAP_SCHEMA = {
-    type: 'object',
-    additionalProperties: false,
-    required: ['centre', 'orbs', 'links'],
-    properties: {
-      centre: {
-        type: 'object',
-        additionalProperties: false,
-        required: ['title', 'liner', 'reading'],
-        properties: { title: { type: 'string' }, liner: { type: 'string' }, reading: { type: 'string' } },
-      },
-      orbs: {
-        type: 'array',
-        items: {
-          type: 'object',
-          additionalProperties: false,
-          required: ['title', 'liner', 'rel', 'link', 'relevance', 'why', 'basis', 'tier'],
-          properties: {
-            title: { type: 'string' },
-            liner: { type: 'string' },
-            rel: { type: 'string', enum: ['cause', 'effect', 'related'] },
-            link: { type: 'number' },
-            relevance: { type: 'number' },
-            why: { type: 'string' },
-            basis: { type: 'string' },
-            tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] },
-          },
-        },
-      },
-      links: {
-        type: 'array',
-        items: {
-          type: 'object',
-          additionalProperties: false,
-          required: ['a', 'b', 'strength', 'why', 'basis', 'tier'],
-          properties: {
-            a: { type: 'string' }, b: { type: 'string' }, strength: { type: 'number' },
-            why: { type: 'string' }, basis: { type: 'string' }, tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] },
-          },
-        },
-      },
-    },
-  };
+  // The shape of a map; reasons: also why/basis/tier on every orb and link
+  function mapSchema(reasons) {
+    const obj = (props) => ({ type: 'object', additionalProperties: false, required: Object.keys(props), properties: props });
+    const why = reasons ? { why: { type: 'string' }, basis: { type: 'string' }, tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] } } : {};
+    return obj({
+      centre: obj({ title: { type: 'string' }, liner: { type: 'string' }, ...(reasons ? { reading: { type: 'string' } } : {}) }),
+      orbs: { type: 'array', items: obj({
+        title: { type: 'string' },
+        liner: { type: 'string' },
+        rel: { type: 'string', enum: ['cause', 'effect', 'related'] },
+        link: { type: 'number' },
+        relevance: { type: 'number' },
+        ...why,
+      }) },
+      links: { type: 'array', items: obj({ a: { type: 'string' }, b: { type: 'string' }, strength: { type: 'number' }, ...why }) },
+    });
+  }
 
   // ─── Your Claude plan (only when the page is opened on claude.ai) ─
   let samplePromise = null;
@@ -213,18 +194,20 @@ Be accurate. Prefer specific, checkable topics over vague ones. When unsure abou
   }
 
   // How a reply should look, spelled out for requests made on your plan
-  const MAP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":"","reading":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5,"why":"","basis":"","tier":3}],"links":[{"a":"orb title","b":"orb title","strength":0.7,"why":"","basis":"","tier":3}]}';
+  const MAP_JSON = (reasons) => reasons
+    ? 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":"","reading":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5,"why":"","basis":"","tier":3}],"links":[{"a":"orb title","b":"orb title","strength":0.7,"why":"","basis":"","tier":3}]}'
+    : 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":""},"orbs":[{"title":"","liner":"","rel":"cause|effect|related","link":0.5,"relevance":0.5}],"links":[{"a":"orb title","b":"orb title","strength":0.7}]}';
   const PLAN_DETAILS = `You research one topic for Celestial, a 3D research explorer. You cannot browse the web here, so draw on what you know and be honest about it.
 
 - about: two to four plain sentences explaining what it is or how the mechanism works, in context.
 - check: two to four concrete items. When diagnosing, things to measure or look at to confirm or rule this out. When exploring, the most useful things to explore next.
-- chart: only when you know a genuinely useful, well-established numeric comparison (4 to 8 rows) — otherwise an empty rows list. Keep labels short; say in the note that values are typical.
+- chart: only when you know a genuinely useful, well-established numeric comparison (4 to 8 rows), otherwise an empty rows list. Keep labels short; say in the note that values are typical.
 - diagram: a simple picture of the idea, which the app draws from your words. Choose the kind that explains it best:
   "chain" for a mechanism or process: 3 to 6 steps in order;
   "cycle" for a feedback loop: 3 to 5 steps, the last leading back to the first;
   "hub" for what it is made of, or the factors that feed into it: 3 to 6 parts.
   Each node: label of 2 to 5 words, note of at most 10 words (may be "" for a hub). caption: one sentence saying what the diagram shows. Use kind "none" with no nodes only if no diagram would help.
-- sources: three to six that you are confident exist (textbooks, standards, reviews, landmark papers, encyclopedia articles, official bodies), described well enough to find: author or organisation, year, title. Leave url empty unless it is a stable address you are certain of, such as a Wikipedia article. Rate each with a tier:
+- sources: three to six that you are confident exist (textbooks, standards, reviews, landmark papers, encyclopedia articles, official bodies), described well enough to find: author or organisation, year, title. Leave url empty unless it is an English Wikipedia article you are certain exists. Never make up an address. Rate each with a tier:
   1 primary evidence: meta-analyses, systematic reviews, official statistics, datasets, standards, laws
   2 peer-reviewed papers, academic textbooks, institutional reports
   3 encyclopedias including Wikipedia, major news outlets, analyst reports, official documentation
@@ -253,15 +236,12 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
     return client;
   }
 
-  // Running total of what this browser session has spent
-  const spend = { dollars: 0, requests: 0, searches: 0 };
+  // Running total of what this browser session has used
+  const spend = { tokens: 0, requests: 0, searches: 0 };
   function count(model, usage) {
-    const price = MODELS[model] || MODELS['claude-opus-5-5'];
-    const input = (usage.input_tokens || 0) + (usage.cache_creation_input_tokens || 0) * 1.25 + (usage.cache_read_input_tokens || 0) * 0.1;
-    const searches = usage.server_tool_use?.web_search_requests || 0;
-    spend.dollars += (input * price.input + (usage.output_tokens || 0) * price.output) / 1e6 + searches * WEB_SEARCH_COST;
+    spend.tokens += (usage.input_tokens || 0) + (usage.cache_creation_input_tokens || 0) + (usage.cache_read_input_tokens || 0) + (usage.output_tokens || 0);
     spend.requests += 1;
-    spend.searches += searches;
+    spend.searches += usage.server_tool_use?.web_search_requests || 0;
   }
 
   // One request. Refusals on Opus/Sonnet are retried on a fallback model
@@ -361,7 +341,8 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
   }
 
   // ─── map: the system around a topic ────────────────────────
-  async function map({ backend, tier, key, model, centre, mode, path, cameFrom, feedback }) {
+  // reasons: Progressive mode is on, so ask for the reasoning behind every line too
+  async function map({ backend, tier, key, model, centre, mode, path, cameFrom, feedback, reasons = false }) {
     const lines = [
       `Centre topic: ${centre}`,
       MODE_NOTES[mode] || MODE_NOTES.diagnose,
@@ -369,9 +350,10 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
       cameFrom ? `Came from: ${cameFrom} (include it as an orbiting topic with this exact title)` : '',
       feedbackNote(feedback),
     ].filter(Boolean);
+    const system = reasons ? MAP_SYSTEM + '\n\n' + MAP_REASONS : MAP_SYSTEM;
     let out;
     if (backend === 'plan') {
-      out = await askPlan([MAP_SYSTEM, ...lines, MAP_JSON].join('\n\n'), tier);
+      out = await askPlan([system, ...lines, MAP_JSON(reasons)].join('\n\n'), tier);
       if (!out || !Array.isArray(out.orbs)) throw { code: 'invalid_json' };
       out.centre = out.centre || {};
       out.links = Array.isArray(out.links) ? out.links : [];
@@ -381,8 +363,8 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
       return tidyMap(out);
     }
     const res = await ask(key, model, {
-      system: MAP_SYSTEM,
-      output_config: { effort: 'medium', format: { type: 'json_schema', schema: MAP_SCHEMA } },
+      system,
+      output_config: { effort: 'medium', format: { type: 'json_schema', schema: mapSchema(reasons) } },
       messages: [{ role: 'user', content: lines.join('\n') }],
     });
     const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
@@ -408,16 +390,17 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
       `Mode: ${mode === 'explore' ? 'exploring a subject' : 'diagnosing a problem'}.`,
       path.length ? `Path so far: ${path.join(' › ')}` : '',
       feedback?.yes?.length ? `The person has marked these as relevant so far: ${feedback.yes.join('; ')}. Where it helps, say how this topic relates to them.` : '',
-      webSearch ? 'Search the web for good sources first.' : 'Do not search the web: rely on what you know, rate sources honestly, and use tier 6 for claims you can’t attribute.',
+      webSearch ? 'Search the web for good sources first. If a video would help someone understand it, run one search for a video explainer too.' : 'Do not search the web: rely on what you know, rate sources honestly, and use tier 6 for claims you can’t attribute.',
     ].filter(Boolean).join('\n');
     if (backend === 'plan') {
       const brief = intro.split('\n').filter((l) => !l.startsWith('Search the web') && !l.startsWith('Do not search')).join('\n');
       const d = await askPlan(PLAN_DETAILS + '\n\n' + brief, tier);
       if (!d || typeof d !== 'object') throw { code: 'invalid_json' };
-      return tidyDetails({ wikipedia: '', ...d });
+      return tidyDetails({ wikipedia: '', ...d }, {});
     }
-    const tools = [DETAILS_TOOL, ...(webSearch ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 4 }] : [])];
+    const tools = [DETAILS_TOOL, ...(webSearch ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 5 }] : [])];
     const messages = [{ role: 'user', content: intro }];
+    const seen = new Map();   // every page the search returned or cited
     for (let round = 0; round < 4; round++) {
       const res = await ask(key, model, {
         system: DETAILS_SYSTEM,
@@ -425,8 +408,9 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
         tools,
         messages,
       });
+      collectUrls(res.content, seen);
       const call = res.content.find((b) => b.type === 'tool_use' && b.name === 'record_details');
-      if (call) return tidyDetails(call.input);
+      if (call) return tidyDetails(call.input, { seen: webSearch ? seen : null });
       messages.push({ role: 'assistant', content: res.content });
       // A long search can pause the turn; send it back so it can carry on
       if (res.stop_reason === 'pause_turn') continue;
@@ -435,19 +419,14 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
     throw new Error('Claude didn’t finish the research. Try opening the orb again.');
   }
 
-  function tidyDetails(d) {
+  function tidyDetails(d, how) {
     const rows = (d.chart?.rows || []).map((r) => ({ label: r.label, value: Number(r.value) })).filter((r) => r.label && Number.isFinite(r.value)).slice(0, 8);
     return {
       about: d.about || '',
       check: (Array.isArray(d.check) ? d.check : []).filter(Boolean).slice(0, 5),
       chart: rows.length >= 2 ? { title: d.chart.title, unit: d.chart.unit || '', note: d.chart.note || '', rows: rows.map((r) => [r.label, r.value]) } : null,
-      sources: (Array.isArray(d.sources) ? d.sources : []).filter((s) => s && s.title).slice(0, 8).map((s) => ({
-        tier: Math.min(6, Math.max(1, Math.round(s.tier) || 6)),
-        type: s.type || 'Source',
-        title: s.title || '',
-        url: /^https?:\/\//.test(s.url || '') ? s.url : '',
-        flag: s.flag || '',
-      })),
+      sources: tidySources(d.sources, how).map(({ from, ...src }) => src),
+      searched: how.seen ? how.seen.size : 0,
       diagram: tidyDiagram(d.diagram),
       wikipedia: d.wikipedia || '',
     };
@@ -463,6 +442,148 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
     return nodes.length >= 3 ? { kind: g.kind, caption: String(g.caption || ''), nodes } : null;
   }
 
+  // ─── Where the sources really came from ────────────────────
+  // With web search on, Claude reads real pages. Every address the search
+  // returned or cited is kept, and a source is only shown with a link when
+  // its address is one of them; a link Claude wrote that the search never
+  // returned is treated as made up and dropped. Without web search (always
+  // the case on a Claude plan) sources are references Claude named from its
+  // own knowledge: shown without links, except English Wikipedia articles.
+  const normUrl = (u) => {
+    try { const x = new URL(u); return (x.hostname.replace(/^www\./, '') + x.pathname.replace(/\/+$/, '') + x.search).toLowerCase(); } catch { return ''; }
+  };
+  const hostOf = (u) => { try { return new URL(u).hostname.replace(/^www\.|^m\./g, ''); } catch { return ''; } };
+  const VIDEO_HOSTS = /(^|\.)(youtube\.com|youtu\.be|vimeo\.com|ted\.com|dailymotion\.com|nebula\.tv)$/;
+  function collectUrls(content, seen) {
+    for (const b of content || []) {
+      if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) {
+        for (const r of b.content) if (r?.url) seen.set(normUrl(r.url), { url: r.url, title: r.title || '' });
+      }
+      for (const c of b.citations || []) if (c?.url) seen.set(normUrl(c.url), { url: c.url, title: c.title || '' });
+    }
+    return seen;
+  }
+  // how: { seen } after a web search, { example: true } for the built-in example, {} otherwise.
+  // Each kept source remembers its place in Claude's list (from), so citations can follow it.
+  function tidySources(list, how = {}) {
+    const out = [];
+    (Array.isArray(list) ? list : []).forEach((s, from) => {
+      if (!s || !s.title || out.length >= 8) return;
+      let url = /^https?:\/\//.test(s.url || '') ? s.url : '';
+      let checked = how.example ? 'example' : how.seen ? 'unlinked' : 'named';
+      if (how.seen && url) {
+        const hit = how.seen.get(normUrl(url));
+        if (!hit) return;
+        url = hit.url;
+        checked = 'web';
+      } else if (url && hostOf(url) !== 'en.wikipedia.org') url = '';
+      const host = url ? hostOf(url) : '';
+      out.push({
+        tier: Math.min(6, Math.max(1, Math.round(s.tier) || 6)),
+        type: String(s.type || 'Source'),
+        title: String(s.title),
+        url, host, checked,
+        video: Boolean(url) && (VIDEO_HOSTS.test(host) || /\bvideo\b/i.test(s.type || '')),
+        flag: String(s.flag || ''),
+        from,
+      });
+    });
+    return out;
+  }
+
+  // ─── deep: look inside one topic ───────────────────────────
+  // A deeper pass than map(): instead of a topic's neighbours, its insides.
+  // Sub-systems, the parts of each, plausible links between parts, and a few
+  // threads the person can choose to follow next.
+  const DEEP_SYSTEM = `You do a deeper research pass on one topic for Celestial, a 3D research explorer. The person has seen the topic's neighbours and now wants to look inside it: the sub-systems it is made of, the parts of each, and plausible connections between parts that are easy to miss. They will then choose which thread to follow, so give them good choices.
+
+- centre: title (the topic, 1 to 5 words), liner (one sentence on what is inside it), reading (one or two first-person sentences on how you decided to break it down).
+- subsystems: 3 to 5 distinct sub-systems, mechanisms, stages or component groups INSIDE the topic (not outside causes or neighbours). title 1 to 5 words; liner one plain sentence; why, basis, tier, cite; parts: 2 to 5 each.
+- parts: title 1 to 5 words, specific and checkable, unique across the whole answer; liner one plain sentence of at most 22 words; relevance 0 to 1 for the person's line of reasoning (spread the values: a few above 0.8, some below 0.4); why, basis, tier, cite.
+- connections: 3 to 8 plausible links between parts, preferably across different sub-systems. a and b are exact part titles; kind is a short verb phrase ("feeds", "limits", "amplifies", "depends on", "trades off against"); confidence 0 to 1, honestly: below 0.5 for speculative links, and say they are speculative in why; why, basis, tier, cite.
+- threads: 3 or 4 directions to explore next. title 2 to 6 words; question: the full question to research; why: one sentence on why it is worth following.
+- why: one or two plain sentences of reasoning the person can follow and remember. basis: a few words on where the reasoning comes from; "My inference" for your own reasoning step. tier 1 to 6: 1 primary evidence (standards, systematic reviews, official data); 2 peer-reviewed work and academic textbooks; 3 encyclopedias, reputable journalism, official documentation; 4 expert but unvetted material; 5 opinion and community knowledge; 6 your own inference.
+- cite: the 0-based positions in your sources list that support this item, or an empty list.`;
+  const DEEP_WEB_SOURCES = `- sources: four to eight, from your web searches only. Search first. Use only URLs that appeared in your search results; never invent or guess one. If a search finds a good video on the topic (a lecture, talk, demonstration or explainer from a credible channel), include it with type "Video". Each source: tier (as above), type (e.g. "Peer-reviewed", "Encyclopedia", "Video"), title, url, flag ("" or one of "Conflict of interest", "Outdated", "Disputed", "Retracted").
+Finish by calling the record_deep tool exactly once.`;
+  const DEEP_PLAN_SOURCES = `- sources: three to six references you are confident exist (textbooks, standards, reviews, landmark papers, encyclopedia articles, official bodies), described well enough to find: author or organisation, year, title. You cannot browse the web here: leave url empty unless it is an English Wikipedia article you are certain exists, and never make up an address. Each: tier, type, title, url, flag ("" or one of "Conflict of interest", "Outdated", "Disputed", "Retracted").`;
+  const DEEP_JSON = 'Reply with only JSON in exactly this shape: {"centre":{"title":"","liner":"","reading":""},"subsystems":[{"title":"","liner":"","why":"","basis":"","tier":3,"cite":[0],"parts":[{"title":"","liner":"","relevance":0.5,"why":"","basis":"","tier":3,"cite":[0]}]}],"connections":[{"a":"part title","b":"part title","kind":"","confidence":0.5,"why":"","basis":"","tier":3,"cite":[]}],"threads":[{"title":"","question":"","why":""}],"sources":[{"tier":3,"type":"","title":"","url":"","flag":""}]}';
+
+  const reasonProps = { why: { type: 'string' }, basis: { type: 'string' }, tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] }, cite: { type: 'array', items: { type: 'integer' } } };
+  const strictObject = (props) => ({ type: 'object', additionalProperties: false, required: Object.keys(props), properties: props });
+  const DEEP_TOOL = {
+    name: 'record_deep',
+    description: 'Record the deeper research pass. Call once, at the end.',
+    strict: true,
+    input_schema: strictObject({
+      centre: strictObject({ title: { type: 'string' }, liner: { type: 'string' }, reading: { type: 'string' } }),
+      subsystems: { type: 'array', items: strictObject({
+        title: { type: 'string' }, liner: { type: 'string' }, ...reasonProps,
+        parts: { type: 'array', items: strictObject({ title: { type: 'string' }, liner: { type: 'string' }, relevance: { type: 'number' }, ...reasonProps }) },
+      }) },
+      connections: { type: 'array', items: strictObject({ a: { type: 'string' }, b: { type: 'string' }, kind: { type: 'string' }, confidence: { type: 'number' }, ...reasonProps }) },
+      threads: { type: 'array', items: strictObject({ title: { type: 'string' }, question: { type: 'string' }, why: { type: 'string' } }) },
+      sources: { type: 'array', items: strictObject({ tier: { type: 'integer', enum: [1, 2, 3, 4, 5, 6] }, type: { type: 'string' }, title: { type: 'string' }, url: { type: 'string' }, flag: { type: 'string' } }) },
+    }),
+  };
+
+  async function deep({ backend, tier, key, model, topic, liner, mode, path, webSearch, feedback }) {
+    const brief = [
+      `Topic: ${topic}`,
+      liner ? `What it is: ${liner}` : '',
+      `Mode: ${mode === 'explore' ? 'exploring a subject' : 'diagnosing a problem'}.`,
+      path.length ? `Path so far: ${path.join(' › ')}` : '',
+      feedbackNote(feedback),
+    ].filter(Boolean).join('\n');
+    if (backend === 'plan') {
+      // A deeper pass deserves more thought than the lightest setting
+      const d = await askPlan([DEEP_SYSTEM, DEEP_PLAN_SOURCES, brief, DEEP_JSON].join('\n\n'), tier === 'quick' ? 'default' : tier);
+      return tidyDeep(d, {});
+    }
+    const tools = [DEEP_TOOL, ...(webSearch ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }] : [])];
+    const messages = [{ role: 'user', content: brief + (webSearch ? '' : '\nDo not search the web: rely on what you know, leave every url empty, and rate sources honestly.') }];
+    const system = DEEP_SYSTEM + '\n\n' + (webSearch ? DEEP_WEB_SOURCES : DEEP_PLAN_SOURCES + '\nFinish by calling the record_deep tool exactly once.');
+    const seen = new Map();
+    for (let round = 0; round < 5; round++) {
+      const res = await ask(key, model, { system, output_config: { effort: 'high' }, tools, messages });
+      collectUrls(res.content, seen);
+      const call = res.content.find((b) => b.type === 'tool_use' && b.name === 'record_deep');
+      if (call) return tidyDeep(call.input, { seen: webSearch ? seen : null });
+      messages.push({ role: 'assistant', content: res.content });
+      if (res.stop_reason === 'pause_turn') continue;
+      messages.push({ role: 'user', content: 'Please call record_deep now with what you have.' });
+    }
+    throw new Error('Claude didn’t finish the deeper pass. Try again.');
+  }
+
+  // Check and tidy a deep pass (also used for the built-in example)
+  function tidyDeep(d, how) {
+    if (!d || typeof d !== 'object' || !Array.isArray(d.subsystems)) throw { code: 'invalid_json' };
+    const sources = tidySources(d.sources, how);
+    const place = new Map(sources.map((s, i) => [s.from, i]));
+    sources.forEach((s) => delete s.from);
+    // Citations follow their source to its new place; ones to dropped sources go
+    const cite = (c) => [...new Set((Array.isArray(c) ? c : []).map((i) => place.get(Math.round(i))).filter((i) => i != null))];
+    const item = (x) => ({ title: String(x.title).trim().slice(0, 60), liner: String(x.liner || ''), ...tidyReason(x), cite: cite(x.cite) });
+    const subsystems = d.subsystems.filter((x) => x && x.title).slice(0, 6).map((x) => ({
+      ...item(x),
+      parts: (Array.isArray(x.parts) ? x.parts : []).filter((p) => p && p.title).slice(0, 6).map((p) => ({ ...item(p), relevance: clamp01(p.relevance ?? 0.5) })),
+    })).filter((x) => x.parts.length);
+    if (!subsystems.length) throw { code: 'invalid_json' };
+    return {
+      centre: { title: String(d.centre?.title || ''), liner: String(d.centre?.liner || ''), reading: String(d.centre?.reading || '') },
+      subsystems,
+      connections: (Array.isArray(d.connections) ? d.connections : []).filter((c) => c && c.a && c.b).slice(0, 10).map((c) => ({
+        a: String(c.a), b: String(c.b), kind: String(c.kind || 'links to'), confidence: clamp01(c.confidence ?? 0.5), ...tidyReason(c), cite: cite(c.cite),
+      })),
+      threads: (Array.isArray(d.threads) ? d.threads : []).filter((t) => t && t.title).slice(0, 4).map((t) => ({
+        title: String(t.title), question: String(t.question || t.title), why: String(t.why || ''),
+      })),
+      sources,
+      searched: how.seen ? how.seen.size : 0,
+    };
+  }
+
   // ─── Quick first pass: Haiku, streamed, while the full answer loads ─
   // Fast and cheap: topics arrive one per line so orbs can appear as they
   // are written, and opened orbs get a short summary to read while waiting.
@@ -472,7 +593,7 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
 Write one JSON object per line and nothing else: no code fence, no commentary.
 Line 1: {"centre":{"title":"short name","liner":"one sentence"}}
 Then 12 to 16 lines, the most relevant first, each:
-{"title":"1 to 5 words","liner":"one plain sentence linking it to the centre","rel":"cause|effect|related","link":0.0,"relevance":0.0,"why":"under 16 words: your reason for linking it to the centre"}
+{"title":"1 to 5 words","liner":"one plain sentence linking it to the centre","rel":"cause|effect|related","link":0.0,"relevance":0.0}
 rel: cause if it can cause the centre, effect if the centre leads to it, otherwise related.
 link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how much it matters for this line of reasoning; spread the values, only a few above 0.8.`;
 
@@ -520,9 +641,10 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
   }
 
   // Topics as they're written. onCentre({title, liner}) once, onOrb(orb) per topic.
-  async function quickMap({ backend, key, centre, mode, path, cameFrom, feedback, onCentre, onOrb }) {
+  async function quickMap({ backend, key, centre, mode, path, cameFrom, feedback, reasons = false, onCentre, onOrb }) {
     const prompt = [
       QUICK_MAP,
+      reasons ? 'Add to each topic line a "why" field: under 16 words, your reason for linking it to the centre.' : '',
       `Centre topic: ${centre}`,
       MODE_NOTES[mode] || MODE_NOTES.diagnose,
       path.length ? `Path so far: ${path.join(' › ')}` : '',
@@ -567,6 +689,6 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
+  window.CELESTIAL_RESEARCH = { MODELS, map, details, deep, tidyDeep, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();
 

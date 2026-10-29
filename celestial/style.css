@@ -10,9 +10,9 @@
   --ink: #15201d;
   --ink-soft: #50615b;
   --rule: #c2d1cb;
-  --accent: #c8325b;      /* the sun and hidden leads */
+  --accent: #bc2f56;      /* the sun and hidden leads */
   --cause: #5b3fe0;       /* violet: streams flowing in */
-  --effect: #00809b;      /* cyan: streams flowing out */
+  --effect: #007189;      /* cyan: streams flowing out */
   --orb-line: #85968f;
   --orb-fill: rgb(227 235 232 / 0.8);
   --3d-line: #2f3d39;
@@ -30,9 +30,11 @@
   /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
   --hot: #d0562e; --cold: #2f7fc1;
   --yes: var(--tier-3);   /* ticked as relevant */
-  --tier-1: #2c5bc9; --tier-2: #13808a; --tier-3: #3d8a4a; --tier-4: #b98512; --tier-5: #cf5a26; --tier-6: #858a92;
+  /* Light values are dark enough for 4.5:1 as text on --bg and --panel */
+  --tier-1: #2c5bc9; --tier-2: #11717a; --tier-3: #33733e; --tier-4: #845f0d; --tier-5: #a7491f; --tier-6: #62666c;
 
-  /* Helvetica Neue where installed (all Macs); Inter elsewhere */
+  /* One neutral grotesque throughout so the orbs and line art carry the character:
+     Helvetica Neue where installed (all Macs), Inter elsewhere. Plex Mono for data labels. */
   --font-display: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
@@ -71,7 +73,7 @@
 /* Dusk · light: blush, pink and lavender */
 :root[data-theme="dusk-light"] {
   --bg: #efe6ec; --panel: #faf4f8; --ink: #241a22; --ink-soft: #6c5a67; --rule: #dccad6;
-  --accent: #c46a00; --cause: #5b3fe0; --effect: #00809b;
+  --accent: #9a5300; --cause: #5b3fe0; --effect: #007189;
   --orb-line: #9c8a97; --orb-fill: rgb(239 230 236 / 0.8);
   --3d-line: #3d2f39; --3d-cause: #5b3fe0; --3d-effect: #0094b3;
   --sh-base: #efe6ec; --sh-a: #f2d8e5; --sh-b: #e3d9f1;
@@ -145,7 +147,7 @@ button, input { font: inherit; color: inherit; }
 /* ── Orbs ─────────────────────────────────────────
    At rest: a softly shifting outlined circle with the name inside.
    Hover: widens into a preview card. Click: opens into a full card.
-   Size, padding and corner shape are set every frame by app.js. */
+   Size, padding and corner shape are set every frame by the app script. */
 .orb {
   --d: 80;               /* resting diameter in px */
   --k: 0;                /* 0 → 1 as the preview opens */
@@ -168,6 +170,8 @@ button, input { font: inherit; color: inherit; }
   transition: border-color 0.5s, box-shadow 0.5s, border-width 0.5s;
 }
 .orb.is-leaving { pointer-events: none; }
+/* Far and less relevant orbs: the ring fades further than the name (--ring is set per frame) */
+.orb:not(.is-hover):not(.is-selected):not(.sun) { border-color: color-mix(in srgb, var(--line) calc(var(--ring, 1) * 100%), transparent); }
 .orb .inner > * { flex-shrink: 0; }   /* never squash text; scroll instead */
 .orb .inner {
   flex: none;
@@ -252,12 +256,12 @@ button, input { font: inherit; color: inherit; }
 .orb.is-selected .l { color: var(--ink); font-size: 14.5px; }
 .orb .more { width: 100%; justify-items: center; gap: 10px; margin-top: 8px; }
 .orb .meters { width: 100%; margin: 0; display: grid; gap: 5px; padding-top: 10px; border-top: 1px solid var(--rule); }
-.orb .meters div { display: grid; grid-template-columns: 70px 1fr 2.5ch; align-items: center; gap: 8px; }
+.orb .meters div { display: grid; grid-template-columns: 70px 1fr 6ch; align-items: center; gap: 8px; }
 .orb .meters dt { font-size: 11.5px; color: var(--ink-soft); text-align: left; }
 .orb .meters dd { margin: 0; display: contents; }
 .orb .bar { height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
 .orb .bar i { display: block; height: 100%; background: var(--line); border-radius: 2px; }
-.orb .meters output { font-family: var(--font-data); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-soft); }
+.orb .meters output { font-family: var(--font-data); font-size: 11px; text-align: right; color: var(--ink-soft); }
 .orb .slot { margin: 0; font-size: 11px; line-height: 1.35; color: var(--ink-soft); }
 .orb-expand {
   border: 0;
@@ -368,7 +372,7 @@ button, input { font: inherit; color: inherit; }
   z-index: 3;
   display: grid;
   grid-template-columns: 1fr minmax(0, 620px) 1fr;
-  grid-template-areas: "brand prompt menus" ". trail ." ". about ." ". status .";
+  grid-template-areas: "brand prompt menus" ". trail ." ". about ." ". threads ." ". status .";
   align-items: center;
   gap: 8px 20px;
   padding: calc(env(safe-area-inset-top, 0px) + 14px) 20px 0;
@@ -593,6 +597,7 @@ button, input { font: inherit; color: inherit; }
 .key-cross::before { width: 7px; height: 7px; left: 0; top: 6px; border: 1.5px solid var(--orb-line); box-shadow: 18px 0 0 -1.5px var(--panel), 18px 0 0 0 var(--orb-line); }
 .key-cross::after { width: 11px; height: 1px; left: 7px; top: 9px; border-radius: 0; background: var(--orb-line); opacity: 0.6; }
 .key-glow::before { width: 12px; height: 12px; left: 7px; top: 3px; border: 1.5px solid var(--orb-line); box-shadow: 0 0 8px 3px color-mix(in srgb, var(--accent) 45%, transparent); }
+.key-threads svg { display: block; width: 28px; height: 18px; fill: none; stroke: var(--ink-soft); stroke-width: 1.1; stroke-linecap: round; }
 .key-ring::before { width: 12px; height: 12px; left: 7px; top: 3px; border: 1.5px solid var(--ink-soft); box-shadow: 0 0 0 2px var(--panel), 0 0 0 3.5px var(--ink-soft); }
 
 /* ── Tick and cross inside an opened orb ─────────── */
@@ -628,7 +633,7 @@ button, input { font: inherit; color: inherit; }
 .plain-outlines .orb.v-yes { --line: var(--yes); }
 .orb.v-yes .tag { color: var(--yes); }
 .orb.v-no { border-style: dashed; }
-.orb.v-no:not(.is-selected) .t { color: var(--ink-soft); font-weight: 500; }
+.orb.v-no:not(.is-selected) .t { font-weight: 500; }
 .orb.v-no .tag { color: var(--ink-soft); }
 
 /* ── Findings: the running answer, bottom left ───── */
@@ -767,13 +772,85 @@ button, input { font: inherit; color: inherit; }
 .il-text { font-family: var(--font-data); font-size: 8.5px; fill: var(--ink-soft); }
 .il-head { font-family: var(--font-body); font-size: 10.5px; font-weight: 600; fill: var(--ink); }
 
+/* ── Inside an opened card: Overview / Sources tabs ─ */
+.orb .card-tabs { display: none; }
+.orb.is-selected .card-tabs {
+  display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px;
+  opacity: var(--f);
+  margin-top: 8px; padding: 3px; border-radius: 10px; background: var(--bg);
+}
+.card-tab { padding: 6px 4px; border: 0; border-radius: 8px; background: none; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); cursor: pointer; }
+.card-tab:hover { color: var(--ink); }
+.card-tab[aria-selected="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 2px rgb(0 0 0 / 0.08); }
+.orb .src-note { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--ink-soft); }
+.orb .sources li > span:last-child { min-width: 0; overflow-wrap: anywhere; }
+.orb .src-host { display: block; font-family: var(--font-data); font-size: 10.5px; color: var(--ink-soft); }
+.orb .src-search { font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
+.orb .video-badge {
+  display: inline-block; margin-right: 4px; padding: 0 6px 1px;
+  border-radius: 999px; background: var(--accent); color: var(--panel);
+  font-size: 10.5px; font-weight: 600; font-style: normal; vertical-align: 1px;
+}
+.orb .find-more { display: flex; flex-wrap: wrap; gap: 6px; }
+.orb .find-more a { padding: 3px 11px 4px; border: 1px dashed var(--rule); border-radius: 999px; font-size: 12.5px; color: inherit; text-decoration: none; }
+.orb .find-more a:hover { border-color: var(--line); }
+
+/* Go deeper: a second action beside Expand */
+.orb .actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.orb .actions .orb-expand { flex: 1; }
+.orb-deeper {
+  flex: 1;
+  border: 1.5px solid var(--line);
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.orb-deeper:hover { background: color-mix(in srgb, var(--line) 12%, var(--panel)); }
+.orb .action-note { margin: 0; font-size: 11.5px; line-height: 1.4; color: var(--ink-soft); }
+/* Sub-systems inside a deep map */
+.orb.role-sub { border-style: double; border-width: 3.5px; }
+.orb.role-sub .tag { color: var(--line); }
+.orb .threads { display: grid; gap: 6px; }
+.thread-btn {
+  display: grid; gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: var(--bg);
+  text-align: left;
+  cursor: pointer;
+}
+.thread-btn:hover { border-color: var(--line); }
+.thread-btn b { font-size: 13px; font-weight: 600; }
+.thread-btn small { font-size: 12px; line-height: 1.35; color: var(--ink-soft); }
+
+/* Threads to explore next, under the path while inside a deep map */
+.threads-bar { grid-area: threads; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin: 0; }
+.threads-bar:empty { display: none; }
+.threads-bar .threads-label { white-space: nowrap; font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-right: 2px; }
+.threads-bar button {
+  padding: 4px 12px 5px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.threads-bar button:hover { border-color: var(--accent); }
+.trail .inside { font-family: var(--font-data); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-right: 4px; }
+
 /* Relevance hierarchy: the relevant stand forward, the rest recede */
 .orb.rank-high { border-width: 2px; }
 .orb.rank-high .t { font-weight: 700; }
 .orb.rank-low { border-width: 1px; }
-.orb.rank-low .t { font-weight: 500; color: var(--ink-soft); }
+.orb.rank-low .t { font-weight: 500; }
 
-/* ── Reasoning mode ─────────────────────────────────
+/* ── Progressive mode (called Reasoning in the code) ─
    The toggle sits with the menus. The steps panel mirrors the findings
    panel on the other side, edged in violet like the streams; the line card
    follows the mouse or sits beside the line being explained. */
@@ -881,23 +958,26 @@ button, input { font: inherit; color: inherit; }
 .lc-label { font-family: var(--font-data); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--ink-soft); }
 .lc-source { display: flex; align-items: start; gap: 7px; font-size: 12.5px; line-height: 1.35; }
 .lc-source .tier { flex: none; }
-.lc-meter { display: grid; grid-template-columns: auto 1fr 2.5ch; align-items: center; gap: 8px; }
+.lc-meter { display: grid; grid-template-columns: auto 1fr 6ch; align-items: center; gap: 8px; }
 .lc-meter .bar { height: 4px; border-radius: 2px; background: var(--rule); overflow: hidden; }
 .lc-meter .bar i { display: block; height: 100%; background: var(--line); }
 .lc-meter output { font-family: var(--font-data); font-size: 11px; text-align: right; color: var(--ink-soft); }
 
 /* ── Smaller screens ──────────────────────────── */
 @media (max-width: 1200px) {
-  .top { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand prompt menus" "trail trail trail" "about about about" "status status status"; gap: 8px 12px; }
+  .top { grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "brand prompt menus" "trail trail trail" "about about about" "threads threads threads" "status status status"; gap: 8px 12px; }
   .menu-btn .menu-label { display: none; }
   .menu-btn { padding: 9px; }
 }
 @media (max-width: 640px) {
   /* Search first, then the name and menus on one line under it */
-  .top { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "prompt prompt" "brand menus" "trail trail" "about about" "status status"; padding-inline: 16px; }
+  .top { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "prompt prompt" "brand menus" "trail trail" "about about" "threads threads" "status status"; padding-inline: 16px; }
+  /* Threads scroll sideways on a phone rather than stacking up over the map */
+  .threads-bar { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+  .threads-bar button { flex: none; box-shadow: none; }
   .brand { grid-template-columns: auto minmax(0, 1fr); grid-auto-flow: column; align-items: baseline; gap: 8px; min-width: 0; }
   .brand-name { font-size: 18px; }
-  .brand-stage { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9.5px; }
+  .brand-stage { min-width: 0; justify-self: stretch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 9.5px; }
   /* The centre's one-liner is in the sun itself; on a phone the map needs the room */
   .top > .about { display: none; }
   .trail { font-size: 12px; }
@@ -913,6 +993,15 @@ button, input { font: inherit; color: inherit; }
   .tracing .findings { display: none; }
   .trace-btn { width: 36px; height: 36px; }
   .trace-play { width: 40px; height: 40px; }
+}
+/* Fingers need 44px targets; the look stays, the hit area grows */
+@media (pointer: coarse) {
+  .menu-btn, .trace-btn, .trace-play, .panel-close, .findings-toggle, .orb-close { min-width: 44px; min-height: 44px; }
+  .menu-btn { justify-content: center; }
+  .verdict-btn, .orb-expand, .orb-deeper, .view-tab, .card-tab, .choice, .prompt button, .key-row button { min-height: 44px; }
+  .orb .chip, .findings-chip, .threads-bar button, .orb .find-more a, .view-reset { min-height: 40px; display: inline-flex; align-items: center; }
+  .trail button { min-height: 40px; }
+  .link-btn { padding: 10px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .orb { transition: none; }
