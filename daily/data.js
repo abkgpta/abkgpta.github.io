@@ -1,12 +1,18 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "28 Oct 2026, 7:00 AM IST";
+const UPDATED = "29 Oct 2026, 7:06 AM IST";
 
 const QUOTE = {
-  "text": "Good design is as little design as possible.",
-  "author": "Dieter Rams"
+  "text": "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.",
+  "author": "Antoine de Saint-Exupéry"
 };
 
 const NOW = [
+  {
+    "name": "Celestial",
+    "date": "28 Oct",
+    "note": "A 3D research tool that maps a question as a solar system of related topics, now with a soundtrack.",
+    "url": "https://abkgpta.github.io/celestial/"
+  },
   {
     "name": "Ideakicks",
     "date": "24 Oct",
@@ -23,12 +29,6 @@ const NOW = [
     "note": "Online store, ecommerce logistics, city maps and a promo video plan."
   },
   {
-    "name": "Celestial",
-    "date": "13 Oct",
-    "note": "A 3D research tool that maps a question as a solar system of related topics.",
-    "url": "https://abkgpta.github.io/celestial/"
-  },
-  {
     "name": "TVET Gujarat",
     "date": "1 Oct",
     "note": "System design research: scope and stakeholder map for technical and vocational education in Gujarat."
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Bajaj Auto Q2 net profit rises 35% as revenue tops Rs 20,000 crore",
+        "title": "TVS Motor Q2 results: PAT up 52% as revenue hits Rs 17,103 crore",
         "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/news/bajaj-auto-q2-net-profit-rises-35-percent-to-rs-3354-crore-as-revenue-crosses-rs-20000-crore-135494",
-        "img": "https://img.autocarpro.in/autocarpro/e9f6c398-7308-4c16-bede-9f302257f93f_bajaj-dealer.avif",
-        "why": "Exports rose 40% to 778,528 units while domestic two-wheelers grew only 2%; electric sales neared 200,000."
+        "url": "https://www.autocarpro.in/news/tvs-motor-q2-net-profit-rises-52-percent-to-rs-1377-crore-revenue-jumps-44-percent-135533",
+        "img": "https://img.autocarpro.in/autocarpro/e56fbf38-78f3-48cc-be0d-6ab9c382f36c_tvs.avif",
+        "why": "Standalone profit hit Rs 1,377 crore, and electric two-wheeler sales jumped 133% to 1,86,186 units."
       },
       {
-        "title": "Royal Enfield Himalayan 750 first teaser out, EICMA debut expected",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/royal-enfield-himalayan-750-first-teaser-out-eicma-debut-confirmed-12559610.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/royal-enfield-himalayan-750-teased-launch-eicma-global-2.jpg",
-        "why": "Teaser points to Milan before EICMA (3–8 Nov); RE's above-350cc sales fell 26% in September."
+        "title": "Hero MotoCorp Q2FY27 results: net profit soars 42% to ₹1,861 crore",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/hero-motocorp-q2fy27-results-net-profit-soars-42-to-1-861-crore-126102801888_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2017-12/21/thumb/fitandfill/1200X628/1513859504-4316.jpg",
+        "why": "Revenue grew 23% to ₹14,971 crore on 18.68 lakh units; scooter dispatches rose 47%."
       },
       {
-        "title": "New Honda CB350C Black Edition launched: first look",
+        "title": "New KTM Duke 200 launched at Rs 2.07 lakh with quickshifter and traction control",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-honda-cb350c-black-edition-launched-first-look-12559632.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/new-honda-cb350c-black-edition-launched-7.jpg",
-        "why": "A colour-only variant at about Rs 2.32 lakh on-road, blacking out the cowl, fork lowers and mirrors."
+        "url": "https://www.rushlane.com/new-ktm-duke-200-launch-price-rs-2-07-l-quickshifter-traction-control-12559692.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/New-KTM-Duke-200-launch-7.jpg",
+        "why": "Ride-by-wire, a bi-directional quickshifter and traction control now come standard for just Rs 1,552 more."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Defender 110 India price cut by up to Rs 34 lakh",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/defender-110-india-price-cut-by-up-to-rs-34-lakh-heres-why-12559623.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/land-rover-defender-110-india-price-cut-2.jpg",
-        "why": "Local CKD assembly in Pune brings it to Rs 99 lakh; it was JLR India's bestseller in FY2026."
-      },
-      {
-        "title": "Mid SUV sales H1 FY2027: Creta leads, Maruti gains share, Bayon joins the race",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/mid-suv-sales-h1-fy-2027-creta-leads-maruti-gains-share-bayon-12559594.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/05/new-creta-hyundai-black-colour-sales-1.jpeg",
-        "why": "The segment grew 52% to 4.72 lakh units; Hyundai's share fell from 32% to 19% as Maruti hit 27%."
-      },
-      {
-        "title": "Tata Motors, Amazon partner to deploy 3,000 electric trucks",
+        "title": "Hyundai sees SUVs accounting for 75% of India sales in next 12-18 months",
         "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/news/tata-motors-amazon-partner-to-deploy-3000-electric-trucks-135493",
-        "img": "https://img.autocarpro.in/autocarpro/1bd0e09e-8741-4c22-95a9-920c2352c7fd_Untitled-Design-_2_.png",
-        "why": "Light and medium e-trucks like the Ultra E.7 start in Delhi, then the Delhi–Bengaluru–Chennai NH48 corridor."
+        "url": "https://www.autocarpro.in/news/hyundai-sees-suvs-accounting-for-75-percent-of-india-sales-in-next-12-18-months-135534",
+        "img": "https://img.autocarpro.in/autocarpro/0daa962a-87b5-4eaf-81f0-4cf2eb8b3d4d_hyundai-creta.png",
+        "why": "SUVs were 67% of Hyundai's domestic sales last quarter; the new Bayon starts at Rs 9.99 lakh."
+      },
+      {
+        "title": "New Toyota Innova Hycross facelift launch on Nov 26, flex fuel hybrid incoming",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/toyota-innova-hycross-facelift-launch-on-nov-26-flex-fuel-hybrid-12559728.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/09/toyota-innova-hycross-facelift-hybrid-interiors-spied-7.jpg",
+        "why": "Toyota has shown a strong-hybrid prototype that runs on petrol-ethanol blends up to E85."
+      },
+      {
+        "title": "2027 Maruti Fronx facelift spied: ADAS, new 1.2L 3-cylinder, rear disc brakes",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/2027-maruti-fronx-facelift-spied-adas-new-1-2l-3-cyl-rear-disc-brake-12559708.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/2027-maruti-fronx-facelift-spied.jpg",
+        "why": "The Fronx sold 1,10,135 units in April to September, up 43%, and led India's car exports."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Q3 robotics startup funding jumps as US and China lead physical AI push",
-        "source": "Crunchbase News",
-        "url": "https://news.crunchbase.com/venture/q3-2026-us-china-robotics-startup-funding-jumps-physical-ai-push",
-        "img": "https://news.crunchbase.com/wp-content/uploads/physical-ai.jpg",
-        "why": "Robotics startups raised $9.9B in Q3, over double a year ago; China leads year to date with $13.2B."
+        "title": "Simplismart bags $14 Mn to expand AI inference platform",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/simplismart-bags-14-mn-to-expand-ai-inference-platform/",
+        "img": "https://asset.inc42.com/2026/10/simplismart-funding-social-1-1.png",
+        "why": "The Indian infrastructure startup's revenue run rate grew 14X in six months; about 55% comes from the US."
       },
       {
-        "title": "Nova Spectral AI raises ₹21.2 Cr to build indigenous infrared sensor chips",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/nova-spectral-ai-raises-%e2%82%b921-2-cr-to-build-indigenous-infrared-sensor-chips/",
-        "img": "https://asset.inc42.com/2026/10/stakcbox-funding-featured-1-1-1-1.jpg",
-        "why": "Quantum-dot SWIR sensors on standard CMOS, an alternative to costly InGaAs, for drones, robots and vehicles."
+        "title": "Warhound raises $200M to engineer war dogs and arm them with Anduril gear",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/22/ben-lamm-raises-200m-for-warhound-to-engineer-war-dogs-and-arm-them-with-anduril-gear/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/Warhound.png",
+        "why": "Genetics meets defence tech: Sequoia and In-Q-Tel back the venture at a $1.2 billion valuation."
       },
       {
-        "title": "Ex-Pixxel engineer Effy John's Parsec Aerospace in talks to raise $10 Mn",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ex-pixxel-engineer-effy-johns-parsec-aerospace-in-talks-to-raise-10-mn/",
-        "img": "https://asset.inc42.com/2026/10/Parsec-Aerospace-Funding-social.jpg",
-        "why": "A stealth Bengaluru startup building next-generation aerospace engines; Nexus is expected to lead, per sources."
+        "title": "NVIDIA's tiny robots steal the show with somersaults, stumbles and funny falls",
+        "source": "Interesting Engineering",
+        "url": "https://interestingengineering.com/ai-robotics/microduck-robots-in-nvidia-demo",
+        "img": "https://cms.interestingengineering.com/wp-content/uploads/2026/10/Microduck-4.jpg",
+        "why": "The $399 Microduck packs 15 motors into a sub-2 lb body and sold out after its GTC Berlin demo."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Re:Build, which spun out Slate Auto, raises $2.1B",
+        "title": "Upwind raises $400M after walking away from Datadog acquisition offer",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/27/rebuild-which-spun-out-slate-auto-raises-2-1b/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/06/slate-auto-truck-tesla-charging.jpg",
-        "why": "A US manufacturing accelerator, led by General Catalyst and JPMorganChase, expanding hard-tech production and new startups."
+        "url": "https://techcrunch.com/2026/10/28/upwind-raises-400m-after-walking-away-from-datadog-acquisition-offer",
+        "img": "https://techcrunch.com/wp-content/uploads/2022/08/GettyImages-1197780051.jpg",
+        "why": "The Series C values the cloud security startup at $3.8B, up from $1.5B nine months ago."
       },
       {
-        "title": "Protectt.ai to acquire controlling stake in Bosch's AIShield",
+        "title": "Baillie Gifford funds slash value of holdings in Dailyhunt parent VerSe by up to 80%",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/protectt-ai-to-acquire-controlling-stake-in-boschs-aishield/",
-        "img": "https://asset.inc42.com/2026/10/Prottect-ai-Soc.jpg",
-        "why": "Protectt.ai's first acquisition: an AI-model security platform incubated at Bosch, which keeps a minority stake."
+        "url": "https://inc42.com/buzz/baillie-gifford-funds-slash-value-of-holdings-in-dailyhunt-parent-verse-by-up-to-80/",
+        "img": "https://asset.inc42.com/2026/10/Dailyjunt-social.jpg",
+        "why": "A sharp markdown for a startup that raised $805 Mn at a reported $5 Bn valuation in 2022."
       },
       {
-        "title": "Pronto founder Anjali Sardana sets up physical AI venture Provision Labs in US",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/pronto-founder-anjali-sardana-sets-up-physical-ai-venture-provision-labs-in-us-12753088",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/26/pronto-2026-10-26-14-22-59.png",
-        "why": "It will collect real-world data to train and test AI that runs robots, backed by Pronto's investors."
+        "title": "Live2.ai raises ₹130 Cr to scale AI marketing SaaS platform",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/live2-ai-raises-%e2%82%b9130-cr-to-scale-ai-marketing-saas-platform/",
+        "img": "https://asset.inc42.com/2026/10/live2.ai_soc.png",
+        "why": "An Indian SaaS built for export: revenue grew fourfold in a year and only 10% comes from India."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "L&T Q2 net profit rises 33% to ₹5,202 crore on strong order inflows",
+        "title": "Vedanta Q2 net profit jumps 151% to ₹6,202 crore, revenue rises 57%",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/l-t-q2-net-profit-rises-33-to-5-202-crore-on-strong-order-inflows-126102701204_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-08/21/thumb/fitandfill/1200X628/1724223808-4603.jpg",
-        "why": "Up from ₹3,926 crore, helped by infrastructure spending and reconstruction work in West Asia."
+        "url": "https://www.business-standard.com/amp/companies/quarterly-results/vedanta-q2-net-profit-jumps-151-to-6-202-crore-revenue-rises-57-126102801242_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-07/10/thumb/fitandfill/1200X628/1752085822-4188.jpg",
+        "why": "Record EBITDA of ₹9,938 crore, and net debt fell by ₹4,624 crore in a quarter."
       },
       {
-        "title": "Tata Capital Q2FY27 net profit surges 51% to ₹1,660 crore",
+        "title": "Adani Ports Q2 profit rises 18% to ₹3,682 crore, raises FY27 guidance",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/tata-capital-q2fy27-results-net-profit-surges-51-to-1-660-crore-126102701217_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-10/29/thumb/fitandfill/1200X628/1761735776-1144.JPG",
-        "why": "AUM rose 26% to over ₹3 trillion; the board raised its note programme from $2 billion to $3 billion."
+        "url": "https://www.business-standard.com/companies/quarterly-results/adani-ports-q2-profit-rises-18-to-3-682-crore-raises-fy27-guidance-126102801519_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-11/13/thumb/fitandfill/1200X628/1699843456-3697.jpg",
+        "why": "Revenue and EBITDA guidance both rise by ₹1,000 crore, and capex guidance by ₹3,000 crore."
       },
       {
-        "title": "Cipla Q2 net profit falls 35% to ₹878 cr as US business weighs on sales",
+        "title": "HUL Q2 results: net profit rises 4% to ₹2,790 crore, volume growth at 7%",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/amp/companies/quarterly-results/cipla-q2-net-profit-falls-35-to-878-cr-as-us-business-weighs-on-sales-126102701381_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-09/05/thumb/fitandfill/1200X628/1693926768-8959.jpg",
-        "why": "North America revenue fell 19% to $172 million, while India sales rose 12% on chronic therapies."
+        "url": "https://www.business-standard.com/companies/quarterly-results/hul-q2-fy27-net-profit-sales-volume-growth-home-care-126102800363_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-08/04/thumb/fitandfill/1200X628/1754276995-286.jpg",
+        "why": "Underlying sales growth of 15% was HUL's best in 14 quarters, a read on consumer demand."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Wed 28 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Thu 29 Oct",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Mon 2 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -255,7 +255,7 @@ const RACING = {
       "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "Last Sunday's Australian GP was cancelled for low visibility, so there was no race winner; Marc Marquez heads to Sepang this weekend 10 points ahead of Jorge Martin. WorldSBK's 2026 season has ended.",
+  "note": "No race since last week's cancelled Australian GP; Marc Marquez leads Jorge Martin by 10 points heading into Sepang this weekend. WorldSBK's 2026 season has ended.",
   "source": {
     "name": "motogp.com, Qatar GP new date and end-of-season calendar",
     "url": "https://www.motogp.com/en/news/2026/03/15/motogp-confirms-new-date-for-the-qatar-grand-prix/1005668"
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Cassius 1999",
-    "artist": "Cassius",
-    "id": "2R53yign0dvy3i4TLAr2Ud",
-    "why": "Filtered-disco French house from Philippe Zdar and Boombass, the same 1999 Paris sound as your Daft Punk and Modjo plays."
+    "title": "Talk to Me You'll Understand",
+    "artist": "Ross from Friends",
+    "id": "4Z4i631BesV0P6LTvfLAdL",
+    "why": "Hazy, warm lo-fi house from a UK producer, a close cousin to the Four Tet and Fred again.. tracks in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery Mix",
@@ -286,46 +286,47 @@ const MUSIC = {
     "date": "2026-10-26"
   },
   "lately": [
-    "DreamKiller",
-    "Daft Punk",
-    "Modjo",
     "Fred again..",
-    "Saint Etienne",
-    "X CLUB."
+    "Four Tet",
+    "Skrillex",
+    "Bicep",
+    "Overmono",
+    "Daft Punk"
   ]
 };
 
 const LEARN = {
-  "term": "Affordances and signifiers",
-  "body": "James J. Gibson coined 'affordance' in ecological psychology (1977, 1979) for the action possibilities an environment offers an animal, whether or not they are noticed: a flat, knee-high, rigid surface affords sitting. Don Norman brought the word into design in The Psychology of Everyday Things (1988), but designers began using it for any on-screen cue, so in the 2013 edition of The Design of Everyday Things he added 'signifier' for the perceivable mark that tells people where and how to act. The distinction matters in product form: a flat push plate on a door affords pushing and signals it, while a pull handle on a push door is a signifier that lies, the classic 'Norman door'. Good industrial design makes the affordance real, makes the signifier honest, and closes the loop with feedback such as a detent, click or light. A common overstatement is that good form needs no labels; cultural conventions and learned behaviour shape what people read as a signifier, so test with real users.",
+  "term": "Class-A surfacing and highlight lines",
+  "body": "Class-A surfaces are the visible, customer-facing surfaces of a car or product, built so reflections flow without breaks: at least G2 (curvature) continuity across patch boundaries, using few, low-degree Bézier or NURBS patches with tidy control nets. Surfacers judge them less by shape than by how light travels across them, using zebra stripes, reflection lines and curvature combs to expose flaws a shaded view hides. A highlight that kinks marks a G1 joint, one that suddenly changes speed marks a curvature jump, and one that wavers means too many control points. Car studios often ask for G3 on large panels such as bonnets and roofs, but past G2 the gain mostly shows on glossy paint, so matte or textured products rarely need it. The label is often overstated: Class A describes surface quality and data discipline, not good design, and a dull form can be perfectly Class A.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Affordance",
-        "note": "What the object physically allows."
+        "label": "Patches",
+        "note": "Few low-degree patches, clean control nets."
       },
       {
-        "label": "Signifier",
-        "note": "The visible cue for where and how to act.",
+        "label": "G2 joins",
+        "note": "Curvature matches across every boundary.",
         "hl": true
       },
       {
-        "label": "Mapping",
-        "note": "Control layout matches the effect."
+        "label": "Zebra",
+        "note": "Stripes expose kinks, wobbles and flats."
       },
       {
-        "label": "Feedback",
-        "note": "Click, detent or light confirms the act."
+        "label": "Highlights",
+        "note": "Reflections flow unbroken over the form."
       }
     ],
-    "caption": "Make the action possible, then make it visible."
+    "caption": "Judge a surface by how light moves across it."
   },
   "source": {
-    "name": "Wikipedia: Affordance",
-    "url": "https://en.wikipedia.org/wiki/Affordance"
+    "name": "Wikipedia: Class A surface",
+    "url": "https://en.wikipedia.org/wiki/Class_A_surface"
   },
   "past": [
+    "Affordances and signifiers",
     "Gestalt principles in product form",
     "The golden ratio: use and myth",
     "Draft angles and the parting line",
@@ -334,14 +335,14 @@ const LEARN = {
 };
 
 const DESIGN = {
-  "name": "Anglepoise 1227 lamp",
-  "designer": "George Carwardine",
-  "year": "1935",
-  "why": "Carwardine, an automotive engineer working on suspension, used constant-tension springs so the arm balances and holds any position without clamps or locks. The 1227 brought that mechanism into a three-spring domestic lamp, where the stepped base, jointed arm and bell shade all read directly as the way it works.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Anglepoise1227.jpg?width=1200",
+  "name": "Porsche 911 (original 901)",
+  "designer": "Ferdinand Alexander Porsche",
+  "year": "1963",
+  "why": "F. A. Porsche drew a fastback whose single roofline runs unbroken from windscreen to tail, with upright round headlamps set into long front wings. The form was so resolved that Porsche has evolved it rather than replaced it for six decades, and the low nose and sloping tail read directly as a rear-engined car.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1964_Porsche_911_-_yellow_-_fvl.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Anglepoise1227.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:1964_Porsche_911_-_yellow_-_fvl.jpg"
   }
 };
 
@@ -409,6 +410,11 @@ const LAUNCHES = {
       "price": "₹19–22 lakh"
     },
     {
+      "model": "Toyota Innova Hycross facelift",
+      "when": "26 Nov 2026",
+      "price": "₹20–33 lakh (est.)"
+    },
+    {
       "model": "JSW Motors Combat (hybrid SUV)",
       "when": "4 Dec 2026",
       "price": "₹38 lakh"
@@ -420,7 +426,8 @@ const LAUNCHES = {
     }
   ],
   "source": {
-    "name": "Autocar India, upcoming bikes and cars",
+    "name": "Autocar India upcoming bikes and cars; Rushlane",
     "url": "https://www.autocarindia.com/upcoming-bikes"
   }
 };
+
