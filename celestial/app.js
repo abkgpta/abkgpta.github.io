@@ -545,15 +545,19 @@ const inViewer = Boolean(window.claude?.use);
 let planReady = false;              // true when research can run on the viewer's Claude plan
 const BLOCKED_NOTE = 'claude.ai isn’t letting this page use Claude for you here, and doesn’t say why. Things to try: open the link in a web browser (not the mobile app) while signed in to claude.ai, then reload; check that your account or organisation allows artifacts to use Claude. Meanwhile you can explore the example.';
 let planBlocked = 'checking';       // on claude.ai without Claude: 'checking' | 'denied' | 'unavailable'
-const live = () => Boolean(R && (planReady || apiKey));
-const backend = () => (planReady ? 'plan' : 'api');
-const whoAnswers = () => (planReady ? 'your Claude plan' : R.MODELS[view.model].name);
+// Only on this site: with no key, research replays preloaded answers (demo.js)
+const DEMO = window.CELESTIAL_DEMO;
+const demo = () => Boolean(DEMO) && !inViewer && !apiKey;
+const live = () => Boolean(R && (planReady || apiKey || demo()));
+const backend = () => (planReady ? 'plan' : demo() ? 'demo' : 'api');
+const whoAnswers = () => (planReady ? 'your Claude plan' : demo() ? 'Claude' : R.MODELS[view.model].name);
+const DEMO_END = 'The demo’s preloaded research ends here. Add your Claude API key in Settings to keep going live.';
 const session = { mode: 'diagnose' };
 const liveIds = new Set();          // topics that came from Claude (saved between visits)
 const pending = new Set();          // systems being mapped right now
 const detailsLoading = new Set();
 
-const canExpand = (id) => Boolean(DATA.systems[id]) || live();
+const canExpand = (id) => Boolean(DATA.systems[id]) || (live() && (!demo() || DEMO.hasMap(DATA.topics[id]?.title)));
 const orbitOf = (l) => lerp(TUNING.nearestOrbit, TUNING.farthestOrbit, 1 - l.link) * view.spacing;
 // Size grows with relevance; "Emphasis on relevance" blends towards equal sizes
 const radiusFor = (relevance) => lerp((TUNING.smallestOrb + TUNING.largestOrb) / 2,
@@ -979,12 +983,13 @@ const SOURCE_NOTES = {
   web: 'Found by web search while Claude researched this. Every link is a page the search actually returned; links Claude wrote that the search never returned are dropped.',
   named: 'No web search was used here (on a Claude plan, Claude can’t browse the web from this page), so these are references Claude named from its own knowledge. They haven’t been checked online. Use “find” to look each one up.',
   unlinked: 'Entries without a link are points Claude made without a page from its search to back them.',
+  demo: 'Preloaded for this demo: references Claude named from its own knowledge when the demo was made, without browsing the web. They haven’t been checked online. Use “find” to look each one up.',
   example: 'These are examples showing how sources and their ratings look. Ask your own question to get real ones.',
 };
 const searchLink = (base, q) => base + encodeURIComponent(q);
 function sourceLine(src) {
   const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
-  const find = !src.url && (src.checked === 'named' || src.checked === 'unlinked')
+  const find = !src.url && (src.checked === 'named' || src.checked === 'unlinked' || src.checked === 'demo')
     ? ` <a class="src-search" href="${esc(searchLink('https://www.google.com/search?q=', src.title))}" target="_blank" rel="noopener noreferrer">find ↗</a>` : '';
   return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span>${src.video ? '<em class="video-badge">▶ Video</em>' : ''}<b>${esc(src.type)}</b> ${title}${find}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}${src.host ? `<span class="src-host">${esc(src.host)}</span>` : ''}</span></li>`;
 }
@@ -1002,7 +1007,7 @@ function sourcesFor(o) {
   const list = (items) => `<ul class="sources">${items.map(sourceLine).join('')}</ul>`;
   const parts = [];
   // How these were found, most trustworthy first
-  const kinds = [...new Set(all.map((s) => s.checked))].sort((a, b) => ['web', 'unlinked', 'named', 'example'].indexOf(a) - ['web', 'unlinked', 'named', 'example'].indexOf(b));
+  const kinds = [...new Set(all.map((s) => s.checked))].sort((a, b) => ['web', 'unlinked', 'named', 'demo', 'example'].indexOf(a) - ['web', 'unlinked', 'named', 'demo', 'example'].indexOf(b));
   for (const k of kinds) if (SOURCE_NOTES[k]) parts.push(`<p class="src-note">${SOURCE_NOTES[k]}</p>`);
   if (more.searched) parts.push(`<p class="src-note">Claude’s searches returned ${more.searched} page${more.searched === 1 ? '' : 's'}; these are the ones it used.</p>`);
   if (videos.length) parts.push(`<section class="section"><h3>Videos</h3>${list(videos)}</section>`);
@@ -1048,9 +1053,11 @@ function fillOrb(o) {
   let body;
   if (more.loading) body = `<p class="about-text preview-text">${esc(more.preview || '')}</p><p class="researching"><span class="spinner"></span>${planReady
     ? 'Researching in depth on your plan…'
+    : demo() ? 'Researching in depth with Claude…'
     : `Researching in depth with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and the web' : ''}…`}</p>`;
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
+  else if (demo() && !DEMO.hasDetails(topic.title)) body = `<p class="slot">${DEMO_END}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
   else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in Settings to research any topic in depth.'}</p>`;
   const sources = sourcesFor(o);
@@ -1061,7 +1068,7 @@ function fillOrb(o) {
     deeperHere ? '<button class="orb-deeper" type="button" data-action="deeper">Go deeper</button>' : '',
   ].filter(Boolean).join('');
   const actionNote = !actions && !o.isSun && !topic.inside
-    ? `<p class="slot">${inViewer ? 'Sign in to claude.ai to expand any orb or go deeper' : 'Connect Claude to expand any orb or go deeper'}</p>`
+    ? `<p class="slot">${demo() ? DEMO_END : inViewer ? 'Sign in to claude.ai to expand any orb or go deeper' : 'Connect Claude to expand any orb or go deeper'}</p>`
     : deeperHere && !o.isSun ? '<p class="action-note">Expand shows its neighbours. Go deeper opens it up: sub-systems, parts and plausible connections, then you pick a thread.</p>'
     : deeperHere ? '<p class="action-note">Go deeper opens the centre up into sub-systems, parts and plausible connections, then you pick a thread.</p>' : '';
   const inside = o.isSun && topic.inside ? DATA.inside[o.id] : null;
@@ -1772,7 +1779,7 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     },
     onOrb: (orb) => {
       if (fullDone) return;
-      const id = slug(orb.title);
+      const id = topicId(orb.title);
       if (id === centreId || id === cameFromId || verdicts[id] === 'no') return;
       if (!DATA.topics[id] || liveIds.has(id)) DATA.topics[id] = { title: orb.title, liner: orb.liner };
       liveIds.add(id);
@@ -1815,6 +1822,8 @@ function cameFromReason(centreId, cameFromId, rel) {
 }
 
 const slug = (t) => t.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'topic';
+// In the demo, a preloaded map that names an example topic lands on that same orb
+const topicId = (title) => (demo() && DEMO.idFor(title)) || slug(title);
 
 function storeMap(centreId, out, cameFromId, cameFromRel) {
   if (!trail.slice(0, -1).length) {
@@ -1836,7 +1845,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
   for (const orb of out.orbs.slice(0, 20)) {
     const known = byTitle.get(orb.title.toLowerCase());
     if (known) continue;   // e.g. Claude's copy of the "came from" topic
-    const id = slug(orb.title);
+    const id = topicId(orb.title);
     if (seen.has(id) || verdicts[id] === 'no') continue;   // you ruled it out already
     seen.add(id);
     byTitle.set(orb.title.toLowerCase(), id);
@@ -1863,7 +1872,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
 // the top like any other, and remembered with the rest of the research.
 const insideId = (id) => 'in:' + id;
 const canGoDeeper = (id) => !DATA.topics[id]?.inside
-  && Boolean(DATA.systems[insideId(id)] || DATA.deep[id] || live());
+  && Boolean(DATA.systems[insideId(id)] || DATA.deep[id] || (live() && (!demo() || DEMO.hasDeep(DATA.topics[id]?.title))));
 
 async function goDeeper(id) {
   if (busy || !canGoDeeper(id)) return;
@@ -1873,6 +1882,8 @@ async function goDeeper(id) {
   const before = trail;
   const at = trail.indexOf(deepId);
   trail = at >= 0 ? trail.slice(0, at + 1) : [...trail, deepId];
+  // The new centre needs a name before the open card closes (closing relabels every orb)
+  if (!DATA.systems[deepId]) DATA.topics[deepId] ||= { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
   closeFocus();
   busy = true;
   // The orb you chose glides into the centre and becomes the inside view's sun
@@ -1901,7 +1912,7 @@ async function goDeeper(id) {
 async function researchDeep(deepId, ofId) {
   const topic = DATA.topics[ofId];
   pending.add(deepId);
-  const web = !planReady && view.webSearch;
+  const web = !planReady && !demo() && view.webSearch;
   setStatus(`Looking inside “${topic.title}” with ${whoAnswers()}${web ? ' and the web' : ''}. A deeper pass takes a minute or two…`);
   try {
     const out = await R.deep({
@@ -1990,6 +2001,7 @@ function followThread(i) {
   const t = DATA.inside[sunId]?.threads?.[i];
   if (!t || busy) return;
   if (!live()) { toast(inViewer ? 'Following a thread needs Claude. Sign in to claude.ai and allow it for this page.' : 'Following a thread needs Claude. Add your API key in Settings.'); return; }
+  if (demo() && !DEMO.hasDeep(t.title)) { toast(DEMO_END); return; }
   const id = 't-' + slug(t.title);
   if (!DATA.topics[id]) DATA.topics[id] = { title: t.title, liner: t.question };
   liveIds.add(id);
@@ -2025,6 +2037,14 @@ function modeFor(q) {
 }
 
 async function explore(query) {
+  if (demo()) {
+    // The demo only has research for the example question
+    setViewPanel(true);
+    showViewTab('Research');
+    $('api-key').focus();
+    toast('The demo runs on preloaded research for the example question. Add your Claude API key here to ask your own.');
+    return;
+  }
   if (!live()) {
     setViewPanel(true);
     showViewTab('Research');
@@ -2071,6 +2091,7 @@ async function explore(query) {
 async function loadDetails(o) {
   const id = o.id;
   if (!live() || detailsLoading.has(id)) return;
+  if (demo() && !DEMO.hasDetails(DATA.topics[id].title)) return;
   const known = DATA.details[id];
   if (known && !known.error) return;
   detailsLoading.add(id);
@@ -2111,7 +2132,7 @@ async function loadDetails(o) {
     liveIds.add(id);
     refill(id);
     // Pictures come from Wikipedia, which only your own site can reach
-    const image = backend() === 'api' ? await R.wikipediaImage(d.wikipedia) : null;
+    const image = backend() !== 'plan' ? await R.wikipediaImage(d.wikipedia) : null;
     if (image) { DATA.details[id].image = image; refill(id); }
     saveCache();
   } catch (err) {
@@ -2126,6 +2147,7 @@ const refill = (id) => { for (const o of orbs) if (o.id === id) fillOrb(o); };
 
 // ─── Remember research between visits (in this browser only) ─
 function saveCache() {
+  if (demo()) return;   // preloaded answers replay fresh on every visit
   const pick = (table) => Object.fromEntries([...liveIds].filter((id) => table[id] && !table[id].loading).map((id) => [id, table[id]]));
   try {
     localStorage.setItem(CACHE_STORE, JSON.stringify({
@@ -2687,6 +2709,7 @@ $('prompt').addEventListener('submit', (e) => {
 function updateLiveState(refill = true) {
   $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
     : inViewer ? (planBlocked === 'checking' ? 'Connecting to Claude…' : 'Example · Claude not available here')
+    : demo() ? 'Demo · preloaded research'
     : live() ? `Live · ${R.MODELS[view.model].name}`
     : 'Example · add a key to go live';
   // On claude.ai each viewer's own plan is used, so the key and API-only settings step aside

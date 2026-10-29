@@ -182,7 +182,7 @@
 
 <!-- Only on this site: the demo notice. Hidden once a key is saved, or for the rest of the visit once closed. -->
 <aside id="demo-notice" class="demo-notice" aria-label="Demo version" hidden>
-  <p><b>This is a demo version.</b> It shows one example map. Add your own Claude API key to use the full version: ask any question and research any topic live.</p>
+  <p><b>This is a demo version.</b> Its research on the example question was prepared in advance and replays as if live. Add your own Claude API key to ask any question and research it for real.</p>
   <div class="demo-actions">
     <button id="demo-key" type="button" class="demo-key">Add your API key</button>
     <button id="demo-close" type="button" class="demo-close" aria-label="Close">&times;</button>
@@ -218,6 +218,65 @@
   .demo-notice { flex-direction: column; align-items: stretch; gap: 10px; }
   .demo-actions { justify-content: space-between; }
 }
+
+/* The guided tour (tour.js): a card at the bottom (or top) and a ring round what it describes */
+.tour {
+  position: fixed;
+  z-index: 5;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+  transform: translateX(-50%);
+  width: min(420px, calc(100% - 32px));
+  box-sizing: border-box;
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px 14px;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  animation: rise 0.35s ease-out;
+}
+.tour.at-top { bottom: auto; top: calc(env(safe-area-inset-top, 0px) + 120px); }
+.tour.beside { bottom: auto; transform: none; transition: left 0.25s, top 0.25s; }
+.tour-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.tour-kicker { font-family: var(--font-data); font-size: 10.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); }
+.tour-skip { padding: 2px 0; border: 0; background: none; font-size: 12.5px; color: var(--ink-soft); text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.tour-skip:hover { color: var(--ink); }
+.tour-title { margin: 0; font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; }
+.tour-text { margin: 0; font-size: 14px; line-height: 1.5; text-wrap: pretty; }
+.tour-hint { margin: 0; display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-soft); }
+.tour-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: tour-pulse 1.4s ease-in-out infinite; }
+@keyframes tour-pulse { 50% { opacity: 0.3; } }
+.tour-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.tour-dots { display: flex; gap: 5px; }
+.tour-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--rule); }
+.tour-dots i.done { background: var(--ink-soft); }
+.tour-dots i.on { background: var(--accent); }
+.tour-buttons { display: flex; gap: 6px; }
+.tour-next, .tour-back { padding: 7px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.tour-next { border: 0; background: var(--ink); color: var(--panel); }
+.tour-back { border: 1px solid var(--rule); background: none; }
+.tour-back:hover { border-color: var(--ink-soft); }
+.tour-ring {
+  position: fixed;
+  z-index: 4;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent), 0 0 28px 6px color-mix(in srgb, var(--accent) 25%, transparent);
+  transition: left 0.25s, top 0.25s, width 0.25s, height 0.25s, border-radius 0.25s;
+}
+.tour-again { justify-self: start; margin: 12px 0 0; padding: 6px 12px; border: 1px solid var(--rule); border-radius: 999px; background: none; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.tour-again:hover { border-color: var(--ink-soft); }
+@media (prefers-reduced-motion: reduce) {
+  .tour, .tour-dot { animation: none; }
+  .tour-ring, .tour.beside { transition: none; }
+}
+@media (max-width: 640px) {
+  .tour.at-top { top: auto; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); }
+}
 </style>
 <script>
 (() => {
@@ -246,6 +305,11 @@
 <script src="illustrations.js?v=202610291200"></script>
 <script src="research.js?v=202610291200"></script>
 <script src="sound.js?v=202610291200"></script>
+<!-- Only on this site: preloaded research the demo replays, and the first-visit tour -->
+<script src="demo-details.js?v=202610291200"></script>
+<script src="demo-maps.js?v=202610291200"></script>
+<script src="demo-deep.js?v=202610291200"></script>
+<script src="demo.js?v=202610291200"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
@@ -253,5 +317,6 @@
 } }
 </script>
 <script type="module" src="app.js?v=202610291200"></script>
+<script src="tour.js?v=202610291200"></script>
 </body>
 </html>
