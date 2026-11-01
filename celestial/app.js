@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────
-// CELESTIAL · stage 1 sketch
+// CELESTIAL · the app
 // Draws one topic as a 3D solar system and lets you move through it.
-// The content lives in data.js; this file only decides how it looks
-// and behaves.
+// The content lives in the EXAMPLE CONTENT script above; this script
+// only decides how it looks and behaves.
 //
 // How it's drawn, back to front:
 //  1. Backdrop  – a slowly shifting gradient, drawn by a small shader
@@ -20,6 +20,8 @@ import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
 
 const DATA = window.CELESTIAL_DATA;
 DATA.reasons ||= {};
+DATA.deep ||= {};       // example deep passes, as Claude would return them, by topic
+DATA.inside ||= {};     // deep passes that have been opened, by the id of their inside view
 
 // ─── Fixed numbers ───────────────────────────────────────────
 // The shape of the system. Several of these can be adjusted live
@@ -43,6 +45,7 @@ const TUNING = {
   gap: 1.4,               // minimum space between orbs
   widen: 1.8,             // most a system may stretch to fill a wide screen
   farthestFade: 0.35,     // opacity of the farthest orb when "fade with distance" is on
+  readable: 0.65,         // no orb's name fades below this (about 4.5:1); the outline fades further instead
   centreLine: 0.16,       // strength of the faint cause/effect lines to the centre
   crossLine: 0.14,        // strength of the faint lines between linked orbs
   crossLinkMin: 0.6,      // links between orbs weaker than this aren't drawn
@@ -55,6 +58,7 @@ const TUNING = {
     arrive: 1300,         // ms: each new orb easing out from the centre
     stagger: 55,          // ms between new orbs appearing (most relevant first)
     drift: 1.45,          // how far leaving orbs drift outward (× their distance)
+    ignite: 900,          // ms: on opening, the sun lights up before the first orbs leave it
   },
   openSpeed: 9,           // how quickly an orb opens on hover or click (higher = snappier)
   hiddenLead: { maxLink: 0.45, minRelevance: 0.65 },  // when an orb glows
@@ -66,7 +70,48 @@ const TUNING = {
     shortest: 1.4, longest: 6,     // stream length, in scene units
     thinnest: 1.2, thickest: 4.5,  // stream thickness, in pixels
   },
+  // Woven threads: each line drawn as a few glowing strands (see "Woven threads" below)
+  threads: {
+    fewest: 2, most: 6,   // strands for the weakest and the strongest link
+    spread: 0.02,         // how far the strands weave apart mid-line, as a share of its length on screen
+    minSpread: 1.5, maxSpread: 4.5,   // ...kept between these, in pixels
+    landing: 10,          // pixels: near an orb the strands spread over its rim, at most this far apart
+    arc: 30, arcPerStrand: 8,   // degrees of rim the strands land across (at most, and per extra strand)
+    flare: 45,            // pixels from the rim (at most) where strands start easing out to meet it
+    pad: 10,              // pixels of room around the strands for their glow
+    wave: 150,            // pixels per full weave along a line
+    taper: 0.7,           // how much wider each next strand swings, nesting them
+    speed: 0.45,          // how fast the strands weave
+    width: 1.1,           // strand width in pixels
+    glow: 0.32,           // light around each strand
+    falloff: 1.25,        // how quickly the glow fades (higher is tighter)
+    brightness: 0.75,
+    boost: 2.2,           // threads carry less ink than a line, so they are drawn this much stronger
+    stagger: 0.12, stroke: 1.25,   // seconds: strands drawing in one after another, and each stroke
+    surge: 1.6,           // seconds a click's light takes to travel a line
+  },
 };
+
+// ─── Skins ───────────────────────────────────────────────────
+// A skin is a set of colour and type tokens in the style block
+// (:root[data-skin="…"]), plus the scale its sound plays in.
+//   modes  – it has a light and a dark mode (Settings › Light or dark)
+//   stars  – the night-sky scene: star field, star-chart engraving, the sun
+//            igniting on opening and white-hot stream heads. Without it: the
+//            drifting gradient and the patterned border, streams in one colour
+//   words  – what How to use calls its colours
+// Threads are drawn as light on a dark page and as ink on a light one.
+// To add one, add its tokens there and an entry here; Settings lists them all.
+const SKINS = {
+  classic: { name: 'Classic', note: 'Sea glass, light or dark', scale: 'default', modes: true,
+    words: { cause: 'Violet', effect: 'Cyan', related: 'Grey', yes: 'Green, thick' } },
+  night: { name: 'Night sky', note: 'Stars and an eclipse sun', scale: 'default', stars: true,
+    words: { cause: 'Ember', effect: 'Sea glass', related: 'Silver', yes: 'Lit white' } },
+};
+const darkDevice = matchMedia('(prefers-color-scheme: dark)');
+const skin = () => SKINS[view.skin];
+// Night sky is always dark; Classic is as set, or as the device is
+const isDark = () => !skin().modes || view.mode === 'dark' || (view.mode === 'system' && darkDevice.matches);
 
 // ─── Settings: the controls in the Settings panel ────────────
 const VIEW_DEFAULTS = {
@@ -75,11 +120,12 @@ const VIEW_DEFAULTS = {
   webSearch: true,
   reading: 'auto',
   hierarchy: 1,
-  theme: 'tide',
-  mode: 'system',
+  skin: 'classic',
+  mode: 'system',         // Classic only: 'system' | 'light' | 'dark'
   backdropMotion: true,
   lineArt: true,
   streams: true,
+  threads: true,          // lines drawn as woven threads (plain lines without WebGL2)
   centreLines: true,
   crossLinks: true,
   relationColour: true,
@@ -126,30 +172,23 @@ const VIEW_SETTINGS = [
   { key: 'model', label: 'Model (with your API key)', options: [
     ['claude-opus-5-5', 'Opus 5.5', 'Most capable'],
     ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster'],
-    ['claude-haiku-5-5', 'Haiku 5.5', 'Cheapest'],
+    ['claude-haiku-5-5', 'Haiku 5.5', 'Lowest cost'],
   ] },
-  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens. Each search adds a small cost to your key' },
+  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens or you go deeper. Gives real links and videos in the Sources tab. Each search adds a small cost to your key' },
   { group: 'Learning' },
-  { key: 'reasoning', label: 'Reasoning mode', hint: 'Build each map step by step and explain every line. Same as the Reasoning button' },
+  { key: 'reasoning', label: 'Progressive mode', hint: 'Build each map step by step and explain every line. Claude writes the reasons only while this is on. Same as the Progressive button' },
   { key: 'traceSpeed', label: 'Step speed', needs: 'reasoning', options: [[0, 'Slow'], [1, 'Normal'], [2, 'Fast']] },
   { connection: true },
   { tab: 'Appearance' },
   { group: 'Colours' },
-  { key: 'theme', label: 'Theme', swatches: true, options: [
-    ['tide', 'Tide', 'Teal and bottle green'],
-    ['dusk', 'Dusk', 'Pink and purple'],
-  ] },
-  { key: 'mode', label: 'Light or dark', options: [
-    ['system', 'Match device'],
-    ['light', 'Light'],
-    ['dark', 'Dark'],
-  ] },
-  { key: 'relationColour', label: 'Colour outlines by cause and effect', hint: 'Off: every orb gets the same grey outline' },
+  { key: 'skin', label: 'Skin', swatches: true, options: Object.entries(SKINS).map(([key, k]) => [key, k.name, k.note]) },
+  { key: 'mode', label: 'Light or dark', skins: ['classic'], options: [['system', 'Match device'], ['light', 'Light'], ['dark', 'Dark']] },
+  { key: 'relationColour', label: 'Colour outlines by cause and effect', hint: 'Off: every orb gets the same plain outline' },
   { group: 'Orbs' },
   { key: 'names', label: 'Names inside every orb', hint: 'Off: names appear on hover' },
   { key: 'leadGlow', label: 'Glow around hidden leads' },
   { group: 'Background' },
-  { key: 'lineArt', label: 'Patterned border' },
+  { key: 'lineArt', label: 'Engraved border', hint: 'Round the edges. Night sky: a star-chart frame and constellations. Classic: friezes and slowly turning sun and moon stones' },
   { tab: 'Map' },
   { group: 'Size and spacing' },
   { key: 'hierarchy', label: 'Size orbs by relevance', format: 'percent', min: 0, max: 1, step: 0.05, relayout: true },
@@ -157,9 +196,10 @@ const VIEW_SETTINGS = [
   { key: 'spacing', label: 'Spacing', min: 0.6, max: 1.6, step: 0.05, unit: '×', relayout: true },
   { key: 'fillScreen', label: 'Stretch to fill wide screens', relayout: true },
   { group: 'Lines' },
+  { key: 'threads', label: 'Woven threads', hint: 'Each line is a few glowing strands that meet at the orbs; stronger links get more. Off: plain straight lines' },
   { key: 'streams', label: 'Cause and effect streams' },
   { key: 'centreLines', label: 'Faint lines to the centre' },
-  { key: 'crossLinks', label: 'Faint lines between linked orbs', hint: 'Reasoning mode always shows every line' },
+  { key: 'crossLinks', label: 'Faint lines between linked orbs', hint: 'Progressive mode always shows every line' },
   { group: 'Depth' },
   { key: 'sameSize', label: 'Keep orbs the same size at any depth', hint: 'Off: farther orbs look smaller' },
   { key: 'depthFade', label: 'Fade with distance', hint: 'Farther orbs are more see-through' },
@@ -168,24 +208,28 @@ const VIEW_SETTINGS = [
   { group: 'Whole map' },
   { key: 'mapMotion', label: 'Until you grab it, the map', options: [['still', 'Stays still'], ['sway', 'Sways'], ['spin', 'Spins']] },
   { group: 'Orbs and streams' },
-  { key: 'organic', label: 'Gently warping, drifting orbs' },
+  { key: 'organic', label: 'Gently warping, drifting orbs', hint: 'Also lets the threads between orbs weave' },
   { key: 'streamSpeed', label: 'Stream speed', needs: 'streams', min: 0.4, max: 2, step: 0.1, unit: '×' },
   { group: 'Background' },
-  { key: 'backdropMotion', label: 'Background motion', hint: 'The shifting colours and the slowly turning patterns' },
+  { key: 'backdropMotion', label: 'Background motion', hint: 'Shifting colours or twinkling stars, and the slowly turning patterns' },
   { tab: 'Sound' },
   { group: 'Playback' },
   { key: 'sound', label: 'Sound on', hint: 'Off until you switch it on. Same as the speaker button at the top' },
   { key: 'volume', label: 'Volume', needs: 'sound', format: 'percent', min: 0, max: 1, step: 0.05 },
   { group: 'What plays' },
-  { key: 'music', label: 'Background drone', needs: 'sound', hint: 'A slow chord that follows the theme' },
+  { key: 'music', label: 'Background drone', needs: 'sound', hint: 'A slow chord in the skin’s own key' },
   { key: 'bells', label: 'Orb bells', needs: 'sound', hint: 'A note as each orb appears: causes low, effects high, stronger links nearer the home note. Ticks and crosses answer too' },
-  { key: 'cues', label: 'Reasoning cues', needs: 'sound', hint: 'In Reasoning mode, links between orbs and lines you hover play their two notes' },
+  { key: 'cues', label: 'Progressive cues', needs: 'sound', hint: 'In Progressive mode, links between orbs and lines you hover play their two notes' },
 ];
 const STORE_KEY = 'celestial.view';
 let viewTab = 'Research';
 const storedView = readStoredView();
 const view = { ...VIEW_DEFAULTS, ...storedView };
-if (!['tide', 'dusk'].includes(view.theme)) view.theme = VIEW_DEFAULTS.theme;
+// Before skins there were themes (Tide, now Classic, and Dusk), and the first
+// night-sky release stored its only skin as "default": all of these start on Classic
+if (!SKINS[view.skin]) view.skin = VIEW_DEFAULTS.skin;
+if (!['system', 'light', 'dark'].includes(view.mode)) view.mode = VIEW_DEFAULTS.mode;
+delete view.theme;
 // Sway and spin used to be two switches; they're now one choice
 if (!storedView.mapMotion) view.mapMotion = storedView.spin ? 'spin' : storedView.sway === false ? 'still' : 'sway';
 delete view.sway; delete view.spin;
@@ -197,7 +241,6 @@ function storeView() {
 }
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const darkDevice = matchMedia('(prefers-color-scheme: dark)');
 // Pixels taken by the bars at the top and bottom, measured from the page
 // (the top bar is taller on a phone, and the findings bar sits at the bottom there)
 const narrow = () => innerWidth < 640;
@@ -228,21 +271,26 @@ const lerp = THREE.MathUtils.lerp;
 const clamp = THREE.MathUtils.clamp;
 const $ = (id) => document.getElementById(id);
 
-// ─── 1. Backdrop: a slowly shifting gradient ─────────────────
-// A shader is a tiny program that runs once for every pixel. This one
-// blends two theme tints into the background using soft, drifting
-// "noise" (smooth random clouds), kept faint so it never competes
-// with the colours of the orbs.
+// ─── 1. Backdrop: a drifting gradient, or the star field ─────
+// A shader is a tiny program that runs once for every pixel. For Classic it
+// blends two tints into the background using soft, drifting "noise" (smooth
+// random clouds), kept faint so it never competes with the orbs. For Night
+// sky it paints near-black space with fine grain, a faint warm glow round
+// the centre that cools further out, and three depths of twinkling stars.
+// Nearer stars shift more as the map turns, which gives the space depth.
 const backdrop = new THREE.WebGLRenderer({ antialias: false });
-backdrop.setPixelRatio(0.5);   // a soft gradient needs few pixels
+backdrop.setPixelRatio(1);   // stars are measured in these pixels
 $('backdrop').appendChild(backdrop.domElement);
 const backdropUniforms = {
   uTime: { value: 0 },
   uAspect: { value: 1 },
+  uHeight: { value: 800 },
+  uFade: { value: 1 },             // 0 → 1 as the stars come out on opening
+  uStars: { value: 0 },            // 1: the star field (Night sky), 0: the drifting gradient
+  uPan: { value: new THREE.Vector2() },
   uBase: { value: new THREE.Vector3() },
   uTintA: { value: new THREE.Vector3() },
   uTintB: { value: new THREE.Vector3() },
-  uStrength: { value: 0.8 },
 };
 const backdropScene = new THREE.Scene();
 backdropScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
@@ -251,10 +299,26 @@ backdropScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.Shader
     varying vec2 vUv;
     void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }`,
   fragmentShader: /* glsl */`
-    uniform float uTime, uAspect, uStrength;
+    uniform float uTime, uAspect, uHeight, uFade, uStars;
+    uniform vec2 uPan;
     uniform vec3 uBase, uTintA, uTintB;
     varying vec2 vUv;
     float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    // One depth of stars: at most one per cell of the grid, a few of them bright
+    vec3 stars(vec2 px, float cell, float chance, float t) {
+      vec2 id = floor(px / cell);
+      float h = hash(id);
+      if (h > chance) return vec3(0.0);
+      vec2 at = (vec2(hash(id + 3.7), hash(id + 8.3)) * 0.8 + 0.1) * cell;
+      float d = length(px - id * cell - at);
+      float size = mix(0.55, 1.5, pow(hash(id + 9.1), 4.0));
+      float glow = exp(-d * d / (size * size)) + 0.08 * exp(-d / (size * 5.0));
+      float twinkle = 0.62 + 0.38 * sin(t * (0.5 + 1.6 * hash(id + 5.3)) + h * 40.0);
+      // Mostly white, some warm, some cool
+      float temp = hash(id + 1.9);
+      vec3 col = temp < 0.16 ? vec3(1.0, 0.8, 0.6) : temp > 0.84 ? vec3(0.68, 0.84, 1.0) : vec3(1.0, 0.98, 0.94);
+      return col * glow * twinkle * mix(0.3, 1.0, pow(hash(id + 4.4), 2.0));
+    }
     float noise(vec2 p) {
       vec2 i = floor(p), f = fract(p), u = f * f * (3.0 - 2.0 * f);
       return mix(mix(hash(i), hash(i + vec2(1, 0)), u.x), mix(hash(i + vec2(0, 1)), hash(i + vec2(1, 1)), u.x), u.y);
@@ -264,33 +328,122 @@ backdropScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.Shader
       for (int i = 0; i < 4; i++) { v += a * noise(p); p *= 2.03; a *= 0.5; }
       return v;
     }
-    void main() {
+    // Classic: two tints drifting through the base colour
+    vec3 drift() {
       vec2 p = vec2(vUv.x * uAspect, vUv.y);
       float t = uTime * 0.025;
       vec2 warp = vec2(fbm(p * 1.3 + vec2(t, -t * 0.7)), fbm(p * 1.3 + vec2(-t * 0.8, t * 0.5) + 3.1));
       float a = fbm(p * 0.9 + warp * 1.5 + vec2(t * 0.6, 0.0));
       float b = fbm(p * 1.1 - warp * 1.2 + vec2(0.0, t * 0.5) + 7.3);
+      vec3 col = mix(uBase, uTintA, smoothstep(0.3, 0.85, a) * 0.8);
+      col = mix(col, uTintB, smoothstep(0.35, 0.9, b) * 0.8);
+      return col + (hash(gl_FragCoord.xy + fract(uTime)) - 0.5) / 255.0;   // fine grain stops banding
+    }
+    void main() {
+      if (uStars < 0.5) { gl_FragColor = vec4(drift(), 1.0); return; }
+      vec2 px = gl_FragCoord.xy;
+      vec2 c = vec2((vUv.x - 0.5) * uAspect, vUv.y - 0.5);
+      float r = length(c);
       vec3 col = uBase;
-      col = mix(col, uTintA, smoothstep(0.3, 0.85, a) * uStrength);
-      col = mix(col, uTintB, smoothstep(0.35, 0.9, b) * uStrength);
-      col += (hash(gl_FragCoord.xy + fract(uTime)) - 0.5) / 255.0;   // fine grain stops banding
-      gl_FragColor = vec4(col, 1.0);
+      // The spectrum, kept very low: warm round the centre, cooling outward
+      col += uTintA * exp(-r * r / 0.045);
+      col += uTintB * smoothstep(0.12, 0.5, r) * (1.0 - smoothstep(0.6, 1.2, r));
+      vec2 pan = uPan * uHeight;
+      vec3 s = stars(px + pan * 0.02, 38.0, 0.14, uTime) * 0.5
+             + stars(px + pan * 0.05 + 311.0, 84.0, 0.2, uTime * 1.1) * 0.8
+             + stars(px + pan * 0.1 + 733.0, 160.0, 0.24, uTime * 0.9);
+      col += s * 1.35 * uFade;
+      col *= 1.0 - 0.4 * smoothstep(0.45, 1.05, r);   // the edges fall away into the dark
+      col += (hash(px + fract(uTime * 7.0) * 91.0) - 0.5) * 0.026;   // film grain
+      gl_FragColor = vec4(max(col, 0.0), 1.0);
     }`,
   depthTest: false,
 })));
+// The stars follow the turn of the map (unwrapped, so a full turn doesn't jump)
+const starPan = new THREE.Vector2();
+let lastAzimuth = null;
+function panStars() {
+  const az = controls.getAzimuthalAngle() + world.rotation.y;
+  if (lastAzimuth != null) {
+    let d = az - lastAzimuth;
+    d -= Math.round(d / (2 * Math.PI)) * 2 * Math.PI;
+    starPan.x -= d;
+  }
+  lastAzimuth = az;
+  starPan.y = (controls.getPolarAngle() - Math.PI / 2) * 0.6;
+  backdropUniforms.uPan.value.copy(starPan);
+}
 const backdropCamera = new THREE.Camera();
 
-// ─── 2. Line art around the edges ────────────────────────────
-// Tribal, engraved patterns with a celestial core: sun-stones in the corners,
-// moon-phase stones at the sides, an astrolabe horizon along the bottom,
-// patterned friezes that slowly circle the frame, and twinkling stars.
-// Each moving part is its own layer, so the browser can move it cheaply.
-// A mask in style.css fades all of it out towards the middle of the screen.
+// ─── 2. Engraving round the edges ────────────────────────────
+// Night sky: a faint star-chart frame, a double neatline with a degree scale,
+// an astrolabe horizon along the bottom that turns very slowly, and a few
+// constellations. Classic: tribal, engraved patterns with a celestial core
+// (see classicBorder below). A CSS mask (.art, in the style block) keeps
+// either to the edges.
 const n1 = (v) => v.toFixed(1);
 const polar = (r, deg) => [r * Math.cos(deg * Math.PI / 180), r * Math.sin(deg * Math.PI / 180)];
 const pts = (list) => list.map(([x, y]) => `${n1(x)} ${n1(y)}`).join('L');
 const ring = (r, extra = '') => `<circle r="${n1(r)}" ${extra}/>`;
 const FILL = 'fill="currentColor" stroke="none"';
+
+function starChart(w, h) {
+  let seed = 11;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const layers = [];
+  const svg = (vb, body, attrs = '') =>
+    `<svg viewBox="${vb}" fill="none" stroke="currentColor" stroke-width="0.8" ${attrs}>${body}</svg>`;
+
+  // The neatline: two rules with a scale between them, a longer tick every fifth
+  const m = 14, gap = 6, step = 12;
+  let frame = `<rect x="${m}" y="${m}" width="${w - 2 * m}" height="${h - 2 * m}"/>`
+    + `<rect x="${m + gap}" y="${m + gap}" width="${w - 2 * (m + gap)}" height="${h - 2 * (m + gap)}" stroke-width="0.5"/>`;
+  for (let i = 1, x = m + step; x < w - m; i++, x += step) {
+    const t = i % 5 ? gap / 2 : gap;
+    frame += `<path d="M${x} ${m}v${t}M${x} ${h - m}v${-t}"/>`;
+  }
+  for (let i = 1, y = m + step; y < h - m; i++, y += step) {
+    const t = i % 5 ? gap / 2 : gap;
+    frame += `<path d="M${m} ${y}h${t}M${w - m} ${y}h${-t}"/>`;
+  }
+
+  // Constellations, only near the edges: a few stars joined by fine dashed lines
+  const stars = [];
+  while (stars.length < 24) {
+    const x = rnd() * w, y = rnd() * h;
+    const dx = (x - w / 2) / (w / 2), dy = (y - h * 0.45) / (h / 2);
+    if (dx * dx + dy * dy > 0.66) stars.push([x, y, 0.8 + rnd() * 1.6]);
+  }
+  for (let c = 0; c < 3; c++) {
+    const [ax, ay] = stars[c * 8];
+    const near = [...stars].sort((p, q) => Math.hypot(p[0] - ax, p[1] - ay) - Math.hypot(q[0] - ax, q[1] - ay)).slice(0, 4);
+    frame += `<path d="M${pts(near)}" stroke-width="0.5" stroke-dasharray="3 4"/>`;
+  }
+  layers.push(svg(`0 0 ${w} ${h}`, frame, `class="sky" width="${w}" height="${h}"`));
+  for (const [x, y, size] of stars) {
+    const box = size * 3;
+    const star = `<circle r="${n1(size)}" ${FILL}/>` + (size > 1.8 ? ring(size * 2.4, 'stroke-width="0.4"') : '');
+    layers.push(`<div class="star" style="left:${n1(x - box)}px;top:${n1(y - box)}px;width:${n1(2 * box)}px;height:${n1(2 * box)}px;--delay:${(-rnd() * 9).toFixed(1)}s;--secs:${(5 + rnd() * 6).toFixed(1)}s">${svg(`${n1(-box)} ${n1(-box)} ${n1(2 * box)} ${n1(2 * box)}`, star)}</div>`);
+  }
+
+  // The astrolabe horizon: a great arc with a degree scale
+  const R = Math.max(w * 0.78, 760), cy = h + R * 0.86;
+  let arc = ring(R) + ring(R + 16, 'stroke-width="0.5"') + ring(R + 40, 'stroke-dasharray="1 7" stroke-width="0.5"');
+  for (let a = -180; a < 180; a += 1.25) {
+    const major = Math.abs(a % 10) < 0.01;
+    arc += `<path d="M${pts([polar(R, a), polar(R + (major ? 16 : 6), a)])}"/>`;
+  }
+  const big = R + 42;
+  layers.push(`<div class="stone horizon" style="left:${n1(w / 2 - big)}px;top:${n1(cy - big)}px;width:${n1(2 * big)}px;height:${n1(2 * big)}px">
+    ${svg(`${n1(-big)} ${n1(-big)} ${n1(2 * big)} ${n1(2 * big)}`, arc, 'class="turn" style="--secs:1200s"')}</div>`);
+
+  return layers;
+}
+
+// Classic's border: sun-stones in the corners, moon-phase stones at the
+// sides, an astrolabe horizon along the bottom, patterned friezes that slowly
+// circle the frame, and twinkling stars. Each moving part is its own layer,
+// so the browser can move it cheaply.
 const SOFT_FILL = 'fill="currentColor" fill-opacity="0.45" stroke="none"';
 
 // A ring of triangle "teeth" between two radii, every other one filled
@@ -374,8 +527,7 @@ function frieze(length) {
   return out.join('');
 }
 
-function drawLineArt() {
-  const w = innerWidth, h = innerHeight;
+function classicBorder(w, h) {
   let seed = 11;
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
   const layers = [];
@@ -443,7 +595,11 @@ function drawLineArt() {
     layers.push(`<div class="star" style="left:${n1(x - size)}px;top:${n1(y - size)}px;width:${n1(2 * size)}px;height:${n1(2 * size)}px;--delay:${(-rnd() * 9).toFixed(1)}s;--secs:${(5 + rnd() * 6).toFixed(1)}s">${svg(`${-size} ${-size} ${2 * size} ${2 * size}`, star)}</div>`);
   }
 
-  $('art').innerHTML = layers.join('');
+  return layers;
+}
+
+function drawLineArt() {
+  $('art').innerHTML = (skin().stars ? starChart : classicBorder)(innerWidth, innerHeight).join('');
 }
 
 
@@ -480,7 +636,7 @@ controls.addEventListener('start', () => { grabbed = true; camGoal = null; camVe
 const world = new THREE.Group();
 scene.add(world);
 
-// ─── Colours come from the CSS tokens in style.css ───────────
+// ─── Colours come from the CSS tokens in the style block ─────
 const palette = {};
 const hexToVec = (hex) => {
   const v = hex.trim().replace('#', '');
@@ -491,6 +647,12 @@ function readPalette() {
   for (const name of ['line', 'cause', 'effect']) {
     palette[name] = new THREE.Color(css.getPropertyValue('--3d-' + name).trim());
   }
+  // Where threads overlap they run hot towards the ink colour; on a light
+  // page they're drawn as ink strokes instead of light
+  threadUniforms.uCore.value.set(css.getPropertyValue('--ink').trim());
+  threadUniforms.uLight.value = isDark() ? 0 : 1;
+  threadUniforms.uChrome.value = skin().stars ? 1 : 0;
+  backdropUniforms.uStars.value = skin().stars ? 1 : 0;
   backdropUniforms.uBase.value = hexToVec(css.getPropertyValue('--sh-base'));
   backdropUniforms.uTintA.value = hexToVec(css.getPropertyValue('--sh-a'));
   backdropUniforms.uTintB.value = hexToVec(css.getPropertyValue('--sh-b'));
@@ -508,7 +670,7 @@ let busy = false;       // true while a transition is playing
 let systemRadius = 20;
 
 const isHiddenLead = (l) => l.link <= TUNING.hiddenLead.maxLink && l.relevance >= TUNING.hiddenLead.minRelevance;
-// ─── Live research with Claude (see research.js) ─────────────
+// ─── Live research with Claude (see the RESEARCH script) ─────
 const R = window.CELESTIAL_RESEARCH;
 const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
 const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
@@ -622,6 +784,57 @@ function suggestions(sunId, n = 3) {
 // Orbs are spread evenly in all three dimensions around the sun.
 // Distance from the sun comes from "link".
 function layout(links) {
+  const placed = links.some((l) => l.parent) ? layoutInside(links) : spread(links);
+  // 4. Optionally stretch sideways so a wide screen gets used
+  const widen = widenFactor();
+  const tall = tallFactor();
+  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; p.target.y *= tall; }
+  return placed;
+}
+
+// An inside view (Go deeper) reads like an exploded diagram: sub-systems
+// sit on a ring round the centre, facing you, and each one's parts fan out
+// beyond it, so every cluster is easy to tell apart
+function layoutInside(links) {
+  const subs = links.filter((l) => !l.parent).sort((a, b) => (b.order ?? b.relevance) - (a.order ?? a.relevance));
+  const placed = [];
+  subs.forEach((sub, i) => {
+    const a = Math.PI / 2 + (i / subs.length) * Math.PI * 2 + (subs.length % 2 ? 0 : Math.PI / subs.length);
+    const out = new THREE.Vector3(Math.cos(a), Math.sin(a) * 0.85, 0).normalize();
+    const target = out.clone().multiplyScalar(orbitOf(sub)).setZ(i % 2 ? -2 : 2);
+    placed.push({ ...sub, target });
+    const parts = links.filter((l) => l.parent === sub.to).sort((x, y) => y.relevance - x.relevance);
+    const fan = Math.min(Math.PI * 0.85, parts.length * 0.8);
+    parts.forEach((p, k) => {
+      const b = a + (parts.length > 1 ? (k / (parts.length - 1) - 0.5) * fan : 0);
+      const d = (sizeOf(sub) + sizeOf(p) + TUNING.gap) * 1.15 * view.spacing;
+      placed.push({ ...p, target: target.clone().add(new THREE.Vector3(Math.cos(b) * d, Math.sin(b) * d, k % 2 ? 2.5 : -2.5)) });
+    });
+  });
+  // Nudge apart anything that still overlaps; sub-systems stay put
+  const push = new THREE.Vector3();
+  for (let pass = 0; pass < 80; pass++) {
+    let moved = false;
+    for (let i = 0; i < placed.length; i++) {
+      for (let j = i + 1; j < placed.length; j++) {
+        const a = placed[i], b = placed[j];
+        const need = sizeOf(a) + sizeOf(b) + TUNING.gap, d = a.target.distanceTo(b.target);
+        if (d >= need) continue;
+        push.subVectors(a.target, b.target);
+        if (push.lengthSq() < 1e-6) push.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+        push.setLength((need - d) / (a.parent && b.parent ? 2 : 1));
+        if (a.parent) a.target.add(push);
+        if (b.parent) b.target.sub(push);
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  return placed;
+}
+
+// Steps 1 to 3 of a normal layout: directions, then distances, then room
+function spread(links) {
   const n = links.length;
   // 1. Even directions over a sphere (a Fibonacci spiral, like seeds in a sunflower)
   const golden = Math.PI * (3 - Math.sqrt(5));
@@ -665,10 +878,6 @@ function layout(links) {
     }
     if (!moved) break;
   }
-  // 4. Optionally stretch sideways so a wide screen gets used
-  const widen = widenFactor();
-  const tall = tallFactor();
-  for (const p of placed) { p.target.x *= widen; p.target.z *= widen; p.target.y *= tall; }
   return placed;
 }
 
@@ -760,6 +969,10 @@ function connectionsOf(id) {
     .map(([a, b, strength]) => [a === id ? b : a, strength])
     .sort((x, y) => y[1] - x[1]);
 }
+
+// Link, relevance and confidence are Claude's estimates, so they're shown as
+// a word and a rough bar rather than an exact-looking number
+const band = (v) => (v >= 0.8 ? 'Strong' : v >= 0.6 ? 'Clear' : v >= 0.4 ? 'Some' : 'Weak');
 
 // A small horizontal bar chart, drawn to scale
 function chartHTML(c) {
@@ -855,6 +1068,7 @@ function orbClasses(o) {
     !o.isSun && DATA.systems[o.id] ? 'expandable' : '',
     o.isSun ? '' : o.relevance >= 0.75 ? 'rank-high' : o.relevance < 0.4 ? 'rank-low' : '',
     o.verdict ? 'v-' + o.verdict : '',
+    o.role === 'sub' ? 'role-sub' : '',
     ...keep,
   ].filter(Boolean).join(' ');
 }
@@ -871,15 +1085,81 @@ function makeOrbElement(o) {
   // and dragging doesn't turn the view
   el.addEventListener('pointerdown', (e) => { o.wasOpen = o === selected; if (o.wasOpen) e.stopPropagation(); });
   el.addEventListener('click', (e) => {
-    // The card's buttons appear under your finger as it opens: don't press them by accident
-    if (!o.wasOpen) return;
+    // The card's buttons appear under your finger as it opens: don't press them by accident.
+    // A click from the keyboard (Enter or Space on a button) has no pointer, so it counts if the card is open
+    if (!(e.detail === 0 ? o === selected : o.wasOpen)) return;
     const btn = e.target.closest('[data-action]');
     if (btn) runAction(btn.dataset.action, o, btn.dataset.id);
+  });
+  // Tab reaches every orb; focusing one previews it, Enter or Space opens it
+  el.tabIndex = 0;
+  el.addEventListener('focus', () => { if (!busy && o !== selected) setHover(o); });
+  el.addEventListener('blur', () => { if (hovered === o) setHover(null); });
+  el.addEventListener('keydown', (e) => {
+    if (e.target !== el || (e.key !== 'Enter' && e.key !== ' ')) return;
+    e.preventDefault();
+    if (o !== selected) openFocus(o);
   });
   el._orb = o;
   o.el = el;
   fillOrb(o);
   return el;
+}
+
+// ─── Sources: where an orb's information came from ──────────
+// Two places a source can come from: the orb's own research (opening it),
+// and, inside a deep map, the deeper pass that put the orb there (each part
+// cites the sources that back it). Nothing here is made up by the page:
+// it only shows what the research returned, and says how it was found.
+const SOURCE_NOTES = {
+  web: 'Found by web search while Claude researched this. Every link is a page the search actually returned; links Claude wrote that the search never returned are dropped.',
+  named: 'No web search was used here (on a Claude plan, Claude can’t browse the web from this page), so these are references Claude named from its own knowledge. They haven’t been checked online. Use “find” to look each one up.',
+  unlinked: 'Entries without a link are points Claude made without a page from its search to back them.',
+  example: 'These are examples showing how sources and their ratings look. Ask your own question to get real ones.',
+};
+const searchLink = (base, q) => base + encodeURIComponent(q);
+function sourceLine(src) {
+  const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
+  const find = !src.url && (src.checked === 'named' || src.checked === 'unlinked')
+    ? ` <a class="src-search" href="${esc(searchLink('https://www.google.com/search?q=', src.title))}" target="_blank" rel="noopener noreferrer">find ↗</a>` : '';
+  return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span>${src.video ? '<em class="video-badge">▶ Video</em>' : ''}<b>${esc(src.type)}</b> ${title}${find}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}${src.host ? `<span class="src-host">${esc(src.host)}</span>` : ''}</span></li>`;
+}
+function sourcesFor(o) {
+  const sunId = trail[trail.length - 1];
+  const more = DATA.details?.[o.id] || {};
+  const own = (more.sources || []).map((s) => ({ checked: more.live ? 'named' : 'example', ...s }));
+  const inside = !o.isSun ? DATA.inside[sunId] : null;
+  const cited = inside ? (inside.cites?.[o.id] || []).map((i) => inside.sources[i]).filter(Boolean) : [];
+  const key = (s) => (s.url || s.title).toLowerCase();
+  const ownKeys = new Set(own.map(key));
+  const fromPass = cited.filter((s) => !ownKeys.has(key(s)));
+  const all = [...own, ...fromPass];
+  const videos = all.filter((s) => s.video);
+  const list = (items) => `<ul class="sources">${items.map(sourceLine).join('')}</ul>`;
+  const parts = [];
+  // How these were found, most trustworthy first
+  const kinds = [...new Set(all.map((s) => s.checked))].sort((a, b) => ['web', 'unlinked', 'named', 'example'].indexOf(a) - ['web', 'unlinked', 'named', 'example'].indexOf(b));
+  for (const k of kinds) if (SOURCE_NOTES[k]) parts.push(`<p class="src-note">${SOURCE_NOTES[k]}</p>`);
+  if (more.searched) parts.push(`<p class="src-note">Claude’s searches returned ${more.searched} page${more.searched === 1 ? '' : 's'}; these are the ones it used.</p>`);
+  if (videos.length) parts.push(`<section class="section"><h3>Videos</h3>${list(videos)}</section>`);
+  const ownText = own.filter((s) => !s.video), passText = fromPass.filter((s) => !s.video);
+  if (ownText.length) parts.push(`<section class="section"><h3>${more.live ? 'From researching this orb' : 'Sources <span>· examples of the rating system</span>'}</h3>${list(ownText)}</section>`);
+  if (passText.length) parts.push(`<section class="section"><h3>From the deeper pass on ${esc(DATA.topics[sunId].title)}</h3>${list(passText)}</section>`);
+  if (!all.length) {
+    parts.push(`<p class="src-note">${more.loading ? 'Researching… sources appear here when Claude finishes.'
+      : more.error ? 'The research didn’t finish, so there are no sources yet.'
+      : live() ? 'No sources yet. They appear here once Claude has researched this orb.'
+      : 'No sources for this example orb. With Claude on, opening an orb researches it and lists its sources here.'}</p>`);
+  }
+  if (all.length && !videos.length && kinds.includes('web')) parts.push('<p class="src-note">The web search didn’t turn up a video for this.</p>');
+  // Searches the person can run themselves, clearly not sources
+  const t = DATA.topics[o.id].title, context = o.isSun ? '' : ' ' + DATA.topics[sunId].title;
+  const q = (t + (o.role ? context : '')).trim();
+  parts.push(`<section class="section"><h3>Look further yourself <span>· searches, not sources</span></h3><div class="find-more">
+    <a href="${esc(searchLink('https://www.youtube.com/results?search_query=', q))}" target="_blank" rel="noopener noreferrer">▶ Videos on YouTube</a>
+    <a href="${esc(searchLink('https://scholar.google.com/scholar?q=', q))}" target="_blank" rel="noopener noreferrer">Papers on Google Scholar</a>
+    <a href="${esc(searchLink('https://en.wikipedia.org/w/index.php?search=', t))}" target="_blank" rel="noopener noreferrer">Wikipedia</a></div></section>`);
+  return { html: parts.join(''), count: all.length, videos: videos.length };
 }
 
 // Everything inside an orb. Called again when research arrives.
@@ -890,10 +1170,12 @@ function fillOrb(o) {
   if (o.verdict === 'yes') tag = '✓ Relevant';
   else if (o.verdict === 'no') tag = '✕ Not relevant';
   else if (o.cameFrom) tag = 'Came from';
+  else if (o.role === 'sub') tag = 'Sub-system';
   else if (o.lead) tag = 'Hidden lead';
+  else if (o.isSun && topic.inside) tag = 'Inside';
   const pressed = (v) => String(o.verdict === v);
   const meter = (name, value) =>
-    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${Math.round(value * 100)}</output></dd></div>`;
+    `<div><dt>${name}</dt><dd><span class="bar"><i style="width:${value * 100}%"></i></span><output>${band(value)}</output></dd></div>`;
   const more = DATA.details?.[o.id] || {};
   const links = o.isSun ? [] : connectionsOf(o.id);
   // A hand-made drawing for the example topics, else one Claude described
@@ -907,10 +1189,33 @@ function fillOrb(o) {
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (live()) body = '<p class="slot">Opening this orb researches it with Claude.</p>';
   else body = `<p class="slot">${inViewer ? 'Sign in to claude.ai to research any topic in depth, on your own Claude plan.' : 'Connect Claude in Settings to research any topic in depth.'}</p>`;
-  const sourceLine = (src) => {
-    const title = src.url ? `<a href="${esc(src.url)}" target="_blank" rel="noopener noreferrer">${esc(src.title)}</a>` : esc(src.title);
-    return `<li><span class="tier tier-${src.tier}" title="Reliability tier ${src.tier} of 6">${src.tier}</span><span><b>${esc(src.type)}</b> ${title}${src.flag ? ` <em class="flag">⚠ ${esc(src.flag)}</em>` : ''}</span></li>`;
-  };
+  const sources = sourcesFor(o);
+  const tab = o.tab === 'sources' ? 'sources' : 'about';
+  const deeperHere = canGoDeeper(o.id);
+  const actions = [
+    o.isSun ? '' : canExpand(o.id) ? '<button class="orb-expand" type="button" data-action="expand">Expand</button>' : '',
+    deeperHere ? '<button class="orb-deeper" type="button" data-action="deeper">Go deeper</button>' : '',
+  ].filter(Boolean).join('');
+  const actionNote = !actions && !o.isSun && !topic.inside
+    ? `<p class="slot">${inViewer ? 'Sign in to claude.ai to expand any orb or go deeper' : 'Connect Claude to expand any orb or go deeper'}</p>`
+    : deeperHere && !o.isSun ? '<p class="action-note">Expand shows its neighbours. Go deeper opens it up: sub-systems, parts and plausible connections, then you pick a thread.</p>'
+    : deeperHere ? '<p class="action-note">Go deeper opens the centre up into sub-systems, parts and plausible connections, then you pick a thread.</p>' : '';
+  const inside = o.isSun && topic.inside ? DATA.inside[o.id] : null;
+  const overview = `
+        ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
+        ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
+        ${body}
+        ${more.chart ? chartHTML(more.chart) : ''}
+        ${more.check?.length ? `<section class="section"><h3>${session.mode === 'explore' && more.live ? 'Worth exploring next' : 'What to check'}</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
+        ${inside?.threads?.length ? `<section class="section"><h3>Threads to follow next <span>· you choose</span></h3><div class="threads">${inside.threads.map((t, i) =>
+          `<button type="button" class="thread-btn" data-action="thread" data-id="${i}"><b>${esc(t.title)}</b>${t.why ? `<small>${esc(t.why)}</small>` : ''}</button>`).join('')}</div></section>` : ''}
+        ${o.isSun ? '' : `<dl class="meters">${o.role ? '' : meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
+        ${links.length ? `<section class="section"><h3>${DATA.inside[trail[trail.length - 1]] ? 'Plausibly connected to' : 'Strongly linked to'}</h3><div class="chips">${links.map(([id]) =>
+          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
+        ${actions ? `<div class="actions">${actions}</div>` : ''}
+        ${actionNote}`;
+  // Re-rendering replaces the card's buttons; keep keyboard focus on the same one
+  const focusedAction = el.contains(document.activeElement) && document.activeElement !== el ? document.activeElement.dataset?.action : null;
   el.innerHTML = `
     <button class="orb-close" type="button" data-action="close" aria-label="Close">&times;</button>
     <div class="inner">
@@ -918,6 +1223,10 @@ function fillOrb(o) {
       <span class="rel"></span>
       <span class="t"></span>
       <span class="l"></span>
+      <div class="card-tabs" role="tablist" aria-label="What to show">
+        <button type="button" class="card-tab" role="tab" data-action="tab" data-id="about" aria-selected="${tab === 'about'}">Overview</button>
+        <button type="button" class="card-tab" role="tab" data-action="tab" data-id="sources" aria-selected="${tab === 'sources'}">Sources${sources.count ? ` · ${sources.count}` : ''}${sources.videos ? ` · ▶ ${sources.videos}` : ''}</button>
+      </div>
       ${o.isSun ? '' : `<div class="verdict" role="group" aria-label="Is this relevant?">
         <p class="verdict-q">${o.verdict ? 'Marked. Change your mind any time.' : 'Is this relevant to what you’re looking for?'}</p>
         <div class="verdict-row">
@@ -925,26 +1234,15 @@ function fillOrb(o) {
           <button type="button" class="verdict-btn no" data-action="cross" aria-pressed="${pressed('no')}"><span aria-hidden="true">✕</span>Not relevant</button>
         </div>
       </div>`}
-      <div class="more">
-        ${more.image ? `<figure class="photo"><img src="${esc(more.image.src)}" alt="${esc(more.image.alt)}" loading="lazy"><figcaption>${more.image.href ? `<a href="${esc(more.image.href)}" target="_blank" rel="noopener noreferrer">${esc(more.image.credit)}</a>` : esc(more.image.credit)}</figcaption></figure>` : ''}
-        ${drawing ? `<figure class="il">${drawing.svg}<figcaption>${esc(drawing.caption)}</figcaption></figure>` : ''}
-        ${body}
-        ${more.chart ? chartHTML(more.chart) : ''}
-        ${more.check?.length ? `<section class="section"><h3>${session.mode === 'explore' && more.live ? 'Worth exploring next' : 'What to check'}</h3><ul class="checks">${more.check.map((c) => `<li>${esc(c)}</li>`).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : `<dl class="meters">${meter('Link', o.link)}${meter('Relevance', o.relevance)}</dl>`}
-        ${links.length ? `<section class="section"><h3>Strongly linked to</h3><div class="chips">${links.map(([id]) =>
-          `<button type="button" class="chip" data-action="open" data-id="${id}">${esc(DATA.topics[id].title)}</button>`).join('')}</div></section>` : ''}
-        ${more.sources?.length ? `<section class="section"><h3>Sources${more.live ? '' : ' <span>· examples of the rating system</span>'}</h3><ul class="sources">${more.sources.map(sourceLine).join('')}</ul></section>` : ''}
-        ${o.isSun ? '' : canExpand(o.id)
-          ? '<button class="orb-expand" type="button" data-action="expand">Expand</button>'
-          : `<p class="slot">${inViewer ? 'Sign in to claude.ai to expand any orb' : 'Connect Claude to expand any orb'}</p>`}
-      </div>
+      <div class="more">${tab === 'sources' ? sources.html : overview}</div>
     </div>`;
   el.querySelector('.rel').textContent = relationText(o);
   el.querySelector('.t').textContent = topic.title;
   el.querySelector('.l').textContent = topic.liner;
   o.inner = el.querySelector('.inner');   // measured every frame to fit the card
+  labelOrb(o);
   // The longest word sets a ceiling on text size, so long words never get cut off
+  if (focusedAction) el.querySelector(`[data-action="${focusedAction}"]`)?.focus({ preventScroll: true });
   el.style.setProperty('--longest', Math.max(7, ...topic.title.split(/\s+/).map((w) => w.length)));
   // Once a picture arrives the card may need to grow
   el.querySelector('.photo img')?.addEventListener('error', (e) => e.target.closest('figure').remove());
@@ -961,14 +1259,18 @@ function makePulse(o) {
   const width = lerp(P.thinnest, P.thickest, o.link);
   // A short bright streak riding on a longer faint one reads as a
   // stream that tapers behind its head
+  // On Night sky the head of each is white chrome; the tail carries the orb's colour
   return [
-    { length: 1, width: 0.75, strength: 0.35 },
-    { length: 0.45, width: 1, strength: 1 },
+    { length: 1, width: 0.75, strength: 0.35, chrome: 0.45 },
+    { length: 0.45, width: 1, strength: 1, chrome: 0.9 },
   ].map((part) => {
-    const m = new LineMaterial({ linewidth: width * part.width, transparent: true, depthWrite: false });
+    const m = new LineMaterial({ linewidth: width * part.width, transparent: true, depthWrite: false, vertexColors: true });
     m.resolution.set(stage.clientWidth, stage.clientHeight);
     streakMaterials.add(m);
-    const streak = new Line2(STREAK, m);
+    const geo = new LineGeometry();
+    geo.setPositions([0, 0, 0, 0, 0, 1]);
+    geo.setColors([1, 1, 1, 1, 1, 1]);
+    const streak = new Line2(geo, m);
     streak.frustumCulled = false;
     streak.userData = part;
     world.add(streak);
@@ -981,7 +1283,380 @@ function makeLine() {
   geo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
   const line = new THREE.Line(geo, new THREE.LineBasicMaterial({ transparent: true, opacity: 0, depthWrite: false }));
   world.add(line);
+  makeThreads(line);
   return line;
+}
+function disposeLine(line) {
+  world.remove(line);
+  line.geometry.dispose();
+  line.material.dispose();
+  line.userData.weave?.mesh.material.dispose();
+}
+
+// ─── Woven threads: every line drawn as a few glowing strands ─
+// A port of the WebThreads component from React Bits (reactbits.dev), turned
+// from one full-screen weave into a small weave per line. Each line gets a
+// flat strip facing the screen, and the shader draws 2 to 6 strands inside it
+// that weave around the straight line and pinch together where it meets each
+// orb. Stronger links get more strands and more light. As in the original,
+// strands draw in one after another when a line appears, the strand under the
+// mouse lights up while its neighbours recede, and a click on the map sends
+// light along every thread. The plain line stays underneath, unseen, so line
+// hover and tap still work the same way. Original notice:
+//
+//   MIT + Commons Clause License Condition v1.0. Copyright (c) 2026 David Haz.
+//   Permission is hereby granted, free of charge, to any person obtaining a copy
+//   of this software and associated documentation files (the "Software"), to deal
+//   in the Software without restriction, including without limitation the rights
+//   to use, copy, modify, merge, publish, and distribute the Software as part of
+//   an application, website, or product, subject to the following conditions:
+//   The above copyright notice and this permission notice shall be included in all
+//   copies or substantial portions of the Software. Commons Clause: you may not
+//   sell, sublicense, or redistribute the components themselves, whether alone, in
+//   a bundle, or as a ported version. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT
+//   WARRANTY OF ANY KIND. Full text: github.com/DavidHDev/react-bits/blob/main/LICENSE.md
+const THREADS = TUNING.threads;
+const MAX_STRANDS = 6;
+const threadGeometry = new THREE.PlaneGeometry(1, 1);
+// Shared by every line: one clock, one weave, one look
+const threadUniforms = {
+  uRes: { value: new THREE.Vector2(1, 1) },
+  uPhase: { value: 0 },
+  uClock: { value: 0 },
+  uWaves: { value: (Math.PI * 2) / THREADS.wave },
+  uTaper: { value: THREADS.taper },
+  uWidth: { value: THREADS.width },
+  uFalloff: { value: THREADS.falloff },
+  uBrightness: { value: THREADS.brightness },
+  uLight: { value: 0 },
+  uChrome: { value: 1 },   // energy in the strands turns white-hot (Night sky)
+  uCore: { value: new THREE.Color(1, 1, 1) },
+  uPad: { value: THREADS.pad },
+};
+// Threads need WebGL2; without it (or if the shader won't build) lines stay plain
+let threadsOk = renderer.capabilities.isWebGL2;
+const threadsOn = () => threadsOk && view.threads;
+renderer.debug.onShaderError = (gl, program, vs, fs) => {
+  console.error('Celestial: a shader failed to build.', gl.getProgramInfoLog(program), gl.getShaderInfoLog(vs), gl.getShaderInfoLog(fs));
+  if (gl.getShaderSource(fs)?.includes('uSurge')) { threadsOk = false; syncViewPanel(); }
+};
+let threadClock = 0;
+
+const THREAD_VERTEX = /* glsl */`
+  uniform vec2 uA, uB;   // the two rim points, in pixels from the bottom left
+  uniform vec2 uRes;
+  uniform float uHalf, uRadA, uRadB;
+  varying vec2 vLocal;   // pixels along the line from the rim of orb A, and across it
+  varying float vLen;    // pixels between the two rims
+  void main() {
+    // A strip from rim to rim that reaches back to each orb's centre
+    vec2 a = uA, b = uB;
+    float len = max(length(b - a), 0.001);
+    vec2 t = (b - a) / len, n = vec2(-t.y, t.x);
+    float along = mix(-uRadA, len + uRadB, uv.x);
+    float across = (uv.y * 2.0 - 1.0) * uHalf;
+    vLocal = vec2(along, across);
+    vLen = len;
+    gl_Position = vec4((a + t * along + n * across) / uRes * 2.0 - 1.0, 0.0, 1.0);
+  }`;
+const THREAD_FRAGMENT = /* glsl */`
+  #define MAX_STRANDS ${MAX_STRANDS}
+  uniform float uCount, uPhase, uClock, uSpread, uWaves, uTaper, uWidth, uGlow, uFalloff;
+  uniform float uBrightness, uOpacity, uLight, uChrome, uLit, uFrom, uPad;
+  uniform float uRadA, uRadB, uLandA, uLandB, uFlare, uArc;
+  uniform vec3 uColA, uColB, uCore;
+  uniform vec4 uIntro;      // seconds since the line appeared, stagger, seconds per stroke, 1 while drawing in
+  uniform vec3 uSurge;      // seconds since a click, direction (1: A to B, -1: B to A), 1 while travelling
+  uniform vec4 uFlow;       // energy: head (0 to 1 + length, in its direction), length, direction, strength
+  uniform float uFocus[MAX_STRANDS];
+  uniform vec2 uFocusState; // how present the mouse is, how far the other strands recede
+  varying vec2 vLocal;
+  varying float vLen;
+  const float PI = 3.14159265;
+  const float TAU = 6.28318530;
+
+  float easeInOut(float t) { return t < 0.5 ? 4.0 * t * t * t : 1.0 - pow(-2.0 * t + 2.0, 3.0) * 0.5; }
+
+  // Strand i's height above the straight line, s pixels from orb A's rim.
+  // Mid-line the strands weave in a narrow bundle. Near each orb they spread
+  // apart and curve outward, so each lands at its own point on the rim and
+  // the bundle wraps onto the orb's curve instead of meeting in one point.
+  // 1 at an orb's rim, easing to 0 by uFlare pixels out. Flat at both ends, so
+  // a strand leaves the bundle gently and settles onto the rim without a hook.
+  float ease(float d) {
+    return 1.0 - smoothstep(0.0, uFlare, d);
+  }
+
+  float strand(float s, float i, float n) {
+    float x = clamp(s / vLen, 0.0, 1.0);
+    float amp = (1.0 + i * uTaper) / (1.0 + (n - 1.0) * uTaper);
+    float angle = x * vLen * uWaves - uPhase + i * TAU / n;
+    float weave = uSpread * sin(PI * x) * amp * sin(angle);
+    float side = n > 1.0 ? i / (n - 1.0) * 2.0 - 1.0 : 0.0;
+    float landing = sin(side * uArc);
+    return weave + landing * (uLandA * ease(s) + uLandB * ease(vLen - s));
+  }
+
+  void main() {
+    float s = vLocal.x;
+    float v = vLocal.y;
+    float x = clamp(s / vLen, 0.0, 1.0);
+    // Inside an orb nothing shows: the strands stop on its rim
+    float rim = smoothstep(-0.5, 1.5, length(vec2(s + uRadA, v)) - uRadA)
+              * smoothstep(-0.5, 1.5, length(vec2(s - vLen - uRadB, v)) - uRadB);
+    float reach = uSpread * sin(PI * x) + uLandA * ease(s) + uLandB * ease(vLen - s);
+    if (rim <= 0.0 || abs(v) > reach + uPad) discard;
+    float travel = mix(s / vLen, 1.0 - s / vLen, uFrom);   // how far along, in the direction strands draw in
+    float n = uCount;
+    float presence = uFocusState.x;
+    float settle = uFocusState.y;
+    vec3 color = vec3(0.0);
+    vec3 inkColor = vec3(0.0);
+    float energy = 0.0;
+    float ink = 0.0;
+
+    for (int k = 0; k < MAX_STRANDS; k++) {
+      float i = float(k);
+      if (i >= n) break;
+      float ci = n > 1.0 ? i / (n - 1.0) : 0.0;
+
+      float head = 2.0;
+      float bead = 0.0;
+      if (uIntro.w > 0.5) {
+        float progress = clamp((uIntro.x - i * uIntro.y) / uIntro.z, 0.0, 1.0);
+        head = mix(-0.1, 1.1, easeInOut(progress));
+        bead = sin(PI * progress);
+        if (progress <= 0.0 || travel > head) continue;
+      }
+
+      float y = strand(s, i, n);
+      float slope = (strand(s + 1.0, i, n) - strand(s - 1.0, i, n)) * 0.5;
+      float d = abs(v - y) / sqrt(1.0 + slope * slope);
+      float focus = uFocus[k];
+      float width = uWidth * (1.0 + 0.4 * focus * presence + 0.3 * uLit);
+      float g = uGlow * pow(width / max(d, 0.3), uFalloff);
+      float onLine = exp(-d / width);
+
+      // A soft light leads each strand as it draws in
+      if (bead > 0.0) {
+        float ahead = (travel - head) * vLen;
+        g *= 1.0 + bead * 1.6 * exp(-(ahead * ahead + d * d) / 60.0);
+      }
+      // Energy flowing from one orb to the other, inside the strands: a bright
+      // head with a fading tail, each strand a beat behind the one before
+      float chrome = 0.0;
+      if (uFlow.w > 0.0) {
+        float pos = uFlow.z > 0.0 ? s / vLen : 1.0 - s / vLen;
+        float h = uFlow.x - i * 0.03;
+        float ahead = (pos - h) * vLen;
+        float tail = max(uFlow.y * vLen, 40.0);
+        float pulse = ahead < 0.0 ? exp(ahead / (tail * 0.5)) : exp(-ahead * ahead / 300.0);
+        float life = sin(PI * clamp(h / (1.0 + uFlow.y), 0.0, 1.0));
+        g *= 1.0 + uFlow.w * life * pulse * (0.8 + 6.0 * onLine);
+        chrome = clamp(uFlow.w * life * pulse * onLine, 0.0, 1.0);
+      }
+      // A click's light running along the strand
+      if (uSurge.z > 0.5) {
+        float p = clamp((uSurge.x - i * 0.05) / ${THREADS.surge.toFixed(2)}, 0.0, 1.0);
+        if (p > 0.0 && p < 1.0) {
+          float lead = uSurge.y > 0.0 ? mix(-0.12, 1.12, easeInOut(p)) : mix(1.12, -0.12, easeInOut(p));
+          float along = (s / vLen - lead) * uSurge.y * vLen;
+          float trail = along < 0.0 ? exp(along / 90.0) : exp(-along * along / 120.0);
+          g *= 1.0 + trail * sin(PI * p) * (0.12 + 2.8 * onLine);
+        }
+      }
+      // The strand under the mouse lifts, with a slow sheen; the rest recede
+      float sheen = pow(0.5 + 0.5 * sin(s * 0.05 - uClock * 1.4), 10.0);
+      float lift = focus * presence;
+      g *= (1.0 - settle * (1.0 - focus)) * (1.0 + lift * (0.9 + 1.4 * sheen * onLine)) * (1.0 + 0.6 * uLit);
+      g = min(g, 12.0) * rim;
+
+      vec3 tint = mix(mix(uColA, uColB, ci), uCore, 0.3 * lift);
+      tint = mix(tint, vec3(1.0), chrome * 0.85 * uChrome);   // energy in the strands is white chrome
+      color += g * tint;
+      energy += g;
+      float stroke = smoothstep(0.45, 1.3, g);
+      inkColor += tint * stroke;
+      ink += stroke;
+    }
+
+    if (uLight < 0.5) {
+      // Dark themes: light, running hot where strands cross
+      float core = smoothstep(1.5, 4.0, energy);
+      color = mix(color, uCore * energy, core * 0.25) * uBrightness;
+      float alpha = clamp(energy, 0.0, 1.0) * uOpacity;
+      gl_FragColor = vec4(min(color * alpha, vec3(1.0)), alpha);
+    } else {
+      // Light themes: crisp ink strokes with a faint haze
+      vec3 hue = ink > 0.0001 ? inkColor / ink : mix(uColA, uColB, 0.5);
+      float body = clamp(ink, 0.0, 1.0);
+      float haze = clamp(1.0 - exp(-energy * 0.3), 0.0, 1.0) * 0.12;
+      float cover = clamp(body * 0.9 + haze * (1.0 - body), 0.0, 0.95) * uOpacity;
+      gl_FragColor = vec4(hue * cover, cover);
+    }
+  }`;
+
+function makeThreads(line) {
+  const u = {
+    ...threadUniforms,
+    uA: { value: new THREE.Vector2() },
+    uB: { value: new THREE.Vector2() },
+    uHalf: { value: 1 },
+    uSpread: { value: 1 },
+    uCount: { value: 2 },
+    uGlow: { value: THREADS.glow },
+    uOpacity: { value: 0 },
+    uLit: { value: 0 },
+    uFrom: { value: 0 },
+    uColA: { value: new THREE.Color() },
+    uColB: { value: new THREE.Color() },
+    uIntro: { value: new THREE.Vector4() },
+    uSurge: { value: new THREE.Vector3() },
+    uFocus: { value: new Float32Array(MAX_STRANDS) },
+    uFocusState: { value: new THREE.Vector2() },
+    uRadA: { value: 1 }, uRadB: { value: 1 },
+    uLandA: { value: 0 }, uLandB: { value: 0 },
+    uFlare: { value: 40 }, uArc: { value: 0 },
+    uFlow: { value: new THREE.Vector4() },
+  };
+  const mesh = new THREE.Mesh(threadGeometry, new THREE.ShaderMaterial({
+    uniforms: u,
+    vertexShader: THREAD_VERTEX,
+    fragmentShader: THREAD_FRAGMENT,
+    transparent: true,
+    premultipliedAlpha: true,   // the shader hands back light already multiplied by its cover
+    depthTest: false,
+    depthWrite: false,
+  }));
+  mesh.frustumCulled = false;
+  mesh.renderOrder = -1;   // under the streams
+  mesh.visible = false;
+  line.add(mesh);
+  line.userData.weave = { mesh, u, born: -1, hiddenFor: 0, focus: u.uFocus.value, presence: 0, settle: 0, lit: 0, surge: null, spread: 0, count: 2 };
+}
+
+// Lines drawn as threads this frame, for the mouse and clicks to find
+let woven = [];
+
+// Draw one line as threads (call after setLine). show: whether the line is
+// on screen; opacity: how strong it is drawn; link: 0–1, sets the strands;
+// colA and colB: colours across the strands; fromB: strands draw in from end B
+// orbA, orbB: the orbs at each end (A is where setLine started), so strands land on their rims
+const rimA = {}, rimB = {};
+function weave(line, show, dt, opacity = 0, link = 0, colA = null, colB = null, fromB = false, orbA = null, orbB = null) {
+  const w = line.userData.weave;
+  line.material.visible = !threadsOn();   // the plain line steps aside but still answers hover
+  if (!w) return;
+  if (!(show && threadsOn())) {
+    w.mesh.visible = false;
+    // Hidden for a moment: draw in again when it comes back
+    if ((w.hiddenFor += dt) > 0.4) w.born = -1;
+    return;
+  }
+  w.hiddenFor = 0;
+  if (w.born < 0) w.born = threadClock;
+  // The rims are found on screen, from where each orb is drawn and its size in
+  // pixels, so the strands meet the circle you see even when one orb sits
+  // nearer the camera than the other
+  const u = w.u, rA = orbA.rpx, rB = orbB.rpx;
+  const ca = toScreen(orbA.obj.position, rimA), cb = toScreen(orbB.obj.position, rimB);
+  ca.x += orbA.dx || 0; ca.y += orbA.dy || 0;
+  cb.x += orbB.dx || 0; cb.y += orbB.dy || 0;
+  const gap = Math.max(Math.hypot(cb.x - ca.x, cb.y - ca.y), 0.001);
+  const tx = (cb.x - ca.x) / gap, ty = (cb.y - ca.y) / gap;
+  const { p1, p2 } = line.userData;
+  p1.x = ca.x + tx * rA; p1.y = ca.y + ty * rA;
+  p2.x = cb.x - tx * rB; p2.y = cb.y - ty * rB;
+  u.uA.value.set(p1.x, screenSize.h - p1.y);
+  u.uB.value.set(p2.x, screenSize.h - p2.y);
+  w.len = Math.max(gap - rA - rB, 0.001);
+  w.spread = clamp(w.len * THREADS.spread, THREADS.minSpread, THREADS.maxSpread);
+  w.count = Math.round(lerp(THREADS.fewest, THREADS.most, clamp(link, 0, 1)));
+  // Near each orb the strands fan out over an arc of its rim (wider with more strands)
+  w.rA = rA; w.rB = rB;
+  w.landA = Math.min(rA, THREADS.landing);
+  w.landB = Math.min(rB, THREADS.landing);
+  w.arc = Math.min(THREADS.arc, THREADS.arcPerStrand * (w.count - 1)) * Math.PI / 180;
+  w.flare = clamp(Math.min(w.len * 0.3, Math.max(rA, rB) * 0.8), 10, THREADS.flare);
+  u.uSpread.value = w.spread;
+  u.uRadA.value = rA;
+  u.uRadB.value = rB;
+  u.uLandA.value = w.landA;
+  u.uLandB.value = w.landB;
+  u.uArc.value = w.arc;
+  u.uFlare.value = w.flare;
+  u.uHalf.value = Math.max(w.spread, Math.sin(w.arc) * Math.max(w.landA, w.landB)) + THREADS.pad;
+  u.uCount.value = w.count;
+  u.uFlow.value.w = 0;   // the streams set this after, while energy is flowing
+  u.uGlow.value = THREADS.glow * (0.6 + 0.4 * link);   // stronger links shine brighter
+  u.uOpacity.value = clamp(opacity * THREADS.boost, 0, 1);
+  u.uColA.value.copy(colA);
+  u.uColB.value.copy(colB);
+  u.uFrom.value = fromB ? 1 : 0;
+  const since = threadClock - w.born;
+  const drawing = !reduceMotion && since < (w.count - 1) * THREADS.stagger + THREADS.stroke;
+  u.uIntro.value.set(since, THREADS.stagger, THREADS.stroke, drawing ? 1 : 0);
+  if (w.surge && threadClock - w.surge.at > THREADS.surge + (w.count - 1) * 0.05) w.surge = null;
+  u.uSurge.value.set(w.surge ? threadClock - w.surge.at : 0, w.surge?.dir || 1, w.surge ? 1 : 0);
+  w.mesh.visible = true;
+  woven.push(w);
+}
+// A strand's height above its line, s pixels from orb A's rim: the same sum as in the shader
+function strandOffset(w, s, i) {
+  const n = w.count, x = clamp(s / w.len, 0, 1);
+  const amp = (1 + i * THREADS.taper) / (1 + (n - 1) * THREADS.taper);
+  const angle = x * w.len * threadUniforms.uWaves.value - threadUniforms.uPhase.value + (i * Math.PI * 2) / n;
+  const side = n > 1 ? (i / (n - 1)) * 2 - 1 : 0;
+  const ease = (d) => { const k = clamp(d / w.flare, 0, 1); return 1 - k * k * (3 - 2 * k); };
+  return w.spread * Math.sin(Math.PI * x) * amp * Math.sin(angle) + Math.sin(side * w.arc) * (w.landA * ease(s) + w.landB * ease(w.len - s));
+}
+// The strand nearest the mouse lights up while the others on its line
+// recede; the line being explained in Progressive mode glows
+let threadPointer = null;   // the mouse over the map (not touch, not an orb)
+let litLine = null;
+let focusTarget = null, focusStrand = -1;
+function focusThreads(dt) {
+  let target = null, strand = -1, best = Infinity;
+  const p = threadPointer && !hovered && !busy ? threadPointer : null;
+  if (p) {
+    const h = screenSize.h, py = h - p.y;   // the shader counts pixels upward
+    for (const w of woven) {
+      const { p1, p2 } = w.mesh.parent.userData;
+      const ax = p1.x, ay = h - p1.y, len = Math.max(w.len, 1);
+      const tx = (p2.x - p1.x) / len, ty = -(p2.y - p1.y) / len;
+      const along = (p.x - ax) * tx + (py - ay) * ty;
+      const across = -(p.x - ax) * ty + (py - ay) * tx;
+      if (along < 0 || along > len || Math.abs(across) > w.u.uHalf.value) continue;
+      for (let i = 0; i < w.count; i++) {
+        const d = Math.abs(across - strandOffset(w, along, i));
+        const reach = w === focusTarget && i === focusStrand ? 9 : 7;   // a little sticky
+        if (d < reach && d < best) { best = d; target = w; strand = i; }
+      }
+    }
+  }
+  focusTarget = target;
+  focusStrand = strand;
+  const ease = 1 - Math.exp(-dt / 0.22), slow = 1 - Math.exp(-dt / 0.3);
+  for (const w of woven) {
+    let strongest = 0;
+    for (let i = 0; i < MAX_STRANDS; i++) {
+      w.focus[i] += ((w === target && i === strand ? 1 : 0) - w.focus[i]) * ease;
+      strongest = Math.max(strongest, w.focus[i]);
+    }
+    w.presence += ((w === target ? 1 : 0) - w.presence) * slow;
+    w.settle += (0.5 * 0.65 * strongest * w.presence - w.settle) * slow;
+    w.lit += ((w.mesh.parent === litLine ? 1 : 0) - w.lit) * slow;
+    w.u.uFocusState.value.set(w.presence * 0.7, w.settle);
+    w.u.uLit.value = w.lit;
+  }
+}
+// A click on the map sends light along every thread, from the end nearer the click
+function surgeThreads(x, y) {
+  if (!threadsOn() || reduceMotion) return;
+  for (const w of woven) {
+    const { p1, p2 } = w.mesh.parent.userData;
+    w.surge = { at: threadClock, dir: Math.hypot(x - p1.x, y - p1.y) <= Math.hypot(x - p2.x, y - p2.y) ? 1 : -1 };
+  }
 }
 
 function setLine(line, a, b) {
@@ -1015,13 +1690,15 @@ function makeOrb(spec) {
     relevance: spec.relevance ?? 1,
     isSun: Boolean(spec.isSun),
     cameFrom: spec.cameFrom,
+    role: spec.role || null,       // inside a deep map: 'sub' (a sub-system) or 'part'
+    parent: spec.parent || null,   // a part's sub-system
     target: spec.target || new THREE.Vector3(),
     start: new THREE.Vector3(),
     grow: 0,
     k: 0,          // 0 → 1 as the orb opens into a preview card on hover
     f: 0,          // 0 → 1 as the orb opens fully on click
     surface: 1,    // the orb's radius in scene units, worked out each frame
-    phase: Math.random() * 10,   // so each orb's shape drifts differently
+    phase: Math.random() * 10,   // so each orb's shape drifts differently (and breathes out of step)
     exit: 0,       // 0 → 1 as the orb drifts away when you leave its system
     nx: 0, ny: 0,  // a gentle nudge that keeps an opened card on screen
     reveal: view.reasoning && !spec.isSun ? 0 : 1,   // 0 → 1 as Reasoning mode reaches this orb's step
@@ -1030,6 +1707,7 @@ function makeOrb(spec) {
   o.lead = !o.isSun && !o.verdict && isHiddenLead(o);
   o.radius = o.isSun ? TUNING.sunSize : radiusFor(o.relevance);
   o.el = makeOrbElement(o);
+  o.el.style.setProperty('--breath', (-o.phase).toFixed(2) + 's');
   o.obj = new CSS2DObject(o.el);
   world.add(o.obj);
   attachLinks(o);
@@ -1052,8 +1730,8 @@ function attachLinks(o) {
   }
 }
 function dropLinks(o) {
-  if (o.line) { world.remove(o.line); o.line.geometry.dispose(); o.line.material.dispose(); o.line = null; }
-  for (const s of o.pulse || []) { world.remove(s); s.material.dispose(); streakMaterials.delete(s.material); }
+  if (o.line) { disposeLine(o.line); o.line = null; }
+  for (const s of o.pulse || []) { world.remove(s); s.material.dispose(); s.geometry.dispose(); streakMaterials.delete(s.material); }
   o.pulse = null;
 }
 
@@ -1066,6 +1744,8 @@ function reshape(o, spec) {
     relevance: spec.relevance ?? 1,
     isSun: Boolean(spec.isSun),
     cameFrom: spec.cameFrom,
+    role: spec.role || null,
+    parent: spec.parent || null,
     target: spec.target || new THREE.Vector3(),
     verdict: spec.verdict || null,
     kept: true,
@@ -1094,13 +1774,17 @@ function applySpec(o, spec) {
   if (was !== o.verdict) fillOrb(o);
 }
 
+const WHITE = new THREE.Color(1, 1, 1), streakHead = new THREE.Color();
 function relationColour(o) {
   return o.rel === 'cause' ? palette.cause : o.rel === 'effect' ? palette.effect : palette.line;
 }
 
 function paintOrb(o) {
   if (o.line) o.line.material.color.copy(relationColour(o));
-  if (o.pulse) for (const s of o.pulse) s.material.color.copy(relationColour(o));
+  if (o.pulse) for (const s of o.pulse) {
+    const tail = relationColour(o), head = streakHead.copy(tail).lerp(WHITE, skin().stars ? s.userData.chrome : 0);
+    s.geometry.setColors([tail.r, tail.g, tail.b, head.r, head.g, head.b]);
+  }
 }
 
 function removeOrb(o) {
@@ -1115,6 +1799,7 @@ function retire(o, shift) {
   if (hovered === o) setHover(null);
   o.leaving = true;
   o.el.classList.add('is-leaving');
+  o.el.tabIndex = -1;
   leaving.push(o);
   const from = o.obj.position.clone();
   const to = from.clone().add(shift).multiplyScalar(TUNING.expand.drift);
@@ -1131,7 +1816,7 @@ function retireLine(c) {
   fadingLines.push(c);
   const from = c.life ?? 1;
   tween(TUNING.expand.leave * 0.6, (t) => { c.life = from * (1 - t); }, () => {
-    world.remove(c.line); c.line.geometry.dispose(); c.line.material.dispose();
+    disposeLine(c.line);
     fadingLines = fadingLines.filter((x) => x !== c);
   }, { ease: easeInOut, owner: c });
 }
@@ -1144,6 +1829,7 @@ function retireLine(c) {
 // - new orbs ease out from the centre in a wave, most relevant first
 // - the camera glides to frame it all
 // Resolves once the movement has settled.
+let opening = true;   // the first map of a visit
 function showSystem(sunId) {
   const E = TUNING.expand;
   const old = new Map(orbs.map((o) => [o.id, o]));
@@ -1164,7 +1850,10 @@ function showSystem(sunId) {
     return o;
   });
   for (const o of old.values()) retire(o, shift);
-  for (const o of orbs) o.hub = o.isSun ? null : orbs[0];
+  // Lines run to the centre, or inside a deep map from each part to its sub-system
+  const hubs = new Map(orbs.map((o) => [o.id, o]));
+  for (const o of orbs) o.hub = o.isSun ? null : (o.parent && hubs.get(o.parent)) || orbs[0];
+  renderThreads();
   updateDimming();
 
   // Faint lines between orbiting topics that are strongly linked to each other
@@ -1192,7 +1881,8 @@ function showSystem(sunId) {
       }, null, { ease: easeInOut, owner: o });
     } else {
       // New orbs start at the centre, so they seem to come out of the sun
-      const delay = o.isSun ? 0 : E.move * 0.3 + fresh.indexOf(o) * E.stagger;
+      // (on opening a night sky, only once it has lit)
+      const delay = o.isSun ? 0 : E.move * 0.3 + fresh.indexOf(o) * E.stagger + (opening && skin().stars ? E.ignite : 0);
       o.obj.position.set(0, 0, 0);
       tween(o.isSun ? E.move * 0.7 : E.arrive, (t) => {
         o.grow = t;
@@ -1202,6 +1892,7 @@ function showSystem(sunId) {
       if (!o.isSun && !view.reasoning) S?.orb(o, delay + E.arrive * 0.25);
     }
   }
+  opening = false;
   renderTrail();
   if (view.reasoning) startTrace();
   return wait(settled * 0.8);
@@ -1269,10 +1960,11 @@ async function mapLive(centreId, cameFromId = null, cameFromRel = 'related') {
     path: trail.slice(0, -1).map((id) => DATA.topics[id].title),
     cameFrom: cameFromId ? DATA.topics[cameFromId].title : '',
     feedback: feedbackTitles(),
+    reasons: view.reasoning,   // Claude writes the reasoning behind each line only in Progressive mode
   };
   let fullDone = false, sketched = 0;
   trace.live = view.reasoning;
-  DATA.reasons[centreId] = {};
+  DATA.reasons[centreId] = view.reasoning ? {} : { _off: true };
   if (cameFromId) {
     DATA.reasons[centreId][cameFromId] = cameFromReason(centreId, cameFromId, cameFromRel);
     addQuickOrb(centreId, { to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
@@ -1340,7 +2032,7 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
   const byTitle = new Map();
   const seen = new Set([centreId]);
   const system = [];
-  const reasons = DATA.reasons[centreId] = { _centre: out.centre.reading || '' };
+  const reasons = DATA.reasons[centreId] = { _centre: out.centre.reading || '', ...(DATA.reasons[centreId]?._off ? { _off: true } : {}) };
   const reason = (r) => ({ why: r.why, from: r.basis, tier: r.tier });
   if (cameFromId) {
     system.push({ to: cameFromId, rel: cameFromRel, link: 0.9, relevance: 1 });
@@ -1368,6 +2060,168 @@ function storeMap(centreId, out, cameFromId, cameFromRel) {
       if (l.why) reasons[`${a}~${b}`] = reason(l);
       return [a, b, strength];
     });
+}
+
+// ─── Go deeper: open a topic up into its sub-systems ─────────
+// Expand moves sideways (a topic's neighbours). Go deeper moves inwards: a
+// deeper research pass splits the topic into sub-systems, the parts of each
+// and plausible connections between parts, and suggests threads to follow.
+// The result is its own map, "Inside <topic>", reached through the path at
+// the top like any other, and remembered with the rest of the research.
+const insideId = (id) => 'in:' + id;
+const canGoDeeper = (id) => !DATA.topics[id]?.inside
+  && Boolean(DATA.systems[insideId(id)] || DATA.deep[id] || live());
+
+async function goDeeper(id) {
+  if (busy || !canGoDeeper(id)) return;
+  const deepId = insideId(id);
+  // The built-in example can be opened without Claude
+  if (!DATA.systems[deepId] && DATA.deep[id]) storeDeep(deepId, id, R.tidyDeep(DATA.deep[id], { example: true }), false);
+  const before = trail;
+  const at = trail.indexOf(deepId);
+  trail = at >= 0 ? trail.slice(0, at + 1) : [...trail, deepId];
+  closeFocus();
+  busy = true;
+  // The orb you chose glides into the centre and becomes the inside view's sun
+  const chosen = orbs.find((o) => o.id === id);
+  if (chosen && !DATA.systems[deepId]) DATA.topics[deepId] = { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
+  if (chosen && DATA.topics[deepId]) chosen.id = deepId;
+  if (!DATA.systems[deepId]) {
+    DATA.topics[deepId] ||= { title: DATA.topics[id].title, liner: 'Looking inside…', inside: id };
+    const moved = showSystem(deepId);
+    const ok = await researchDeep(deepId, id);
+    await moved;
+    if (!ok) {
+      trail = before;
+      delete DATA.topics[deepId];
+      if (chosen) chosen.id = id;
+      await showSystem(trail[trail.length - 1]);
+      busy = false;
+      return;
+    }
+  }
+  await showSystem(deepId);
+  busy = false;
+  saveSession();
+}
+
+async function researchDeep(deepId, ofId) {
+  const topic = DATA.topics[ofId];
+  pending.add(deepId);
+  const web = !planReady && view.webSearch;
+  setStatus(`Looking inside “${topic.title}” with ${whoAnswers()}${web ? ' and the web' : ''}. A deeper pass takes a minute or two…`);
+  try {
+    const out = await R.deep({
+      backend: backend(),
+      tier: view.tier,
+      key: apiKey,
+      model: view.model,
+      topic: topic.title,
+      liner: topic.liner,
+      mode: session.mode,
+      path: trail.slice(0, -1).map((t) => DATA.topics[t].title),
+      webSearch: web,
+      feedback: feedbackTitles(),
+    });
+    storeDeep(deepId, ofId, out, true);
+    setStatus('');
+    saveCache();
+    return true;
+  } catch (err) {
+    setStatus(R.explain(err), 'error');
+    return false;
+  } finally {
+    pending.delete(deepId);
+    updateSpend();
+  }
+}
+
+// Store a deep pass like any other system: sub-systems orbit the centre,
+// parts orbit their sub-system, plausible connections become cross-links
+function storeDeep(deepId, ofId, out, isLive) {
+  const of = DATA.topics[ofId];
+  const subs = out.subsystems;
+  DATA.topics[deepId] = { title: of.title, liner: out.centre.liner || of.liner, inside: ofId };
+  const reasons = DATA.reasons[deepId] = { _centre: out.centre.reading || '' };
+  const reason = (x) => ({ why: x.why, from: x.basis, tier: x.tier });
+  const used = new Set([deepId, ofId]);
+  const idFor = (title) => {
+    let id = slug(title), n = 2;
+    while (used.has(id)) id = `${slug(title)}-${n++}`;
+    used.add(id);
+    return id;
+  };
+  const put = (id, x) => {
+    if (!DATA.topics[id] || liveIds.has(id) || !isLive) DATA.topics[id] = { title: x.title, liner: x.liner };
+    if (isLive) liveIds.add(id);
+  };
+  const system = [], cites = {}, byTitle = new Map();
+  for (const sub of subs) {
+    const sid = idFor(sub.title);
+    put(sid, sub);
+    const top = Math.max(...sub.parts.map((p) => p.relevance));
+    system.push({ to: sid, rel: 'related', role: 'sub', link: 0.6, relevance: clamp(0.55 + top * 0.45, 0, 1) });
+    reasons[sid] = reason(sub);
+    cites[sid] = sub.cite;
+    for (const part of sub.parts) {
+      const pid = idFor(part.title);
+      put(pid, part);
+      byTitle.set(part.title.toLowerCase(), pid);
+      system.push({ to: pid, rel: 'related', role: 'part', parent: sid, link: 0.8, relevance: part.relevance });
+      reasons[pid] = reason(part);
+      cites[pid] = part.cite;
+    }
+  }
+  DATA.systems[deepId] = system;
+  DATA.crossLinks[deepId] = out.connections
+    .map((c) => [byTitle.get(c.a.toLowerCase()), byTitle.get(c.b.toLowerCase()), c])
+    .filter(([a, b]) => a && b && a !== b)
+    .map(([a, b, c]) => {
+      // Shown in Reasoning mode and on the line cards; strength follows confidence
+      reasons[`${a}~${b}`] = { why: `${DATA.topics[a].title} ${c.kind} ${DATA.topics[b].title}. ${c.why}`, from: `${c.basis} · ${c.confidence >= 0.7 ? 'likely' : c.confidence >= 0.5 ? 'plausible' : 'speculative'}`, tier: c.tier };
+      cites[`${a}~${b}`] = c.cite;
+      return [a, b, TUNING.crossLinkMin + (1 - TUNING.crossLinkMin) * c.confidence];
+    });
+  DATA.inside[deepId] = { of: ofId, threads: out.threads, sources: out.sources, cites, live: isLive };
+  DATA.details[deepId] = {
+    about: `Inside ${of.title}: ${subs.length} sub-systems (${subs.map((x) => x.title).join(', ')}), ${system.length - subs.length} parts and ${DATA.crossLinks[deepId].length} plausible connections between them.`,
+    sources: out.sources,
+    live: isLive,
+  };
+  if (isLive) liveIds.add(deepId);
+}
+
+// Pick a thread: it becomes the next deeper pass, one level further in
+function followThread(i) {
+  const sunId = trail[trail.length - 1];
+  const t = DATA.inside[sunId]?.threads?.[i];
+  if (!t || busy) return;
+  if (!live()) { toast(inViewer ? 'Following a thread needs Claude. Sign in to claude.ai and allow it for this page.' : 'Following a thread needs Claude. Add your API key in Settings.'); return; }
+  const id = 't-' + slug(t.title);
+  if (!DATA.topics[id]) DATA.topics[id] = { title: t.title, liner: t.question };
+  liveIds.add(id);
+  goDeeper(id);
+}
+
+// The threads bar under the path, while you're inside a deep map
+function renderThreads() {
+  const bar = $('threads');
+  const sunId = trail[trail.length - 1];
+  const threads = DATA.inside[sunId]?.threads || [];
+  bar.replaceChildren();
+  if (!threads.length) return;
+  const label = document.createElement('span');
+  label.className = 'threads-label';
+  label.textContent = 'Follow a thread';
+  bar.append(label);
+  threads.forEach((t, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = t.title;
+    b.title = t.question + (t.why ? '\n' + t.why : '');
+    b.addEventListener('click', () => followThread(i));
+    bar.append(b);
+  });
 }
 
 // Start a new investigation from the prompt line
@@ -1415,6 +2269,7 @@ async function explore(query) {
     return;
   }
   await showSystem(id);
+  $('prompt-input').value = '';   // the question is the heading now; the line is ready for the next one
   saveSession();
   saveFeedback();
   saveFindings();
@@ -1482,7 +2337,7 @@ function saveCache() {
   const pick = (table) => Object.fromEntries([...liveIds].filter((id) => table[id] && !table[id].loading).map((id) => [id, table[id]]));
   try {
     localStorage.setItem(CACHE_STORE, JSON.stringify({
-      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks), reasons: pick(DATA.reasons),
+      topics: pick(DATA.topics), systems: pick(DATA.systems), crossLinks: pick(DATA.crossLinks), reasons: pick(DATA.reasons), inside: pick(DATA.inside),
       details: Object.fromEntries(Object.entries(pick(DATA.details)).filter(([, d]) => !d.error)),
     }));
   } catch { /* storage full or blocked: research still works, it just won't be remembered */ }
@@ -1493,7 +2348,7 @@ function saveSession() {
 function loadCache() {
   try {
     const c = JSON.parse(localStorage.getItem(CACHE_STORE) || 'null');
-    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'reasons', 'details']) {
+    if (c) for (const table of ['topics', 'systems', 'crossLinks', 'reasons', 'details', 'inside']) {
       Object.assign(DATA[table], c[table] || {});
       Object.keys(c[table] || {}).forEach((id) => liveIds.add(id));
     }
@@ -1643,7 +2498,9 @@ function setHover(o) {
 // ─── Focus: a clicked orb opens up in place ─────────────────
 function relationText(o) {
   const sun = DATA.topics[trail[trail.length - 1]].title;
-  if (o.isSun) return 'Centre of this system';
+  if (o.isSun) return DATA.topics[o.id]?.inside ? 'Inside view · centre' : 'Centre of this system';
+  if (o.role === 'sub') return `Sub-system of ${sun}`;
+  if (o.role === 'part') return `Part of ${DATA.topics[o.parent]?.title || sun}`;
   const verb = { cause: 'Cause of', effect: 'Effect of', related: 'Related to' }[o.rel];
   return `${verb} ${sun}`;
 }
@@ -1654,6 +2511,7 @@ function openFocus(o) {
   if (view.reasoning && o.step != null && o.step > trace.at) { trace.at = o.step; trace.playing = false; renderTrace(); }
   pinned = null;
   selected = o;
+  if (o.tab !== 'about') { o.tab = 'about'; fillOrb(o); }
   updateDimming();
   if (live() && !DATA.details[o.id]?.about) loadDetails(o);
 }
@@ -1665,8 +2523,17 @@ function closeFocus() {
 }
 
 function runAction(action, o, id) {
-  if (action === 'close') closeFocus();
+  if (action === 'close') { closeFocus(); o.el.focus({ preventScroll: true }); }
   if (action === 'expand') expand(o.id);
+  if (action === 'deeper') goDeeper(o.id);
+  if (action === 'thread') followThread(Number(id));
+  if (action === 'tab') {
+    o.tab = id;
+    fillOrb(o);
+    o.inner.scrollTop = 0;
+    // Opening Sources on an orb that hasn't been researched yet starts the research
+    if (id === 'sources' && live() && !DATA.details[o.id]?.about) loadDetails(o);
+  }
   if (action === 'open') { const other = orbs.find((x) => x.id === id); if (other) openFocus(other); }
   if (action === 'retry') { delete DATA.details[o.id]; loadDetails(o); }
   if (action === 'tick') setVerdict(o, 'yes');
@@ -1686,19 +2553,31 @@ function setVerdict(o, v) {
   // A crossed orb has said what it needed to: close it and let it drift off
   if (next === 'no' && selected === o) closeFocus();
   updateFindings();
+  renderAnswer();
 }
 
 function updateDimming() {
   for (const o of orbs) {
     o.el.classList.toggle('is-dim', Boolean(selected) && o !== selected && !o.isSun);
     o.el.classList.toggle('is-selected', o === selected);
+    labelOrb(o);
   }
+}
+// What a screen reader hears: a button with the orb's name while closed,
+// a labelled group holding the card's own buttons once opened
+function labelOrb(o) {
+  const open = o === selected;
+  o.el.setAttribute('role', open ? 'group' : 'button');
+  o.el.setAttribute('aria-label', `${DATA.topics[o.id]?.title || ''}. ${relationText(o)}${o.verdict ? `. Marked ${o.verdict === 'yes' ? 'relevant' : 'not relevant'}` : ''}`);
+  if (open) o.el.removeAttribute('aria-expanded'); else o.el.setAttribute('aria-expanded', 'false');
 }
 
 addEventListener('keydown', (e) => {
   if (e.key !== 'Escape') return;
   pinned = null;
+  const was = selected;
   closeFocus();
+  if (was && (was.el.contains(document.activeElement) || document.activeElement === document.body)) was.el.focus({ preventScroll: true });
   setPanel(null, false);
 });
 
@@ -1720,14 +2599,45 @@ stage.addEventListener('pointerup', (e) => {
   else if (d.orb) openFocus(d.orb);
   else {
     // In Reasoning mode, tapping a line keeps its reasoning open (how touch screens "hover")
-    pinned = view.reasoning ? lineAt(e.clientX, e.clientY) : null;
+    pinned = view.reasoning ? lineAt(e.clientX, e.clientY, e.pointerType === 'touch') : null;
     if (!pinned) closeFocus();
+    surgeThreads(e.clientX, e.clientY);
   }
 });
 
+// ─── The answer first ────────────────────────────────────────
+// Your question is the page's heading. Under it, one line names the best
+// lead on the map and how strongly it's linked: what you ticked, if you have,
+// else the strongest cause for a problem, or the strongest topic to start
+// with. Pressing it opens that orb.
+function renderAnswer() {
+  const root = trail[0], sunId = trail[trail.length - 1];
+  $('headline-title').textContent = root === DATA.start ? DATA.prompt : DATA.topics[root]?.title || '';
+  const line = $('answer');
+  line.replaceChildren();
+  if (pending.has(sunId)) return;
+  const open = orbs.filter((o) => !o.isSun && !o.leaving && o.verdict !== 'no' && o.role !== 'part');
+  const yes = open.filter((o) => o.verdict === 'yes');
+  const diagnose = session.mode !== 'explore' && !DATA.topics[sunId]?.inside;
+  const causes = open.filter((o) => o.rel === 'cause');
+  const pool = yes.length ? yes : diagnose && causes.length ? causes : open;
+  const score = (o) => o.relevance + o.link * 0.5;
+  const best = [...pool].sort((a, b) => score(b) - score(a))[0];
+  if (!best) return;
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = best.rel ? 'rel-' + best.rel : '';
+  b.textContent = DATA.topics[best.id].title;
+  b.addEventListener('click', () => { const o = orbs.find((x) => x.id === best.id); if (o) openFocus(o); });
+  const strength = document.createElement('span');
+  strength.className = 'strength';
+  strength.textContent = `${band(best.link)} link${best.verdict === 'yes' ? ', you marked it relevant' : ''}`;
+  line.append(diagnose ? 'Most likely: ' : 'Start with: ', b, ' · ', strength);
+}
+
 // ─── Trail (breadcrumb) ──────────────────────────────────────
 function renderTrail() {
-  $('about').textContent = DATA.topics[trail[trail.length - 1]].liner;
+  renderAnswer();
   const nav = $('trail');
   nav.replaceChildren();
   const depth = document.createElement('span');
@@ -1744,6 +2654,12 @@ function renderTrail() {
     const b = document.createElement('button');
     b.type = 'button';
     b.textContent = DATA.topics[id].title;
+    if (DATA.topics[id].inside) {
+      const mark = document.createElement('span');
+      mark.className = 'inside';
+      mark.textContent = 'Inside';
+      b.prepend(mark);
+    }
     if (i === trail.length - 1) b.setAttribute('aria-current', 'step');
     else b.addEventListener('click', () => expand(id));
     nav.append(b);
@@ -1889,15 +2805,19 @@ function syncViewPanel() {
     if (!s.key) continue;
     const el = $('view-' + s.key);
     // Greyed out while the setting it depends on is off
-    const off = Boolean(s.needs && !view[s.needs]);
+    // Threads also grey out where the device can't draw them
+    const unsupported = s.key === 'threads' && !threadsOk;
+    const off = Boolean(s.needs && !view[s.needs]) || unsupported;
+    if (unsupported) el.closest('label').querySelector('small').textContent = 'This device can’t draw them (it needs WebGL2), so lines stay plain';
     (el.closest('label') || el).classList.toggle('is-off', off);
+    if (s.skins) el.hidden = !s.skins.includes(view.skin);
     if (s.options) {
       for (const b of el.querySelectorAll('.choice')) {
         b.setAttribute('aria-checked', String(b.dataset.value === String(view[s.key])));
         b.disabled = off;
       }
     } else if (el.type === 'checkbox') {
-      el.checked = view[s.key];
+      el.checked = view[s.key] && !unsupported;
       el.disabled = off;
     } else {
       el.value = view[s.key];
@@ -1920,16 +2840,20 @@ function afterViewChange(s) {
   if (s?.relayout) { clearTimeout(relayoutTimer); relayoutTimer = setTimeout(relayout, 120); }
 }
 
-// The page's colours come from data-theme on the root, e.g. "tide-dark"
-const OUR_THEMES = ['tide-light', 'tide-dark', 'dusk-light', 'dusk-dark'];
-function themeName() {
-  const dark = view.mode === 'dark' || (view.mode === 'system' && darkDevice.matches);
-  return `${view.theme}-${dark ? 'dark' : 'light'}`;
-}
-
+// The page's colours come from data-skin on the root, e.g. "classic", and
+// for Classic data-mode, "light" or "dark"
 function applyView() {
   const root = document.documentElement;
-  if (root.dataset.theme !== themeName()) root.dataset.theme = themeName();
+  const mode = isDark() ? 'dark' : 'light';
+  if (root.dataset.mode !== mode) root.dataset.mode = mode;
+  if (root.dataset.skin !== view.skin) {
+    root.dataset.skin = view.skin;
+    // The star field is measured in whole pixels; a soft gradient needs few
+    backdrop.setPixelRatio(skin().stars ? 1 : 0.5);
+    resize();
+    drawLineArt();
+    for (const b of document.querySelectorAll('[data-word]')) b.textContent = skin().words[b.dataset.word];
+  }
   const b = document.body.classList;
   b.toggle('hide-names', !view.names);
   b.toggle('plain-outlines', !view.relationColour);
@@ -1943,14 +2867,8 @@ function applyView() {
   if ($('plan-note') && R) updateLiveState(false);
   applySound();
 }
-darkDevice.addEventListener('change', applyView);
-// If the page host switches light/dark itself, keep our theme and follow its mode
-new MutationObserver(() => {
-  const t = document.documentElement.dataset.theme;
-  if (OUR_THEMES.includes(t)) return;
-  if (t === 'dark' || t === 'light') view.mode = t;
-  applyView();
-}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+darkDevice.addEventListener('change', () => { if (skin().modes && view.mode === 'system') applyView(); });
 
 // The Settings and How to use panels: one open at a time
 function setPanel(name, open) {
@@ -1976,7 +2894,7 @@ $('view-reset').addEventListener('click', () => {
 // ─── Sound (see the SOUND script) ────────────────────────────
 const S = window.CELESTIAL_SOUND;
 function applySound() {
-  S?.configure({ on: view.sound, volume: view.volume, music: view.music, bells: view.bells, cues: view.cues, theme: view.theme });
+  S?.configure({ on: view.sound, volume: view.volume, music: view.music, bells: view.bells, cues: view.cues, theme: skin().scale });
   $('sound-toggle').setAttribute('aria-pressed', String(view.sound));
 }
 $('sound-toggle').addEventListener('click', () => {
@@ -1996,7 +2914,6 @@ function toast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { t.hidden = true; }, 4200);
 }
-$('prompt-input').value = trail[0] === DATA.start ? DATA.prompt : DATA.topics[trail[0]].title;
 $('prompt').addEventListener('submit', (e) => {
   e.preventDefault();
   const q = $('prompt-input').value.trim();
@@ -2013,7 +2930,7 @@ function updateLiveState(refill = true) {
   const onClaude = planReady || inViewer;
   $('plan-note').hidden = !onClaude;
   $('plan-note').textContent = planReady
-    ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so sources are named but not linked.'
+    ? 'Research runs on your own Claude plan, whoever shared this page with you. No key needed; the first search asks your permission. It draws on Claude’s own knowledge (no web browsing here), so each orb’s Sources tab lists references Claude named, with search links to find them, rather than links to pages it read.'
     : planBlocked === 'checking' ? 'Connecting to Claude…'
     : planBlocked === 'denied' ? 'Claude is switched off for this page in your settings. Turn it back on to research your own questions; it runs on your own Claude plan.'
     : BLOCKED_NOTE;
@@ -2038,7 +2955,7 @@ function updateSpend() {
   const s = R?.spend;
   $('spend').textContent = !s?.requests ? ''
     : planReady ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'} on your Claude plan`
-    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web searches` : ''}, about $${s.dollars.toFixed(2)}`;
+    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web search${s.searches === 1 ? '' : 'es'}` : ''}, ${s.tokens >= 1e6 ? (s.tokens / 1e6).toFixed(1) + 'M' : Math.max(1, Math.round(s.tokens / 1000)) + 'k'} tokens. Your Anthropic console shows the cost.`;
 }
 $('key-form').addEventListener('submit', (e) => {
   e.preventDefault();
@@ -2065,7 +2982,7 @@ $('show-example').addEventListener('click', () => {
   clearFeedback();
   Object.assign(findings, { shown: false, claude: null, sig: '', loading: false, error: '' });
   renderFindings();
-  $('prompt-input').value = DATA.prompt;
+  $('prompt-input').value = '';
   closeFocus();
   showSystem(DATA.start);
   saveSession();
@@ -2130,6 +3047,15 @@ function updatePulse(o, sun, approach) {
   const path = a.distanceTo(b);
   const dimmed = selected && selected !== o ? 0.25 : 1;
   const u = ((streamClock + o.pulseOffset) % o.pulseEvery) / P.travel;   // 0→1 while travelling
+  // Drawn as threads: the energy travels inside the strands instead of as a separate streak
+  const w = o.line?.userData.weave;
+  if (threadsOn() && w?.mesh.visible) {
+    for (const s of o.pulse) s.visible = false;
+    const len = Math.min(o.pulseLength, path * 0.7) / Math.max(path, 0.01);
+    // Causes flow from the orb (end A) into the centre, effects back out
+    w.u.uFlow.value.set(u * (1 + len), len, o.rel === 'cause' ? 1 : -1, o.flow * dimmed * (0.6 + 0.4 * o.link));
+    return;
+  }
   for (const streak of o.pulse) {
     const len = Math.min(o.pulseLength * streak.userData.length, path * 0.7) / Math.max(path, 0.01);
     // The head runs a little past the end so the tail can slide in after it
@@ -2147,7 +3073,8 @@ function updatePulse(o, sun, approach) {
   }
 }
 
-// ─── Reasoning mode: watch the map being built ───────────────
+// ─── Progressive mode: watch the map being built ─────────────
+// (Called "Reasoning" in the code and in stored settings, view.reasoning.)
 // A toggle at the top. When it's on, a system doesn't appear all at once:
 // it's rebuilt one step at a time, in the order the reasoning goes. First
 // how the question was read, then causes (strongest first), effects and
@@ -2206,19 +3133,23 @@ function describe(l) {
       tier: null,
     };
   }
+  // A map Claude made while the mode was off has no reasons; say so plainly
+  const OFF_NOTE = 'Progressive mode was off when Claude mapped this, so no reason was written for this line. Turn it on before asking a question to get one for every line.';
+  const off = Boolean(DATA.reasons[sunId]?._off);
   if (l.kind === 'orb') {
     const o = l.orb, r = reasonFor(sunId, o.id);
     const verb = { cause: 'Cause of', effect: 'Effect of', related: 'Related to' }[o.rel] || 'Related to';
+    const role = o.role === 'sub' ? `Sub-system of ${centre}` : o.role === 'part' ? `Part of ${DATA.topics[o.parent]?.title || centre}` : '';
     return {
-      kicker: `${o.lead ? 'Hidden lead · ' : ''}${verb} ${centre}`, rel: o.rel, title: DATA.topics[o.id].title,
-      why: r?.why || `No reasoning was recorded for this line. The orb’s own summary: ${DATA.topics[o.id].liner}`,
+      kicker: role || `${o.lead ? 'Hidden lead · ' : ''}${verb} ${centre}`, rel: o.rel, title: DATA.topics[o.id].title,
+      why: r?.why || (off ? `${OFF_NOTE} The orb’s own summary: ${DATA.topics[o.id].liner}` : `No reasoning was recorded for this line. The orb’s own summary: ${DATA.topics[o.id].liner}`),
       fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength: o.link,
     };
   }
   const { a, b, strength } = l.c, r = reasonFor(sunId, a.id, b.id);
   return {
-    kicker: 'Noticing a connection', rel: 'cross', title: `${DATA.topics[a.id].title} ↔ ${DATA.topics[b.id].title}`,
-    why: r?.why || 'These two were marked as strongly linked, but no reasoning was recorded for the line.',
+    kicker: DATA.inside[sunId] ? 'A plausible connection' : 'Noticing a connection', rel: 'cross', title: `${DATA.topics[a.id].title} ↔ ${DATA.topics[b.id].title}`,
+    why: r?.why || (off ? OFF_NOTE : 'These two were marked as strongly linked, but no reasoning was recorded for the line.'),
     fromLabel: 'Where this comes from', from: r ? r.from : 'Not recorded', tier: r ? r.tier : 6, strength,
   };
 }
@@ -2228,13 +3159,17 @@ const linkKey = (l) => !l ? '' : l.kind === 'start' ? 'start' : l.kind === 'orb'
 // first within each, with each cross-link right after its second orb
 function startTrace() {
   const rank = { cause: 0, effect: 1, related: 2 };
-  const planets = orbs.slice(1).sort((x, y) => (rank[x.rel] ?? 2) - (rank[y.rel] ?? 2) || y.link - x.link);
+  const inside = orbs.some((o) => o.role === 'sub');
+  const byRelevance = (x, y) => y.relevance - x.relevance;
+  const planets = inside
+    ? orbs.filter((o) => o.role === 'sub').sort(byRelevance).flatMap((sub) => [sub, ...orbs.filter((o) => o.parent === sub.id).sort(byRelevance)])
+    : orbs.slice(1).sort((x, y) => (rank[x.rel] ?? 2) - (rank[y.rel] ?? 2) || y.link - x.link);
   const steps = [{ kind: 'start', orb: orbs[0], phase: 'start' }];
   const shown = new Set();
   let waiting = [...crossLines];
   for (const o of orbs) o.step = null;
   for (const o of planets) {
-    steps.push({ kind: 'orb', orb: o, phase: o.rel });
+    steps.push({ kind: 'orb', orb: o, phase: inside ? 'sub:' + (o.parent || o.id) : o.rel });
     shown.add(o);
     const ready = waiting.filter((c) => shown.has(c.a) && shown.has(c.b));
     waiting = waiting.filter((c) => !ready.includes(c));
@@ -2312,7 +3247,8 @@ function renderTrace() {
   trace.steps.slice(0, trace.at + 1).forEach((s, i) => {
     if (s.phase !== phase && s.kind !== 'cross') {
       phase = s.phase;
-      items.push(`<li class="trace-phase">${PHASES[phase] || ''}</li>`);
+      const label = PHASES[phase] || (phase.startsWith('sub:') ? `Inside ${DATA.topics[phase.slice(4)]?.title || ''}` : '');
+      items.push(`<li class="trace-phase">${esc(label)}</li>`);
     }
     const d = describe(s);
     items.push(`<li><button type="button" class="trace-step" data-step="${i}" ${i === trace.at ? 'aria-current="step"' : ''}>
@@ -2380,11 +3316,13 @@ function segDist(x, y, p, q) {
   const t = len2 ? clamp(((x - p.x) * dx + (y - p.y) * dy) / len2, 0, 1) : 0;
   return Math.hypot(x - (p.x + t * dx), y - (p.y + t * dy));
 }
-function lineAt(x, y) {
-  let best = null, bestD = 9;
+// touch: a fingertip gets a 44px-wide target; threads count their whole bundle
+function lineAt(x, y, touch = false) {
+  let best = null, bestD = touch ? 22 : 9;
   const consider = (line, link) => {
     if (!line?.visible || !line.userData.p1) return;
-    const d = segDist(x, y, line.userData.p1, line.userData.p2);
+    const w = line.userData.weave;
+    const d = segDist(x, y, line.userData.p1, line.userData.p2) - (threadsOn() && w?.mesh.visible ? w.spread * 0.7 : 0);
     if (d < bestD) { bestD = d; best = link; }
   };
   for (const o of orbs) if (!o.isSun && o.reveal > 0.5) consider(o.line, { kind: 'orb', orb: o });
@@ -2392,9 +3330,11 @@ function lineAt(x, y) {
   return best;
 }
 stage.addEventListener('pointermove', (e) => {
-  pointer = view.reasoning && e.pointerType !== 'touch' && !down && !e.target.closest?.('.orb') ? { x: e.clientX, y: e.clientY } : null;
+  const free = e.pointerType !== 'touch' && !down && !e.target.closest?.('.orb');
+  pointer = view.reasoning && free ? { x: e.clientX, y: e.clientY } : null;
+  threadPointer = free ? { x: e.clientX, y: e.clientY } : null;
 });
-stage.addEventListener('pointerleave', () => { pointer = null; });
+stage.addEventListener('pointerleave', () => { pointer = null; threadPointer = null; });
 
 // The line being explained lights up with a thicker stroke drawn over it
 const glowMaterial = new LineMaterial({ linewidth: 3.2, transparent: true, depthWrite: false });
@@ -2413,7 +3353,7 @@ function cardHTML(d) {
     <b class="lc-title">${esc(d.title)}</b>
     <p class="lc-why">${esc(d.why)}</p>
     <div class="lc-from"><span class="lc-label">${esc(d.fromLabel)}</span><span class="lc-source">${tier}<span>${esc(d.from)}</span></span></div>
-    ${d.strength != null ? `<div class="lc-meter"><span class="lc-label">Link</span><span class="bar"><i style="width:${Math.round(d.strength * 100)}%"></i></span><output>${Math.round(d.strength * 100)}</output></div>` : ''}`;
+    ${d.strength != null ? `<div class="lc-meter"><span class="lc-label">Link</span><span class="bar"><i style="width:${Math.round(d.strength * 100)}%"></i></span><output>${band(d.strength)}</output></div>` : ''}`;
 }
 function updateReasoning(sw, h) {
   const card = $('link-card');
@@ -2429,7 +3369,10 @@ function updateReasoning(sw, h) {
   const active = !view.reasoning ? null : hoverLink || pinned || (following && !selected && (trace.live || !busy) ? step : null);
   // Light up its line
   const line = active?.kind === 'orb' ? active.orb.line : active?.kind === 'cross' ? active.c.line : null;
-  glow.visible = Boolean(line?.visible && line.userData.a);
+  const shown = Boolean(line?.visible && line.userData.a);
+  // Threads light up the line themselves; plain lines get a thicker stroke drawn over them
+  litLine = shown ? line : null;
+  glow.visible = shown && !threadsOn();
   if (glow.visible) {
     const { a, b } = line.userData;
     glow.position.copy(a);
@@ -2438,7 +3381,7 @@ function updateReasoning(sw, h) {
     glowMaterial.color.copy(active.kind === 'orb' ? relationColour(active.orb) : palette.line);
     glowMaterial.opacity = 0.85 * Math.min(1, line.material.opacity * 4);
   }
-  if (!active || (active.kind !== 'start' && !glow.visible)) { card.hidden = true; cardKey = ''; return; }
+  if (!active || (active.kind !== 'start' && !shown)) { card.hidden = true; cardKey = ''; return; }
   const key = linkKey(active);
   if (key !== cardKey) {
     cardKey = key;
@@ -2500,6 +3443,11 @@ function frame(now) {
   lastNow = now;
   const seconds = now / 1000;
   streamClock += dt * view.streamSpeed;
+  // Threads weave unless motion is reduced or orb motion is off; the clock still runs for clicks and draw-ins
+  threadClock += dt;
+  if (!reduceMotion && view.organic) threadUniforms.uPhase.value += dt * THREADS.speed;
+  threadUniforms.uClock.value = reduceMotion ? 0 : threadClock;
+  woven = [];
   if (view.backdropMotion && !reduceMotion) backdropClock += dt;
 
   for (let i = tweens.length - 1; i >= 0; i--) {
@@ -2512,6 +3460,7 @@ function frame(now) {
   if (view.mapMotion === 'sway' && !grabbed && !reduceMotion) world.rotation.y = Math.sin(now / 4000) * 0.12;
   glideCamera(dt);
   controls.update();
+  camera.updateMatrixWorld();   // so points projected this frame match where the orbs are drawn
   world.updateMatrixWorld();
   advanceTrace(now);
 
@@ -2526,7 +3475,10 @@ function frame(now) {
   for (const o of all) {
     // Reasoning mode: an orb comes out of the sun when the build reaches its step
     o.reveal += (revealGoal(o) - o.reveal) * revealRate;
-    if (o.reveal < 0.999 && o.hub && !o.leaving) o.obj.position.copy(o.target).multiplyScalar(o.reveal);
+    if (o.reveal < 0.999 && o.hub && !o.leaving) {
+      if (o.hub.isSun) o.obj.position.copy(o.target).multiplyScalar(o.reveal);
+      else o.obj.position.lerpVectors(o.hub.target, o.target, o.reveal);
+    }
     o.obj.getWorldPosition(worldPos);
     const camDist = camera.position.distanceTo(worldPos);
     // Open up smoothly on hover (preview) or click (full)
@@ -2586,8 +3538,15 @@ function frame(now) {
     }
     o.nx += (nx - o.nx) * approach;
     o.ny += (ny - o.ny) * approach;
-    o.el.style.translate = `${(o.nx + fx * calm).toFixed(2)}px ${(o.ny + fy * calm).toFixed(2)}px`;
+    o.dx = o.nx + fx * calm;   // kept so threads meet the orb where it's drawn
+    o.dy = o.ny + fy * calm;
+    o.el.style.translate = `${o.dx.toFixed(2)}px ${o.dy.toFixed(2)}px`;
     o.el.style.rotate = `${(TUNING.tilt * Math.sin(seconds * 0.33 + o.phase * 0.9) * calm).toFixed(2)}deg`;
+    // Sway about the orb's own centre. Left at the default, the turn would also
+    // swing the whole placement around the corner of the map, shifting the orb
+    // by up to ~20px from where its lines and threads meet it
+    const at = toScreen(o.obj.position, o.at ||= {});
+    o.el.style.transformOrigin = `${at.x.toFixed(1)}px ${at.y.toFixed(1)}px`;
     // The further away an orb is, the more see-through it gets
     let fade = 1;
     if (view.depthFade && !o.isSun) {
@@ -2596,12 +3555,16 @@ function frame(now) {
     }
     // Less relevant orbs recede, so the eye lands on the relevant ones first
     if (!o.isSun) fade *= lerp(1, lerp(TUNING.leastRelevantFade, 1, o.relevance), view.hierarchy);
-    if (o.verdict === 'no') fade *= 0.6;   // ruled out: fades back
+    // The ring keeps the full fade, so depth and relevance still read at a glance
+    o.el.style.setProperty('--ring', clamp(fade / TUNING.readable, 0.2, 1).toFixed(2));
+    fade = Math.max(fade, TUNING.readable);
+    if (o.verdict === 'no') fade = 0.55;   // ruled out: fades back, still legible
     if (o.verdict === 'yes') fade = Math.max(fade, 0.95);   // relevant: stays clear
     o.fade = Math.max(fade, open) * Math.min(1, o.grow * 1.5) * (1 - o.exit) * o.reveal;
     o.el.style.opacity = o.fade.toFixed(3);
     // The orb's radius in scene units, so lines and streams meet its edge
     o.surface = (Math.min(w, hgt) / 2) * (2 * tanV * camDist) / h;
+    o.rpx = Math.min(w, hgt) / 2;   // ...and in pixels, for threads to land on its rim
   }
 
   for (const o of all) {
@@ -2609,7 +3572,8 @@ function frame(now) {
     o.linkIn += ((o.leaving ? 0 : 1) - o.linkIn) * settle;
     if (o.line) {
       const faint = view.reasoning ? TUNING.reasonLine
-        : view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine : 0;
+        : view.centreLines && (o.rel === 'cause' || o.rel === 'effect') ? TUNING.centreLine
+        : o.role ? TUNING.centreLine * 1.4 : 0;   // inside a deep map the structure always shows
       const dim = selected && selected !== o ? 0.4 : 1;
       const strength = Math.max(faint * o.fade * dim, 0.6 * o.k) * o.grow * o.linkIn;
       o.line.visible = strength > 0.005 && Boolean(sun);
@@ -2617,7 +3581,10 @@ function frame(now) {
         edgePoints(o, sun);
         setLine(o.line, pathFrom, pathTo);
         o.line.material.opacity = strength;
-      }
+        // Strands in the orb's colour, the outer ones warming towards the ink; drawn in from the centre outward
+        const col = relationColour(o);
+        weave(o.line, true, dt, strength, o.link, col, col, true, o, sun);   // a cause or effect keeps its colour all the way
+      } else weave(o.line, false, dt);
     }
     if (o.pulse) updatePulse(o, sun, approach);
   }
@@ -2628,14 +3595,18 @@ function frame(now) {
     const faint = view.reasoning ? TUNING.reasonLine : TUNING.crossLine * c.strength;
     const strength = Math.max(faint * Math.min(c.a.fade, c.b.fade) * dim, 0.5 * lit) * Math.min(c.a.grow, c.b.grow) * (c.life ?? 1) * c.reveal;
     c.line.visible = (view.crossLinks || view.reasoning) && strength > 0.005;
-    if (!c.line.visible) continue;
+    if (!c.line.visible) { weave(c.line, false, dt); continue; }
     edgePoints(c.a, c.b);
     setLine(c.line, pathFrom, pathTo);
     c.line.material.opacity = strength;
+    // Strands shade from one orb's colour to the other's
+    weave(c.line, true, dt, strength, c.strength, relationColour(c.a), relationColour(c.b), false, c.a, c.b);
   }
   updateReasoning(sw, h);
+  focusThreads(dt);
 
   backdropUniforms.uTime.value = backdropClock;
+  panStars();
   backdrop.render(backdropScene, backdropCamera);
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
@@ -2656,7 +3627,9 @@ function resize() {
   labelRenderer.setSize(w, h);
   backdrop.setSize(w, h);
   backdropUniforms.uAspect.value = w / h;
+  backdropUniforms.uHeight.value = h;
   for (const m of streakMaterials) m.resolution.set(w, h);
+  threadUniforms.uRes.value.set(w, h);
   camera.aspect = w / h;
   camera.updateProjectionMatrix();
   clearTimeout(resizeTimer);
@@ -2665,6 +3638,13 @@ function resize() {
 new ResizeObserver(resize).observe(stage);
 
 // ─── Start ───────────────────────────────────────────────────
+// The opening: the stars come out of the dark and the sun ignites
+if (!reduceMotion) {
+  document.body.classList.add('opening');
+  setTimeout(() => document.body.classList.remove('opening'), 2600);
+  backdropUniforms.uFade.value = 0;
+  tween(2800, (t) => { backdropUniforms.uFade.value = t; }, null, { ease: easeInOut });
+}
 loadCache();
 loadFeedback();
 loadFindings();
@@ -2689,4 +3669,3 @@ $('plan-allow').addEventListener('click', async () => {
   try { await R.openPermissions(); } catch { toast('Open the page’s Permissions menu on claude.ai and switch Claude on.'); }
   checkPlan();
 });
-

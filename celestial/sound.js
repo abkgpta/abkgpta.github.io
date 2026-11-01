@@ -2,8 +2,8 @@
 // SOUND · a soundtrack generated in the browser, with no audio files.
 //
 // Everything is synthesised with the Web Audio API:
-//   drone  – a slow chord under everything, set by the theme
-//            (Tide: open fifths on A; Dusk: a soft D minor)
+//   drone  – a slow chord under everything, set by the skin
+//            (both skins: open fifths on A)
 //   bells  – one note per orb as it appears. Causes ring in the low
 //            octave, related topics in the middle, effects up high.
 //            A stronger link picks a note nearer the home note, and a
@@ -14,16 +14,15 @@
 // off and nothing plays until you switch it on.
 // ─────────────────────────────────────────────────────────────
 (() => {
-  // Notes as semitones above the theme's home note (MIDI numbering)
+  // Notes as semitones above the skin's home note (MIDI numbering)
   const SCALES = {
-    tide: { home: 57, steps: [0, 2, 4, 7, 9], drone: [-24, -17, -12, -5] },   // A major pentatonic; drone A1 E2 A2 E3
-    dusk: { home: 62, steps: [0, 3, 5, 7, 10], drone: [-24, -12, -9, -5] },   // D minor pentatonic; drone D2 D3 F3 A3
+    default: { home: 57, steps: [0, 2, 4, 7, 9], drone: [-24, -17, -12, -5] },   // A major pentatonic; drone A1 E2 A2 E3
   };
   const OCTAVE = { cause: 0, related: 12, effect: 24 };
   const hz = (midi) => 440 * Math.pow(2, (midi - 69) / 12);
   const gentle = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const cfg = { on: false, volume: 0.6, music: true, bells: true, cues: true, theme: 'tide' };
+  const cfg = { on: false, volume: 0.6, music: true, bells: true, cues: true, theme: 'default' };
   let ctx = null, master = null, bus = null, droneOut = null, drone = null, droneTheme = '';
   let nextFree = 0;   // bells queue behind each other so a whole map doesn't land at once
 
@@ -82,7 +81,7 @@
   // Each note is two slightly detuned voices that swell slowly at their own
   // pace, all through one soft filter that opens and closes over a minute.
   function startDrone(theme) {
-    const s = SCALES[theme] || SCALES.tide, now = ctx.currentTime;
+    const s = SCALES[theme] || SCALES.default, now = ctx.currentTime;
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.value = 520;
@@ -162,7 +161,7 @@
 
   // The note an orb plays, from its role and how strongly it's linked
   function noteOf(o) {
-    const s = SCALES[cfg.theme] || SCALES.tide;
+    const s = SCALES[cfg.theme] || SCALES.default;
     if (!o || o.isSun) return s.home - 12;
     const degree = Math.round((1 - Math.min(1, Math.max(0, o.link ?? 0.5))) * (s.steps.length - 1));
     return s.home + (OCTAVE[o.rel] ?? 12) + s.steps[degree];
@@ -221,10 +220,9 @@
       if (!playing() || !cfg.bells || !v) return;
       const at = slot(0, 0.3);
       if (at == null) return;
-      const s = SCALES[cfg.theme] || SCALES.tide, home = s.home + 12;
+      const s = SCALES[cfg.theme] || SCALES.default, home = s.home + 12;
       const notes = v === 'yes' ? [home + s.steps[2], home + s.steps[3], home + 12] : [home + s.steps[1], home - 12 + s.steps[4]];
       notes.forEach((m, i) => bell(hz(m), v === 'yes' ? 0.09 : 0.06, at + i * 0.11, v === 'yes' ? 2.8 : 1.6));
     },
   };
 })();
-
