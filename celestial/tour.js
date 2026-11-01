@@ -133,6 +133,7 @@
   }
 
   // Beside what it points at when there's room, otherwise above or below it
+  const placed = { left: -1e4, top: -1e4 };
   function place(r) {
     const cw = card.offsetWidth, ch = card.offsetHeight, gap = 24, edge = 16;
     let left = null;
@@ -143,9 +144,14 @@
     card.classList.toggle('beside', left != null);
     if (left != null) {
       const top = Math.min(Math.max(r.top + r.height / 2 - ch / 2, 76), innerHeight - ch - edge);
-      card.style.left = `${left}px`;
-      card.style.top = `${top}px`;
+      // Orbs drift a few pixels all the time; the card only follows real moves, so it holds still to read and press
+      if (Math.abs(left - placed.left) > 24 || Math.abs(top - placed.top) > 24) {
+        Object.assign(placed, { left, top });
+        card.style.left = `${left}px`;
+        card.style.top = `${top}px`;
+      }
     } else {
+      placed.left = placed.top = -1e4;
       card.style.left = card.style.top = '';
       card.classList.toggle('at-top', Boolean(r) && r.top + r.height / 2 >= innerHeight * 0.55);
     }

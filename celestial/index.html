@@ -7,9 +7,9 @@
 <title>Celestial</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <!-- ?v= is a version tag: change it on each release so browsers fetch fresh files -->
-<link rel="stylesheet" href="style.css?v=202610291200">
+<link rel="stylesheet" href="style.css?v=202611011000">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
   <form id="prompt" class="prompt" autocomplete="off" role="search">
     <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.6"/><path d="M10.4 10.4 14 14"/></svg>
     <label for="prompt-input" class="visually-hidden">What do you want to understand?</label>
-    <input id="prompt-input" name="q" type="text" placeholder="Ask why something happens, or type a topic">
+    <input id="prompt-input" name="q" type="text" placeholder="Ask why something happens, or name a topic">
     <button type="submit">Explore</button>
   </form>
   <div class="brand">
@@ -49,7 +49,10 @@
     </button>
   </div>
   <nav id="trail" class="trail" aria-label="Your path"></nav>
-  <p id="about" class="about"></p>
+  <div class="headline">
+    <h1 id="headline-title"></h1>
+    <p id="answer" class="answer" aria-live="polite"></p>
+  </div>
   <div id="threads" class="threads-bar" aria-label="Threads to explore next"></div>
   <p id="status" class="status" role="status" hidden></p>
 </header>
@@ -115,10 +118,10 @@
 
     <p class="view-group">Colours</p>
     <ul class="help-key">
-      <li><span class="key key-cause"></span><span><b>Violet</b>: a cause of the centre</span></li>
-      <li><span class="key key-effect"></span><span><b>Cyan</b>: an effect of the centre</span></li>
-      <li><span class="key key-plain"></span><span><b>Grey</b>: related, neither cause nor effect</span></li>
-      <li><span class="key key-yes"></span><span><b>Green, thick</b>: you marked it relevant</span></li>
+      <li><span class="key key-cause"></span><span><b data-word="cause">Ember</b>: a cause of the centre</span></li>
+      <li><span class="key key-effect"></span><span><b data-word="effect">Sea glass</b>: an effect of the centre</span></li>
+      <li><span class="key key-plain"></span><span><b data-word="related">Silver</b>: related, neither cause nor effect</span></li>
+      <li><span class="key key-yes"></span><span><b data-word="yes">Lit white</b>: you marked it relevant</span></li>
       <li><span class="key key-no"></span><span><b>Faded, dashed</b>: you marked it not relevant</span></li>
     </ul>
 
@@ -177,8 +180,6 @@
 <div id="link-card" class="link-card" role="tooltip" hidden></div>
 
 <p id="toast" class="toast" role="status" hidden></p>
-
-
 
 <!-- Only on this site: the demo notice. Hidden once a key is saved, or for the rest of the visit once closed. -->
 <aside id="demo-notice" class="demo-notice" aria-label="Demo version" hidden>
@@ -301,22 +302,22 @@
 })();
 </script>
 
-<script src="data.js?v=202610291200"></script>
-<script src="illustrations.js?v=202610291200"></script>
-<script src="research.js?v=202610291200"></script>
-<script src="sound.js?v=202610291200"></script>
+<script src="data.js?v=202611011000"></script>
+<script src="illustrations.js?v=202611011000"></script>
+<script src="research.js?v=202611011000"></script>
+<script src="sound.js?v=202611011000"></script>
 <!-- Only on this site: preloaded research the demo replays, and the first-visit tour -->
-<script src="demo-details.js?v=202610291200"></script>
-<script src="demo-maps.js?v=202610291200"></script>
-<script src="demo-deep.js?v=202610291200"></script>
-<script src="demo.js?v=202610291200"></script>
+<script src="demo-details.js?v=202611011000"></script>
+<script src="demo-maps.js?v=202611011000"></script>
+<script src="demo-deep.js?v=202611011000"></script>
+<script src="demo.js?v=202611011000"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
-<script type="module" src="app.js?v=202610291200"></script>
-<script src="tour.js?v=202610291200"></script>
+<script type="module" src="app.js?v=202611011000"></script>
+<script src="tour.js?v=202611011000"></script>
 </body>
 </html>

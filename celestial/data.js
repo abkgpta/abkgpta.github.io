@@ -470,5 +470,3 @@ window.CELESTIAL_DATA = {
     },
   },
 };
-
-

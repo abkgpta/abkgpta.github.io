@@ -1,27 +1,30 @@
 /* Celestial. Layout: one full-screen 3D space with thin instrument-style overlays at the edges.
-   Back to front: shader backdrop, line art, lines and streams, orbs, interface.
-   Two themes (Tide, Dusk), each with a light and a dark mode. A theme only redefines the
-   tokens below; everything else is shared. The 3D canvas reads --3d-*, the backdrop --sh-*. */
+   Back to front: star field, engraving, lines and streams, orbs, interface.
+   Skins: a skin only redefines the tokens below, keyed by data-skin on the root; everything
+   else is shared. The 3D canvas reads --3d-*, the backdrop --sh-*. To add a skin, add a
+   :root[data-skin="…"] block here and an entry in SKINS in the app script. Classic also
+   has a dark mode, keyed by data-mode="dark". */
 
-/* Tide · light: sea glass, teal and bottle green (also the fallback before the script runs) */
-:root, :root[data-theme="light"], :root[data-theme="tide-light"] {
+/* Classic: sea glass, teal and bottle green. The default skin, and the fallback
+   before the script runs */
+:root, :root[data-skin="classic"] {
   --bg: #e3ebe8;
   --panel: #f2f7f5;
   --ink: #15201d;
   --ink-soft: #50615b;
   --rule: #c2d1cb;
-  --accent: #bc2f56;      /* the sun and hidden leads */
+  --accent: #c8325b;      /* the sun and hidden leads */
   --cause: #5b3fe0;       /* violet: streams flowing in */
-  --effect: #007189;      /* cyan: streams flowing out */
+  --effect: #00809b;      /* cyan: streams flowing out */
   --orb-line: #85968f;
   --orb-fill: rgb(227 235 232 / 0.8);
   --3d-line: #2f3d39;
   --3d-cause: #5b3fe0;
   --3d-effect: #0094b3;
-  --sh-base: #e3ebe8;     /* backdrop shader: base and two drifting tints */
+  --sh-base: #e3ebe8;     /* backdrop: base and two drifting tints */
   --sh-a: #cfe6e1;
   --sh-b: #d6e5d3;
-  --art: #1d3a33;         /* line art, multiplied over the backdrop */
+  --art: #1d3a33;         /* the patterned border, multiplied over the backdrop */
   --art-opacity: 0.17;
   --art-blend: multiply;
   --shadow: 0 1px 2px rgb(20 40 34 / 0.08), 0 8px 24px rgb(20 40 34 / 0.08);
@@ -30,37 +33,15 @@
   /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
   --hot: #d0562e; --cold: #2f7fc1;
   --yes: var(--tier-3);   /* ticked as relevant */
-  /* Light values are dark enough for 4.5:1 as text on --bg and --panel */
-  --tier-1: #2c5bc9; --tier-2: #11717a; --tier-3: #33733e; --tier-4: #845f0d; --tier-5: #a7491f; --tier-6: #62666c;
+  --tier-1: #2c5bc9; --tier-2: #13808a; --tier-3: #3d8a4a; --tier-4: #b98512; --tier-5: #cf5a26; --tier-6: #858a92;
 
-  /* One neutral grotesque throughout so the orbs and line art carry the character:
-     Helvetica Neue where installed (all Macs), Inter elsewhere. Plex Mono for data labels. */
+  /* Helvetica Neue where installed (all Macs); Inter elsewhere */
   --font-display: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
   --font-body: "Helvetica Neue", Helvetica, "Inter", Arial, sans-serif;
   --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 }
-/* Tier colours, lifted for dark modes */
-:root[data-theme="dark"], :root[data-theme$="-dark"] {
-  --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8;
-  --hot: #ff8a5c; --cold: #6fb0ff;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) { --hot: #ff8a5c; --cold: #6fb0ff; --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8; }
-}
-/* Tide · dark: deep sea */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    --bg: #0d1615; --panel: #142120; --ink: #e4eeeb; --ink-soft: #8fa6a0; --rule: #263f3a;
-    --accent: #ff5c8a; --cause: #ad9cff; --effect: #4fd6f0;
-    --orb-line: #4d6a63; --orb-fill: rgb(13 22 21 / 0.78);
-    --3d-line: #b6cbc5; --3d-cause: #9f8bff; --3d-effect: #34d0ee;
-    --sh-base: #0d1615; --sh-a: #0f2d2a; --sh-b: #11251a;
-    --art: #7fb8a8; --art-opacity: 0.12; --art-blend: screen;
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"], :root[data-theme="tide-dark"] {
+/* Classic · dark: deep sea, with the tier colours lifted */
+:root[data-skin="classic"][data-mode="dark"] {
   --bg: #0d1615; --panel: #142120; --ink: #e4eeeb; --ink-soft: #8fa6a0; --rule: #263f3a;
   --accent: #ff5c8a; --cause: #ad9cff; --effect: #4fd6f0;
   --orb-line: #4d6a63; --orb-fill: rgb(13 22 21 / 0.78);
@@ -69,28 +50,48 @@
   --art: #7fb8a8; --art-opacity: 0.12; --art-blend: screen;
   --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
   color-scheme: dark;
+  --hot: #ff8a5c; --cold: #6fb0ff;
+  --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8;
 }
-/* Dusk · light: blush, pink and lavender */
-:root[data-theme="dusk-light"] {
-  --bg: #efe6ec; --panel: #faf4f8; --ink: #241a22; --ink-soft: #6c5a67; --rule: #dccad6;
-  --accent: #9a5300; --cause: #5b3fe0; --effect: #007189;
-  --orb-line: #9c8a97; --orb-fill: rgb(239 230 236 / 0.8);
-  --3d-line: #3d2f39; --3d-cause: #5b3fe0; --3d-effect: #0094b3;
-  --sh-base: #efe6ec; --sh-a: #f2d8e5; --sh-b: #e3d9f1;
-  --art: #4a2840; --art-opacity: 0.16; --art-blend: multiply;
-  --shadow: 0 1px 2px rgb(50 20 40 / 0.08), 0 8px 24px rgb(50 20 40 / 0.08);
-  color-scheme: light;
-}
-/* Dusk · dark: plum night */
-:root[data-theme="dusk-dark"] {
-  --bg: #16111a; --panel: #201927; --ink: #f1e9f2; --ink-soft: #ab9bb1; --rule: #3a2c42;
-  --accent: #ffb03b; --cause: #b8a4ff; --effect: #4fd6f0;
-  --orb-line: #66556e; --orb-fill: rgb(22 17 26 / 0.78);
-  --3d-line: #d0c3d6; --3d-cause: #a990ff; --3d-effect: #34d0ee;
-  --sh-base: #16111a; --sh-a: #2c1428; --sh-b: #1e1533;
-  --art: #c79bd0; --art-opacity: 0.11; --art-blend: screen;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.35);
+
+/* Night sky: near-black space, a white-hot sun with a warm corona,
+   causes warm (ember), effects cool (sea glass), everything else chrome */
+:root[data-skin="night"] {
+  --bg: #05060a;
+  --panel: #0c0e14;
+  --ink: #eeeae1;
+  --ink-soft: #9a9ca6;
+  --rule: #262a34;
+  --accent: #f4b860;      /* the sun's corona, focus rings and hidden leads */
+  --sun-core: #fff6e6;    /* the white-hot rim of the sun */
+  --cause: #f08c56;       /* ember: what leads in */
+  --effect: #5cc8c4;      /* sea glass: what flows out */
+  --orb-line: #8a8f9b;    /* chrome: related */
+  --orb-fill: rgb(6 7 12 / 0.74);
+  --3d-line: #c3c8d2;
+  --3d-cause: #ff9258;
+  --3d-effect: #46d2cc;
+  --sh-base: #040509;     /* star field: the dark, a warm glow round the centre, a cool one beyond */
+  --sh-a: #1c0f07;
+  --sh-b: #020a0e;
+  --art: #d8d2c4;         /* the engraving, screened over the stars */
+  --art-opacity: 0.075;
+  --art-blend: screen;
+  --shadow: 0 12px 32px rgb(0 0 0 / 0.55);
+  --radius: 6px;          /* controls: hairline instruments, not pills */
+  --radius-panel: 10px;
   color-scheme: dark;
+
+  --hot: #ff8a5c; --cold: #6fb0ff;
+  --yes: #f4efe4;         /* ticked as relevant: lit white */
+  /* Source reliability tiers 1 (most reliable) to 6 (unsourced) */
+  --tier-1: #7fa2ff; --tier-2: #4cc7cf; --tier-3: #79c98a; --tier-4: #e8b84a; --tier-5: #ff8a57; --tier-6: #9aa0a8;
+
+  /* An engraved serif, like a star atlas, for the sun, the question and headings;
+     a geometric sans for everything you read and press; Plex Mono for data */
+  --font-display: "Cormorant Garamond", "Iowan Old Style", Georgia, serif;
+  --font-body: "Jost", "Futura", "Avenir Next", system-ui, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 
 html, body { height: 100%; }
@@ -533,9 +534,9 @@ button, input { font: inherit; color: inherit; }
 .choice-text { display: grid; gap: 1px; }
 .choice-text small { font-size: 11px; color: var(--ink-soft); }
 .swatch { width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--rule); }
-/* Swatches always show their own theme, whatever theme is active */
-.theme-tide .swatch { background: linear-gradient(135deg, #cfe6e1 0 25%, #d6e5d3 25% 50%, #0f2d2a 50% 75%, #11251a 75%); }
-.theme-dusk .swatch { background: linear-gradient(135deg, #f2d8e5 0 25%, #e3d9f1 25% 50%, #2c1428 50% 75%, #1e1533 75%); }
+/* Swatches always show their own skin, whatever skin is active */
+.theme-classic .swatch { background: linear-gradient(135deg, #cfe6e1 0 25%, #d6e5d3 25% 50%, #0f2d2a 50% 75%, #11251a 75%); }
+.theme-night .swatch { background: radial-gradient(circle, #fff6e6 0 14%, #f4b860 24%, #f08c56 36%, #1c4b4a 58%, #05060a 78%); border-color: #3a3f4b; }
 .view-foot { display: flex; justify-content: flex-end; padding: 10px 16px 14px; border-top: 1px solid var(--rule); }
 .view-reset {
   padding: 6px 12px;
@@ -1008,3 +1009,211 @@ button, input { font: inherit; color: inherit; }
   .art * { animation: none !important; }
 }
 
+/* ── Night sky's shapes ─────────────────────────
+   Everything from here to the keyframes belongs to Night sky alone, so Classic keeps
+   the rounded pills, solid rings and plain sun it always had. :where() adds no weight,
+   so each rule overrides the shared ones exactly as it would unscoped. */
+:where(:root[data-skin="night"]) .prompt,
+:where(:root[data-skin="night"]) .menu-btn,
+:where(:root[data-skin="night"]) .status,
+:where(:root[data-skin="night"]) .view-reset,
+:where(:root[data-skin="night"]) .toast,
+:where(:root[data-skin="night"]) .prompt button,
+:where(:root[data-skin="night"]) .orb-expand,
+:where(:root[data-skin="night"]) .orb-deeper,
+:where(:root[data-skin="night"]) .verdict-btn,
+:where(:root[data-skin="night"]) .key-row button,
+:where(:root[data-skin="night"]) .key-row input,
+:where(:root[data-skin="night"]) .orb .chip,
+:where(:root[data-skin="night"]) .findings-chip,
+:where(:root[data-skin="night"]) .threads-bar button,
+:where(:root[data-skin="night"]) .orb .find-more a,
+:where(:root[data-skin="night"]) .choice { border-radius: var(--radius); }
+:where(:root[data-skin="night"]) .panel,
+:where(:root[data-skin="night"]) .findings,
+:where(:root[data-skin="night"]) .trace,
+:where(:root[data-skin="night"]) .link-card { border-radius: var(--radius-panel); }
+:where(:root[data-skin="night"]) .view-tabs,
+:where(:root[data-skin="night"]) .orb.is-selected .card-tabs { border-radius: var(--radius); }
+:where(:root[data-skin="night"]) .view-tab,
+:where(:root[data-skin="night"]) .card-tab { border-radius: 4px; }
+:where(:root[data-skin="night"]) .view-tab[aria-selected="true"],
+:where(:root[data-skin="night"]) .card-tab[aria-selected="true"] { box-shadow: inset 0 0 0 1px var(--rule); }
+:where(:root[data-skin="night"]) .prompt { background: color-mix(in srgb, var(--panel) 86%, transparent); box-shadow: none; }
+:where(:root[data-skin="night"]) .prompt:focus-within { border-color: color-mix(in srgb, var(--accent) 70%, var(--rule)); }
+:where(:root[data-skin="night"]) .prompt button { margin: 5px; padding: 5px 16px; border: 1px solid var(--rule); background: none; color: var(--ink); font-weight: 500; letter-spacing: 0.02em; }
+:where(:root[data-skin="night"]) .prompt button:hover { border-color: var(--accent); color: var(--accent); }
+:where(:root[data-skin="night"]) .menu-btn,
+:where(:root[data-skin="night"]) .status,
+:where(:root[data-skin="night"]) .threads-bar button { background: color-mix(in srgb, var(--panel) 80%, transparent); box-shadow: none; }
+:where(:root[data-skin="night"]) .menu-btn { font-weight: 500; }
+:where(:root[data-skin="night"]) .menu-btn:hover { border-color: color-mix(in srgb, var(--ink) 35%, var(--rule)); }
+:where(:root[data-skin="night"]) .menu-btn[aria-expanded="true"],
+:where(:root[data-skin="night"]) .menu-btn[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent) 70%, var(--rule));
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel));
+  color: var(--ink);
+}
+:where(:root[data-skin="night"]) .findings { border-left: 1px solid var(--rule); box-shadow: inset 2px 0 0 var(--yes), var(--shadow); }
+:where(:root[data-skin="night"]) .trace { border-left: 1px solid var(--rule); box-shadow: inset 2px 0 0 var(--cause), var(--shadow); }
+:where(:root[data-skin="night"]) .link-card { border-top: 1px solid var(--rule); box-shadow: inset 0 2px 0 var(--line), var(--shadow); }
+:where(:root[data-skin="night"]) .toast { background: var(--panel); color: var(--ink); border: 1px solid var(--rule); }
+:where(:root[data-skin="night"]) .trace-play { border-color: var(--rule); background: color-mix(in srgb, var(--accent) 14%, var(--panel)); color: var(--ink); }
+:where(:root[data-skin="night"]) .trace-play:hover:not(:disabled) { border-color: var(--accent); }
+:where(:root[data-skin="night"]) .orb-expand { font-weight: 500; }
+:where(:root[data-skin="night"]) .orb-deeper,
+:where(:root[data-skin="night"]) .verdict-btn { border-width: 1px; font-weight: 500; }
+:where(:root[data-skin="night"]) .orb .viz,
+:where(:root[data-skin="night"]) .orb .il,
+:where(:root[data-skin="night"]) .orb .photo img,
+:where(:root[data-skin="night"]) .orb.is-selected:not(.sun) .verdict,
+:where(:root[data-skin="night"]) .thread-btn,
+:where(:root[data-skin="night"]) .connection { border-radius: 8px; }
+/* Labels: mono, sentence case, no wide tracking */
+:where(:root[data-skin="night"]) .orb .tag,
+:where(:root[data-skin="night"]) .orb .rel,
+:where(:root[data-skin="night"]) .orb .section h3,
+:where(:root[data-skin="night"]) .view-group,
+:where(:root[data-skin="night"]) .findings-kicker,
+:where(:root[data-skin="night"]) .findings-section h3,
+:where(:root[data-skin="night"]) .trace-kicker,
+:where(:root[data-skin="night"]) .trace-phase,
+:where(:root[data-skin="night"]) .lc-kicker,
+:where(:root[data-skin="night"]) .lc-label,
+:where(:root[data-skin="night"]) .brand-stage,
+:where(:root[data-skin="night"]) .trail .depth,
+:where(:root[data-skin="night"]) .trail .inside,
+:where(:root[data-skin="night"]) .threads-bar .threads-label { text-transform: none; letter-spacing: 0.01em; }
+:where(:root[data-skin="night"]) .view-group,
+:where(:root[data-skin="night"]) .findings-kicker,
+:where(:root[data-skin="night"]) .findings-section h3,
+:where(:root[data-skin="night"]) .trace-kicker,
+:where(:root[data-skin="night"]) .trace-phase,
+:where(:root[data-skin="night"]) .lc-kicker,
+:where(:root[data-skin="night"]) .lc-label,
+:where(:root[data-skin="night"]) .orb .section h3,
+:where(:root[data-skin="night"]) .orb .rel,
+:where(:root[data-skin="night"]) .brand-stage,
+:where(:root[data-skin="night"]) .trail .depth,
+:where(:root[data-skin="night"]) .threads-bar .threads-label { font-size: 11px; }
+/* Type: the engraved serif for names that matter, the sans for the rest */
+:where(:root[data-skin="night"]) .brand-name { font-family: var(--font-display); font-size: 25px; font-weight: 500; letter-spacing: 0.01em; }
+:where(:root[data-skin="night"]) .panel-head h2,
+:where(:root[data-skin="night"]) .findings-head h2,
+:where(:root[data-skin="night"]) .trace-head h2 { font-family: var(--font-display); font-size: 21px; font-weight: 600; letter-spacing: 0; }
+:where(:root[data-skin="night"]) .lc-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; }
+:where(:root[data-skin="night"]) .orb .t { font-family: var(--font-body); font-weight: 500; }
+:where(:root[data-skin="night"]) .orb.rank-high .t { font-weight: 600; }
+:where(:root[data-skin="night"]) .orb.rank-low .t { font-weight: 400; }
+:where(:root[data-skin="night"]) .orb.sun .t,
+:where(:root[data-skin="night"]) .orb.is-selected .t { font-family: var(--font-display); font-weight: 600; letter-spacing: 0; }
+:where(:root[data-skin="night"]) .orb.sun .t { font-size: min(clamp(15px, calc(var(--d) * 0.15px), 26px), calc(var(--d) * 1.3px / var(--longest, 8))); }
+:where(:root[data-skin="night"]) .orb.is-selected .t { font-size: 25px; line-height: 1.05; }
+
+/* ── Orbs: hairline rings that breathe with a soft inner light ── */
+:where(:root[data-skin="night"]) .orb { border-width: 1px; }
+:where(:root[data-skin="night"]) .orb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: inset 0 0 calc(var(--d) * 0.24px) color-mix(in srgb, var(--line) 42%, transparent);
+  opacity: 0.45;
+  animation: orb-breathe 6.5s ease-in-out var(--breath, 0s) infinite alternate;
+}
+:where(:root[data-skin="night"]) .orb .inner { position: relative; z-index: 1; }
+:where(:root[data-skin="night"]) .orb.is-selected::before { opacity: 0.35; animation: none; }
+:where(:root[data-skin="night"]) .orb.expandable { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px color-mix(in srgb, var(--line) 75%, transparent); }
+:where(:root[data-skin="night"]) .no-lead-glow .orb.lead.expandable { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px color-mix(in srgb, var(--line) 75%, transparent); }
+:where(:root[data-skin="night"]) .orb.lead { box-shadow: 0 0 26px 3px color-mix(in srgb, var(--accent) 30%, transparent); }
+:where(:root[data-skin="night"]) .orb.role-sub { border-width: 3px; }
+:where(:root[data-skin="night"]) .orb.rank-high { border-width: 1.25px; }
+:where(:root[data-skin="night"]) .orb.rank-low { border-width: 1px; }
+/* Ticked: lit white, a little thicker */
+:where(:root[data-skin="night"]) .orb.v-yes { border-width: 1.5px; box-shadow: 0 0 22px 2px color-mix(in srgb, var(--yes) 22%, transparent); }
+:where(:root[data-skin="night"]) .orb.v-yes.expandable { box-shadow: 0 0 0 3px var(--bg), 0 0 0 4px var(--yes), 0 0 22px 2px color-mix(in srgb, var(--yes) 22%, transparent); }
+/* Pointing at or opening an orb lights its ring */
+:where(:root[data-skin="night"]) .orb.is-hover,
+:where(:root[data-skin="night"]) .orb.is-selected,
+:where(:root[data-skin="night"]) .orb.expandable.is-hover,
+:where(:root[data-skin="night"]) .orb.v-yes.is-hover {
+  border-width: 1px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--line) 45%, transparent),
+    0 0 20px 2px color-mix(in srgb, var(--line) 34%, transparent),
+    0 0 60px 10px color-mix(in srgb, var(--line) 12%, transparent);
+}
+/* The sun: a dark disc with a white-hot rim and a warm corona, like an eclipse */
+:where(:root[data-skin="night"]) .orb.sun {
+  border-width: 1px;
+  border-color: color-mix(in srgb, var(--sun-core) 88%, var(--accent));
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 16%, var(--bg)) 0%, color-mix(in srgb, var(--cause) 6%, var(--bg)) 72%, color-mix(in srgb, var(--accent) 26%, var(--bg)) 100%);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--sun-core) 35%, transparent),
+    0 0 14px 2px color-mix(in srgb, var(--sun-core) 50%, transparent),
+    0 0 44px 10px color-mix(in srgb, var(--accent) 34%, transparent),
+    0 0 120px 36px color-mix(in srgb, var(--cause) 14%, transparent);
+}
+:where(:root[data-skin="night"]) .orb.sun::before { box-shadow: inset 0 0 calc(var(--d) * 0.2px) color-mix(in srgb, var(--accent) 60%, transparent); }
+:where(:root[data-skin="night"]) .orb.sun.is-selected { background: var(--panel); }
+/* The opening: the sun ignites before anything else arrives */
+:where(:root[data-skin="night"]) .opening .orb.sun { animation: ignite 2.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+:where(:root[data-skin="night"]) .still .orb::before { animation: none; opacity: 0.8; }
+@media (prefers-reduced-motion: reduce) {
+  :where(:root[data-skin="night"]) .orb::before,
+  :where(:root[data-skin="night"]) .opening .orb.sun { animation: none; }
+}
+:where(:root[data-skin="night"]) .is-researching .orb.sun { animation-name: breathe-night; }
+@keyframes orb-breathe { to { opacity: 1; } }
+@keyframes breathe-night {
+  50% {
+    box-shadow:
+      0 0 0 1px color-mix(in srgb, var(--sun-core) 55%, transparent),
+      0 0 22px 4px color-mix(in srgb, var(--sun-core) 65%, transparent),
+      0 0 70px 18px color-mix(in srgb, var(--accent) 44%, transparent),
+      0 0 160px 48px color-mix(in srgb, var(--cause) 20%, transparent);
+  }
+}
+@keyframes ignite {
+  0% { border-color: transparent; box-shadow: 0 0 0 0 transparent, 0 0 0 0 transparent, 0 0 0 0 transparent, 0 0 0 0 transparent; }
+  38% {
+    border-color: var(--sun-core);
+    box-shadow:
+      0 0 0 1px var(--sun-core),
+      0 0 34px 8px color-mix(in srgb, var(--sun-core) 75%, transparent),
+      0 0 100px 30px color-mix(in srgb, var(--accent) 50%, transparent),
+      0 0 220px 70px color-mix(in srgb, var(--cause) 22%, transparent);
+  }
+}
+
+/* The answer first: the question as the page heading, the best lead under it */
+.headline { grid-area: about; display: grid; justify-items: center; gap: 3px; margin: 0; text-align: center; }
+.headline h1 { margin: 0; max-width: 100%; font-family: var(--font-display); font-size: 30px; font-weight: 500; line-height: 1.1; text-wrap: balance; }
+.answer { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+.answer:empty { display: none; }
+.answer button {
+  --line: var(--orb-line);
+  padding: 2px 3px;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--line) 80%, transparent);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.answer button.rel-cause { --line: var(--cause); }
+.answer button.rel-effect { --line: var(--effect); }
+.answer button:hover { color: var(--line); }
+.answer .strength { font-family: var(--font-data); font-size: 11.5px; }
+@media (max-width: 640px) {
+  /* The sun already names the centre; the heading stays for screen readers */
+  .headline h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .answer { font-size: 13px; }
+}
+@media (pointer: coarse) {
+  .answer button { min-height: 40px; }
+}

@@ -691,4 +691,3 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
 
   window.CELESTIAL_RESEARCH = { MODELS, map, details, deep, tidyDeep, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();
-
