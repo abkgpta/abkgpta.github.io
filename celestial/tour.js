@@ -66,7 +66,7 @@
       target: () => $('#prompt'),
       kicker: 'Your turn',
       title: 'Explore on your own',
-      text: 'Everything in this demo was researched in advance and replays as if live, so you can open, expand and go deeper anywhere on this question. To ask your own questions, add a Claude API key.',
+      text: 'Everything in this demo was researched in advance and replays as if live, so you can open, expand and go deeper into any orb, and keep going deeper from there. To ask your own questions, add a Claude API key.',
       last: true,
     },
   ];
