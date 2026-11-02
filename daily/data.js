@@ -1,16 +1,16 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "29 Oct 2026, 7:06 AM IST";
+const UPDATED = "2 Nov 2026, 6:54 AM IST";
 
 const QUOTE = {
-  "text": "Perfection is achieved, not when there is nothing more to add, but when there is nothing left to take away.",
-  "author": "Antoine de Saint-Exupéry"
+  "text": "Any sufficiently advanced technology is indistinguishable from magic.",
+  "author": "Arthur C. Clarke"
 };
 
 const NOW = [
   {
     "name": "Celestial",
-    "date": "28 Oct",
-    "note": "A 3D research tool that maps a question as a solar system of related topics, now with a soundtrack.",
+    "date": "1 Nov",
+    "note": "A 3D research tool that maps a question as a solar system of topics, now with a guided demo and tour.",
     "url": "https://abkgpta.github.io/celestial/"
   },
   {
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "TVS Motor Q2 results: PAT up 52% as revenue hits Rs 17,103 crore",
-        "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/news/tvs-motor-q2-net-profit-rises-52-percent-to-rs-1377-crore-revenue-jumps-44-percent-135533",
-        "img": "https://img.autocarpro.in/autocarpro/e56fbf38-78f3-48cc-be0d-6ab9c382f36c_tvs.avif",
-        "why": "Standalone profit hit Rs 1,377 crore, and electric two-wheeler sales jumped 133% to 1,86,186 units."
+        "title": "Indian e-two-wheeler sales cross a record 2.23 lakh units in October",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/industry/indian-e-two-wheeler-sales-crosses-a-record-223-lakh-units-in-october-441190",
+        "img": "https://asset.autocarindia.com/static/news/images/20261101_130459_ded3bbfb.jpg",
+        "why": "Up 48% year on year; TVS led with 60,429 units while Ola Electric fell 26%."
       },
       {
-        "title": "Hero MotoCorp Q2FY27 results: net profit soars 42% to ₹1,861 crore",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/hero-motocorp-q2fy27-results-net-profit-soars-42-to-1-861-crore-126102801888_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2017-12/21/thumb/fitandfill/1200X628/1513859504-4316.jpg",
-        "why": "Revenue grew 23% to ₹14,971 crore on 18.68 lakh units; scooter dispatches rose 47%."
+        "title": "Marquez wins Malaysian Grand Prix to close in on retaining championship",
+        "source": "Al Jazeera",
+        "url": "https://www.aljazeera.com/sports/2026/11/1/marquez-wins-malaysian-grand-prix-to-close-in-on-retaining-championship",
+        "img": "https://www.aljazeera.com/wp-content/uploads/2026/11/AFP__20261101__D6323RM__v1__HighRes__MotoPrixMasMotogpPodium-1793523846.jpg",
+        "why": "He now leads injured Jorge Martin by 44 points and could clinch the title in Qatar next weekend."
       },
       {
-        "title": "New KTM Duke 200 launched at Rs 2.07 lakh with quickshifter and traction control",
+        "title": "TVS 450, Xpulse 421, Harley Cruiser 350 / 440, RE 750 and more expected at EICMA 2026",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-ktm-duke-200-launch-price-rs-2-07-l-quickshifter-traction-control-12559692.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/New-KTM-Duke-200-launch-7.jpg",
-        "why": "Ride-by-wire, a bi-directional quickshifter and traction control now come standard for just Rs 1,552 more."
+        "url": "https://www.rushlane.com/tvs-450-xpulse-421-harley-cruiser-440-re-750-and-more-expected-at-eicma-2026-12559821.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/tvs-apache-rr-450-based-on-tangent-rr-concept.jpg",
+        "why": "Indian makers bring big-bore bikes to Milan, from an Apache RR 450 to Royal Enfield's 750 twins."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Hyundai sees SUVs accounting for 75% of India sales in next 12-18 months",
-        "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/news/hyundai-sees-suvs-accounting-for-75-percent-of-india-sales-in-next-12-18-months-135534",
-        "img": "https://img.autocarpro.in/autocarpro/0daa962a-87b5-4eaf-81f0-4cf2eb8b3d4d_hyundai-creta.png",
-        "why": "SUVs were 67% of Hyundai's domestic sales last quarter; the new Bayon starts at Rs 9.99 lakh."
+        "title": "Festive boom! Maruti, Mahindra, Tata Motors, Hyundai post record domestic sales in October",
+        "source": "Business Today",
+        "url": "https://www.businesstoday.in/auto/story/festive-boom-maruti-mahindra-tata-motors-hyundai-post-record-domestic-sales-in-october-565002-2026-11-01",
+        "img": "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202611/6ae75676e782f-october-turns-blockbuster-for-carmakers-as-maruti--mahindra--hyundai--kia-set-sales-records-011045741-16x9.png",
+        "why": "Maruti sold a record 2,16,789 cars at home, up 20%; Tata's EV sales rose 75% to 16,244."
       },
       {
-        "title": "New Toyota Innova Hycross facelift launch on Nov 26, flex fuel hybrid incoming",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/toyota-innova-hycross-facelift-launch-on-nov-26-flex-fuel-hybrid-12559728.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/09/toyota-innova-hycross-facelift-hybrid-interiors-spied-7.jpg",
-        "why": "Toyota has shown a strong-hybrid prototype that runs on petrol-ethanol blends up to E85."
+        "title": "Xiaomi EV deliveries top 50,000 in October as new SUV boosts sales",
+        "source": "Investing.com",
+        "url": "https://investing.com/news/company-news/xiaomi-ev-deliveries-top-50000-in-october-as-new-suv-boosts-sales-4989493",
+        "img": "https://content-media.investing.com/news/LYNXMPEA7A0FH_L.jpg",
+        "why": "Its best month of 2026, driven by the new Sky Nomad SUV; it is 61% of the way to 550,000."
       },
       {
-        "title": "2027 Maruti Fronx facelift spied: ADAS, new 1.2L 3-cylinder, rear disc brakes",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/2027-maruti-fronx-facelift-spied-adas-new-1-2l-3-cyl-rear-disc-brake-12559708.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/10/2027-maruti-fronx-facelift-spied.jpg",
-        "why": "The Fronx sold 1,10,135 units in April to September, up 43%, and led India's car exports."
+        "title": "TechCrunch Mobility: A new, bigger AV boom is here",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/01/techcrunch-mobility-a-new-bigger-av-boom-is-here/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/robotaxi-illustration.jpg",
+        "why": "One VC has seen 81 new autonomous-vehicle startups pitch this year, about two-thirds more than last year."
       }
     ]
   },
@@ -92,25 +92,24 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Simplismart bags $14 Mn to expand AI inference platform",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/simplismart-bags-14-mn-to-expand-ai-inference-platform/",
-        "img": "https://asset.inc42.com/2026/10/simplismart-funding-social-1-1.png",
-        "why": "The Indian infrastructure startup's revenue run rate grew 14X in six months; about 55% comes from the US."
-      },
-      {
-        "title": "Warhound raises $200M to engineer war dogs and arm them with Anduril gear",
+        "title": "This startup's self-driving excavators help dig up $600M in new funding",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/22/ben-lamm-raises-200m-for-warhound-to-engineer-war-dogs-and-arm-them-with-anduril-gear/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/Warhound.png",
-        "why": "Genetics meets defence tech: Sequoia and In-Q-Tel back the venture at a $1.2 billion valuation."
+        "url": "https://techcrunch.com/2026/10/26/this-startups-self-driving-excavators-help-dig-up-600m-in-new-funding/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/bedrock-robotics-excavators.jpg",
+        "why": "Bedrock's retrofit autonomy kit is now doing paid work on real sites, at a $4.1B valuation."
       },
       {
-        "title": "NVIDIA's tiny robots steal the show with somersaults, stumbles and funny falls",
-        "source": "Interesting Engineering",
-        "url": "https://interestingengineering.com/ai-robotics/microduck-robots-in-nvidia-demo",
-        "img": "https://cms.interestingengineering.com/wp-content/uploads/2026/10/Microduck-4.jpg",
-        "why": "The $399 Microduck packs 15 motors into a sub-2 lb body and sold out after its GTC Berlin demo."
+        "title": "Skyroot Aerospace eyes commercial rocket launches from early 2027",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/start-ups/skyroot-aerospace-eyes-commercial-rocket-launches-from-early-2027-126103001590_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-07/02/thumb/fitandfill/1200X628/1782994119-3451.jpg",
+        "why": "After its first orbital launch, Skyroot targets one launch a month by end-2027."
+      },
+      {
+        "title": "Nova Spectral AI raises ₹21.2 Cr to build indigenous infrared sensor chips",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/nova-spectral-ai-raises-%E2%82%B921-2-cr-to-build-indigenous-infrared-sensor-chips/",
+        "why": "Short-wave infrared sensors from colloidal quantum dots on standard silicon CMOS; prototype due in 18 months."
       }
     ]
   },
@@ -118,25 +117,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Upwind raises $400M after walking away from Datadog acquisition offer",
+        "title": "From Cent to Matiks: Indian startups raised over $132 Mn this week",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/from-to-cent-to-matiks-indian-startups-raised-over-132-mn-this-week/",
+        "img": "https://asset.inc42.com/2026/10/Funding-Galore_Oct-Soc-100.jpg",
+        "why": "Funding fell 29% week on week, but 32 startups raised money, up from 17."
+      },
+      {
+        "title": "OpenAI reportedly lowers funding target for new round",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/10/28/upwind-raises-400m-after-walking-away-from-datadog-acquisition-offer",
-        "img": "https://techcrunch.com/wp-content/uploads/2022/08/GettyImages-1197780051.jpg",
-        "why": "The Series C values the cloud security startup at $3.8B, up from $1.5B nine months ago."
+        "url": "https://techcrunch.com/2026/10/31/openai-reportedly-lowers-funding-target-for-new-round",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/07/OpenAI-logo-green.jpg",
+        "why": "The target reportedly dropped from $30B to $20B, with $11B secured so far."
       },
       {
-        "title": "Baillie Gifford funds slash value of holdings in Dailyhunt parent VerSe by up to 80%",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/baillie-gifford-funds-slash-value-of-holdings-in-dailyhunt-parent-verse-by-up-to-80/",
-        "img": "https://asset.inc42.com/2026/10/Dailyjunt-social.jpg",
-        "why": "A sharp markdown for a startup that raised $805 Mn at a reported $5 Bn valuation in 2022."
-      },
-      {
-        "title": "Live2.ai raises ₹130 Cr to scale AI marketing SaaS platform",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/live2-ai-raises-%e2%82%b9130-cr-to-scale-ai-marketing-saas-platform/",
-        "img": "https://asset.inc42.com/2026/10/live2.ai_soc.png",
-        "why": "An Indian SaaS built for export: revenue grew fourfold in a year and only 10% comes from India."
+        "title": "Re:Build, which spun out Slate Auto, raises $2.1B",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/10/27/rebuild-which-spun-out-slate-auto-raises-2-1b",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/06/slate-auto-truck-tesla-charging.jpg",
+        "why": "A manufacturing accelerator with 2.4 million sq ft of US factory space, led by General Catalyst."
       }
     ]
   },
@@ -144,25 +143,25 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Vedanta Q2 net profit jumps 151% to ₹6,202 crore, revenue rises 57%",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/amp/companies/quarterly-results/vedanta-q2-net-profit-jumps-151-to-6-202-crore-revenue-rises-57-126102801242_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-07/10/thumb/fitandfill/1200X628/1752085822-4188.jpg",
-        "why": "Record EBITDA of ₹9,938 crore, and net debt fell by ₹4,624 crore in a quarter."
+        "title": "Gross GST collections hit ₹2.31 lakh crore in October, a 22.9% YoY rise",
+        "source": "Business Today",
+        "url": "https://www.businesstoday.in/india/story/gross-gst-collections-hit-rs2-31-lakh-crore-in-october-marks-22-9-yoy-rise-on-robust-domestic-growth-564976-2026-11-01",
+        "img": "https://akm-img-a-in.tosshub.com/businesstoday/images/story/202611/6ae6e5bfd237d-total-refunds-disbursed-during-october-2026-increased-by-65-year-on-year-to-27-934-crore--up-from-010950497-16x9.jpg",
+        "why": "Domestic revenue rose 15.8% and import revenue 42.2%; net GST was up 25.6%."
       },
       {
-        "title": "Adani Ports Q2 profit rises 18% to ₹3,682 crore, raises FY27 guidance",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/adani-ports-q2-profit-rises-18-to-3-682-crore-raises-fy27-guidance-126102801519_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-11/13/thumb/fitandfill/1200X628/1699843456-3697.jpg",
-        "why": "Revenue and EBITDA guidance both rise by ₹1,000 crore, and capex guidance by ₹3,000 crore."
+        "title": "FPIs withdraw ₹34,843 crore from Indian equities in October, turn net buyers in final week",
+        "source": "Free Press Journal",
+        "url": "https://www.freepressjournal.in/business/fpis-withdraw-34843-crore-from-indian-equities-in-october-turn-net-buyers-in-final-week",
+        "img": "https://media.assettype.com/freepressjournal/2026-11-01/3grdtfu6/fpis-outflow.jpg",
+        "why": "A second straight month of heavy selling, but about ₹6,300 crore came back in the last week."
       },
       {
-        "title": "HUL Q2 results: net profit rises 4% to ₹2,790 crore, volume growth at 7%",
+        "title": "Gold pulls forex reserves down for seventh straight week to $719.8 billion",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/hul-q2-fy27-net-profit-sales-volume-growth-home-care-126102800363_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-08/04/thumb/fitandfill/1200X628/1754276995-286.jpg",
-        "why": "Underlying sales growth of 15% was HUL's best in 14 quarters, a read on consumer demand."
+        "url": "https://www.business-standard.com/economy/news/gold-pulls-forex-reserves-down-for-seventh-straight-week-to-719-8-billion-126103001414_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2020-02/07/thumb/fitandfill/1200X628/1581091561-2435.png",
+        "why": "Reserves are $66 billion below September's record of $785.7 billion; the rupee is near 95 per dollar."
       }
     ]
   }
@@ -170,60 +169,80 @@ const NEWS = [
 
 const CALENDAR = [
   {
-    "day": "Thu 29 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Fri 30 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Sat 31 Oct",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Sun 1 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
     "day": "Mon 2 Nov",
     "items": [
+      {
+        "time": "All day",
+        "title": "overgrwth: renders"
+      },
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Tue 3 Nov",
+    "items": [
+      {
+        "time": "All day",
+        "title": "overgrwth: compilation"
+      },
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Wed 4 Nov",
+    "items": [
+      {
+        "time": "All day",
+        "title": "overgrwth: complete on site"
+      },
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Thu 5 Nov",
+    "items": [
+      {
+        "time": "All day",
+        "title": "cortX: framework + copy"
+      },
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Fri 6 Nov",
+    "items": [
+      {
+        "time": "All day",
+        "title": "cortX: CAD + renders"
+      },
       {
         "time": "9:00 PM",
         "title": "Leave office"
@@ -239,10 +258,6 @@ const CALENDAR = [
 const RACING = {
   "items": [
     {
-      "when": "30 Oct–1 Nov",
-      "what": "MotoGP: Malaysian GP, Sepang"
-    },
-    {
       "when": "6–8 Nov",
       "what": "MotoGP: Qatar GP, Lusail (rescheduled)"
     },
@@ -255,10 +270,10 @@ const RACING = {
       "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "No race since last week's cancelled Australian GP; Marc Marquez leads Jorge Martin by 10 points heading into Sepang this weekend. WorldSBK's 2026 season has ended.",
+  "note": "Marc Marquez won the Malaysian GP at Sepang on 1 Nov, ahead of Pedro Acosta and Alex Marquez. He leads Jorge Martin by 44 points and could seal the title in Qatar. WorldSBK's 2026 season has ended.",
   "source": {
-    "name": "motogp.com, Qatar GP new date and end-of-season calendar",
-    "url": "https://www.motogp.com/en/news/2026/03/15/motogp-confirms-new-date-for-the-qatar-grand-prix/1005668"
+    "name": "Al Jazeera, Malaysian GP report; motogp.com calendar",
+    "url": "https://www.aljazeera.com/sports/2026/11/1/marquez-wins-malaysian-grand-prix-to-close-in-on-retaining-championship"
   }
 };
 
@@ -275,120 +290,116 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Talk to Me You'll Understand",
-    "artist": "Ross from Friends",
-    "id": "4Z4i631BesV0P6LTvfLAdL",
-    "why": "Hazy, warm lo-fi house from a UK producer, a close cousin to the Four Tet and Fred again.. tracks in your recent plays."
+    "title": "Café del Mar",
+    "artist": "Energy 52",
+    "id": "57Og0l7MDIqHI2n1UTw6YK",
+    "why": "A classic Balearic trance anthem with the same slow-building melodic lift as the Three Drives and Matt Darey records in your recent plays."
   },
   "playlist": {
-    "name": "Weekly Discovery Mix",
-    "url": "https://open.spotify.com/playlist/4dGNwkanrYF7nnKUPk52nX",
-    "date": "2026-10-26"
+    "name": "Weekly Discovery Trance Gems",
+    "url": "https://open.spotify.com/playlist/3WkkjjVLA0nN4sc3HpU95t",
+    "date": "2026-11-02"
   },
   "lately": [
-    "Fred again..",
-    "Four Tet",
-    "Skrillex",
-    "Bicep",
-    "Overmono",
-    "Daft Punk"
+    "Matt Darey",
+    "Three Drives",
+    "Lost Tribe",
+    "Rank 1",
+    "Tillmann Uhrmacher",
+    "CRW"
   ]
 };
 
 const LEARN = {
-  "term": "Class-A surfacing and highlight lines",
-  "body": "Class-A surfaces are the visible, customer-facing surfaces of a car or product, built so reflections flow without breaks: at least G2 (curvature) continuity across patch boundaries, using few, low-degree Bézier or NURBS patches with tidy control nets. Surfacers judge them less by shape than by how light travels across them, using zebra stripes, reflection lines and curvature combs to expose flaws a shaded view hides. A highlight that kinks marks a G1 joint, one that suddenly changes speed marks a curvature jump, and one that wavers means too many control points. Car studios often ask for G3 on large panels such as bonnets and roofs, but past G2 the gain mostly shows on glossy paint, so matte or textured products rarely need it. The label is often overstated: Class A describes surface quality and data discipline, not good design, and a dull form can be perfectly Class A.",
+  "term": "Shut lines, gap and flush",
+  "body": "A shut line is the visible joint between two parts, such as a door and a body side, and it is specified by two numbers: gap (the width across the joint) and flush (the step in height between the two surfaces). Customers rarely notice a gap's absolute width; they notice variation, so a gap that tapers along its length or differs from its mirror on the other side reads as poor quality even when it is within tolerance. That is why studios specify parallelism and side-to-side symmetry alongside the nominal gap, and why flush errors, which break reflections across the joint, often look worse than a slightly wide gap. Designers manage shut lines by placing them where they will be least seen or most deliberate: along feature lines, in shadowed undercuts, or as clean graphic lines that the form is composed around. The popular belief that the narrowest gap is always best is overstated: a tight gap that cannot be held consistently in production looks worse than a slightly wider one built to be even.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Patches",
-        "note": "Few low-degree patches, clean control nets."
+        "label": "Gap",
+        "note": "Width across the joint, held even."
       },
       {
-        "label": "G2 joins",
-        "note": "Curvature matches across every boundary.",
+        "label": "Flush",
+        "note": "Surface step; breaks reflections if off.",
         "hl": true
       },
       {
-        "label": "Zebra",
-        "note": "Stripes expose kinks, wobbles and flats."
+        "label": "Parallel",
+        "note": "No taper along the line, matched L to R."
       },
       {
-        "label": "Highlights",
-        "note": "Reflections flow unbroken over the form."
+        "label": "Placement",
+        "note": "Hide in shadow or make it a feature line."
       }
     ],
-    "caption": "Judge a surface by how light moves across it."
-  },
-  "source": {
-    "name": "Wikipedia: Class A surface",
-    "url": "https://en.wikipedia.org/wiki/Class_A_surface"
+    "caption": "The eye reads variation, not width."
   },
   "past": [
+    "Class-A surfacing and highlight lines",
     "Affordances and signifiers",
     "Gestalt principles in product form",
     "The golden ratio: use and myth",
-    "Draft angles and the parting line",
-    "Surface continuity: G0 to G3"
+    "Draft angles and the parting line"
   ]
 };
 
 const DESIGN = {
-  "name": "Porsche 911 (original 901)",
-  "designer": "Ferdinand Alexander Porsche",
-  "year": "1963",
-  "why": "F. A. Porsche drew a fastback whose single roofline runs unbroken from windscreen to tail, with upright round headlamps set into long front wings. The form was so resolved that Porsche has evolved it rather than replaced it for six decades, and the low nose and sloping tail read directly as a rear-engined car.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1964_Porsche_911_-_yellow_-_fvl.jpg?width=1200",
+  "name": "Citroën DS",
+  "designer": "Flaminio Bertoni (body), with André Lefèbvre (engineering)",
+  "year": "1955",
+  "why": "Bertoni gave the DS a low, tapering body with a single-spoke wheel and a fibreglass roof, so the car looked like nothing else at the 1955 Paris Salon. Its form and its hydropneumatic suspension were conceived together, which is why the shape still reads as a coherent idea rather than styling over a chassis.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1955_Citro%C3%ABn_DS_19_Museo_Nazionale_dell'automobile_Torino.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:1964_Porsche_911_-_yellow_-_fvl.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:1955_Citro%C3%ABn_DS_19_Museo_Nazionale_dell'automobile_Torino.jpg"
   }
 };
 
 const FUNDING = {
-  "summary": "$133.9M across 15 Indian startups, 19–24 Oct, down 56% from the week before.",
+  "summary": "$115M across 28 Indian startups, 26–31 Oct, down 14% from $133.9M the week before.",
   "rounds": [
     {
-      "company": "Even Healthcare",
-      "amount": "$50M",
-      "stage": "Series B",
-      "sector": "Healthcare"
-    },
-    {
-      "company": "AuxoAI",
-      "amount": "$20.7M",
+      "company": "Cent",
+      "amount": "$15M",
       "stage": "Series A",
-      "sector": "AI"
+      "sector": "Healthtech"
     },
     {
-      "company": "The Pant Project",
-      "amount": "₹109 Cr",
+      "company": "Simplismart",
+      "amount": "$14M",
+      "stage": "",
+      "sector": "AI inference"
+    },
+    {
+      "company": "Live2.ai",
+      "amount": "$14M",
+      "stage": "",
+      "sector": "AI marketing SaaS"
+    },
+    {
+      "company": "Troovy",
+      "amount": "$11.5M",
       "stage": "Series B",
-      "sector": "Menswear"
+      "sector": "E-commerce"
     },
     {
-      "company": "Battery Smart",
-      "amount": "~₹100 Cr",
-      "stage": "",
-      "sector": "EV battery swapping"
+      "company": "Matiks",
+      "amount": "$10M",
+      "stage": "Pre-Series A",
+      "sector": "Gaming"
     },
     {
-      "company": "CureBay",
-      "amount": "~₹100 Cr",
-      "stage": "Pre-Series C",
-      "sector": "Rural healthcare"
-    },
-    {
-      "company": "Chapter Home",
-      "amount": "₹63 Cr",
-      "stage": "",
-      "sector": "Home & kitchen"
+      "company": "Ace Blend",
+      "amount": "$9.91M",
+      "stage": "Series A",
+      "sector": "E-commerce"
     }
   ],
   "source": {
     "name": "Entrackr weekly funding report",
-    "url": "https://entrackr.com/report/weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-19-oct-24-12744844"
+    "url": "https://entrackr.com/report/weekly-funding-report-weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-26-oct-31-12770310"
   }
 };
 
@@ -397,7 +408,12 @@ const LAUNCHES = {
     {
       "model": "Mercedes-Benz GLC Electric",
       "when": "4 Nov 2026",
-      "price": "₹85 lakh"
+      "price": "₹80–90 lakh (est.)"
+    },
+    {
+      "model": "Denza Z9 GT",
+      "when": "13 Nov 2026",
+      "price": "₹1.2–1.5 crore (est.)"
     },
     {
       "model": "Honda Rebel 500",
@@ -411,23 +427,18 @@ const LAUNCHES = {
     },
     {
       "model": "Toyota Innova Hycross facelift",
-      "when": "26 Nov 2026",
-      "price": "₹20–33 lakh (est.)"
+      "when": "25 Nov 2026",
+      "price": "₹20–35 lakh (est.)"
     },
     {
-      "model": "JSW Motors Combat (hybrid SUV)",
-      "when": "4 Dec 2026",
-      "price": "₹38 lakh"
-    },
-    {
-      "model": "Royal Enfield Himalayan 750",
-      "when": "Dec 2026",
-      "price": "₹4.50–5.00 lakh"
+      "model": "Mini Cooper SE (2nd gen)",
+      "when": "27 Nov 2026",
+      "price": "TBA"
     }
   ],
   "source": {
-    "name": "Autocar India upcoming bikes and cars; Rushlane",
-    "url": "https://www.autocarindia.com/upcoming-bikes"
+    "name": "Autocar India: upcoming car launches in November 2026; upcoming bikes",
+    "url": "https://www.autocarindia.com/car-news/upcoming-car-launches-in-november-2026-441173"
   }
 };
 
