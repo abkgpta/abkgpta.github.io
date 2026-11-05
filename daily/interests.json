@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03",
+  "updated": "2026-11-05",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
     {
@@ -61,6 +61,12 @@
       "source": "inferred",
       "weight": 0.4,
       "why": "CAD and render sprint for portfolio projects, 3D logo in Plasticity"
+    },
+    {
+      "topic": "Industrial design studios and hiring",
+      "source": "inferred",
+      "weight": 0.4,
+      "why": "portfolio built to apply to industrial design studios worldwide"
     }
   ]
 }
