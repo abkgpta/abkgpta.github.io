@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "5 Nov 2026, 6:53 AM IST";
+const UPDATED = "6 Nov 2026, 6:53 AM IST";
 
 const QUOTE = {
-  "text": "Simplicity is prerequisite for reliability.",
-  "author": "Edsger W. Dijkstra"
+  "text": "Form ever follows function.",
+  "author": "Louis Sullivan"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Hero-built Harley-Davidson X350 T revealed",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/hero-built-harley-davidson-x350-t-revealed-441230",
-        "img": "https://asset.autocarindia.com/static/news/images/20261103_140030_5a362a96.jpg",
-        "why": "A 350cc air/oil-cooled model slotting below the X440 S and X440 T; Autocar links the downsizing to 40% GST."
+        "title": "Two Wheeler Sales Oct 2026: Hero, Honda, TVS, Bajaj, Suzuki, Royal Enfield",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/two-wheeler-sales-oct-2026-hero-honda-tvs-bajaj-suzuki-royal-enfield-12560495.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/06/honda-activa-sales-new-record-black.jpeg",
+        "why": "Top six makers sold 29.2 lakh units, up 16.45%; Honda edged Hero by just 163 units overall."
       },
       {
-        "title": "TVS RTR 125 LC revealed",
+        "title": "India-bound bikes and scooters from EICMA 2026",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/tvs-rtr-125-lc-revealed-441222",
-        "img": "https://asset.autocarindia.com/static/news/images/20261103_104504_8f361147.jpg",
-        "why": "TVS's first liquid-cooled 125cc single makes 14.7hp at 9,000rpm and 12Nm."
+        "url": "https://www.autocarindia.com/auto-features/india-bound-bikes-and-scooters-from-eicma-2026-441268",
+        "img": "https://asset.autocarindia.com/static/features/images/20261105_110341_c4c2b162.jpg",
+        "why": "Over 20 models likely for India, including the 55hp Himalayan 750 and a 46.7hp Hero Xpulse 450."
       },
       {
-        "title": "Yamaha RW350, RW700, Xenter E and NMax E unveiled at EICMA 2026",
+        "title": "Harley-Davidson Sprint 440 Cruiser revealed",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/yamaha-rw350-rw700-xenter-e-nmax-e-unveiled-at-eicma-2026-441214",
-        "img": "https://asset.autocarindia.com/static/news/images/20261103_095228_83e68199.jpeg",
-        "why": "Two new adventure bikes plus electric scooters with 3.5kWh batteries and about 104–108km claimed range."
+        "url": "https://www.autocarindia.com/bike-news/harley-davidson-sprint-440-cruiser-revealed-441212",
+        "img": "https://asset.autocarindia.com/static/news/images/20261103_100833_eee64658.jpg",
+        "why": "X440-based cruiser with a 683mm seat and £4,995 UK price; India launch unlikely soon."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "BMW Group trims 2026 outlook amid structural realignment",
-        "source": "Just Auto",
-        "url": "https://www.just-auto.com/news/bmw-group-trims-2026-outlook/",
-        "img": "https://www.just-auto.com/wp-content/uploads/sites/30/2026/11/shutterstock_2451613647.jpg",
-        "why": "Auto EBIT margin guidance cut to -0.5% to +0.5% from 1–3%; Q3 deliveries fell 6.3%."
+        "title": "M&M Q2 consolidated profit rises 25% to ₹4,588 cr on strong auto show",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/m-m-q2-consolidated-profit-rises-25-to-4-588-cr-on-strong-auto-show-126110500963_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/05/thumb/fitandfill/1200X628/1793902339-8302.jpg",
+        "why": "Auto PAT jumped 55% to ₹2,388 Cr as vehicle volumes rose 26% to 330,896."
       },
       {
-        "title": "Nio to hold Nio IN 2026 tech day on November 25 in Guangzhou with focus on AI",
-        "source": "CnEVPost",
-        "url": "https://cnevpost.com/2026/11/04/nio-to-hold-nio-in-2026-tech-day-nov-25-guangzhou",
-        "img": "https://cnevpost.com/wp-content/uploads/2026/11/2026110409233649.jpg",
-        "why": "Comes as Nio's October deliveries fell 15.2% year on year, ending 31 months of growth."
+        "title": "Germany's EV share hits record 37% as BEVs beat gas and diesel combined",
+        "source": "Electrek",
+        "url": "https://electrek.co/2026/11/04/germany-electric-car-sales-record-37-percent-share/",
+        "img": "https://electrek.co/wp-content/uploads/sites/3/2025/06/gas-vs-electric.png",
+        "why": "94,086 BEVs registered in October, up 79.5%, in a market that grew only 1.7%."
       },
       {
-        "title": "TechCrunch Mobility: A new, bigger AV boom is here",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/01/techcrunch-mobility-a-new-bigger-av-boom-is-here/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/robotaxi-illustration.jpg",
-        "why": "Trucks VC has seen 81 new AV startups pitch this year, two-thirds more than in 2025."
+        "title": "Maruti Sales Oct 2026 All Time High: Domestic 2.12 Lakh, Exports Near 50k",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/maruti-sales-oct-2026-all-time-high-domestic-2-12-lakh-exports-near-50k-12559942.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2025/08/Maruti-Grand-Vitara-New-Colours-Launched.jpeg",
+        "why": "Record 2,76,120 total units, up 25%; exports rose 59% to 49,872."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Soket Labs & ZenteiQ launch indigenous AI models",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/soket-labs-zenteiq-launch-indigenous-ai-models/",
-        "img": "https://asset.inc42.com/2026/11/soket-ai-social-.png",
-        "why": "Soket's EKA-1 has 26.3B parameters and covers all 22 scheduled Indian languages plus English."
+        "title": "Zipline hits $21.5B valuation as Walmart expands bet on drone delivery",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/05/zipline-hits-21-5b-valuation-as-walmart-expands-bet-on-drone-delivery",
+        "img": "https://techcrunch.com/wp-content/uploads/2022/09/Zipline-Package-Drop.jpg",
+        "why": "Raised $1.5B; a new Walmart deal adds 300 drone delivery sites to today's 21."
       },
       {
-        "title": "Quint Computing raises €9.1M to scale quantum computing technology",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/03/quint-computing-raises-eur91m-to-scale-quantum-computing-technology",
-        "img": "https://cdn.tech.eu/uploads/2026/11/quintcomputing-featured-771.png",
-        "why": "A year-old FAU Erlangen spinout building superconducting chips that cut errors at the hardware level."
+        "title": "A YC startup is putting $1M behind five unsolved materials science problems for AI",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/05/a-yc-startup-is-putting-1m-behind-five-unsolved-materials-science-problems-for-ai",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/08/discoverd-materials.jpg",
+        "why": "Discovered Materials offers prizes for five open problems, including a cuprate superconductivity theory."
       },
       {
-        "title": "Exclusive: Manastu Space raises ₹22 Cr in ongoing funding round",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/exclusive-manastu-space-raises-%E2%82%B922-cr-in-ongoing-funding-round/",
-        "img": "https://asset.inc42.com/2026/10/Manastu-Space-social.jpg",
-        "why": "Builds green satellite propulsion and in-orbit refuelling; TDB has also committed ₹116 Cr in debentures."
+        "title": "Spacetech startup Cosmoserve Space raises $6 Mn in seed round",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/snippets/spacetech-startup-cosmoserve-space-raises-6-mn-in-seed-round-12787035",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/comoserve-2026-11-05-20-27-14.png",
+        "why": "In-orbit satellite servicing startup; total funding now over $9M."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Cleantech startup altM raises $10.3 Mn to scale manufacturing",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/cleantech-startup-altm-raises-10-3-mn-to-scale-manufacturing",
-        "img": "https://asset.inc42.com/2026/11/social-altM.png",
-        "why": "Makes specialty chemicals and biomaterials from crop residue; Rainmatter and Mela Ventures led the Series A."
+        "title": "AI inference startup Fal doubles its valuation to $16B as demand surges",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/03/ai-inference-startup-fal-doubles-its-valuation-to-16b-as-demand-surges/",
+        "img": "https://techcrunch.com/wp-content/uploads/2022/12/GettyImages-1268605503.jpg",
+        "why": "$1.3B round led by Bessemer, double its $8B valuation from April."
       },
       {
-        "title": "PowerUp Money raises $10 Mn to expand wealth management services",
+        "title": "GIVA Raises ₹975 Cr Led By Multiples PE, Eyes 160 New Stores In FY27",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/powerup-money-raises-10-mn-to-expand-wealth-management-services",
-        "img": "https://asset.inc42.com/2025/06/PowerUp-Money-Founder-SM.png",
-        "why": "Flourish Ventures led, with Peak XV and Accel, as it moves to full-stack financial planning."
+        "url": "https://inc42.com/buzz/giva-raises-%E2%82%B9975-cr-led-by-multiples-pe-eyes-160-new-stores-in-fy27",
+        "img": "https://asset.inc42.com/2026/11/Untitled-Design-40.png",
+        "why": "The jewellery brand's FY26 revenue rose to ₹865 Cr from ₹505 Cr; it has about 425 stores."
       },
       {
-        "title": "Blue Ashva exits iD Fresh Food via a ₹50 Cr secondary transaction",
+        "title": "Venomics AI Raises $2.7 Mn To Turn Venom Into Medicine",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/blue-ashva-exits-id-fresh-food-via-a-%e2%82%b950-cr-secondary-transaction/",
-        "img": "https://asset.inc42.com/2026/11/iD-Fresh-Food-Financials-social.png",
-        "why": "The early backer sold its roughly 1% stake; iD Fresh's FY26 revenue reportedly crossed ₹870 Cr."
+        "url": "https://inc42.com/buzz/venomics-ai-raises-2-7-mn-to-turn-venom-into-medicine/",
+        "img": "https://asset.inc42.com/2026/11/Venomics-Founders-SM.png",
+        "why": "An IISc spinout; Speciale Invest and South Park Commons co-led the pre-seed."
       }
     ]
   },
@@ -144,24 +144,25 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "SEDEMAC Q2 profit rises 30% YoY to ₹39 Cr, revenue jumps 40%",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/sedemac-q2-profit-rises-30-yoy-to-%e2%82%b939-cr-revenue-jumps-40/",
-        "img": "https://asset.inc42.com/2026/11/SEDEMAC-social.jpg",
-        "why": "The engine-control electronics maker's revenue rose to ₹400.6 Cr from ₹286.5 Cr."
+        "title": "Tonbo Imaging turns profitable in Q2 FY27 with Rs 23.5 Cr; shares hit 20% upper circuit",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/fintrackr/tonbo-imaging-turns-profitable-in-q2-fy27-with-rs-235-cr-shares-hit-20-upper-circuit-12785666",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/tonbo-imaging-2026-11-05-13-11-55.png",
+        "why": "Revenue rose to ₹183.3 Cr from ₹8.9 Cr a year ago, against a ₹9.6 Cr loss then."
       },
       {
-        "title": "Ola Electric allots rights equity shares for ₹1,000 Cr fundraise",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ola-electrics-%e2%82%b91000-cr-rights-issue-to-open-on-october-22-issue-price-set-at-%e2%82%b927/",
-        "img": "https://asset.inc42.com/2026/10/ola-electric-ebike-social-1-1.jpg",
-        "why": "37.03 Cr partly paid shares at ₹27; ₹599.8 Cr came in on application."
+        "title": "Amagi's Q2 FY27 profit jumps nearly 29 times to Rs 75 Cr; total income crosses Rs 500 Cr",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/fintrackr/amagis-q2-fy27-profit-jumps-nearly-29-times-to-rs-75-cr-total-income-crosses-rs-500-cr-12786053",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/amagi-2026-11-05-14-55-50.png",
+        "why": "Operating revenue grew 27% to ₹476 Cr, up from ₹375 Cr."
       },
       {
-        "title": "Awfis' Q2 profit almost doubles YoY to ₹31 Cr, revenue up 20%",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/awfis-q2-profit-almost-doubles-yoy-to-%e2%82%b931-cr-revenue-up-20/",
-        "why": "The coworking operator's operating revenue rose 19.6% to ₹438.7 Cr."
+        "title": "LIC Q2 net profit rises 20% to ₹12,076 crore, net premium income up 16.2%",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/lic-q2fy27-results-net-profit-increases-20-to-12-076-crore-126110501463_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-08/07/thumb/fitandfill/1200X628/1786098389-3318.JPG",
+        "why": "Net premium income reached ₹1.47 trillion; value of new business rose 17% to ₹3,710 Cr."
       }
     ]
   }
@@ -169,28 +170,11 @@ const NEWS = [
 
 const CALENDAR = [
   {
-    "day": "Thu 5 Nov",
-    "items": [
-      {
-        "time": "All day",
-        "title": "cortX: framework + copy"
-      },
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
     "day": "Fri 6 Nov",
     "items": [
       {
         "time": "All day",
-        "title": "cortX: CAD + renders"
+        "title": "cortX: brief, CAD check + colour (Plasticity mesh export AM)"
       },
       {
         "time": "9:00 PM",
@@ -207,7 +191,7 @@ const CALENDAR = [
     "items": [
       {
         "time": "All day",
-        "title": "cortX: system visualisation"
+        "title": "cortX: renders (finals overnight on Mac)"
       },
       {
         "time": "9:00 PM",
@@ -224,7 +208,7 @@ const CALENDAR = [
     "items": [
       {
         "time": "All day",
-        "title": "cortX: compilation"
+        "title": "cortX: system visuals, identity + platform screens"
       },
       {
         "time": "9:00 PM",
@@ -241,7 +225,24 @@ const CALENDAR = [
     "items": [
       {
         "time": "All day",
-        "title": "cortX: compilation"
+        "title": "cortX: compile + PR (review in the evening)"
+      },
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Tue 10 Nov",
+    "items": [
+      {
+        "time": "All day",
+        "title": "cortX: OK by 10:00, merge, live before 15:30 flight"
       },
       {
         "time": "9:00 PM",
@@ -270,7 +271,7 @@ const RACING = {
       "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "Marc Marquez won the Malaysian GP on 1 Nov and leads Jorge Martin by 44 points; he could seal the title at Qatar this weekend. WorldSBK's 2026 season has ended.",
+  "note": "Qatar GP at Lusail runs this weekend. Marc Marquez won the Malaysian GP on 1 Nov and leads Jorge Martin by 44 points, so he could seal the title at Qatar. WorldSBK's 2026 season has ended.",
   "source": {
     "name": "Al Jazeera, Malaysian GP report; motogp.com calendar",
     "url": "https://www.aljazeera.com/sports/2026/11/1/marquez-wins-malaysian-grand-prix-to-close-in-on-retaining-championship"
@@ -290,10 +291,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Arla Fearn",
-    "artist": "Overmono",
-    "id": "7vQ9CJvFJwFMGkeEjruaOW",
-    "why": "From the Welsh duo's debut album Good Lies: breakbeat-driven UK electronica close to the Bicep and 808 State in your recent plays."
+    "title": "Hyph Mngo",
+    "artist": "Joy Orbison",
+    "id": "2BTjb4H2FLh2e5zx3nI6Ul",
+    "why": "Joy Orbison's 2009 debut single, a UK bass and house touchstone in the same lineage as the Overmono and Bicep tracks you've saved."
   },
   "playlist": {
     "name": "Weekly Discovery Trance Gems",
@@ -301,59 +302,55 @@ const MUSIC = {
     "date": "2026-11-02"
   },
   "lately": [
-    "DreamKiller",
-    "Daft Punk",
-    "Kleinefrigo",
-    "Maeksll",
-    "808 State",
-    "BICEP"
+    "Deftones",
+    "Foster The People"
   ]
 };
 
 const LEARN = {
-  "term": "Design for manufacture and assembly (DFMA)",
-  "body": "DFMA, formalised by Geoffrey Boothroyd and Peter Dewhurst in the late 1970s and 1980s, treats part count and assembly motion as design decisions rather than factory problems. Its core test asks of every part: does it move relative to its neighbours, must it be a different material, and must it be separate to allow assembly or service? A part that fails all three is a candidate to merge into another, which is why snap fits, living hinges and multi-function mouldings replace screws, brackets and clips. Boothroyd's design efficiency index compares the theoretical minimum part count, at an ideal 3 seconds each, with the estimated real assembly time, so a design can be scored before tooling exists. The common overstatement is that fewer parts is always better: merging parts can push up tool cost, complicate moulding and make repair impossible, so DFMA should be weighed against serviceability and the cost of the tool, not applied as a blind count.",
+  "term": "Anthropometrics and the percentile myth",
+  "body": "Anthropometrics is the measurement of human body dimensions, and ergonomics uses those percentile tables to size products for a target population. The familiar rule of designing from the 5th-percentile female to the 95th-percentile male only works one dimension at a time: percentiles are not additive, so someone can be 95th percentile in stature and 40th in arm reach. Gilbert Daniels' 1952 study of 4,063 US Air Force pilots found that none fell within the middle 30 percent on all ten dimensions measured, which is why the 'average user' is a design fiction. Each dimension is set by its limiting user: clearances such as door height use the large end, while reaches such as the distance to a control use the small end. Where several dimensions interact, as in a seat, a cockpit or a motorcycle's rider triangle, designers rely on adjustability, multivariate test cases and digital human models rather than a single percentile.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Moves?",
-        "note": "Does it move relative to its neighbours?"
+        "label": "95th %ile",
+        "note": "Large user sets clearance and space"
       },
       {
-        "label": "Material?",
-        "note": "Must it be a different material?"
+        "label": "5th %ile",
+        "note": "Small user sets reach and force"
       },
       {
-        "label": "Separate?",
-        "note": "Needed apart for assembly or service?"
+        "label": "Combine",
+        "note": "Each extra dimension cuts real coverage"
       },
       {
-        "label": "Merge",
-        "note": "Fails all three: combine it with another.",
+        "label": "Adjust",
+        "note": "Adjustability spans the spread",
         "hl": true
       }
     ],
-    "caption": "Every part must earn its place."
+    "caption": "No one is average on every dimension."
   },
   "past": [
+    "Design for manufacture and assembly (DFMA)",
     "Simultaneous contrast in CMF",
     "Shut lines, gap and flush",
     "Class-A surfacing and highlight lines",
-    "Affordances and signifiers",
-    "Gestalt principles in product form"
+    "Affordances and signifiers"
   ]
 };
 
 const DESIGN = {
-  "name": "Braun TP 1 radio-phonograph",
-  "designer": "Dieter Rams",
-  "year": "1959",
-  "why": "Rams split the music system into a slim pocket radio and a clip-on record player that stack into one block, an early case of portable, modular electronics. The grid of perforations, flat aluminium faces and minimal controls show the Braun language of order and restraint at pocket scale.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/DieterRamsTP1Perspective.jpg?width=1200",
+  "name": "Eames Lounge Chair and Ottoman (670/671)",
+  "designer": "Charles and Ray Eames",
+  "year": "1956",
+  "why": "Three moulded plywood shells, originally veneered in rosewood, carry leather cushions, so the structure is the expression. The shells sit on rubber shock mounts over a die-cast aluminium base, giving club-chair comfort with a fraction of the visual mass.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Eames_Lounge_Chair_-_side.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:DieterRamsTP1Perspective.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Eames_Lounge_Chair_-_side.jpg"
   }
 };
 
@@ -436,3 +433,4 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/car-news/upcoming-car-launches-in-november-2026-441173"
   }
 };
+
