@@ -709,8 +709,22 @@ button, input { font: inherit; color: inherit; }
   font-family: var(--font-data);
   font-size: 12.5px;
 }
+.key-field, .provider-select {
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg);
+  color: inherit;
+  font-family: var(--font-data);
+  font-size: 12.5px;
+}
+.provider-select { font-family: inherit; font-size: 13px; cursor: pointer; }
+.key-form label:not(:first-child) { margin-top: 4px; }
 .key-row button, .link-btn { cursor: pointer; }
 .key-row button { padding: 6px 14px; border: 0; border-radius: 8px; background: var(--ink); color: var(--panel); font-weight: 600; }
+.key-row .key-secondary { border: 1px solid var(--rule); background: none; color: var(--ink); font-weight: 500; white-space: nowrap; }
+.key-row .key-secondary:hover { border-color: var(--ink-soft); }
 .plan-note { margin: 0 0 6px; }
 .plan-actions { margin-bottom: 8px; }
 .plan-actions:not(:has(button:not([hidden]))) { display: none; }
@@ -1024,6 +1038,8 @@ button, input { font: inherit; color: inherit; }
 :where(:root[data-skin="night"]) .verdict-btn,
 :where(:root[data-skin="night"]) .key-row button,
 :where(:root[data-skin="night"]) .key-row input,
+:where(:root[data-skin="night"]) .key-field,
+:where(:root[data-skin="night"]) .provider-select,
 :where(:root[data-skin="night"]) .orb .chip,
 :where(:root[data-skin="night"]) .findings-chip,
 :where(:root[data-skin="night"]) .threads-bar button,
