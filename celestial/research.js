@@ -1,11 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // RESEARCH · asks Claude to map topics and find sources.
 //
-// It reaches Claude in one of two ways:
+// It reaches a model in one of two ways:
 //  • On claude.ai: through your own Claude plan. No key needed; the
 //    first request asks your permission. No web browsing there.
-//  • On your own site: with your own Claude API key, kept in this
-//    browser's storage and sent only to Anthropic's API.
+//  • On your own site: with your own API key from one of PROVIDERS
+//    (Anthropic, OpenAI, Google Gemini, OpenRouter or any
+//    OpenAI-compatible server), kept in this browser's storage and sent
+//    only to that provider. Only Anthropic's API searches the web.
 //
 // Two kinds of request:
 //   map(…)     → the solar system around a topic (names, one-liners,
@@ -25,6 +27,205 @@
     'claude-sonnet-5-5': { name: 'Claude Sonnet 5.5', fallback: true },
     'claude-haiku-5-5': { name: 'Claude Haiku 5.5', fallback: false },
   };
+
+  // ─── Providers: whose API answers when you bring your own key ─
+  // kind 'anthropic' uses the official SDK (structured output, web search).
+  // kind 'openai' speaks the Chat Completions API that most services copy;
+  // kind 'gemini' speaks Google's own API. Those two get the same JSON
+  // prompts as a Claude plan, and draw on the model's own knowledge.
+  const PROVIDERS = {
+    anthropic: { name: 'Anthropic', kind: 'anthropic', keyHint: 'sk-ant-…', keyPrefix: 'sk-ant-', keyWhere: 'console.anthropic.com → API keys' },
+    openai: { name: 'OpenAI', kind: 'openai', base: 'https://api.openai.com/v1', model: 'gpt-5.5', keyHint: 'sk-…', keyWhere: 'platform.openai.com → API keys' },
+    gemini: { name: 'Google Gemini', kind: 'gemini', base: 'https://generativelanguage.googleapis.com/v1beta', model: 'gemini-2.5-pro', keyHint: 'AIza…', keyWhere: 'aistudio.google.com → Get API key' },
+    openrouter: { name: 'OpenRouter', kind: 'openai', base: 'https://openrouter.ai/api/v1', model: 'openrouter/auto', keyHint: 'sk-or-…', keyWhere: 'openrouter.ai → Keys. One key reaches models from many companies' },
+    custom: { name: 'Custom server', kind: 'openai', base: '', model: '', keyHint: 'Only if the server needs one', keyOptional: true, editBase: true,
+      keyWhere: 'Any OpenAI-compatible server: Groq, Mistral, DeepSeek, Together, xAI, or Ollama and LM Studio on this computer. The server has to allow requests from this site (CORS)' },
+  };
+
+  // What's saved: the chosen provider, each provider's model and address,
+  // and one key per provider (Anthropic's under the original name)
+  const CONN_STORE = 'celestial.provider';
+  const keyStore = (id) => (id === 'anthropic' ? 'celestial.key' : 'celestial.key.' + id);
+  const readStore = (k) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
+  function loadConnection(id) {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(CONN_STORE)) || {}; } catch { /* nothing saved */ }
+    const pick = PROVIDERS[id] ? id : PROVIDERS[saved.id] ? saved.id : 'anthropic';
+    const p = PROVIDERS[pick];
+    return {
+      id: pick,
+      key: readStore(keyStore(pick)),
+      model: saved.models?.[pick] || p.model || '',
+      baseUrl: String(saved.bases?.[pick] || p.base || '').trim().replace(/\/+$/, ''),
+    };
+  }
+  // Saves the choice (and the key, when given: '' forgets it). Returns false if storage is off.
+  function saveConnection({ id, key, model, baseUrl }) {
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(CONN_STORE)) || {}; } catch { /* start fresh */ }
+    saved.id = id;
+    if (model !== undefined) saved.models = { ...saved.models, [id]: model };
+    if (baseUrl !== undefined) saved.bases = { ...saved.bases, [id]: baseUrl };
+    try {
+      localStorage.setItem(CONN_STORE, JSON.stringify(saved));
+      if (key !== undefined) key ? localStorage.setItem(keyStore(id), key) : localStorage.removeItem(keyStore(id));
+      return true;
+    } catch { return false; }
+  }
+  // Enough saved to research live?
+  function ready(c) {
+    if (!c || !PROVIDERS[c.id]) return false;
+    if (c.id === 'anthropic') return Boolean(c.key);
+    return Boolean(c.baseUrl && c.model && (c.key || PROVIDERS[c.id].keyOptional));
+  }
+  let conn = loadConnection();
+  const setConnection = (c) => { conn = { ...c }; };
+
+  // The name used in messages: whoever answered the last request
+  let voice = 'Claude';
+
+  // ─── Requests to the other providers ───────────────────────
+  async function httpError(res, p) {
+    let msg = '';
+    try { const b = await res.json(); msg = (Array.isArray(b) ? b[0] : b)?.error?.message || b?.message || ''; } catch { /* no body */ }
+    const name = p.name;
+    if (res.status === 401 || (res.status === 403 && /key/i.test(msg))) return new Error(`${name} rejected your API key. Check it in Settings.`);
+    if (res.status === 403) return new Error(`${name} won’t let this key do that${msg ? ': ' + msg : '.'}`);
+    if (res.status === 404) return new Error(`${name} doesn’t know the model “${conn.model}”. Pick another in Settings.`);
+    if (res.status === 429) return new Error(`${name} is rate-limiting this key, or its credit has run out. Wait a minute and try again.`);
+    if (res.status === 400) return Object.assign(new Error(`${name} couldn’t process the request${msg ? ': ' + msg : '.'}`), { status: 400 });
+    return new Error(`${name} returned an error (${res.status}). Try again in a moment.`);
+  }
+  async function send(url, init, p) {
+    let res;
+    try { res = await fetch(url, init); } catch {
+      throw new Error(`Couldn’t reach ${p.name}. Check your connection${p.editBase ? ', the server address, and that the server allows requests from this site (CORS)' : ''}.`);
+    }
+    if (!res.ok) throw await httpError(res, p);
+    return res;
+  }
+  // Server-sent events, one parsed data line at a time
+  async function readEvents(res, onData) {
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '';
+    for (;;) {
+      const { value, done } = await reader.read();
+      buf += dec.decode(value || new Uint8Array(), { stream: !done });
+      const lines = buf.split(/\r?\n/);
+      buf = done ? '' : lines.pop();
+      for (const line of lines) {
+        const t = line.trim();
+        if (!t.startsWith('data:')) continue;
+        const data = t.slice(5).trim();
+        if (!data || data === '[DONE]') continue;
+        try { onData(JSON.parse(data)); } catch { /* keep-alive or a partial line */ }
+      }
+      if (done) return;
+    }
+  }
+  function tally(tokens) {
+    spend.requests += 1;
+    spend.tokens += tokens || 0;
+  }
+  const geminiText = (j) => (j?.candidates?.[0]?.content?.parts || []).filter((x) => !x.thought).map((x) => x.text || '').join('');
+
+  // One prompt in, text out. json: ask for a JSON reply; onDelta: stream it.
+  async function askOther(prompt, { json = false, onDelta = null } = {}) {
+    const p = PROVIDERS[conn.id];
+    voice = p.name;
+    if (!ready(conn)) throw new Error(`Add your ${p.name} details in Settings first.`);
+    if (p.kind === 'gemini') {
+      const model = conn.model.replace(/^models\//, '');
+      const url = `${conn.baseUrl}/models/${encodeURIComponent(model)}:${onDelta ? 'streamGenerateContent?alt=sse' : 'generateContent'}`;
+      const res = await send(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': conn.key },
+        body: JSON.stringify({
+          contents: [{ role: 'user', parts: [{ text: prompt }] }],
+          ...(json ? { generationConfig: { responseMimeType: 'application/json' } } : {}),
+        }),
+      }, p);
+      let text = '', tokens = 0, blocked = '';
+      const take = (j) => {
+        const d = geminiText(j);
+        if (d) { text += d; onDelta?.(d); }
+        if (j?.usageMetadata?.totalTokenCount) tokens = j.usageMetadata.totalTokenCount;
+        if (j?.promptFeedback?.blockReason) blocked = j.promptFeedback.blockReason;
+      };
+      if (onDelta) await readEvents(res, take); else take(await res.json());
+      tally(tokens);
+      if (!text && blocked) throw new Error(`${p.name} declined this request. Try rephrasing the topic.`);
+      return text;
+    }
+    // OpenAI-style Chat Completions
+    const headers = { 'Content-Type': 'application/json' };
+    if (conn.key) headers.Authorization = 'Bearer ' + conn.key;
+    if (conn.id === 'openrouter') { headers['HTTP-Referer'] = location.origin; headers['X-Title'] = 'Celestial'; }
+    const base = { model: conn.model, messages: [{ role: 'user', content: prompt }] };
+    const extras = {
+      ...(json ? { response_format: { type: 'json_object' } } : {}),
+      ...(onDelta ? { stream_options: { include_usage: true } } : {}),
+    };
+    const post = (body) => send(conn.baseUrl + '/chat/completions', { method: 'POST', headers, body: JSON.stringify(body) }, p);
+    let res;
+    try { res = await post({ ...base, ...extras, stream: Boolean(onDelta) }); } catch (err) {
+      // Some compatible servers reject the optional extras: try once without them
+      if (err.status !== 400 || !Object.keys(extras).length) throw err;
+      res = await post({ ...base, stream: Boolean(onDelta) });
+    }
+    let text = '', tokens = 0, refused = '';
+    if (onDelta) {
+      await readEvents(res, (j) => {
+        const d = j?.choices?.[0]?.delta?.content;
+        if (d) { text += d; onDelta(d); }
+        if (j?.usage?.total_tokens) tokens = j.usage.total_tokens;
+      });
+    } else {
+      const j = await res.json();
+      const m = j?.choices?.[0]?.message || {};
+      text = typeof m.content === 'string' ? m.content : (m.content || []).map((x) => x.text || '').join('');
+      refused = m.refusal || '';
+      tokens = j?.usage?.total_tokens || 0;
+    }
+    tally(tokens);
+    if (!text && refused) throw new Error(`${p.name} declined this request. Try rephrasing the topic.`);
+    return text;
+  }
+
+  // A JSON reply, even when it comes wrapped in a code fence or a sentence
+  function parseJSON(text) {
+    const t = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+    try { return JSON.parse(t); } catch { /* look for the object inside */ }
+    const a = t.indexOf('{'), b = t.lastIndexOf('}');
+    if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch { /* fall through */ } }
+    throw { code: 'invalid_json' };
+  }
+
+  // The models a provider offers this key, for the Settings list
+  async function listModels(c = conn) {
+    const p = PROVIDERS[c.id];
+    if (!p || p.kind === 'anthropic' || !c.baseUrl) return [];
+    if (p.kind === 'gemini') {
+      const res = await send(`${c.baseUrl}/models?pageSize=1000`, { headers: { 'x-goog-api-key': c.key } }, p);
+      const j = await res.json();
+      return (j.models || [])
+        .filter((m) => (m.supportedGenerationMethods || []).includes('generateContent'))
+        .map((m) => String(m.name).replace(/^models\//, ''))
+        .sort();
+    }
+    const res = await send(c.baseUrl + '/models', { headers: c.key ? { Authorization: 'Bearer ' + c.key } : {} }, p);
+    const j = await res.json();
+    return (j.data || j.models || []).map((m) => String(m.id || m.name || '')).filter(Boolean).sort();
+  }
+  // A sensible model from a list, when the saved one isn't in it
+  function pickModel(id, list) {
+    const ver = (m) => (m.match(/(\d+(?:\.\d+)?)/) || [0, 0])[1] * 1;
+    const best = (re) => list.filter((m) => re.test(m)).sort((a, b) => ver(b) - ver(a))[0];
+    if (id === 'openai') return best(/^gpt-\d+(\.\d+)?$/) || best(/^gpt-/) || list[0] || '';
+    if (id === 'gemini') return best(/^gemini-[\d.]+-pro$/) || best(/^gemini-[\d.]+-flash$/) || best(/^gemini-/) || list[0] || '';
+    return list[0] || '';
+  }
 
   // ─── Prompts ───────────────────────────────────────────────
   const MAP_SYSTEM = `You map topics for Celestial, a 3D research explorer. People use it mostly to diagnose problems (trace root causes) and sometimes to learn about a subject. It works for any field.
@@ -221,8 +422,15 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
   async function askPlan(prompt, tier) {
     const sample = await getSample();
     if (!sample) throw { code: 'sampling_disabled' };
+    voice = 'Claude';
     spend.requests += 1;
     return sample.json(prompt, { modelTier: tier || 'default' });
+  }
+  // A JSON-only request: on a Claude plan, or with another provider's key
+  const promptOnly = (backend) => backend === 'plan' || backend === 'other';
+  async function askJSON(backend, prompt, tier) {
+    if (backend === 'plan') return askPlan(prompt, tier);
+    return parseJSON(await askOther(prompt, { json: true }));
   }
 
   // ─── Connection to Claude with an API key ──────────────────
@@ -247,6 +455,7 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
   // One request. Refusals on Opus/Sonnet are retried on a fallback model
   // automatically by Anthropic's servers ("fallbacks: default").
   async function ask(key, model, params) {
+    voice = 'Claude';
     const c = await getClient(key);
     const fallback = MODELS[model]?.fallback;
     const res = await c.beta.messages.create({
@@ -275,7 +484,7 @@ Reply with only JSON in exactly this shape: {"about":"","check":[""],"chart":{"t
   };
   function explain(err) {
     if (err && typeof err.code === 'string' && !(err instanceof Error)) {
-      return PLAN_ERRORS[err.code] || 'Couldn’t reach Claude just now. Try again in a moment.';
+      return (PLAN_ERRORS[err.code] || 'Couldn’t reach Claude just now. Try again in a moment.').replace(/Claude(?!\.ai| plan)/g, voice);
     }
     const E = sdk?.default;
     if (E && err instanceof E.AuthenticationError) return 'Your API key was rejected. Check it in Settings.';
@@ -326,8 +535,8 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
       notRelevant.length ? `Marked not relevant: ${notRelevant.join('; ')}` : '',
     ].filter(Boolean).join('\n');
     let d;
-    if (backend === 'plan') {
-      d = await askPlan(DIGEST_SYSTEM + '\n\n' + lines + '\n\nReply with only JSON in exactly this shape: {"title":"","summary":"","next":[""]}', tier);
+    if (promptOnly(backend)) {
+      d = await askJSON(backend, DIGEST_SYSTEM + '\n\n' + lines + '\n\nReply with only JSON in exactly this shape: {"title":"","summary":"","next":[""]}', tier);
     } else {
       const res = await ask(key, model, {
         system: DIGEST_SYSTEM,
@@ -352,8 +561,8 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
     ].filter(Boolean);
     const system = reasons ? MAP_SYSTEM + '\n\n' + MAP_REASONS : MAP_SYSTEM;
     let out;
-    if (backend === 'plan') {
-      out = await askPlan([system, ...lines, MAP_JSON(reasons)].join('\n\n'), tier);
+    if (promptOnly(backend)) {
+      out = await askJSON(backend, [system, ...lines, MAP_JSON(reasons)].join('\n\n'), tier);
       if (!out || !Array.isArray(out.orbs)) throw { code: 'invalid_json' };
       out.centre = out.centre || {};
       out.links = Array.isArray(out.links) ? out.links : [];
@@ -392,9 +601,11 @@ Mention ruled-out topics only to say they were set aside. Be honest when the mar
       feedback?.yes?.length ? `The person has marked these as relevant so far: ${feedback.yes.join('; ')}. Where it helps, say how this topic relates to them.` : '',
       webSearch ? 'Search the web for good sources first. If a video would help someone understand it, run one search for a video explainer too.' : 'Do not search the web: rely on what you know, rate sources honestly, and use tier 6 for claims you can’t attribute.',
     ].filter(Boolean).join('\n');
-    if (backend === 'plan') {
+    if (promptOnly(backend)) {
       const brief = intro.split('\n').filter((l) => !l.startsWith('Search the web') && !l.startsWith('Do not search')).join('\n');
-      const d = await askPlan(PLAN_DETAILS + '\n\n' + brief, tier);
+      // Other providers can name a Wikipedia article for the picture too
+      const wiki = backend === 'other' ? '\n\nAlso add "wikipedia" to the JSON: the exact title of the English Wikipedia article whose lead image would best illustrate this topic, or "" if none fits.' : '';
+      const d = await askJSON(backend, PLAN_DETAILS + wiki + '\n\n' + brief, tier);
       if (!d || typeof d !== 'object') throw { code: 'invalid_json' };
       return tidyDetails({ wikipedia: '', ...d }, {});
     }
@@ -535,9 +746,9 @@ Finish by calling the record_deep tool exactly once.`;
       path.length ? `Path so far: ${path.join(' › ')}` : '',
       feedbackNote(feedback),
     ].filter(Boolean).join('\n');
-    if (backend === 'plan') {
+    if (promptOnly(backend)) {
       // A deeper pass deserves more thought than the lightest setting
-      const d = await askPlan([DEEP_SYSTEM, DEEP_PLAN_SOURCES, brief, DEEP_JSON].join('\n\n'), tier === 'quick' ? 'default' : tier);
+      const d = await askJSON(backend, [DEEP_SYSTEM, DEEP_PLAN_SOURCES, brief, DEEP_JSON].join('\n\n'), tier === 'quick' ? 'default' : tier);
       return tidyDeep(d, {});
     }
     const tools = [DEEP_TOOL, ...(webSearch ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }] : [])];
@@ -624,6 +835,8 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
       const { text } = await sample(prompt, { modelTier: 'quick', onText: ({ delta }) => onDelta(delta) });
       return text;
     }
+    if (backend === 'other') return askOther(prompt, { onDelta });
+    voice = 'Claude';
     const c = await getClient(key);
     const stream = c.messages.stream({
       model: QUICK_MODEL,
@@ -689,5 +902,5 @@ link (0 to 1): how strongly it is connected in general. relevance (0 to 1): how 
     } catch { return null; }
   }
 
-  window.CELESTIAL_RESEARCH = { MODELS, map, details, deep, tidyDeep, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
+  window.CELESTIAL_RESEARCH = { MODELS, PROVIDERS, loadConnection, saveConnection, ready, setConnection, listModels, pickModel, map, details, deep, tidyDeep, digest, quickMap, quickAbout, wikipediaImage, explain, spend, planAvailable, planState, openPermissions };
 })();

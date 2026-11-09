@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <!-- ?v= is a version tag: change it on each release so browsers fetch fresh files -->
-<link rel="stylesheet" href="style.css?v=202611011000">
+<link rel="stylesheet" href="style.css?v=202611090900">
 </head>
 <body>
 
@@ -76,7 +76,17 @@
     <button type="button" id="plan-retry" class="link-btn" hidden>Check again</button>
   </div>
   <form id="key-form" class="key-form" autocomplete="off">
-    <label for="api-key">Your Claude API key</label>
+    <label for="provider">Who answers</label>
+    <select id="provider" class="provider-select"></select>
+    <label for="provider-base" class="provider-base-label">Server address</label>
+    <input id="provider-base" class="key-field provider-base" type="url" spellcheck="false" placeholder="https://api.groq.com/openai/v1">
+    <label for="provider-model" class="provider-model-label">Model</label>
+    <div class="key-row provider-model-row">
+      <input id="provider-model" class="key-field" type="text" spellcheck="false" list="provider-models" placeholder="Model name">
+      <button type="button" id="provider-list" class="key-secondary">List models</button>
+    </div>
+    <datalist id="provider-models"></datalist>
+    <label for="api-key" id="api-key-label">Your API key</label>
     <div class="key-row">
       <input id="api-key" type="password" spellcheck="false" placeholder="sk-ant-…">
       <button type="submit">Save</button>
@@ -183,7 +193,7 @@
 
 <!-- Only on this site: the demo notice. Hidden once a key is saved, or for the rest of the visit once closed. -->
 <aside id="demo-notice" class="demo-notice" aria-label="Demo version" hidden>
-  <p><b>This is a demo version.</b> Its research on the example question was prepared in advance and replays as if live, so you can keep expanding and going deeper into any orb. Add your own Claude API key to ask any question and research it for real.</p>
+  <p><b>This is a demo version.</b> Its research on the example question was prepared in advance and replays as if live, so you can keep expanding and going deeper into any orb. Add your own API key from Anthropic, OpenAI, Google Gemini, OpenRouter or any OpenAI-compatible service to ask any question and research it for real.</p>
   <div class="demo-actions">
     <button id="demo-key" type="button" class="demo-key">Add your API key</button>
     <button id="demo-close" type="button" class="demo-close" aria-label="Close">&times;</button>
@@ -283,7 +293,10 @@
 (() => {
   const box = document.getElementById('demo-notice');
   const has = (store, key) => { try { return Boolean(store.getItem(key)); } catch { return false; } };
-  box.hidden = has(localStorage, 'celestial.key') || has(sessionStorage, 'celestial.demoClosed');
+  // Connected = the chosen provider has what it needs (research.js knows; it loads below)
+  const connected = () => { const R = window.CELESTIAL_RESEARCH; return Boolean(R && R.ready(R.loadConnection())); };
+  box.hidden = true;
+  addEventListener('DOMContentLoaded', () => { box.hidden = connected() || has(sessionStorage, 'celestial.demoClosed'); });
   document.getElementById('demo-close').addEventListener('click', () => {
     box.hidden = true;
     try { sessionStorage.setItem('celestial.demoClosed', '1'); } catch { /* fine: it shows again next time */ }
@@ -297,29 +310,29 @@
   });
   // A saved key unlocks the full version, so the notice has done its job
   document.getElementById('key-form').addEventListener('submit', () => setTimeout(() => {
-    if (has(localStorage, 'celestial.key')) box.hidden = true;
+    if (connected()) box.hidden = true;
   }));
 })();
 </script>
 
-<script src="data.js?v=202611011000"></script>
-<script src="illustrations.js?v=202611011000"></script>
-<script src="research.js?v=202611011000"></script>
-<script src="sound.js?v=202611011000"></script>
+<script src="data.js?v=202611090900"></script>
+<script src="illustrations.js?v=202611090900"></script>
+<script src="research.js?v=202611090900"></script>
+<script src="sound.js?v=202611090900"></script>
 <!-- Only on this site: preloaded research the demo replays, and the first-visit tour -->
-<script src="demo-details.js?v=202611011000"></script>
-<script src="demo-maps.js?v=202611011000"></script>
-<script src="demo-deep.js?v=202611011000"></script>
-<script src="demo-deeper.js?v=202611011300"></script>
-<script src="demo-aliases.js?v=202611011300"></script>
-<script src="demo.js?v=202611011300"></script>
+<script src="demo-details.js?v=202611090900"></script>
+<script src="demo-maps.js?v=202611090900"></script>
+<script src="demo-deep.js?v=202611090900"></script>
+<script src="demo-deeper.js?v=202611090900"></script>
+<script src="demo-aliases.js?v=202611090900"></script>
+<script src="demo.js?v=202611090900"></script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
 } }
 </script>
-<script type="module" src="app.js?v=202611011000"></script>
-<script src="tour.js?v=202611011000"></script>
+<script type="module" src="app.js?v=202611090900"></script>
+<script src="tour.js?v=202611090900"></script>
 </body>
 </html>

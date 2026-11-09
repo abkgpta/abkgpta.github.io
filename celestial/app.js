@@ -169,12 +169,12 @@ const VIEW_SETTINGS = [
     ['default', 'Balanced', 'Recommended'],
     ['complex', 'Thorough', 'Slower, deeper'],
   ] },
-  { key: 'model', label: 'Model (with your API key)', options: [
+  { key: 'model', label: 'Claude model (with an Anthropic key)', options: [
     ['claude-opus-5-5', 'Opus 5.5', 'Most capable'],
     ['claude-sonnet-5-5', 'Sonnet 5.5', 'Faster'],
     ['claude-haiku-5-5', 'Haiku 5.5', 'Lowest cost'],
   ] },
-  { key: 'webSearch', label: 'Search the web for sources', hint: 'When an orb opens or you go deeper. Gives real links and videos in the Sources tab. Each search adds a small cost to your key' },
+  { key: 'webSearch', label: 'Search the web for sources', hint: 'With an Anthropic key, when an orb opens or you go deeper. Gives real links and videos in the Sources tab. Each search adds a small cost to your key' },
   { group: 'Learning' },
   { key: 'reasoning', label: 'Progressive mode', hint: 'Build each map step by step and explain every line. Claude writes the reasons only while this is on. Same as the Progressive button' },
   { key: 'traceSpeed', label: 'Step speed', needs: 'reasoning', options: [[0, 'Slow'], [1, 'Normal'], [2, 'Fast']] },
@@ -672,9 +672,14 @@ let systemRadius = 20;
 const isHiddenLead = (l) => l.link <= TUNING.hiddenLead.maxLink && l.relevance >= TUNING.hiddenLead.minRelevance;
 // ─── Live research with Claude (see the RESEARCH script) ─────
 const R = window.CELESTIAL_RESEARCH;
-const KEY_STORE = 'celestial.key', CACHE_STORE = 'celestial.research';
-const readKey = () => { try { return localStorage.getItem(KEY_STORE) || ''; } catch { return ''; } };
-let apiKey = readKey();
+const CACHE_STORE = 'celestial.research';
+// Whose API answers with your own key: Anthropic, OpenAI, Gemini, OpenRouter
+// or any OpenAI-compatible server (see PROVIDERS in research.js)
+let conn = R.loadConnection();
+let apiKey = conn.key;
+const provider = () => R.PROVIDERS[conn.id];
+const onAnthropic = () => conn.id === 'anthropic';
+const connected = () => R.ready(conn);
 // Opened on claude.ai? Then research can only run on the viewer's own Claude
 // plan (the page can't reach Anthropic's API directly from there).
 const inViewer = Boolean(window.claude?.use);
@@ -683,11 +688,15 @@ const BLOCKED_NOTE = 'claude.ai isn’t letting this page use Claude for you her
 let planBlocked = 'checking';       // on claude.ai without Claude: 'checking' | 'denied' | 'unavailable'
 // Only on this site: with no key, research replays preloaded answers (demo.js)
 const DEMO = window.CELESTIAL_DEMO;
-const demo = () => Boolean(DEMO) && !inViewer && !apiKey;
-const live = () => Boolean(R && (planReady || apiKey || demo()));
-const backend = () => (planReady ? 'plan' : demo() ? 'demo' : 'api');
-const whoAnswers = () => (planReady ? 'your Claude plan' : demo() ? 'Claude' : R.MODELS[view.model].name);
-const DEMO_END = 'The demo’s preloaded research ends here. Add your Claude API key in Settings to keep going live.';
+const demo = () => Boolean(DEMO) && !inViewer && !connected();
+const live = () => Boolean(R && (planReady || connected() || demo()));
+// 'api' is Anthropic's API (with web search); 'other' any other provider
+const backend = () => (planReady ? 'plan' : demo() ? 'demo' : onAnthropic() ? 'api' : 'other');
+const modelName = () => (onAnthropic() ? R.MODELS[view.model]?.name || 'Claude' : conn.model || provider().name);
+const whoAnswers = () => (planReady ? 'your Claude plan' : demo() ? 'Claude' : modelName());
+// Web search only runs on Anthropic's API
+const searchesWeb = () => backend() === 'api' && view.webSearch;
+const DEMO_END = 'The demo’s preloaded research ends here. Add an API key in Settings to keep going live.';
 const session = { mode: 'diagnose' };
 const liveIds = new Set();          // topics that came from Claude (saved between visits)
 const pending = new Set();          // systems being mapped right now
@@ -1190,7 +1199,7 @@ function fillOrb(o) {
   if (more.loading) body = `<p class="about-text preview-text">${esc(more.preview || '')}</p><p class="researching"><span class="spinner"></span>${planReady
     ? 'Researching in depth on your plan…'
     : demo() ? 'Researching in depth with Claude…'
-    : `Researching in depth with ${esc(R.MODELS[view.model]?.name || 'Claude')}${view.webSearch ? ' and the web' : ''}…`}</p>`;
+    : `Researching in depth with ${esc(modelName())}${searchesWeb() ? ' and the web' : ''}…`}</p>`;
   else if (more.error) body = `<p class="research-error">${esc(more.error)}</p><button type="button" class="chip" data-action="retry">Try again</button>`;
   else if (more.about) body = `<p class="about-text">${esc(more.about)}</p>`;
   else if (demo() && !DEMO.hasDetails(topic.title)) body = `<p class="slot">${DEMO_END}</p>`;
@@ -2119,7 +2128,7 @@ async function goDeeper(id) {
 async function researchDeep(deepId, ofId) {
   const topic = DATA.topics[ofId];
   pending.add(deepId);
-  const web = !planReady && !demo() && view.webSearch;
+  const web = searchesWeb();
   setStatus(`Looking inside “${topic.title}” with ${whoAnswers()}${web ? ' and the web' : ''}. A deeper pass takes a minute or two…`);
   try {
     const out = await R.deep({
@@ -2207,7 +2216,7 @@ function followThread(i) {
   const sunId = trail[trail.length - 1];
   const t = DATA.inside[sunId]?.threads?.[i];
   if (!t || busy) return;
-  if (!live()) { toast(inViewer ? 'Following a thread needs Claude. Sign in to claude.ai and allow it for this page.' : 'Following a thread needs Claude. Add your API key in Settings.'); return; }
+  if (!live()) { toast(inViewer ? 'Following a thread needs Claude. Sign in to claude.ai and allow it for this page.' : 'Following a thread needs a model to research it. Add an API key in Settings.'); return; }
   if (demo() && !DEMO.hasDeep(t.title)) { toast(DEMO_END); return; }
   const id = 't-' + slug(t.title);
   if (!DATA.topics[id]) DATA.topics[id] = { title: t.title, liner: t.question };
@@ -2249,7 +2258,7 @@ async function explore(query) {
     setViewPanel(true);
     showViewTab('Research');
     $('api-key').focus();
-    toast('The demo runs on preloaded research for the example question. Add your Claude API key here to ask your own.');
+    toast('The demo runs on preloaded research for the example question. Add an API key here (Anthropic, OpenAI, Gemini, OpenRouter or your own server) to ask your own.');
     return;
   }
   if (!live()) {
@@ -2261,7 +2270,7 @@ async function explore(query) {
       if (await R.planAvailable(true)) { planReady = true; updateLiveState(); return explore(query); }
       toast(planBlocked === 'denied' ? 'Claude is switched off for this page. Use “Allow Claude” in Settings.' : 'Claude isn’t available to this page here. See Settings for what to try.');
     } else {
-      toast('Add your Claude API key here to explore your own questions.');
+      toast('Add an API key here to explore your own questions.');
     }
     return;
   }
@@ -2333,7 +2342,7 @@ async function loadDetails(o) {
       rel: o.isSun ? null : o.rel,
       mode: session.mode,
       path: trail.map((t) => DATA.topics[t].title),
-      webSearch: view.webSearch,
+      webSearch: searchesWeb(),
       feedback: feedbackTitles(),
     });
     DATA.details[id] = { ...d, live: true };
@@ -2942,12 +2951,26 @@ $('prompt').addEventListener('submit', (e) => {
   if (q) explore(q);
 });
 
-// ─── Your Claude API key ────────────────────────────────────
+// ─── Your API key and provider ──────────────────────────────
+// The provider list, filled once
+for (const [id, p] of Object.entries(R.PROVIDERS)) $('provider').append(new Option(p.name, id));
+function fillConnection() {
+  const p = provider();
+  $('provider').value = conn.id;
+  const other = !onAnthropic();
+  $('provider-base').hidden = $('key-form').querySelector('.provider-base-label').hidden = !p.editBase;
+  $('provider-base').value = conn.baseUrl;
+  $('provider-model').closest('.key-row').hidden = $('key-form').querySelector('.provider-model-label').hidden = !other;
+  $('provider-model').value = conn.model;
+  $('provider-model').placeholder = p.model || 'Model name, e.g. llama-3.3-70b-versatile';
+  $('api-key').placeholder = p.keyHint;
+  $('api-key-label').textContent = `Your ${p.name} API key${p.keyOptional ? ' (if it needs one)' : ''}`;
+}
 function updateLiveState(refill = true) {
   $('brand-stage').textContent = planReady ? 'Live · on your Claude plan'
     : inViewer ? (planBlocked === 'checking' ? 'Connecting to Claude…' : 'Example · Claude not available here')
     : demo() ? 'Demo · preloaded research'
-    : live() ? `Live · ${R.MODELS[view.model].name}`
+    : live() ? `Live · ${onAnthropic() ? modelName() : `${provider().name} · ${modelName()}`}`
     : 'Example · add a key to go live';
   // On claude.ai each viewer's own plan is used, so the key and API-only settings step aside
   const onClaude = planReady || inViewer;
@@ -2959,17 +2982,20 @@ function updateLiveState(refill = true) {
     : BLOCKED_NOTE;
   $('plan-allow').hidden = !(inViewer && !planReady && planBlocked === 'denied');
   $('plan-retry').hidden = !(inViewer && !planReady && planBlocked === 'unavailable');
-  $('key-form').querySelector('label').hidden = onClaude;
-  $('key-form').querySelector('.key-row').hidden = onClaude;
+  $('key-form').hidden = onClaude;
   $('key-note').hidden = onClaude;
-  $('view-model').hidden = onClaude;
-  $('view-webSearch').closest('label').hidden = onClaude;
+  $('view-model').hidden = onClaude || !onAnthropic();
+  $('view-webSearch').closest('label').hidden = onClaude || !onAnthropic();
   $('view-tier').hidden = !planReady;
+  fillConnection();
+  const p = provider();
   $('key-forget').hidden = !apiKey || onClaude;
   $('api-key').value = apiKey ? '••••••••••••' + apiKey.slice(-4) : '';
-  $('key-note').textContent = apiKey
-    ? 'Saved in this browser only. It is sent only to Anthropic.'
-    : 'Stored only in this browser and sent only to Anthropic. Create one at console.anthropic.com → API keys.';
+  $('key-note').textContent = (apiKey
+    ? `Saved in this browser only. It is sent only to ${p.editBase ? 'the server above' : p.name}.`
+    : `Stored only in this browser and sent only to ${p.editBase ? 'the server above' : p.name}. ${p.editBase ? p.keyWhere : 'Create one at ' + p.keyWhere}.`)
+    + (onAnthropic() ? '' : ' Answers come from the model’s own knowledge: web search for sources runs only with an Anthropic key.');
+  R.setConnection(conn);
   if (refill) for (const o of orbs) fillOrb(o);
   if (refill) updateFindings(); else renderFindings();
   updateSpend();
@@ -2978,23 +3004,78 @@ function updateSpend() {
   const s = R?.spend;
   $('spend').textContent = !s?.requests ? ''
     : planReady ? `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'} on your Claude plan`
-    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web search${s.searches === 1 ? '' : 'es'}` : ''}, ${s.tokens >= 1e6 ? (s.tokens / 1e6).toFixed(1) + 'M' : Math.max(1, Math.round(s.tokens / 1000)) + 'k'} tokens. Your Anthropic console shows the cost.`;
+    : `This visit: ${s.requests} request${s.requests === 1 ? '' : 's'}${s.searches ? `, ${s.searches} web search${s.searches === 1 ? '' : 'es'}` : ''}${s.tokens ? `, ${s.tokens >= 1e6 ? (s.tokens / 1e6).toFixed(1) + 'M' : Math.max(1, Math.round(s.tokens / 1000)) + 'k'} tokens` : ''}. ${provider().editBase ? 'Your provider' : `Your ${provider().name} account`} shows the cost.`;
 }
+// Saves the provider, model and address as they are in the form (not the key)
+function keepConnection() {
+  const p = provider();
+  const model = onAnthropic() ? '' : $('provider-model').value.trim();
+  const baseUrl = p.editBase ? $('provider-base').value.trim().replace(/\/+$/, '') : conn.baseUrl;
+  conn = { ...conn, ...(onAnthropic() ? {} : { model }), baseUrl };
+  R.saveConnection({ id: conn.id, ...(onAnthropic() ? {} : { model }), ...(p.editBase ? { baseUrl } : {}) });
+}
+// Fill the model suggestions from the provider; quiet: no toast unless it fails
+async function loadModels(quiet = false) {
+  if (onAnthropic() || !connected()) return;
+  const asked = conn.id;
+  try {
+    const list = await R.listModels(conn);
+    if (conn.id !== asked) return;
+    $('provider-models').replaceChildren(...list.map((m) => new Option(m)));
+    // Big providers retire models: swap a missing one for their newest. A custom server keeps what you typed.
+    if (list.length && !list.includes(conn.model) && !provider().editBase && conn.id !== 'openrouter') {
+      const pick = R.pickModel(conn.id, list);
+      if (pick) {
+        $('provider-model').value = pick;
+        keepConnection();
+        updateLiveState(false);
+        toast(`“${pick}” is selected: this key doesn’t list the model that was set. Change it under Model.`);
+        return;
+      }
+    }
+    if (!quiet) toast(list.length ? `${list.length} models available. Type in the Model box to pick one.` : 'This server didn’t list any models. Type the model name yourself.');
+  } catch (err) {
+    if (!quiet) toast(R.explain(err));
+  }
+}
+$('provider').addEventListener('change', () => {
+  conn = R.loadConnection($('provider').value);
+  apiKey = conn.key;
+  R.saveConnection({ id: conn.id });
+  $('provider-models').replaceChildren();
+  updateLiveState();
+  loadModels(true);
+});
+$('provider-model').addEventListener('change', () => { keepConnection(); updateLiveState(false); });
+$('provider-base').addEventListener('change', () => { keepConnection(); updateLiveState(false); });
+$('provider-list').addEventListener('click', () => {
+  keepConnection();
+  if (!connected()) { toast(provider().editBase ? 'Add the server address (and a key if it needs one) first.' : `Save your ${provider().name} key first.`); return; }
+  loadModels();
+});
 $('key-form').addEventListener('submit', (e) => {
   e.preventDefault();
-  const v = $('api-key').value.trim();
-  if (!v || v.startsWith('•')) return;
-  if (!v.startsWith('sk-ant-')) { toast('That doesn’t look like a Claude API key. They start with sk-ant-.'); return; }
+  const p = provider();
+  const typed = $('api-key').value.trim();
+  const v = typed.startsWith('•') ? apiKey : typed;
+  keepConnection();
+  if (p.editBase && !/^https?:\/\/\S+$/.test(conn.baseUrl)) { toast('Add the server’s address, starting with https:// (or http://localhost).'); return; }
+  if (!onAnthropic() && !conn.model) { toast('Add the name of the model to use.'); return; }
+  if (!v && !p.keyOptional) { toast(`Paste your ${p.name} API key first.`); return; }
+  if (p.keyPrefix && !v.startsWith(p.keyPrefix)) { toast(`That doesn’t look like ${p.name === 'Anthropic' ? 'a Claude' : 'an ' + p.name} API key. They start with ${p.keyPrefix}.`); return; }
   apiKey = v;
-  try { localStorage.setItem(KEY_STORE, v); } catch { toast('This browser won’t store the key, so it will be forgotten when you close the tab.'); }
+  conn = { ...conn, key: v };
+  if (!R.saveConnection({ id: conn.id, key: v })) toast('This browser won’t store the key, so it will be forgotten when you close the tab.');
+  else toast(v ? 'Key saved. Type a question or topic to begin.' : 'Saved. Type a question or topic to begin.');
   updateLiveState();
-  toast('Key saved. Type a question or topic to begin.');
+  loadModels(true);
   $('prompt-input').focus();
   $('prompt-input').select();
 });
 $('key-forget').addEventListener('click', () => {
   apiKey = '';
-  try { localStorage.removeItem(KEY_STORE); } catch { /* ignore */ }
+  conn = { ...conn, key: '' };
+  R.saveConnection({ id: conn.id, key: '' });
   updateLiveState();
   toast('Key removed from this browser.');
 });

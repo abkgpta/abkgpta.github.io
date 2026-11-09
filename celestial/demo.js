@@ -20,8 +20,8 @@
 (() => {
   const R = window.CELESTIAL_RESEARCH, DATA = window.CELESTIAL_DATA, C = window.CELESTIAL_DEMO_CONTENT;
   if (!R || !DATA || !C) return;
-  // A saved key (or claude.ai) means real research: leave the example alone
-  const hasKey = (() => { try { return Boolean(localStorage.getItem('celestial.key')); } catch { return false; } })();
+  // A saved key for the chosen provider (or claude.ai) means real research: leave the example alone
+  const hasKey = Boolean(R.ready?.(R.loadConnection()));
   if (hasKey || window.claude?.use) return;
 
   // How long each kind of research takes, in milliseconds [shortest, longest].
@@ -197,7 +197,7 @@
     };
   };
 
-  const missing = () => new Error('The demo has no preloaded research for this. Add your Claude API key in Settings to research it live.');
+  const missing = () => new Error('The demo has no preloaded research for this. Add an API key in Settings to research it live.');
   const clone = (x) => JSON.parse(JSON.stringify(x));
   const withoutReasons = (o) => { const { why, basis, tier, ...rest } = o; return rest; };
 
