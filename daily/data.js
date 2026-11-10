@@ -1,16 +1,16 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "6 Nov 2026, 6:53 AM IST";
+const UPDATED = "10 Nov 2026, 6:56 AM IST";
 
 const QUOTE = {
-  "text": "Form ever follows function.",
-  "author": "Louis Sullivan"
+  "text": "Have nothing in your houses that you do not know to be useful, or believe to be beautiful.",
+  "author": "William Morris"
 };
 
 const NOW = [
   {
     "name": "Celestial",
-    "date": "1 Nov",
-    "note": "A 3D research tool that maps a question as a solar system of topics, now with a guided demo and tour.",
+    "date": "9 Nov",
+    "note": "A 3D research tool that maps a question as a solar system of topics, now with bring-your-own-key for any AI provider.",
     "url": "https://abkgpta.github.io/celestial/"
   },
   {
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Two Wheeler Sales Oct 2026: Hero, Honda, TVS, Bajaj, Suzuki, Royal Enfield",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/two-wheeler-sales-oct-2026-hero-honda-tvs-bajaj-suzuki-royal-enfield-12560495.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/06/honda-activa-sales-new-record-black.jpeg",
-        "why": "Top six makers sold 29.2 lakh units, up 16.45%; Honda edged Hero by just 163 units overall."
+        "title": "Bezzecchi bounces back with Qatar victory as Marquez extends championship lead",
+        "source": "motogp.com",
+        "url": "https://www.motogp.com/en/news/2026/11/08/bezzecchi-bounces-back-with-qatar-victory-as-marquez-extends-championship-lead/1184256",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/08/1a840126-694d-4b12-830a-ad2ad6fbce1d/Report-MGP-GP-QAT.jpg",
+        "why": "Bezzecchi won at Lusail from Marquez and Raul Fernandez; Marquez can clinch the title by winning the Portimão Sprint."
       },
       {
-        "title": "India-bound bikes and scooters from EICMA 2026",
+        "title": "TVS leads electric two-wheeler sales in October 2026 as sales nearly double",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/auto-features/india-bound-bikes-and-scooters-from-eicma-2026-441268",
-        "img": "https://asset.autocarindia.com/static/features/images/20261105_110341_c4c2b162.jpg",
-        "why": "Over 20 models likely for India, including the 55hp Himalayan 750 and a 46.7hp Hero Xpulse 450."
+        "url": "https://www.autocarindia.com/bike-news/tvs-leads-e2w-sales-in-october-2026-as-sales-nearly-double-441292",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_104807_c715a2ee.jpeg",
+        "why": "TVS sold 60,490 e-2Ws, up 94.7%; total e-2W retail rose 48.5% to 2,24,064 units, a 9.7% share."
       },
       {
-        "title": "Harley-Davidson Sprint 440 Cruiser revealed",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/harley-davidson-sprint-440-cruiser-revealed-441212",
-        "img": "https://asset.autocarindia.com/static/news/images/20261103_100833_eee64658.jpg",
-        "why": "X440-based cruiser with a 683mm seat and £4,995 UK price; India launch unlikely soon."
+        "title": "Vespa reveals all-new electric range bearing familiar names",
+        "source": "Visordown",
+        "url": "https://www.visordown.com/news/vespa-reveals-all-new-electric-range-bearing-familiar-names",
+        "img": "https://www.visordown.com/sites/default/files/2026-11/primavera_tech_70_ele_blu_energico_opaco_sidedx.jpg",
+        "why": "Vespa's first full electric range at EICMA: Primavera and Sprint S with removable batteries and 85km range."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "M&M Q2 consolidated profit rises 25% to ₹4,588 cr on strong auto show",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/m-m-q2-consolidated-profit-rises-25-to-4-588-cr-on-strong-auto-show-126110500963_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/05/thumb/fitandfill/1200X628/1793902339-8302.jpg",
-        "why": "Auto PAT jumped 55% to ₹2,388 Cr as vehicle volumes rose 26% to 330,896."
+        "title": "Electric car retail sales surge 76 percent in October 2026",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/ev-retail-sales-surge-76-percent-in-october-2026-441290",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_090204_acc97cb3.jpg",
+        "why": "FADA data: EV retail rose 76.47% to 37,049 units, a 7.3% share; Tata led with 14,669."
       },
       {
-        "title": "Germany's EV share hits record 37% as BEVs beat gas and diesel combined",
-        "source": "Electrek",
-        "url": "https://electrek.co/2026/11/04/germany-electric-car-sales-record-37-percent-share/",
-        "img": "https://electrek.co/wp-content/uploads/sites/3/2025/06/gas-vs-electric.png",
-        "why": "94,086 BEVs registered in October, up 79.5%, in a market that grew only 1.7%."
+        "title": "Yangwang U9 Xtreme breaks production-car top-speed record at 503.17kph",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/yangwang-u9-xtreme-breaks-production-car-top-speed-record-at-50317kph-441294",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_105844_3816943d.jpg",
+        "why": "BYD's 3,019hp four-motor EV is the first production car past 500kph; only 30 will be built."
       },
       {
-        "title": "Maruti Sales Oct 2026 All Time High: Domestic 2.12 Lakh, Exports Near 50k",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/maruti-sales-oct-2026-all-time-high-domestic-2-12-lakh-exports-near-50k-12559942.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2025/08/Maruti-Grand-Vitara-New-Colours-Launched.jpeg",
-        "why": "Record 2,76,120 total units, up 25%; exports rose 59% to 49,872."
+        "title": "BYD Atto 2 spied undisguised in India",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/byd-atto-2-spied-undisguised-in-india-441293",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_104210_b2ea1216.jpg",
+        "why": "BYD's coming entry model sits below the Atto 3, with 45.1kWh and 64.8kWh packs and up to 430km WLTP."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Zipline hits $21.5B valuation as Walmart expands bet on drone delivery",
+        "title": "AI hardware startup Nominal triples valuation to $3B in 8 months",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/05/zipline-hits-21-5b-valuation-as-walmart-expands-bet-on-drone-delivery",
-        "img": "https://techcrunch.com/wp-content/uploads/2022/09/Zipline-Package-Drop.jpg",
-        "why": "Raised $1.5B; a new Walmart deal adds 300 drone delivery sites to today's 21."
+        "url": "https://techcrunch.com/2026/11/09/ai-hardware-startup-nominal-triples-valuation-to-3b-in-8-months/",
+        "img": "https://techcrunch.com/wp-content/uploads/2023/09/Cameron-McCord.jpg",
+        "why": "Lightspeed-led $240M Series C for the hardware-testing AI platform, triple March's $1B; Anduril is a customer."
       },
       {
-        "title": "A YC startup is putting $1M behind five unsolved materials science problems for AI",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/05/a-yc-startup-is-putting-1m-behind-five-unsolved-materials-science-problems-for-ai",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/08/discoverd-materials.jpg",
-        "why": "Discovered Materials offers prizes for five open problems, including a cuprate superconductivity theory."
+        "title": "Peppermint Robotics bags ₹100 Cr to scale its industrial robotics bet",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/peppermint-robotics-bags-%E2%82%B9100-cr-to-scale-its-industrial-robotics-bet/",
+        "img": "https://asset.inc42.com/2026/11/Peppermint-social.jpg",
+        "why": "Pune autonomous cleaning-robot maker's Pre-Series B was led by pi Ventures; the US is nearly half of revenue."
       },
       {
-        "title": "Spacetech startup Cosmoserve Space raises $6 Mn in seed round",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/spacetech-startup-cosmoserve-space-raises-6-mn-in-seed-round-12787035",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/comoserve-2026-11-05-20-27-14.png",
-        "why": "In-orbit satellite servicing startup; total funding now over $9M."
+        "title": "Physicl raises $10M to make the digital world real enough for robots",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/06/physicl-raises-10m-to-make-the-digital-world-real-enough-for-robots",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/physicl-studio-hero-kitchen-16x9-1.jpg",
+        "why": "Inovia-led seed for synthetic training data; its Studio offers 10,000 3D environments for robot builders."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "AI inference startup Fal doubles its valuation to $16B as demand surges",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/03/ai-inference-startup-fal-doubles-its-valuation-to-16b-as-demand-surges/",
-        "img": "https://techcrunch.com/wp-content/uploads/2022/12/GettyImages-1268605503.jpg",
-        "why": "$1.3B round led by Bessemer, double its $8B valuation from April."
+        "title": "Onodrim Industries hits $1.3B valuation with $300M Series A to strengthen European defence",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/11/09/onodrim-industries-hits-13b-valuation-with-300m-series-a-to-strengthen-european-defence/",
+        "img": "https://cdn.tech.eu/uploads/2026/11/onodrimindustries-featured-768.png",
+        "why": "Lux Capital-led round for a platform buying controlling stakes in European defence and industrial suppliers."
       },
       {
-        "title": "GIVA Raises ₹975 Cr Led By Multiples PE, Eyes 160 New Stores In FY27",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/giva-raises-%E2%82%B9975-cr-led-by-multiples-pe-eyes-160-new-stores-in-fy27",
-        "img": "https://asset.inc42.com/2026/11/Untitled-Design-40.png",
-        "why": "The jewellery brand's FY26 revenue rose to ₹865 Cr from ₹505 Cr; it has about 425 stores."
+        "title": "EloElo Group raises $80 Mn in Series C led by Hornbill Capital, NBCUniversal",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/eloelo-group-raises-80-mn-in-series-c-led-by-hornbill-capital-nbcuniversal-12780928",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/03/eloelo-2026-11-03-17-59-32.png",
+        "why": "Funds take micro-drama app Story TV international; the group has over 40 million monthly active users."
       },
       {
-        "title": "Venomics AI Raises $2.7 Mn To Turn Venom Into Medicine",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/venomics-ai-raises-2-7-mn-to-turn-venom-into-medicine/",
-        "img": "https://asset.inc42.com/2026/11/Venomics-Founders-SM.png",
-        "why": "An IISc spinout; Speciale Invest and South Park Commons co-led the pre-seed."
+        "title": "MakeMyTrip acquires majority stake in Quick Ride",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/makemytrip-acquires-majority-stake-in-quick-ride-to-enter-shared-mobility-segment-12789293",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/17/make-my-trip-2026-10-17-12-58-49.png",
+        "why": "MakeMyTrip enters ride pooling, folding Quick Ride into its ground unit with redBus and Savaari."
       }
     ]
   },
@@ -144,99 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Tonbo Imaging turns profitable in Q2 FY27 with Rs 23.5 Cr; shares hit 20% upper circuit",
+        "title": "PhysicsWallah cites AI efficiencies for job cuts; earmarks $20 Mn for M&A",
         "source": "Entrackr",
-        "url": "https://entrackr.com/fintrackr/tonbo-imaging-turns-profitable-in-q2-fy27-with-rs-235-cr-shares-hit-20-upper-circuit-12785666",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/tonbo-imaging-2026-11-05-13-11-55.png",
-        "why": "Revenue rose to ₹183.3 Cr from ₹8.9 Cr a year ago, against a ₹9.6 Cr loss then."
+        "url": "https://entrackr.com/news/physicswallah-cites-ai-efficiencies-for-job-cuts-offline-biz-faces-profit-pressure-earmarks-20-mn-for-ma-12795872",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/09/pw-2026-11-09-15-29-41.png",
+        "why": "AI now writes about 90% of its code; Q2 revenue rose 18% to ₹1,242 Cr, profit ₹142 Cr."
       },
       {
-        "title": "Amagi's Q2 FY27 profit jumps nearly 29 times to Rs 75 Cr; total income crosses Rs 500 Cr",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/fintrackr/amagis-q2-fy27-profit-jumps-nearly-29-times-to-rs-75-cr-total-income-crosses-rs-500-cr-12786053",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/05/amagi-2026-11-05-14-55-50.png",
-        "why": "Operating revenue grew 27% to ₹476 Cr, up from ₹375 Cr."
-      },
-      {
-        "title": "LIC Q2 net profit rises 20% to ₹12,076 crore, net premium income up 16.2%",
+        "title": "Tata Steel Q2 net profit up 18.2% Y-o-Y, led by India operations",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/lic-q2fy27-results-net-profit-increases-20-to-12-076-crore-126110501463_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-08/07/thumb/fitandfill/1200X628/1786098389-3318.JPG",
-        "why": "Net premium income reached ₹1.47 trillion; value of new business rose 17% to ₹3,710 Cr."
+        "url": "https://www.business-standard.com/companies/quarterly-results/tata-steel-q2-fy27-results-net-profit-india-operations-uk-netherlands-126110700767_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-04/11/thumb/fitandfill/1200X628/1744395575-361.jpg",
+        "why": "Profit ₹3,666 Cr on ₹65,436 Cr revenue; India revenue up 22.6% while UK losses widened."
+      },
+      {
+        "title": "BlueStone reports 45% Y-o-Y growth in Q3 FY27 driven by festive demand",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/quarterly-results/bluestone-festive-season-business-growth-dhanteras-diwali-q3-fy27-126110900275_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-08/22/thumb/fitandfill/1200X628/1724307673-3345.png",
+        "why": "The jeweller's business grew 45% from 1 Oct to 8 Nov on more transactions (provisional update)."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Fri 6 Nov",
-    "items": [
-      {
-        "time": "All day",
-        "title": "cortX: brief, CAD check + colour (Plasticity mesh export AM)"
-      },
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Sat 7 Nov",
-    "items": [
-      {
-        "time": "All day",
-        "title": "cortX: renders (finals overnight on Mac)"
-      },
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Sun 8 Nov",
-    "items": [
-      {
-        "time": "All day",
-        "title": "cortX: system visuals, identity + platform screens"
-      },
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Mon 9 Nov",
-    "items": [
-      {
-        "time": "All day",
-        "title": "cortX: compile + PR (review in the evening)"
-      },
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Tue 10 Nov",
     "items": [
@@ -253,15 +185,63 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Wed 11 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Thu 12 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Fri 13 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Sat 14 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
 const RACING = {
   "items": [
-    {
-      "when": "6–8 Nov",
-      "what": "MotoGP: Qatar GP, Lusail (rescheduled)"
-    },
     {
       "when": "20–22 Nov",
       "what": "MotoGP: Portuguese GP, Portimão"
@@ -271,10 +251,10 @@ const RACING = {
       "what": "MotoGP: Valencia GP, season finale"
     }
   ],
-  "note": "Qatar GP at Lusail runs this weekend. Marc Marquez won the Malaysian GP on 1 Nov and leads Jorge Martin by 44 points, so he could seal the title at Qatar. WorldSBK's 2026 season has ended.",
+  "note": "Marco Bezzecchi (Aprilia) won the Qatar GP at Lusail on 8 Nov from Marc Marquez and Raul Fernandez. Marquez leads Jorge Martin by 60 points and is champion if he wins the Portimão Sprint. Only two MotoGP rounds remain; WorldSBK's 2026 season has ended.",
   "source": {
-    "name": "Al Jazeera, Malaysian GP report; motogp.com calendar",
-    "url": "https://www.aljazeera.com/sports/2026/11/1/marquez-wins-malaysian-grand-prix-to-close-in-on-retaining-championship"
+    "name": "motogp.com, Qatar GP report and calendar",
+    "url": "https://www.motogp.com/en/news/2026/11/08/bezzecchi-bounces-back-with-qatar-victory-as-marquez-extends-championship-lead/1184256"
   }
 };
 
@@ -291,10 +271,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Hyph Mngo",
-    "artist": "Joy Orbison",
-    "id": "2BTjb4H2FLh2e5zx3nI6Ul",
-    "why": "Joy Orbison's 2009 debut single, a UK bass and house touchstone in the same lineage as the Overmono and Bicep tracks you've saved."
+    "title": "Universal Nation (Remastered Album Mix)",
+    "artist": "Push",
+    "id": "3UI3f9yJSyEGkZHa3Oc7MT",
+    "why": "A late-'90s Belgian trance anthem by M.I.K.E. as Push, right beside the ATB, Paul van Dyk and Robert Miles you've been playing."
   },
   "playlist": {
     "name": "Weekly Discovery Trance Gems",
@@ -302,135 +282,143 @@ const MUSIC = {
     "date": "2026-11-02"
   },
   "lately": [
-    "Deftones",
-    "Foster The People"
+    "ATB",
+    "Robin S",
+    "Rank 1",
+    "Ultra Naté",
+    "U96",
+    "Veracocha"
   ]
 };
 
 const LEARN = {
-  "term": "Anthropometrics and the percentile myth",
-  "body": "Anthropometrics is the measurement of human body dimensions, and ergonomics uses those percentile tables to size products for a target population. The familiar rule of designing from the 5th-percentile female to the 95th-percentile male only works one dimension at a time: percentiles are not additive, so someone can be 95th percentile in stature and 40th in arm reach. Gilbert Daniels' 1952 study of 4,063 US Air Force pilots found that none fell within the middle 30 percent on all ten dimensions measured, which is why the 'average user' is a design fiction. Each dimension is set by its limiting user: clearances such as door height use the large end, while reaches such as the distance to a control use the small end. Where several dimensions interact, as in a seat, a cockpit or a motorcycle's rider triangle, designers rely on adjustability, multivariate test cases and digital human models rather than a single percentile.",
+  "term": "Crown and tension in surfaces",
+  "body": "Crown is the small, deliberate convexity given to a panel that reads as flat, often only a few millimetres over a large span. A truly flat panel tends to look slightly sunken once reflections and highlights move across it, and in sheet metal it is also prone to oil-canning, so crown buys both visual fullness and stiffness. Tension describes how curvature is distributed across a section: a surface that stays nearly flat and then tightens toward its edge reads as taut and energetic, while a constant-radius arc reads soft or inflated. In CAD this is controlled with conics and their rho value, or with curvature-graded splines, rather than with circular fillets, and judged by highlight lines rather than by silhouette. More crown is not better: too much makes a form look swollen, so crown and tension are tuned together against the brand's intended character.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "95th %ile",
-        "note": "Large user sets clearance and space"
+        "label": "Flat",
+        "note": "Reads sunken, oil-cans in sheet metal"
       },
       {
-        "label": "5th %ile",
-        "note": "Small user sets reach and force"
+        "label": "Crown",
+        "note": "A few mm of convexity over the span"
       },
       {
-        "label": "Combine",
-        "note": "Each extra dimension cuts real coverage"
-      },
-      {
-        "label": "Adjust",
-        "note": "Adjustability spans the spread",
+        "label": "Tension",
+        "note": "Curvature tightens toward the edge",
         "hl": true
+      },
+      {
+        "label": "Check",
+        "note": "Judge with highlight lines, not silhouette"
       }
     ],
-    "caption": "No one is average on every dimension."
+    "caption": "Fullness comes from where curvature goes."
+  },
+  "source": {
+    "name": "Wikipedia: Class A surface",
+    "url": "https://en.wikipedia.org/wiki/Class_A_surface"
   },
   "past": [
+    "Anthropometrics and the percentile myth",
     "Design for manufacture and assembly (DFMA)",
     "Simultaneous contrast in CMF",
     "Shut lines, gap and flush",
-    "Class-A surfacing and highlight lines",
-    "Affordances and signifiers"
+    "Class-A surfacing and highlight lines"
   ]
 };
 
 const DESIGN = {
-  "name": "Eames Lounge Chair and Ottoman (670/671)",
-  "designer": "Charles and Ray Eames",
-  "year": "1956",
-  "why": "Three moulded plywood shells, originally veneered in rosewood, carry leather cushions, so the structure is the expression. The shells sit on rubber shock mounts over a die-cast aluminium base, giving club-chair comfort with a fraction of the visual mass.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Eames_Lounge_Chair_-_side.jpg?width=1200",
+  "name": "Fiat Panda (first generation)",
+  "designer": "Giorgetto Giugiaro, Italdesign",
+  "year": "1980",
+  "why": "Giugiaro treated a cheap car as a design brief rather than a compromise: flat glass, slab sides and simple pressings kept tooling and repair costs low. Inside, tubular hammock-style seats and a full-width fabric shelf in place of a moulded dashboard made the cabin light, flexible and honest about its means.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1980-1986_Fiat_Panda_30.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Eames_Lounge_Chair_-_side.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:1980-1986_Fiat_Panda_30.jpg"
   }
 };
 
 const FUNDING = {
-  "summary": "$115M across 28 Indian startups, 26–31 Oct, down 14% from $133.9M the week before.",
+  "summary": "$258.1M across 28 Indian startups, 2–7 Nov, more than double the previous week's roughly $115M.",
   "rounds": [
     {
-      "company": "Cent",
-      "amount": "$15M",
+      "company": "GIVA",
+      "amount": "$100 million",
+      "stage": "",
+      "sector": "Jewellery"
+    },
+    {
+      "company": "EloElo Group",
+      "amount": "$80 million",
+      "stage": "Series C",
+      "sector": "Consumer AI & entertainment"
+    },
+    {
+      "company": "Clinics On Cloud",
+      "amount": "$12.5 million",
       "stage": "Series A",
       "sector": "Healthtech"
     },
     {
-      "company": "Simplismart",
-      "amount": "$14M",
-      "stage": "",
-      "sector": "AI inference"
+      "company": "Peppermint Robotics",
+      "amount": "Rs 100 crore",
+      "stage": "Pre-Series B",
+      "sector": "Robotics"
     },
     {
-      "company": "Live2.ai",
-      "amount": "$14M",
-      "stage": "",
-      "sector": "AI marketing SaaS"
-    },
-    {
-      "company": "Troovy",
-      "amount": "$11.5M",
-      "stage": "Series B",
-      "sector": "E-commerce"
-    },
-    {
-      "company": "Matiks",
-      "amount": "$10M",
-      "stage": "Pre-Series A",
-      "sector": "Gaming"
-    },
-    {
-      "company": "Ace Blend",
-      "amount": "$9.91M",
+      "company": "altM",
+      "amount": "$10.3 million",
       "stage": "Series A",
-      "sector": "E-commerce"
+      "sector": "Specialty chemicals"
+    },
+    {
+      "company": "Two Point O Capital (TW.O)",
+      "amount": "$10 million",
+      "stage": "",
+      "sector": "AI-powered clean energy"
     }
   ],
   "source": {
     "name": "Entrackr weekly funding report",
-    "url": "https://entrackr.com/report/weekly-funding-report-weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-oct-26-oct-31-12770310"
+    "url": "https://entrackr.com/report/weekly-funding-report-weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-nov-02-nov-07-12791269"
   }
 };
 
 const LAUNCHES = {
   "items": [
     {
-      "model": "Denza Z9 GT",
-      "when": "13 Nov 2026",
-      "price": "₹1.2–1.5 crore (est.)"
-    },
-    {
-      "model": "Honda Rebel 500",
+      "model": "Royal Enfield Himalayan 750",
       "when": "Nov 2026",
-      "price": "₹4.40–4.60 lakh"
+      "price": "₹5.25–6.00 lakh (est.)"
     },
     {
       "model": "Ducati DesertX V2",
       "when": "Nov 2026",
-      "price": "₹19–22 lakh"
+      "price": "₹19–22 lakh (est.)"
     },
     {
-      "model": "Toyota Innova Hycross facelift",
-      "when": "25 Nov 2026",
-      "price": "₹20–35 lakh (est.)"
+      "model": "Hyundai compact EV",
+      "when": "Late 2026",
+      "price": "₹9.79–12.99 lakh (est.)"
     },
     {
-      "model": "Royal Enfield Himalayan 750",
-      "when": "Late Nov 2026",
-      "price": "₹4.50 lakh (est.)"
+      "model": "Royal Enfield Continental GT 750",
+      "when": "Jan 2027",
+      "price": "₹4.00–4.20 lakh (est.)"
+    },
+    {
+      "model": "Hyundai Ioniq P",
+      "when": "Jan 2027",
+      "price": "₹9.79–12.99 lakh (est.)"
     }
   ],
   "source": {
-    "name": "Autocar India: upcoming car launches in November 2026; upcoming bikes",
-    "url": "https://www.autocarindia.com/car-news/upcoming-car-launches-in-november-2026-441173"
+    "name": "Autocar India: upcoming bikes and cars",
+    "url": "https://www.autocarindia.com/upcoming-bikes"
   }
 };
 
