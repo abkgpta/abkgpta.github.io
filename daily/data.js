@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "11 Nov 2026, 6:58 AM IST";
+const UPDATED = "12 Nov 2026, 7:10 AM IST";
 
 const QUOTE = {
-  "text": "Less, but better.",
-  "author": "Dieter Rams"
+  "text": "Everyone designs who devises courses of action aimed at changing existing situations into preferred ones.",
+  "author": "Herbert A. Simon"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Ather crosses 3 lakh yearly sales for the first time in 2026",
+        "title": "10 things to know about the Royal Enfield Himalayan 750",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/ather-crosses-3-lakh-yearly-sales-for-the-first-time-in-2026-441286",
-        "img": "https://asset.autocarindia.com/static/news/images/20261109_072135_5c0a312d.jpg",
-        "why": "Ather sold 3.01 lakh units by 6 Nov, up 67% year on year, its highest market share yet at 16.32%."
+        "url": "https://www.autocarindia.com/auto-features/10-things-to-know-about-the-royal-enfield-himalayan-750-441282",
+        "img": "https://asset.autocarindia.com/static/features/images/20261107_084151_219b162b.jpg",
+        "why": "Royal Enfield's biggest Himalayan gets a 743cc air/oil-cooled twin making 55hp; India reveal expected at Motoverse, 27–29 Nov."
       },
       {
-        "title": "KTM 1390 Super Duke GT Evo unveiled",
+        "title": "TVS leads electric two-wheeler sales in October 2026 as sales nearly double",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/ktm-1390-super-duke-gt-evo-unveiled-441295",
-        "img": "https://asset.autocarindia.com/static/news/images/20261109_115240_744597da.jpg",
-        "why": "Revealed at EICMA: a 187hp 1,350cc V-twin sport-tourer with an automated manual gearbox, due early 2027."
+        "url": "https://www.autocarindia.com/bike-news/tvs-leads-e2w-sales-in-october-2026-as-sales-nearly-double-441292",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_104807_c715a2ee.jpeg",
+        "why": "TVS led with 60,490 e2Ws, up 94.7%, as total retail hit 2,24,064 units; Ola fell 26.4%."
       },
       {
-        "title": "Talking Points: \"It was not the time to take that extra risk\"",
+        "title": "12 wins at 12 circuits: Bezzecchi breaks Spencer's record",
         "source": "motogp.com",
-        "url": "https://www.motogp.com/en/news/2026/11/09/talking-points-it-was-not-the-time-to-take-that-extra-risk/1184905",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/09/2aeef593-000f-4533-9ee7-83e434250072/Talking-Points-Qatar-GP.jpg",
-        "why": "Marquez played it safe in Qatar and leads the title fight by 60 points with Martin still in contention."
+        "url": "https://www.motogp.com/en/news/2026/11/10/12-wins-at-12-circuits-bezzecchi-breaks-spencers-record/1184932",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/08/a54c7174-9f9b-4209-aa66-acc38691634b/LG9_5012.jpg",
+        "why": "His Qatar win makes Bezzecchi the first rider whose first 12 GP wins came at 12 different circuits."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Honda's new Ohio plant will reportedly build next-gen Acura MDX and two flagship SUVs",
-        "source": "Motor1",
-        "url": "https://www.motor1.com/news/814927/honda-ohio-plant-build-acura/",
-        "img": "https://cdn.motor1.com/images/mgl/ojE7bL/s1/honda-us-production.jpg",
-        "why": "Honda commits about $3 billion to a new Ohio plant: 2,000+ jobs, 240,000 vehicles a year, production from 2029."
-      },
-      {
-        "title": "Europe wants BYD investigated over spying fears. Company responds",
-        "source": "Motor1",
-        "url": "https://www.motor1.com/news/814970/europe-byd-investigation-spying-fears/",
-        "img": "https://cdn.motor1.com/images/mgl/7ZEA47/s1/byd-dolphin-surf-2026-im-test.jpg",
-        "why": "Fourteen MEPs ask the EU to examine whether BYD is a cybersecurity risk; BYD says it shares no data with China."
-      },
-      {
-        "title": "Denza D9 spotted in India for the first time",
+        "title": "Electric car retail sales surge 76 percent in October 2026",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/denza-d9-spotted-in-india-for-the-first-time-441285",
-        "img": "https://asset.autocarindia.com/static/news/images/20261109_065737_fb529585.png",
-        "why": "BYD's luxury electric MPV debuts in India on 13 November, with a claimed 520km WLTP range."
+        "url": "https://www.autocarindia.com/car-news/ev-retail-sales-surge-76-percent-in-october-2026-441290",
+        "img": "https://asset.autocarindia.com/static/news/images/20261109_090204_acc97cb3.jpg",
+        "why": "India EV retail jumped 76.47% to 37,049 units while overall car sales fell 14%; Tata led with 14,669."
+      },
+      {
+        "title": "India-made Renault Kiger improves safety rating to 4-star GNCAP",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/india-made-renault-kiger-improves-safety-rating-4-star-gncap-12560883.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-renault-kiger-facelift-global-ncap-crash-test-5.jpg",
+        "why": "The facelifted Chennai-built Kiger goes from 2 to 4 stars for adults with six airbags and ESC."
+      },
+      {
+        "title": "Scion is back, and it's bringing a tiny kei truck to America",
+        "source": "Motor1",
+        "url": "https://www.motor1.com/news/815063/scion-returns-kei-truck-america/",
+        "img": "https://cdn.motor1.com/images/mgl/1ZPg63/s1/scion-by-toyota-kei-01.jpg",
+        "why": "Toyota revives Scion with the US-built KEI-01, a 660cc kei pickup for fleets due in late 2027."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "X-energy gets green light to build its first small modular nuclear reactors",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/10/x-energy-gets-green-light-to-build-its-first-small-modular-nuclear-reactors/",
-        "img": "https://techcrunch.com/wp-content/uploads/2021/06/GettyImages-129268875.jpg",
-        "why": "NRC approves four 80MW Xe-100 reactors at Dow's Texas plant, the first US advanced-reactor permit at an industrial site."
-      },
-      {
-        "title": "Ring launches a home security drone and an enterprise security robot",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/10/ring-known-for-its-doorbell-cameras-launches-a-home-security-drone-and-an-enterprise-security-robot",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/Ring-drone.jpg",
-        "why": "Amazon's Ring launches Ring Robotics: a $270 indoor Drone Cam and a $1,000 Rover Cam patrol robot for businesses."
-      },
-      {
-        "title": "PORT raises €14.5M to take urban logistics from e-bikes to autonomous robots",
+        "title": "Lightspeed and Alphabet's CapitalG back Fractile in £500M-plus funding round",
         "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/10/port-raises-eur145m-to-take-urban-logistics-from-e-bikes-to-autonomous-robots",
-        "img": "https://cdn.tech.eu/uploads/2026/11/port-fatured-782.png",
-        "why": "EBRD-led round funds an AI driver trained on its 3,500 e-bikes, plus a robotic delivery system with Royal Mail."
+        "url": "https://tech.eu/2026/11/11/lightspeed-and-googles-capital-g-back-fractile-in-ps500m-plus-funding-round/",
+        "img": "https://cdn.tech.eu/uploads/2025/05/fractile-43.jpg",
+        "why": "UK AI inference chip startup raises a £500M-plus Series C at above £5bn; chips due in data centres next year."
+      },
+      {
+        "title": "Tendrils Compute raises $30M to \"redo the CPU\"",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/11/11/tendrils-compute-raises-30m-to-redo-the-cpu/",
+        "img": "https://cdn.tech.eu/uploads/2026/11/tendrils-878.png",
+        "why": "Benchmark leads the round for a Cambridge startup building thousands-of-cores parallel CPUs and the open-source language Vine."
+      },
+      {
+        "title": "From Reliance to Sarvam, Nvidia sits at the heart of India's AI plans",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/start-ups/from-reliance-to-sarvam-nvidia-sits-at-the-heart-of-india-s-ai-plans-126111101483_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-10/31/thumb/fitandfill/1200X628/1761907591-4362.jpg",
+        "why": "Nvidia chips power Reliance's 1GW Jamnagar data centre, Yotta's 20,000-GPU cluster and L&T's AI factory."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "SEBI clears MakeMyTrip's India IPO",
+        "title": "After a decade-long stint, Gaurav Munjal to step down as Unacademy CEO",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/sebi-clears-makemytrips-india-ipo/",
-        "img": "https://asset.inc42.com/2025/09/MakeMyTrip-sociak.jpg",
-        "why": "MakeMyTrip's India arm gets SEBI observations for a pure offer-for-sale IPO."
+        "url": "https://inc42.com/buzz/after-a-decade-long-stint-gaurav-munjal-to-step-down-as-unacademy-ceo/",
+        "img": "https://asset.inc42.com/2026/11/gaurav-munjal-quits-social-.png",
+        "why": "Munjal becomes executive chairman two months after upGrad bought Unacademy for just over $200 Mn."
       },
       {
-        "title": "ShareChat parent Mohalla Tech's FY26 loss widens 79% to ₹1,978 Cr",
+        "title": "Sarvam ropes in Google Cloud India MD Sashikumar Sreedharan as President & CBO",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/sharechat-parent-mohalla-techs-fy26-loss-widens-79-to-%E2%82%B91978-cr-revenue-inches-past-%E2%82%B91000-cr-mark/",
-        "img": "https://asset.inc42.com/2026/11/Sharechat-FY26-social.jpg",
-        "why": "Revenue rose 40% to ₹1,016 Cr and EBITDA loss narrowed 58%; ESOP and forex costs pushed net loss up."
+        "url": "https://inc42.com/buzz/sarvam-ropes-in-google-cloud-india-md-sashikumar-sreedharan-as-president-cbo/",
+        "img": "https://asset.inc42.com/2026/10/Sarvam-AI-Exclusive-social.jpg",
+        "why": "He will run Sarvam's enterprise and government business; the AI startup is reportedly raising about $300 Mn."
       },
       {
-        "title": "Oura to acquire AI-native primary care startup Counsel Health for $625M",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/10/oura-to-acquire-ai-native-primary-care-startup-counsel-health-for-625m/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/GettyImages-2296609700.jpg",
-        "why": "The smart-ring maker buys the AI-plus-physician care platform after indefinitely postponing its IPO."
+        "title": "Berlin freight unicorn sennder raises €228M in debt and equity",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/11/11/berlin-freight-unicorn-sennder-raises-228m-in-debt-and-equity/",
+        "img": "https://cdn.tech.eu/uploads/2026/11/smart-1-276.jpg",
+        "why": "Now profitable, sennder raises €73M equity and €155M debt to grow its freight network and roll out AI agents."
       }
     ]
   },
@@ -144,44 +144,57 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "HSBC upgrades Indian equities to 'overweight', cuts China to 'neutral'",
+        "title": "Bulls in action! Sensex zooms 1,400 pts intraday; oil, FII buying aid rally",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/hsbc-upgrades-indian-equities-to-overweight-cuts-china-to-neutral-126110901244_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-06/14/thumb/fitandfill/1200X628/1781452723-2857.jpg",
-        "why": "After the recent correction, HSBC cites reasonable valuations, resilient earnings and strong expected credit growth."
+        "url": "https://www.business-standard.com/markets/news/bulls-in-action-sensex-zooms-1-300-pts-intraday-oil-fii-buying-aid-rally-126111100243_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-07/06/thumb/fitandfill/1200X628/1751820375-8099.jpg",
+        "why": "Sensex closed 772.75 points higher at 81,879.40 after touching 82,520 intraday."
       },
       {
-        "title": "Debt drives overseas fundraising by Indian companies to 7-year high",
+        "title": "FPIs turn net buyers in November, pump ₹53,739 crore into Indian equities",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/debt-drives-overseas-fundraising-by-indian-companies-to-7-year-high-126110901601_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/09/thumb/fitandfill/1200X628/1794247681-3908.jpg",
-        "why": "Indian firms raised $17.2 billion abroad in April–October, almost all as debt, helped by RBI swap facilities."
+        "url": "https://www.business-standard.com/markets/news/fpis-turn-net-buyers-in-november-pump-53-739-crore-into-indian-equities-126111000477_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-06/11/thumb/fitandfill/1200X628/1781167756-8568.jpeg",
+        "why": "Foreign investors put in ₹53,739 crore from 2 to 9 Nov after ₹34,843 crore of outflows in October."
       },
       {
-        "title": "Brokerages feel sequential squeeze as closing auction session, curbs hit Q2",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/brokerages-feel-sequential-squeeze-as-closing-auction-session-curbs-hit-q2-126110901092_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/09/thumb/fitandfill/1200X628/1794247108-1969.jpg",
-        "why": "Derivatives curbs and weaker volumes left revenue at Groww, Angel One and Motilal Oswal flat to lower."
+        "title": "Indian garment makers rethink reliance on US after tariffs disrupt trade",
+        "source": "Reuters via Business Standard",
+        "url": "https://www.business-standard.com/industry/news/indian-garment-makers-rethink-reliance-on-us-after-tariffs-disrupt-trade-126111100074_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/11/thumb/featurecrop/1200X628/1794364973-6123.jpg",
+        "why": "Apparel exports to the US fell 9.8% in April–August while other markets rose 3.7%; exporters look to Europe."
+      }
+    ]
+  },
+  {
+    "topic": "Design & 3D tools",
+    "stories": [
+      {
+        "title": "Blender 5.3 is out now: here's what's new",
+        "source": "80 Level",
+        "url": "https://80.lv/articles/blender-5-3-has-finally-arrived",
+        "img": "https://cdn.80.lv/api/upload/meta/50974/images/6af4373eb589c/contain_1200x630.jpg",
+        "why": "Adds native Gaussian Splat import and rendering, dispersion in Principled BSDF and a DLSS 4.5 denoiser."
+      },
+      {
+        "title": "Adobe brings AI agents and new creative tools to Photoshop, Premiere and Firefly",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/10/adobe-adds-more-ai-to-its-products-and-launches-an-mcp/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/FF-AIA-PlanMode-No-Logo-4.jpg",
+        "why": "Adobe launches a local MCP server for Creative Cloud apps and Firefly Builder, a prototyping tool that rivals Figma."
+      },
+      {
+        "title": "An industrial designer's brilliant invention for dim restaurants",
+        "source": "Core77",
+        "url": "https://www.core77.com/posts/145866/An-Industrial-Designers-Brilliant-Invention-for-Dim-Restaurants",
+        "img": "https://s3files.core77.com/blog/images/lead_n_spotlight/1856533_lead_400_145866_.jpg",
+        "why": "Andrew Ferrier's Loupe Light stacks magnetic light rings; lift one off and it becomes a lit menu magnifier."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Wed 11 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Thu 12 Nov",
     "items": [
@@ -233,6 +246,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Mon 16 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -252,10 +278,10 @@ const RACING = {
     },
     {
       "when": "5–7 Mar 2027",
-      "what": "MotoGP: Thai GP, Buriram (2027 opener)"
+      "what": "MotoGP: Thai GP, Buriram (2027 opener, provisional)"
     }
   ],
-  "note": "Marco Bezzecchi (Aprilia) won the Qatar GP at Lusail on 8 Nov from Marc Marquez and Raul Fernandez. Marquez leads Jorge Martin by 60 points with two MotoGP rounds left; WorldSBK's 2026 season has ended.",
+  "note": "Marc Marquez leads Jorge Martin by 60 points with two MotoGP rounds left; WorldSBK's 2026 season has ended.",
   "source": {
     "name": "motogp.com and worldsbk.com calendars",
     "url": "https://www.worldsbk.com/en/news/2026/10/01/provisional-2027-worldsbk-calendar-revealed-china-to-debut-and-valencia-returns/1144887"
@@ -275,10 +301,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Xpander",
-    "artist": "Sasha",
-    "id": "76mh0rcSJpNhoCCqazptWm",
-    "why": "A long, slow-building 1999 progressive trance classic, a natural next step from the Chicane and Faithless you've been replaying."
+    "title": "Flaming June",
+    "artist": "BT",
+    "id": "5Vh9T9b7t7764fDEWMd9Fs",
+    "why": "BT's 1997 trance anthem from ESCM, a melodic match for the Chicane and Faithless records in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery Trance Gems",
@@ -296,49 +322,53 @@ const MUSIC = {
 };
 
 const LEARN = {
-  "term": "Visual weight and balance",
-  "body": "Visual weight is how heavy an element looks, not how much it weighs: size, dark value, high saturation, strong texture, isolation and a hard edge all add to it. In a product, a darker or thicker lower section drops the visual centre of gravity so the object reads as planted, while a pale, thin top makes it feel lighter than it is. Balance can be symmetrical, which is calm and formal, or asymmetrical, where a small heavy element counterweights a large light area like a lever around an implied fulcrum. Rudolf Arnheim's Art and Visual Perception remains the standard account of these forces. Rules of thumb such as 'the right side reads heavier' rest on limited, context-dependent studies, so check balance on the real object in its setting, by squinting, flipping the image or turning the model.",
+  "term": "Product semantics",
+  "body": "Product semantics studies how a product's form communicates what it is, how it works and how to use it; Klaus Krippendorff and Reinhart Butter brought the term into industrial design in a 1984 special issue of IDSA's journal Innovation. It reads form at several levels: identity (what kind of thing this is), operation (where to grip, press or twist) and expression (precise, playful, rugged). Designers build those cues from orientation, part hierarchy, texture, colour and visible joints, so a raised, contrasting button reads as pressable before any label is seen. Krippendorff's later book The Semantic Turn (2006) argues that meaning is made by users in context rather than fixed by the designer, which is why one form can read differently across cultures. The expressive, metaphor-heavy Cranbrook work of the 1980s is often treated as the whole movement, but the theory's core is about legibility and use, not styling.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Size",
-        "note": "Bigger areas read heavier"
+        "label": "Identity",
+        "note": "What kind of thing is this?"
       },
       {
-        "label": "Value",
-        "note": "Dark and saturated outweigh pale"
-      },
-      {
-        "label": "Position",
-        "note": "Low mass plants the form",
+        "label": "Operation",
+        "note": "Where to grip, press or turn",
         "hl": true
       },
       {
-        "label": "Balance",
-        "note": "Small heavy offsets large light"
+        "label": "Expression",
+        "note": "Precise, playful or rugged"
+      },
+      {
+        "label": "Context",
+        "note": "Users make meaning in their setting"
       }
     ],
-    "caption": "Weight is perceived, so balance is judged by eye."
+    "caption": "Form is read in layers, from what it is to how it feels."
   },
   "past": [
+    "Product semantics",
+    "Visual weight and balance",
     "Crown and tension in surfaces",
     "Anthropometrics and the percentile myth",
-    "Design for manufacture and assembly (DFMA)",
-    "Simultaneous contrast in CMF",
-    "Shut lines, gap and flush"
+    "Design for manufacture and assembly (DFMA)"
   ]
 };
 
 const DESIGN = {
-  "name": "Lamy 2000 fountain pen",
-  "designer": "Gerd A. Müller",
-  "year": "1966",
-  "why": "Müller, a former Braun designer, gave the pen a single seamless form in brushed stainless steel and Makrolon fibreglass-reinforced plastic, with the nib hooded so almost nothing interrupts the cylinder. Even the spring-loaded clip and the piston filler are integrated into the body, which is why the design has stayed in production essentially unchanged.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Lamy_2000_fountain_pen-1.jpg?width=1200",
+  "name": "Sony Walkman TPS-L2",
+  "designer": "Kozo Ohsone and Akio Morita, Sony",
+  "year": "1979",
+  "why": "Sony built it from the Pressman cassette recorder by removing the recording circuit and speaker and pairing it with lightweight headphones, turning a tape machine into a personal object. Its blue-and-silver metal body, twin headphone jacks and orange 'hotline' talk-over button show how a few deliberate decisions can define a whole product category.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Walkman_TPS-L2.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Lamy_2000_fountain_pen-1.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Walkman_TPS-L2.jpg"
+  },
+  "source": {
+    "name": "Cooper Hewitt collection",
+    "url": "https://collection.cooperhewitt.org/objects/1141960831"
   }
 };
 
@@ -391,39 +421,38 @@ const FUNDING = {
 const LAUNCHES = {
   "items": [
     {
-      "model": "Royal Enfield Himalayan 750",
-      "when": "Nov 2026",
-      "price": "₹5.25–6.00 lakh (est.)"
-    },
-    {
-      "model": "Honda Rebel 500",
-      "when": "Nov 2026",
-      "price": "₹4.40–4.60 lakh (est.)"
+      "model": "Denza Z9 GT",
+      "when": "13 Nov 2026",
+      "price": "₹1.2–1.5 Cr"
     },
     {
       "model": "Ducati DesertX V2",
       "when": "Nov 2026",
-      "price": "₹19–22 lakh (est.)"
+      "price": "₹19–22 lakh"
     },
     {
-      "model": "Honda ALPHA electric SUV",
-      "when": "2 Dec 2026",
-      "price": "₹16–25 lakh (est.)"
+      "model": "Honda Rebel 300",
+      "when": "Nov 2026",
+      "price": "₹2.1–2.2 lakh"
     },
     {
-      "model": "Royal Enfield Continental GT 750",
-      "when": "Jan 2027",
-      "price": "₹4.00–4.20 lakh (est.)"
+      "model": "Toyota Innova Hycross facelift",
+      "when": "25 Nov 2026",
+      "price": "₹20–35 lakh"
     },
     {
-      "model": "Hyundai Ioniq P",
-      "when": "Jan 2027",
-      "price": "₹9.79–12.99 lakh (est.)"
+      "model": "Mini Cooper SE",
+      "when": "27 Nov 2026",
+      "price": "TBA"
+    },
+    {
+      "model": "Royal Enfield Himalayan 750",
+      "when": "Late Nov 2026",
+      "price": "TBA"
     }
   ],
   "source": {
-    "name": "Autocar India: upcoming bikes and cars",
-    "url": "https://www.autocarindia.com/upcoming-bikes"
+    "name": "Autocar India: upcoming launches",
+    "url": "https://www.autocarindia.com/car-news/upcoming-car-launches-in-november-2026-441173"
   }
 };
-
