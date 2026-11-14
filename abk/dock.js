@@ -9,7 +9,8 @@
     { label: "Daily", href: root + "daily/", match: function (p) { return /\/daily\/$/.test(p); } },
     { label: "Week", href: root + "daily/week.html", match: function (p) { return /\/daily\/week\.html$/.test(p); }, opt: true },
     { label: "Celestial", href: root + "celestial/" },
-    { label: "nnode.cc ↗", href: "https://nnode.cc", ext: true }
+    { label: "nnode.cc ↗", href: "https://nnode.cc", ext: true },
+    { label: "YouTube ↗", href: "https://www.youtube.com/@abk23", ext: true }
   ];
   var nav = document.createElement("nav");
   nav.className = "abk-dock";
