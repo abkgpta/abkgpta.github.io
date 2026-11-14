@@ -32,6 +32,23 @@
   .logo3d canvas, .logo3d img { width: 100%; height: 100%; display: block; }
   .logo-fallback { object-fit: contain; padding: 10px; }
   :root[data-theme="dark"] .logo-fallback { filter: invert(.95); }
+  .top-actions { display: flex; gap: var(--space-8); align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  /* Music: solid pink while playing or ready to play, so it reads as the main control on the bar */
+  .music { gap: 10px; }
+  .music[hidden] { display: none; }
+  .music .lbl-s { display: none; }
+  @media (max-width: 600px) { .music .lbl { display: none; } .music .lbl-s { display: inline; } }
+  .music .ico { width: 10px; height: 10px; position: relative; flex: 0 0 auto; }
+  .music .ico::before, .music .ico::after { content: ""; position: absolute; top: 0; bottom: 0; width: 3px; background: currentColor; }
+  .music .ico::before { left: 1px; } .music .ico::after { right: 1px; }
+  .music:not(.is-playing) .ico::before { left: 1px; width: 0; height: 0; background: none; border-style: solid; border-width: 5px 0 5px 9px; border-color: transparent transparent transparent currentColor; }
+  .music:not(.is-playing) .ico::after { display: none; }
+  .music .eq { display: none; gap: 2px; align-items: flex-end; height: 10px; }
+  .music.is-playing .eq { display: inline-flex; }
+  .music .eq i { width: 2px; background: currentColor; animation: eq 1.1s ease-in-out infinite; }
+  .music .eq i:nth-child(2) { animation-delay: -.35s; } .music .eq i:nth-child(3) { animation-delay: -.7s; }
+  @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 10px; } }
+  @media (prefers-reduced-motion: reduce) { .music .eq i { animation: none; height: 6px; } }
   .intro { display: grid; grid-template-columns: 1fr auto; gap: var(--space-24); align-items: end; }
   .intro p { margin: 0; font-size: 16px; line-height: 1.55; max-width: 48ch; }
   .doors { display: grid; gap: var(--space-12); }
@@ -46,10 +63,14 @@
 </style>
 </head>
 <body class="abk">
+<script src="/abk/loader.js"></script>
 <div class="hub">
   <div class="top">
     <div class="logo3d" id="logo3d" role="img" aria-label="ABK"><img class="logo-fallback" src="daily/abk-logo.svg" alt=""></div>
-    <button class="abk-btn" id="themeToggle" type="button">Theme: Auto</button>
+    <div class="top-actions">
+      <button class="abk-btn is-primary music" id="music" type="button" hidden aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">We Are the Music Makers</span><span class="lbl-s">Music</span><span class="eq" aria-hidden="true"><i></i><i></i><i></i></span></button>
+      <button class="abk-btn" id="themeToggle" type="button">Theme: Auto</button>
+    </div>
   </div>
 
   <h1 class="abk-wordmark is-monument">ABHIK<span>GUPTA</span></h1>
@@ -115,6 +136,44 @@
       } catch (e) {}
     };
     document.body.appendChild(s);
+  })();
+</script>
+<audio id="track" src="abk/audio/we-are-the-music-makers.mp3" preload="metadata" loop></audio>
+<script>
+  // Music: "We Are the Music Makers" (Aphex Twin, Selected Ambient Works 85-92), used with permission.
+  // Tries to start softly once the loader finishes. Browsers block sound until the visitor
+  // interacts, so if that happens the pink button waits for a tap. Pausing is remembered.
+  (function () {
+    var a = document.getElementById("track"), b = document.getElementById("music"), KEY = "abk-music";
+    var fade = 0, VOL = 0.6;
+    function off() { try { return localStorage.getItem(KEY) === "off"; } catch (e) { return false; } }
+    function save(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+    function ui() {
+      var on = !a.paused;
+      b.classList.toggle("is-playing", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+      b.setAttribute("aria-label", (on ? "Pause" : "Play") + " music: We Are the Music Makers by Aphex Twin");
+      b.title = (on ? "Pause" : "Play") + ": We Are the Music Makers, Aphex Twin";
+    }
+    function ramp(to, ms, then) {
+      cancelAnimationFrame(fade);
+      var from = a.volume, t0 = performance.now();
+      (function f(t) { var k = Math.min(1, (t - t0) / ms); a.volume = from + (to - from) * k; if (k < 1) fade = requestAnimationFrame(f); else if (then) then(); })(t0);
+    }
+    function play() { a.volume = 0; var p = a.play(); ramp(VOL, 1800); return p && p.catch ? p : Promise.resolve(); }
+    function pause() { ramp(0, 400, function () { a.pause(); }); }
+    var playing = false;
+    a.addEventListener("play", ui); a.addEventListener("pause", ui);
+    a.addEventListener("error", function () { b.hidden = true; });
+    b.hidden = false;
+    b.addEventListener("click", function () {
+      playing = !playing;
+      save(playing ? "on" : "off");
+      if (playing) play().catch(function () { playing = false; ui(); }); else pause();
+    });
+    ui();
+    function auto() { if (off()) return; playing = true; play().catch(function () { playing = false; a.volume = VOL; ui(); }); }
+    if (window.ABKLoader) ABKLoader.whenLoaded(auto); else auto();
   })();
 </script>
 <script src="daily/logo3d.js"></script>
