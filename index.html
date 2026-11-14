@@ -140,11 +140,10 @@
     document.body.appendChild(s);
   })();
 </script>
-<audio id="track" src="abk/audio/we-are-the-music-makers.mp3" preload="metadata" loop></audio>
+<audio id="track" src="abk/audio/we-are-the-music-makers.mp3" preload="auto" loop></audio>
 <script>
   // Music: "We Are the Music Makers" (Aphex Twin, Selected Ambient Works 85-92), used with permission.
-  // Tries to start softly once the loader finishes. Browsers block sound until the visitor
-  // interacts, so if that happens the pink button waits for a tap. Pausing is remembered.
+  // Plays by default from the moment the page starts loading. A visitor's own pause is remembered.
   (function () {
     var a = document.getElementById("track"), b = document.getElementById("music"), KEY = "abk-music";
     var fade = 0, VOL = 0.6;
@@ -162,7 +161,7 @@
       var from = a.volume, t0 = performance.now();
       (function f(t) { var k = Math.min(1, (t - t0) / ms); a.volume = from + (to - from) * k; if (k < 1) fade = requestAnimationFrame(f); else if (then) then(); })(t0);
     }
-    function play() { a.volume = 0; var p = a.play(); ramp(VOL, 1800); return p && p.catch ? p : Promise.resolve(); }
+    function play() { a.volume = 0; var p = a.play(); ramp(VOL, 700); return p && p.catch ? p : Promise.resolve(); }
     function pause() { ramp(0, 400, function () { a.pause(); }); }
     var playing = false;
     a.addEventListener("play", ui); a.addEventListener("pause", ui);
@@ -174,8 +173,24 @@
       if (playing) play().catch(function () { playing = false; ui(); }); else pause();
     });
     ui();
-    function auto() { if (off()) return; playing = true; play().catch(function () { playing = false; a.volume = VOL; ui(); }); }
-    if (window.ABKLoader) ABKLoader.whenLoaded(auto); else auto();
+    // On by default. If the browser blocks sound before the visitor has interacted, the music starts
+    // on their first tap, click or key press anywhere on the page (scrolling doesn't count in browsers).
+    var armed = false;
+    var EVTS = ["pointerdown", "touchend", "keydown"];
+    function disarm() { EVTS.forEach(function (e) { document.removeEventListener(e, onGesture, true); }); armed = false; }
+    function onGesture(e) {
+      if (b.contains(e.target)) { disarm(); return; }   // the button handles its own tap
+      disarm();
+      if (off() || playing) return;
+      playing = true; play().catch(function () { playing = false; ui(); });
+    }
+    function arm() { if (armed) return; armed = true; EVTS.forEach(function (e) { document.addEventListener(e, onGesture, true); }); }
+    function auto() {
+      if (off() || playing) return;
+      playing = true;
+      play().catch(function () { playing = false; a.volume = VOL; ui(); arm(); });
+    }
+    auto();   // straight away, under the loader, so the music is already going when the page appears
   })();
 </script>
 <script src="daily/logo3d.js"></script>
