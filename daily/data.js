@@ -1,15 +1,15 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "13 Nov 2026, 6:56 AM IST";
+const UPDATED = "15 Nov 2026, 6:55 AM IST";
 
 const QUOTE = {
-  "text": "Recognizing the need is the primary condition for design.",
-  "author": "Charles Eames"
+  "text": "If I have seen further it is by standing on the shoulders of Giants.",
+  "author": "Isaac Newton"
 };
 
 const NOW = [
   {
     "name": "Celestial",
-    "date": "9 Nov",
+    "date": "15 Nov",
     "note": "A 3D research tool that maps a question as a solar system of topics, now with bring-your-own-key for any AI provider.",
     "url": "https://abkgpta.github.io/celestial/"
   },
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Kia plans $2 billion Andhra expansion, capacity to hit 630,000 units",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/industry/agriculture/kia-india-andhra-pradesh-expansion-2-billion-capacity-630000-units-126111200365_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/12/thumb/fitandfill/1200X628/1794471694-3869.jpeg",
-        "why": "Kia India's roughly $2 billion expansion lifts capacity from 430,000 to 630,000 units, with 12,000 jobs expected."
+        "title": "BYD Denza D9 launch price Rs 90 lakh – luxury MPV rivals Vellfire, M9",
+        "source": "RushLane",
+        "url": "https://www.rushlane.com/byd-denza-d9-launch-price-rs-90-lakh-luxury-mpv-rivals-vellfire-m9-12561012.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/byd-denza-d9-india-launch-cover.jpg",
+        "why": "BYD brings its Denza luxury brand to India with a seven-seat electric MPV: 115 kWh battery, 730 km NEDC range."
       },
       {
-        "title": "Annual electric car and SUV sales cross 300,000 units for the first time in India",
-        "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/analysis-sales/annual-electric-car-and-suv-sales-cross-300000-units-for-the-first-time-in-india-135863",
-        "img": "https://img.autocarpro.in/autocarpro/cd691491-35b2-4f40-8cd4-c19c42c4e46a_Lead-pic-for-CY2026-YTD-ePV-sales-AD.jpg",
-        "why": "Electric PV retail reached 304,701 units by 9 November, up 66%; Tata leads with about 40% share."
+        "title": "Mahindra aiming 10k sales per month for first SUV based on NU_IQ – Vision S?",
+        "source": "RushLane",
+        "url": "https://www.rushlane.com/mahindra-aiming-10k-sales-per-month-for-first-suv-based-on-nu_iq-vision-s-12561040.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2025/08/Mahindra-Vision-S-Interiors-17.jpeg",
+        "why": "Mahindra has set aside capacity for 10,000 NU_IQ vehicles a month; the first SUV is expected by July 2027."
       },
       {
-        "title": "JLR suffers legal setback in BYD dispute as Dutch court orders files destroyed",
-        "source": "Motor1",
-        "url": "https://www.motor1.com/news/815239/byd-ti7-court-ruling-files/",
-        "img": "https://cdn.motor1.com/images/mgl/ZnlN7Z/s1/byd-ti-7.jpg",
-        "why": "A Hague court told JLR to return or destroy files seized from BYD; the Ti7 design dispute remains open."
+        "title": "Tata car sales breakup Oct 2026 – Nexon, Punch, Tiago, Sierra, Harrier, Curvv, Safari",
+        "source": "RushLane",
+        "url": "https://www.rushlane.com/tata-car-sales-breakup-oct-2026-nexon-punch-tiago-sierra-aeris-12561137.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/07/tata-sierra-ev-review-images-2.jpg",
+        "why": "Tata sold 73,894 cars in October, up 20.87%; Nexon and Punch made up 57.5% of the total."
       }
     ]
   },
@@ -66,51 +66,51 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Two rounds to go: the story behind the 2026 title fight",
-        "source": "motogp.com",
-        "url": "https://www.motogp.com/en/news/2026/11/11/two-rounds-to-go-the-story-behind-the-2026-title-fight/1184983",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/10/f4088472-8143-40a4-9c57-202d191ac542/MM-JM-MB-COVER.jpg",
-        "why": "Marc Marquez could seal the title in Portugal; Martin trails by 60 points and Bezzecchi by 74."
+        "title": "Two-wheeler retail sales fall year on year in October",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/bike-news/two-wheeler-retail-sales-fall-in-october-441310",
+        "img": "https://asset.autocarindia.com/static/news/images/20261111_121709_d5ced39e.jpeg",
+        "why": "FADA data: 23.21 lakh units vs 32.40 lakh a year ago; Honda (27.47%) overtook Hero (25.78%) and EVs hit 9.65%."
       },
       {
-        "title": "Ola Electric Q2 loss widens to Rs 362 crore as revenue falls 39%",
-        "source": "Autocar Professional",
-        "url": "https://www.autocarpro.in/news/ola-electric-q2-loss-widens-to-rs-362-crore-as-revenue-falls-39-percent-135880",
-        "img": "https://img.autocarpro.in/autocarpro/bc4f2e89-2a56-4776-9a22-e3bfd0b00464_image.png",
-        "why": "September-quarter revenue fell 39% to Rs 421 crore; the auditor qualified its review over a Rs 57 crore PLI provision."
+        "title": "TVS Norton Atlas GT, Manx R patented in India – launch 2027?",
+        "source": "RushLane",
+        "url": "https://www.rushlane.com/tvs-norton-atlas-gt-manx-r-patented-in-india-launch-2027-12561225.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/tvs-norton-atlas-gt-manx-r-patented-in-india-cover.jpg",
+        "why": "Norton's 206 bhp 1200cc V4 Manx R and 585cc twin Atlas GT are now patented in India."
       },
       {
-        "title": "New Yamaha Xenter E scooter debuts – 16\" wheels, 108 km range",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-yamaha-xenter-e-scooter-debuts-16-wheels-108-km-range-12560930.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/yamaha-xenter-e-scooter-debuts-at-eicma-8.jpg",
-        "why": "Yamaha's big-wheel electric scooter gets a 3.5 kWh battery and 108 km claimed range; Europe gets it in spring 2027."
+        "title": "Royal Enfield 650 INT will not get 750cc engine – report",
+        "source": "RushLane",
+        "url": "https://www.rushlane.com/royal-enfield-650-int-will-not-get-750cc-engine-report-12561213.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/royal-enfield-interceptor-650.jpg",
+        "why": "The Interceptor keeps its 47 bhp 648cc twin; the new 743cc engine (55 bhp) stays with the Continental GT 750."
       }
     ]
   },
   {
-    "topic": "Deep tech",
+    "topic": "Deep tech & clean mobility",
     "stories": [
       {
-        "title": "SoftBank leads $500M funding round in Agile Robots",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/12/softbank-leads-500m-funding-round-in-agile-robots/",
-        "img": "https://cdn.tech.eu/uploads/2026/11/agile-robots-kapak-905-12.png",
-        "why": "Munich robotics maker's $500M Series F values it at $8.5bn; funds go to US expansion and production."
-      },
-      {
-        "title": "Dhruva Space to raise $15.5 Mn in pre-Series B; revenue surges 8X",
+        "title": "MeitY examines data collection by home services platforms for physical AI training",
         "source": "Entrackr",
-        "url": "https://entrackr.com/exclusive/exclusive-dhruva-space-to-raise-155-mn-in-pre-series-b-revenue-surges-8x-12803436",
-        "img": "https://img-cdn.publive.online/entrackr/media/media_files/fit-in/1200x675/2026/11/12/dhruva-space-2026-11-12-13-16-30.png",
-        "why": "Hyderabad spacetech's round is led by IndusBridge Ventures; FY26 operating revenue rose to Rs 79 Cr from Rs 10 Cr."
+        "url": "https://entrackr.com/news/meity-examines-data-collection-by-home-services-platforms-for-physical-ai-training-12806000",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/13/home-service-2-2026-11-13-13-03-43.png",
+        "why": "The ministry is questioning first-person video and sensor data gathered from gig workers to train robots."
       },
       {
-        "title": "Spacetech: Europe's 10 most-funded companies in H1 2026",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/12/spacetech-europes-10-most-funded-companies-in-h1-2026/",
-        "img": "https://cdn.tech.eu/uploads/2026/11/spacetech-featured-961.png",
-        "why": "European spacetech raised about €2.8bn in H1 2026, led by Eutelsat's €975M debt financing."
+        "title": "Zelio E-Mobility's net profit zooms 2.6X YoY to ₹31 Cr in H1",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/zelio-e-mobilitys-net-profit-zooms-2-6x-yoy-to-%e2%82%b931-cr-in-h1/",
+        "img": "https://asset.inc42.com/2026/11/Zelio-social.jpg",
+        "why": "The EV scooter maker's H1 FY27 profit rose 164% to ₹31.4 Cr as operating revenue grew 120% to ₹296.7 Cr."
+      },
+      {
+        "title": "Raptee.HV opens experience centre in Chennai",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/bike-news/rapteehv-opens-experience-centre-in-chennai-441314",
+        "img": "https://asset.autocarindia.com/static/news/images/20261112_081222_36666ee5.jpeg",
+        "why": "The high-voltage EV bike maker's T30 uses a 5.4 kWh pack and 29.5 hp motor; it got Rs 25 crore from TIDCO."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Greenjoules raises Rs 150 Cr in Series B led by Amazon funds, secures Rs 100 Cr loan from TDB",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/greenjoules-raises-rs-150-cr-in-series-b-led-by-amazon-funds-secures-rs-100-cr-loan-from-tdb-12801123",
-        "img": "https://img-cdn.publive.online/entrackr/media/media_files/fit-in/1200x675/2026/11/11/greenjoules-2026-11-11-16-27-43.png",
-        "why": "Pune farm-waste-to-fuel firm also gets a Rs 100 Cr government loan to build a plant in Khed City."
+        "title": "Zetwerk's Q2 loss jumps 43% YoY to ₹88 Cr, revenue up 18%",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/zetwerks-q2-loss-jumps-43-yoy-to-%e2%82%b988-cr-revenue-up-18/",
+        "img": "https://asset.inc42.com/2026/11/Zetwerk-social.jpg",
+        "why": "The manufacturing marketplace grew operating revenue 18.3% to ₹4,599.4 Cr while its loss widened to ₹88.1 Cr."
       },
       {
-        "title": "Rigi kicks off fresh investment from Google",
+        "title": "Baaz Bikes to kick off Series B round led by BIG Capital",
         "source": "Entrackr",
-        "url": "https://entrackr.com/exclusive/exclusive-rigi-kicks-off-fresh-investment-from-google-12802768",
-        "img": "https://img-cdn.publive.online/entrackr/media/media_files/fit-in/1200x675/2026/11/12/rigi-tv-2026-11-12-10-48-55.png",
-        "why": "Google International put Rs 10 Cr into the creator-economy startup for 1.43%, valuing it at about Rs 670 Cr."
+        "url": "https://entrackr.com/exclusive/exclusive-baaz-bikes-to-kick-off-series-b-round-led-by-big-capital-12805522",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/13/baaz-2026-11-13-10-27-39.png",
+        "why": "The EV two-wheeler startup is raising Rs 46.22 crore, led by BIG Capital with Kalaari Capital."
       },
       {
-        "title": "Wakefit posts Rs 452 Cr revenue and Rs 27 Cr PBT in Q2 FY27",
+        "title": "Bodhi Tree to acquire majority stake in restaurant chain A2B for $180 Mn",
         "source": "Entrackr",
-        "url": "https://entrackr.com/fintrackr/wakefit-posts-rs-452-cr-revenue-and-rs-27-cr-pbt-in-q2-fy27-12804662",
-        "img": "https://img-cdn.publive.online/entrackr/media/media_files/fit-in/1200x675/2026/11/12/wakefit-2-2026-11-12-21-26-02.png",
-        "why": "Q2 revenue rose 19.9% year on year to Rs 452 Cr; profit before tax climbed 66.3% to Rs 26.54 Cr."
+        "url": "https://entrackr.com/snippets/bodhi-tree-to-acquire-majority-stake-in-restaurant-chain-a2b-for-180-mn-12804797",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/12/bodhi-tree-2026-11-12-23-07-04.png",
+        "why": "A2B (Adyar Ananda Bhavan) runs about 160 outlets in India and 30+ abroad with over 15,000 staff."
       }
     ]
   },
@@ -144,83 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Retail inflation at 6.09% in October, breaches RBI's upper band after 2 yrs",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/economy/news/retail-inflation-at-6-09-in-october-breaches-rbi-s-upper-band-after-2-yrs-126111201088_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-03/06/thumb/fitandfill/1200X628/1772817722-2989.jpg",
-        "why": "CPI rose to 6.09% from 5.54% in September, with food inflation at 8.94% and onion prices up 116%."
+        "title": "Ashok Leyland Q2 consolidated revenue jumps 35% to ₹17,030 crore; profit up 8.8%",
+        "source": "Autocar Professional",
+        "url": "https://www.autocarpro.in/news/ashok-leyland-q2-consolidated-revenue-jumps-35-percent-to-rs-17030-crore-profit-up-88-percent-135924",
+        "img": "https://img.autocarpro.in/autocarpro/be98c0b4-8194-4ba0-98a6-934972e51007_image.png",
+        "why": "CV sales rose 32% to 64,677 units, but auditors flagged loan-balance issues at Hinduja Leyland Finance."
       },
       {
-        "title": "Godrej Capital raises ₹2,500 crore from Temasek at ₹28,000 crore valuation",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/godrej-capital-raises-2-500-crore-from-temasek-at-28-000-crore-valuation-126111200763_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-04/17/thumb/fitandfill/1200X628/1681730095-6653.jpg",
-        "why": "The group keeps about 80% and targets ₹1 trillion AUM by 2031."
+        "title": "Warburg Pincus to acquire 38.51% stake in Pricol's demerged electronics business",
+        "source": "Autocar Professional",
+        "url": "https://www.autocarpro.in/news/warburg-pincus-to-acquire-3851-percent-stake-in-pricols-demerged-electronics-business-135916",
+        "img": "https://img.autocarpro.in/autocarpro/07a96c66-7f47-4bf0-aaee-38e5c84cb2ab_image.png",
+        "why": "Warburg buys the promoters' full stake in the instrument-cluster unit, about 60% of Pricol's revenue."
       },
       {
-        "title": "Vodafone Idea's Q2 loss widens to ₹5,975 cr; co raises additional ₹4K cr",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/quarterly-results/vodafone-idea-q2-loss-widens-to-5-975-crore-despite-higher-arpu-revenue-126111201639_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-08/13/thumb/fitandfill/1200X628/1786644475-642.gif",
-        "why": "Loss beat estimates for the worse even as revenue rose 6% to ₹11,884 crore and ARPU rose 9.7% to ₹198."
-      }
-    ]
-  },
-  {
-    "topic": "Design & 3D tools",
-    "stories": [
-      {
-        "title": "Sony brings back 1979 wired Walkman headphones design",
-        "source": "Core77",
-        "url": "https://www.core77.com/posts/145875/Sony-Brings-Back-1979-Wired-Walkman-Headphones-Design",
-        "img": "https://s3files.core77.com/blog/images/lead_n_spotlight/1856616_lead_400_145875_.jpeg",
-        "why": "Sony's $60 MDR-3R revives the original Walkman headphones with a USB-C cable, inline controls and more bass."
-      },
-      {
-        "title": "Edit your Blender animations just like editing mesh with this free tool",
-        "source": "80 Level",
-        "url": "https://80.lv/articles/edit-your-blender-animations-just-like-editing-mesh-with-this-free-tool",
-        "img": "https://cdn.80.lv/api/upload/meta/50982/images/6af49b53044b2/contain_1200x630.jpg",
-        "why": "The free Editable Motion Paths add-on turns animation into editable curves and works with existing rigs."
-      },
-      {
-        "title": "The Symbiotic 3026: an indoor beehive",
-        "source": "Core77",
-        "url": "https://www.core77.com/posts/145879/The-Symbiotic-3026-An-Indoor-Beehive",
-        "img": "https://s3files.core77.com/blog/images/lead_n_spotlight/1856679_lead_400_145879_.jpg",
-        "why": "Futuristic Beehive's $600 sealed indoor hive uses a 20mm wall-entry tube and a honey-collection funnel."
+        "title": "SoftBank sells 1.65% stake in Meesho for Rs 1,885 Cr through block deal",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/softbank-sells-165-stake-in-meesho-for-rs-1885-cr-through-block-deal-12807590",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/28/meesho-2026-10-28-17-38-38.png",
+        "why": "SoftBank sold 7.64 crore shares at Rs 246.75; Fidelity and Societe Generale were the biggest buyers."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Fri 13 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
-    "day": "Sat 14 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Sun 15 Nov",
     "items": [
@@ -249,6 +197,32 @@ const CALENDAR = [
   },
   {
     "day": "Tue 17 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Wed 18 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Thu 19 Nov",
     "items": [
       {
         "time": "9:00 PM",
@@ -301,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Music Is Math",
-    "artist": "Boards of Canada",
-    "id": "3MF9cjIlg3R9osw3SgRmEb",
-    "why": "From Geogaddi (Warp, 2002): hazy, analogue electronica that sits between the Aphex Twin and C418 in your recent plays."
+    "title": "Goodbye",
+    "artist": "Apparat, Soap&Skin",
+    "id": "4VxaUj96W2jw9UOtKHu51p",
+    "why": "Apparat is one half of Moderat, from your recent plays; this slow-building track from The Devil's Walk became the Dark theme."
   },
   "playlist": {
     "name": "Weekly Discovery Trance Gems",
@@ -312,109 +286,109 @@ const MUSIC = {
     "date": "2026-11-02"
   },
   "lately": [
-    "C418",
-    "Animal Collective",
-    "Deftones",
-    "Medasin",
-    "Aphex Twin",
-    "LCD Soundsystem"
+    "The Smiths",
+    "Louf",
+    "Duran Duran",
+    "Moderat",
+    "Daphni",
+    "Anish Kumar"
   ]
 };
 
 const LEARN = {
-  "term": "The Ulm School (HfG Ulm)",
-  "body": "The Hochschule für Gestaltung Ulm (1953–1968), founded by Inge Aicher-Scholl, Otl Aicher and Max Bill, is often called the 'new Bauhaus', but that label only fits its first years under Bill. From the late 1950s Tomás Maldonado pushed it away from art-based form-giving towards design as a rational, scientific discipline, drawing on ergonomics, semiotics, operations research and systems thinking. Its signature output was the modular system rather than the single object: Hans Gugelot's work with Braun, including the SK 4 with Dieter Rams, and Otl Aicher's 1962 Lufthansa identity show design as a set of rules applied across many products. The 'Ulm method' made design something that could be argued, specified and handed to engineers, which is why its influence on corporate product programmes outlasted the school itself. Its critics, and later some of its own staff, argued that the pure method left too little room for meaning and play, a tension that resurfaced in the product semantics movement of the 1980s.",
+  "term": "Kansei engineering",
+  "body": "Kansei engineering, developed by Mitsuo Nagamachi at Hiroshima University from the 1970s, is a method for translating the feelings people have about a product into concrete design parameters. It starts by collecting the words users use for a product domain (\"sporty\", \"solid\", \"friendly\") and turning them into semantic differential scales, then has people rate a set of real or sketched variants on those scales. The variants are broken down into measurable properties, such as radius size, height-to-length ratio, shut-line count or surface finish, and statistics (regression, quantification theory, factor analysis) link each property to each feeling. The result is a rule set like \"larger front radii raise 'friendly' scores\", which designers can use as a brief or a check. Its limits are often understated: the mapping only ranks the properties you chose to test, it is tied to the culture and moment of the survey, and it cannot invent a form; it tunes form, it does not generate it.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "1953",
-        "note": "Bill: Bauhaus-style art and form"
+        "label": "Words",
+        "note": "Collect users' feeling words for the domain"
       },
       {
-        "label": "Method",
-        "note": "Maldonado: science, semiotics, ergonomics",
+        "label": "SD scales",
+        "note": "Rate product variants on word pairs"
+      },
+      {
+        "label": "Mapping",
+        "note": "Statistics link properties to feelings",
         "hl": true
       },
       {
-        "label": "Systems",
-        "note": "Braun SK 4, Lufthansa: rules over objects"
-      },
-      {
-        "label": "1968",
-        "note": "School closes; the method spreads"
+        "label": "Rules",
+        "note": "Design rules: which parameter moves which"
       }
     ],
-    "caption": "Ulm turned form-giving into a rational, teachable method."
+    "caption": "Feelings in, measurable form parameters out."
   },
   "source": {
-    "name": "Encyclopaedia Britannica: Ulm School of Design",
-    "url": "https://www.britannica.com/topic/Ulm-School-of-Design"
+    "name": "Wikipedia: Kansei engineering",
+    "url": "https://en.wikipedia.org/wiki/Kansei_engineering"
   },
   "past": [
+    "The Ulm School (HfG Ulm)",
     "Product semantics",
     "Visual weight and balance",
     "Crown and tension in surfaces",
-    "Anthropometrics and the percentile myth",
-    "Design for manufacture and assembly (DFMA)"
+    "Anthropometrics and the percentile myth"
   ]
 };
 
 const DESIGN = {
-  "name": "Bialetti Moka Express",
-  "designer": "Alfonso Bialetti",
-  "year": "1933",
-  "why": "Its octagonal cast-aluminium body turns a three-part pressure brewer into one object that is cheap to make, easy to grip and instantly recognisable. Nearly a century on the form is almost unchanged, proof that a design solving a real everyday need can outlive every styling trend around it.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Moka_Express_Bialetti.jpg?width=1200",
+  "name": "Artemide Tizio desk lamp",
+  "designer": "Richard Sapper",
+  "year": "1972",
+  "why": "Sapper balanced the two arms with counterweights so the head stays wherever it is put, and ran the low-voltage current through the arms themselves, so there are no wires along the frame. The result is a lamp whose structure, electrics and adjustment are one system, and it has stayed in production for decades with barely a change.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Lampe_Tizio_von_Richard_Sapper.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Moka_Express_Bialetti.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Lampe_Tizio_von_Richard_Sapper.jpg"
   }
 };
 
 const FUNDING = {
-  "summary": "$258.1M across 28 Indian startups, 2–7 Nov, more than double the previous week's roughly $115M.",
+  "summary": "$31.3M across 12 Indian startups, 9–14 Nov, down nearly 88% from $258.1M the week before.",
   "rounds": [
     {
-      "company": "GIVA",
-      "amount": "$100 million",
-      "stage": "",
-      "sector": "Jewellery"
+      "company": "Greenjoules",
+      "amount": "Rs 150 crore",
+      "stage": "Series B",
+      "sector": "Biofuels"
     },
     {
-      "company": "EloElo Group",
-      "amount": "$80 million",
+      "company": "Olyv",
+      "amount": "Rs 57.62 crore",
       "stage": "Series C",
-      "sector": "Consumer AI & entertainment"
+      "sector": "Lending"
     },
     {
-      "company": "Clinics On Cloud",
-      "amount": "$12.5 million",
-      "stage": "Series A",
-      "sector": "Healthtech"
-    },
-    {
-      "company": "Peppermint Robotics",
-      "amount": "Rs 100 crore",
-      "stage": "Pre-Series B",
-      "sector": "Robotics"
-    },
-    {
-      "company": "altM",
-      "amount": "$10.3 million",
-      "stage": "Series A",
-      "sector": "Specialty chemicals"
-    },
-    {
-      "company": "Two Point O Capital (TW.O)",
-      "amount": "$10 million",
+      "company": "Desible.ai",
+      "amount": "Rs 32 crore",
       "stage": "",
-      "sector": "AI-powered clean energy"
+      "sector": "AI"
+    },
+    {
+      "company": "Froncort.AI",
+      "amount": "$2.3 million",
+      "stage": "",
+      "sector": "Health AI"
+    },
+    {
+      "company": "mistEO",
+      "amount": "Rs 18 crore",
+      "stage": "Seed",
+      "sector": "Climate data"
+    },
+    {
+      "company": "Rigi",
+      "amount": "Rs 10 crore",
+      "stage": "",
+      "sector": "Creators"
     }
   ],
   "source": {
     "name": "Entrackr weekly funding report",
-    "url": "https://entrackr.com/report/weekly-funding-report-weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-nov-02-nov-07-12791269"
+    "url": "https://entrackr.com/report/funding-and-acquisitions-in-indian-startups-this-week-nov-09-nov-14-12808553"
   }
 };
 
@@ -423,22 +397,12 @@ const LAUNCHES = {
     {
       "model": "Toyota Innova Hycross facelift",
       "when": "25 Nov 2026",
-      "price": "₹20–35 lakh"
-    },
-    {
-      "model": "Mini Cooper SE",
-      "when": "27 Nov 2026",
-      "price": "TBA"
+      "price": "₹19.5–27.5 lakh"
     },
     {
       "model": "Royal Enfield Himalayan 750",
-      "when": "Late Nov 2026",
-      "price": "₹5.25–6 lakh"
-    },
-    {
-      "model": "Honda Rebel 500",
       "when": "Nov 2026",
-      "price": "₹4.4–4.6 lakh"
+      "price": "₹5.25–6 lakh"
     },
     {
       "model": "Ducati DesertX V2",
@@ -449,6 +413,11 @@ const LAUNCHES = {
       "model": "Hyundai compact EV",
       "when": "Late 2026",
       "price": "₹9.8–13 lakh"
+    },
+    {
+      "model": "Hyundai Ioniq P",
+      "when": "Jan 2027",
+      "price": "₹9.8–13 lakh"
     }
   ],
   "source": {
@@ -456,3 +425,4 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
+
