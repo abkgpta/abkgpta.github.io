@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "16 Nov 2026, 6:53 AM IST";
+const UPDATED = "17 Nov 2026, 7:02 AM IST";
 
 const QUOTE = {
-  "text": "Real artists ship.",
-  "author": "Steve Jobs"
+  "text": "Design is the conscious and intuitive effort to impose meaningful order.",
+  "author": "Victor Papanek"
 };
 
 const NOW = [
@@ -37,28 +37,28 @@ const NOW = [
 
 const NEWS = [
   {
-    "topic": "Startups & Indian startups",
+    "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Razorpay gets SEBI nod for ₹6,000 Cr IPO",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/razorpay-gets-sebi-nod-for-%e2%82%b96000-cr-ipo/",
-        "img": "https://asset.inc42.com/2026/11/Razorpay-IPO-social-1.jpg",
-        "why": "The payments major's ₹5,000–6,000 Cr IPO could list Jan–Mar 2027 at about $5 Bn, below its 2021 $7.5 Bn valuation."
+        "title": "Hot headlines: match point Marquez as MotoGP straps in for the rollercoaster",
+        "source": "motogp.com",
+        "url": "https://www.motogp.com/en/news/2026/11/16/hot-headlines-match-point-marquez-as-motogp-straps-in-for-the-rollercoaster/1185225",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/16/d7a4635b-6d61-40c7-8e82-1051d16848e1/IMG_8551.png",
+        "why": "Marquez leads Martin by 60 points; leaving Portimão 37+ points clear seals the 2026 title."
       },
       {
-        "title": "Sachin Tendulkar backs waste management startup Recykal",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/sachin-tendulkar-backs-waste-management-startup-recykal/",
-        "img": "https://asset.inc42.com/2026/11/tendulkar-recykal-social-.png",
-        "why": "Recykal, which has raised over $60 Mn, grew FY26 gross revenue 53.2% to ₹1,498 Cr."
+        "title": "Stark Future becomes Europe's first electric motorcycle unicorn with €1.2bn valuation",
+        "source": "Visordown",
+        "url": "https://www.visordown.com/news/stark-future-becomes-europes-first-electric-motorcycle-unicorn-eu12bn-valuation",
+        "img": "https://www.visordown.com/sites/default/files/2026-11/240625_facility_10.jpg",
+        "why": "A round of over €150m, led by Highland Europe, is the largest ever for a European e-motorcycle company."
       },
       {
-        "title": "Ajinkya Rahane picks up stake in D2C cookware brand Ember",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ajinkya-rahane-picks-up-stake-in-d2c-cookware-brand-ember/",
-        "img": "https://asset.inc42.com/2026/11/Ember-Founders-SM.png",
-        "why": "A consumer product brand drawing celebrity money; Ember raised a $3.2 Mn seed round last September."
+        "title": "Royal Enfield CEO says electric motorcycle adoption will take more time",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/industry/royal-enfield-ceo-says-electric-motorcycle-adoption-will-take-more-time-441336",
+        "img": "https://asset.autocarindia.com/static/news/images/20261116_104604_4bee2c82.jpeg",
+        "why": "Only about 200 Flying Flea C6 units delivered since April; RE will grow its EV brand gradually."
       }
     ]
   },
@@ -66,77 +66,77 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "BYD Denza Z9 GT India launch price Rs 1.57 Cr – 670 km range, 270 km/h top speed",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/byd-denza-z9-gt-india-launch-price-rs-1-57-cr-670-km-range-270-km-h-topspeed-12561013.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/byd-denza-z9-gt-india-launch-cover.jpg",
-        "why": "A three-motor electric GT with a 122.49 kWh pack and 2.7 s 0–100 km/h; reservations cost Rs 10 lakh."
+        "title": "Tesla Cybercab orders open at $29,990. Subscription is mandatory",
+        "source": "Motor1",
+        "url": "https://www.motor1.com/news/815563/tesla-cybercab-robotaxi-limits/",
+        "img": "https://cdn.motor1.com/images/mgl/1ZPjO3/s1/tesla-cybercab-order-form.jpg",
+        "why": "Private buyers can order the two-seat robotaxi but need a $299/month subscription; deliveries start December in Austin."
       },
       {
-        "title": "New Toyota Innova Hycross facelift first official teaser out",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-toyota-innova-hycross-facelift-first-official-teaser-out-12560359.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-toyota-innova-hycross-teaser-first-official-launch-1.jpg",
-        "why": "Toyota's second bestseller in India gets its first major update since 2022, launching 25 November."
+        "title": "Defender EV to debut in 2027",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/defender-ev-to-debut-in-2027-441338",
+        "img": "https://asset.autocarindia.com/static/news/images/20261116_104717_8d6a93db.jpg",
+        "why": "JLR's CEO confirmed electric Defender Sport production at Halewood in 2027 on the EMA platform."
       },
       {
-        "title": "New Toyota Fortuner spied in Argentina – India launch 2027",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-toyota-fortuner-spied-in-argentina-india-launch-2027-12561130.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-toyota-fortuner-spied-testing-abroad.jpg",
-        "why": "The next Fortuner debuts globally on 1 December in South Africa; India should keep the 2.8-litre diesel."
+        "title": "JSW Motors website goes live ahead of brand debut next month",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/jsw-motors-website-goes-live-ahead-of-brand-debut-next-month-441341",
+        "img": "https://asset.autocarindia.com/static/news/images/20261116_113937_bb9d94a2.jpg",
+        "why": "The new Indian carmaker debuts on 3 December; its first model, the Combat, is a Jetour T2-based plug-in hybrid SUV."
       }
     ]
   },
   {
-    "topic": "Motorcycles",
+    "topic": "Deep tech",
     "stories": [
       {
-        "title": "New VinFast electric scooter, motorcycle patented – launch at Bharat Auto Expo?",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-vinfast-electric-scooter-motorcycle-patented-launch-at-bharat-auto-expo-12561245.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-vinfast-electric-scooter-motrocycle-for-india.jpg",
-        "why": "The patented scooter uses a side-mounted motor instead of VinFast's usual hub motor; specs are unconfirmed."
+        "title": "After dodging death, battery startup Our Next Energy is now going public",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/16/after-dodging-death-battery-startup-our-next-energy-is-now-going-public/",
+        "img": "https://techcrunch.com/wp-content/uploads/2022/09/ONE-Anode-Free-Cell-Technology-prismatic.jpg",
+        "why": "Battery maker ONE merges with Wen Acquisition Corp. at a $1B pro forma value and will list on Nasdaq as ONEE."
       },
       {
-        "title": "New Hero street fighter bike spied testing – electric Vida UBX?",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-hero-street-fighter-bike-spied-testing-electric-vida-ubx-12561118.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/hero-vida-ubx-spied-testing-new-cover.jpg",
-        "why": "The EICMA concept looks close to production, with USD forks, mono-shock and the battery where the engine sits."
-      },
-      {
-        "title": "New Bajaj Pulsar N250SS, Pulsar NS200 review – more torque or sharper handling?",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-bajaj-pulsar-n250ss-pulsar-ns200-review-12560414.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/pulsar-n250-ss-pulsar-ns200-ug-review-cover.jpg",
-        "why": "Two 25 PS Pulsars about Rs 1,000 apart: the 249cc N250 SS at Rs 1.59 lakh vs the NS200 UG at Rs 1.6 lakh."
-      }
-    ]
-  },
-  {
-    "topic": "Deep tech & clean mobility",
-    "stories": [
-      {
-        "title": "DroneAcharya profits tank 65% YoY to ₹67 lakh in H1",
+        "title": "Bharat Semi raises $24 Mn to build smart sensors for physical AI",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/droneacharya-profits-tank-65-yoy-to-%e2%82%b967-lakh-in-h1/",
-        "img": "https://asset.inc42.com/2026/11/DroneAcharya-social.png",
-        "why": "The listed drone maker's operating revenue fell 18.3% to ₹7.8 Cr, even as EBITDA margin rose to 54.7%."
+        "url": "https://inc42.com/buzz/bharat-semi-raises-24-mn-to-build-smart-sensors-for-physical-ai/",
+        "img": "https://asset.inc42.com/2026/09/Semiconductor-social-1.jpg",
+        "why": "A seed round led by Info Edge, South Park Commons and Indus Bridge for on-chip AI sensors for robots, cameras and drones."
       },
       {
-        "title": "New Yamaha Xenter E scooter debuts – 16\" wheels, 108 km range",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-yamaha-xenter-e-scooter-debuts-16-wheels-108-km-range-12560930.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/yamaha-xenter-e-scooter-debuts-at-eicma-8.jpg",
-        "why": "A fixed 3.5 kWh pack, 10 bhp and big-wheel stability; Yamaha plans a European launch in spring 2027."
+        "title": "AI inference startup Daisytuner raises €6M seed",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/11/16/ai-inference-startup-daisyturner-raises-eur6m-seed/",
+        "img": "https://cdn.tech.eu/uploads/2026/11/daisytuner-58.png",
+        "why": "Elaia and LEA Ventures co-led the round for an AI compiler that adapts models to many chip types."
+      }
+    ]
+  },
+  {
+    "topic": "Startups & Indian startups",
+    "stories": [
+      {
+        "title": "AI CRM startup Dreamteam raises $53 Mn from Accel, Premji Invest, others",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/ai-crm-startup-dreamteam-raises-53-mn-from-accel-premji-invest-others-12814853",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/16/dreamteam-2026-11-16-19-20-35.png",
+        "why": "Former Freshworks leaders founded this AI-agent CRM in 2025; Accel, Together Fund and Premji Invest backed it."
       },
       {
-        "title": "New Maruti SUV spied testing – next-gen Brezza 2028?",
-        "source": "RushLane",
-        "url": "https://www.rushlane.com/new-maruti-suv-spied-testing-next-gen-brezza-2028-12561219.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-maruti-brezza-spied-testing-cover.jpg",
-        "why": "Suzuki has shown a 1.2L Z12E hybrid and a 174 bhp plug-in hybrid; their link to this mule is speculation."
+        "title": "Urban Company opens Rs 2,500 Cr QIP, sets floor price at Rs 161.03 per share",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/urban-company-opens-rs-2500-cr-qip-sets-floor-price-at-rs-16103-per-share-12814907",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/10/16/urban-company-01-2026-10-16-17-26-12.png",
+        "why": "Rs 600 Cr goes to InstaHelp, whose spending widened Urban Company's Q2 loss to Rs 182 Cr."
+      },
+      {
+        "title": "FRND posts Rs 367 Cr revenue in FY26; profit jumps 10X",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/frnd-posts-rs-367-cr-revenue-in-fy26-profit-jumps-10x-12814582",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/16/frnd-2026-11-16-17-37-00.png",
+        "why": "The voice social app for small-town India grew revenue 88%, with profit near Rs 19 Cr in its third profitable year."
       }
     ]
   },
@@ -144,25 +144,25 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "FirstCry Q2 net loss narrows 75% YoY to ₹12.6 Cr, revenue up 14%",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/firstcry-q2-net-loss-narrows-75-yoy-to-%e2%82%b912-6-cr-revenue-up-14/",
-        "img": "https://asset.inc42.com/2026/10/soc-firstcry.jpg",
-        "why": "Parent Brainbees cut its loss from ₹50.5 Cr as operating revenue rose 14.1% to ₹2,395.8 Cr."
+        "title": "IBM invests $3 bn yearly in India, plans $10 bn global quantum push: CEO",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/news/ibm-invests-3-bn-yearly-in-india-plans-10-bn-global-quantum-push-ceo-126111601056_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-06/26/thumb/fitandfill/1200X628/1782465223-4703.JPG",
+        "why": "Arvind Krishna also warned AI could displace 10–20% of jobs, with BPO hit hardest."
       },
       {
-        "title": "New-age tech stocks continue rally; E2E Network, Turtlemint lead gains",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/new-age-tech-stocks-continue-rally-e2e-network-turtlemint-lead-gains/",
-        "img": "https://asset.inc42.com/2026/11/Tech-Stocks_Nov-14-social.jpg",
-        "why": "55 of 69 tracked stocks gained this week, lifting combined market cap 4.5% to $177 Bn."
+        "title": "Mahanadi Coalfields IPO price band set at ₹129–136 per share",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/news/coal-india-to-use-mcl-ipo-proceeds-for-1-trillion-diversification-plan-126111601650_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-11/23/thumb/fitandfill/1200X628/1763917171-5102.jpg",
+        "why": "Coal India's ₹8,981 Cr offer for sale opens 19 Nov and helps fund a ₹1 trillion diversification plan."
       },
       {
-        "title": "Anup Gupta to exit Nexus Venture Partners after 16 years",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/anup-gupta-to-exit-nexus-venture-partners-after-16-years/",
-        "img": "https://asset.inc42.com/2026/11/Anup-Gupta-Nexus-VP-SM.png",
-        "why": "A senior exit at a firm managing $3.2 Bn across eight funds; he steps down in June 2027."
+        "title": "NSE stock market-cap crosses ₹5 trillion; scrip up 16% from IPO price",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/markets/news/nse-stock-market-cap-crosses-5-trillion-scrip-up-16-from-ipo-price-126111600849_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/08/thumb/fitandfill/1200X628/1788887342-8272.jpg",
+        "why": "The newly listed exchange overtook LIC to become the 10th most valuable BSE-listed company."
       }
     ]
   }
@@ -170,21 +170,16 @@ const NEWS = [
 
 const CALENDAR = [
   {
-    "day": "Mon 16 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
-  {
     "day": "Tue 17 Nov",
     "items": [
+      {
+        "time": "10:00 AM",
+        "title": "Abhik / Prachi"
+      },
+      {
+        "time": "7:30 PM",
+        "title": "Meeting with Alistair: employment in China"
+      },
       {
         "time": "9:00 PM",
         "title": "Leave office"
@@ -233,6 +228,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Sat 21 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -255,10 +263,10 @@ const RACING = {
       "what": "MotoGP: Thai GP, Buriram (2027 opener, provisional)"
     }
   ],
-  "note": "Marc Marquez could seal the MotoGP title in Portugal: he leads Martin by 60 points and Bezzecchi by 74; WorldSBK's 2026 season has ended.",
+  "note": "Marc Marquez can seal the MotoGP title at Portimão: he leads Martin by 60 points and needs to leave 37+ clear. Bagnaia is out injured; Lecuona stands in. WorldSBK's 2026 season has ended.",
   "source": {
     "name": "motogp.com and worldsbk.com calendars",
-    "url": "https://www.worldsbk.com/en/news/2026/10/01/provisional-2027-worldsbk-calendar-revealed-china-to-debut-and-valencia-returns/1144887"
+    "url": "https://www.motogp.com/en/news/2026/11/16/hot-headlines-match-point-marquez-as-motogp-straps-in-for-the-rollercoaster/1185225"
   }
 };
 
@@ -275,10 +283,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Kiara",
-    "artist": "Bonobo",
-    "id": "7sqii6BhIDpJChYpU3WjwS",
-    "why": "Bonobo's 2010 album Black Sands sits between the Four Tet and Floating Points you've had on repeat: warm, melodic UK electronica."
+    "title": "Two Thousand and Seventeen",
+    "artist": "Four Tet",
+    "id": "2ZIaH69kaz55RM4Pjx6KXl",
+    "why": "From Four Tet's 2017 album New Energy: gentle, melodic UK electronica in the same space as the Floating Points and Leon Vynehall you've been playing."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Vibes",
@@ -286,63 +294,62 @@ const MUSIC = {
     "date": "2026-11-16"
   },
   "lately": [
-    "The Smiths",
     "Floating Points",
-    "Four Tet",
     "Leon Vynehall",
     "Fred again..",
-    "Ejeca"
+    "Boards of Canada",
+    "Ejeca",
+    "Sade"
   ]
 };
 
 const LEARN = {
-  "term": "Le Corbusier's Modulor",
-  "body": "The Modulor is a proportion system Le Corbusier published in 1948 (Le Modulor) and used on the Unité d'Habitation in Marseille. It anchors the golden ratio to a human body: a 1.83 m man, with his navel at 113 cm and his raised hand at 226 cm. From these it builds two Fibonacci-like series, a red one (…43, 70, 113, 183…) and a blue one at double the values (…86, 140, 226…), in which each step is roughly 1.618 times the last and each term is the sum of the two before. For a designer its real value is a fixed palette of related dimensions that keeps heights, grids and openings in family with each other and with the body. Its limits are often skipped: the 'standard' man was raised from 1.75 m to 1.83 m partly to suit British and American feet and inches, it describes one tall male body rather than a population range, and the claim that golden-ratio sizes are inherently more beautiful is not supported by evidence.",
+  "term": "Undercuts, shutoffs and side actions",
+  "body": "An undercut is any feature that stops a moulded part from ejecting straight along the tool's line of draw: a snap hook, a side hole, a lateral rib or a groove in a side wall. Because an injection mould's two halves separate along one axis, an undercut must either be designed out or released by extra mechanism: side actions (slides driven by angled cam pins), lifters (angled cores that move sideways as the ejector plate rises) or collapsing cores for internal threads. Each mechanism adds tooling cost, maintenance and a witness line on the part, and slides need room in the tool, which constrains how closely features can be packed. Designers often avoid them with a shutoff, opening a window in the wall beneath a snap so a core from the opposite half can form the hook, or with a bump-off, where a flexible resin such as polypropylene strips over a shallow undercut. The idea that every undercut needs a slide is overstated, but shutoffs and bump-offs carry their own costs: a visible opening, tight shutoff angles and material limits.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "183",
-        "note": "Height of the standard man, in cm"
+        "label": "Draw",
+        "note": "Mould halves part along one axis"
       },
       {
-        "label": "113",
-        "note": "Navel height: the split by 1.618",
+        "label": "Undercut",
+        "note": "Feature that blocks straight ejection",
         "hl": true
       },
       {
-        "label": "226",
-        "note": "Raised hand: double the navel, blue series"
+        "label": "Shutoff",
+        "note": "Core through a window forms the hook"
       },
       {
-        "label": "Series",
-        "note": "Red 43·70·113·183, blue 86·140·226"
+        "label": "Slide",
+        "note": "Cam-driven side action: cost, witness line"
       }
     ],
-    "caption": "A golden-ratio scale tied to one human body."
+    "caption": "Design the undercut out first; add mechanism last."
   },
   "source": {
-    "name": "Wikipedia: Modulor",
-    "url": "https://en.wikipedia.org/wiki/Modulor"
+    "name": "Wikipedia: Injection moulding",
+    "url": "https://en.wikipedia.org/wiki/Injection_moulding"
   },
   "past": [
+    "Le Corbusier's Modulor",
     "Kansei engineering",
     "The Ulm School (HfG Ulm)",
     "Product semantics",
-    "Visual weight and balance",
-    "Crown and tension in surfaces"
+    "Visual weight and balance"
   ]
 };
 
 const DESIGN = {
-  "name": "Braun ET 66 calculator",
-  "designer": "Dietrich Lubs with Dieter Rams",
-  "year": "1987",
-  "why": "Every key is a slightly domed circle that reads as a target for the fingertip, and colour is used only as code: an accent-coloured equals key and a few other cues, everything else neutral. It shows how far a strict grid, one form vocabulary and restrained CMF can carry an everyday object, which is why its key layout still echoes in interfaces today.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1987_Braun_calculator_ET66_by_Dieter_Rams_(13964223413).jpg?width=1200",
-  "imgCredit": {
-    "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:1987_Braun_calculator_ET66_by_Dieter_Rams_(13964223413).jpg"
+  "name": "Brionvega TS 502 radio",
+  "designer": "Marco Zanuso and Richard Sapper",
+  "year": "1964",
+  "why": "Closed, it is a plain hinged box; opened, the two halves split into a speaker side and a dial-and-controls side, so the act of opening is the switch from object to instrument. It shows how a single hinge line and a strict cube can hold all the complexity of a product while keeping its form calm.",
+  "source": {
+    "name": "Cooper Hewitt: TS 502 Portable Radio",
+    "url": "https://collection.cooperhewitt.org/objects/18648915"
   }
 };
 
@@ -397,7 +404,12 @@ const LAUNCHES = {
     {
       "model": "Toyota Innova Hycross facelift",
       "when": "25 Nov 2026",
-      "price": "₹19.5–27.5 lakh"
+      "price": "₹20–35 lakh"
+    },
+    {
+      "model": "Mini Cooper SE (2nd gen)",
+      "when": "27 Nov 2026",
+      "price": "₹50 lakh"
     },
     {
       "model": "Royal Enfield Himalayan 750",
@@ -410,19 +422,18 @@ const LAUNCHES = {
       "price": "₹19–22 lakh"
     },
     {
-      "model": "Hyundai compact EV",
-      "when": "Late 2026",
-      "price": "₹9.8–13 lakh"
+      "model": "JSW Motors Combat",
+      "when": "Dec 2026",
+      "price": "₹38 lakh"
     },
     {
-      "model": "Hyundai Ioniq P",
-      "when": "Jan 2027",
+      "model": "Hyundai compact EV",
+      "when": "Late 2026",
       "price": "₹9.8–13 lakh"
     }
   ],
   "source": {
     "name": "Autocar India: upcoming cars and bikes",
-    "url": "https://www.autocarindia.com/upcoming-cars"
+    "url": "https://www.autocarindia.com/upcoming-bikes"
   }
 };
-
