@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "18 Nov 2026, 6:55 AM IST";
+const UPDATED = "19 Nov 2026, 6:55 AM IST";
 
 const QUOTE = {
-  "text": "Design is so simple, that's why it is so complicated.",
-  "author": "Paul Rand"
+  "text": "There are three responses to a piece of design: yes, no, and WOW! Wow is the one to aim for.",
+  "author": "Milton Glaser"
 };
 
 const NOW = [
@@ -37,28 +37,28 @@ const NOW = [
 
 const NEWS = [
   {
-    "topic": "Deep tech",
+    "topic": "Indian business",
     "stories": [
       {
-        "title": "Genesis AI raises $500 million to deploy glove-wearing robots",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/17/genesis-ai-raises-500-million-to-deploy-electric-glove-wearing-robots/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/IMG_1826.jpg",
-        "why": "A $500M Series A led by Khosla, Premji Invest and Eclipse; US mass manufacturing of its Eno humanoid starts next year."
+        "title": "In first meeting since Sep 17, Tata Sons board to discuss listing next week",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/news/in-first-meeting-since-sep-17-tata-sons-board-to-discuss-listing-next-week-126111801431_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/18/thumb/fitandfill/1200X628/1795024716-2852.jpg",
+        "why": "The board meets on 26 November; at a ₹15–18 trillion valuation the issue could be at least ₹37,500 crore."
       },
       {
-        "title": "Science Corporation's brain tech is worth $3.5 billion after new funding",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/17/science-corporations-brain-tech-is-worth-3-5-billion-after-new-funding",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/55588371385_eb2e316d52_o.jpg",
-        "why": "A $400M Series D for the ex-Neuralink president's startup, whose PRIMA retinal implant chip is approved in Europe."
+        "title": "Trade deal signing after US finalises tariff architecture: Commerce secy",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/economy/news/india-us-trade-deal-signing-to-await-washington-s-new-tariff-architecture-126111801141_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/18/thumb/fitandfill/1200X628/1795007810-6279.jpg",
+        "why": "Signing waits on USTR tariff probes into 16 trade partners, India among them, over manufacturing excess capacity."
       },
       {
-        "title": "Qluster raises €4.7M to power the next generation of quantum computing",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/17/qluster-raises-eur47m-to-power-the-next-generation-of-quantum-computing",
-        "img": "https://cdn.tech.eu/uploads/2026/11/qluster-featured-10.png",
-        "why": "A Paris photonic quantum spin-off; Quantonation led the pre-seed and it targets a fault-tolerant machine by 2036."
+        "title": "Tata Sons board members to visit Air India HQ, review performance on Nov 19",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/news/tata-sons-board-members-to-visit-air-india-hq-review-performance-on-nov-19-126111801439_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/22/thumb/fitandfill/1200X628/1790048874-5403.png",
+        "why": "Air India's loss widened to more than Rs 22,000 crore in FY2025-26; Singapore Airlines holds 25.1 per cent."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Lecuona to replace Bagnaia at the Portuguese GP",
-        "source": "WorldSBK",
-        "url": "https://www.worldsbk.com/en/news/2026/11/16/lecuona-to-replace-bagnaia-at-the-portuguese-gp/1185495",
-        "img": "https://resources.wsbk.pulselive.com/wsbk/photo/2026/11/16/5fc1331b-1278-4107-89af-161ad110a495/52990_JDR_R03_2026_Ambience.jpg",
-        "why": "Bagnaia is out after foot surgery, so Ducati's WorldSBK rider steps onto the factory Desmosedici at Portimão."
-      },
-      {
-        "title": "Suzuki to make world championship return in 2027",
-        "source": "Visordown",
-        "url": "https://www.visordown.com/news/suzuki-make-world-championship-return-2027-gsx-r750",
-        "img": "https://www.visordown.com/sites/default/files/2026-05/suzuki-gsxr1000-jm-r3jm3720.jpg",
-        "why": "Suzuki returns full-time to World Supersport for the first time in over a decade, with a GSX-R750."
-      },
-      {
-        "title": "Bajaj Pulsar 180 discontinued in India for a second time in five years",
+        "title": "2027 Triumph Street Triple 798 RS priced at Rs 14.39 lakh",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/bajaj-pulsar-180-discontinued-in-india-for-a-second-time-in-five-years-441342",
-        "img": "https://asset.autocarindia.com/static/news/images/20261116_121442_b65b5625.jpg",
-        "why": "Revived only in April 2026 to take on the Apache RTR 180, the Rs 1.22 lakh Pulsar has left Bajaj's website."
+        "url": "https://www.autocarindia.com/bike-news/2027-triumph-street-triple-798-rs-priced-at-rs-1439-lakh-441354",
+        "img": "https://asset.autocarindia.com/static/news/images/20261117_130055_157d6b9a.jpg",
+        "why": "The new 798cc triple makes 135hp and 86Nm and weighs 5kg less than the 765 RS it replaces."
+      },
+      {
+        "title": "Dixon returns to MotoGP action with Honda at Portimao",
+        "source": "WorldSBK",
+        "url": "https://worldsbk.com/en/news/2026/11/18/dixon-returns-to-motogp-action-with-honda-at-portimao/1185725",
+        "img": "https://resources.wsbk.pulselive.com/wsbk/photo/2026/11/18/1a6beb18-2438-4f9b-a715-951e0026c75a/_DS_0197.jpg",
+        "why": "Jake Dixon replaces Joan Mir for his fourth MotoGP start, after two in 2021 on Yamaha machinery."
+      },
+      {
+        "title": "Alex Marquez set for Portuguese GP return",
+        "source": "MotoGP",
+        "url": "https://www.motogp.com/en/news/2026/11/17/alex-marquez-set-for-portuguese-gp-return/1185531",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/10/31/5a43648b-2ddc-4584-96a4-0eb921743958/_DSC5563.jpg",
+        "why": "Back after one round out following surgery; he had been on pole at the Malaysian GP and finished P3."
       }
     ]
   },
@@ -92,25 +92,51 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Mahindra XEV 9S scores 5 stars in BNCAP crash tests",
+        "title": "Tata Group draws interest from Honda, Hyundai for vehicle and technology sharing",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/mahindra-xev-9s-scores-5-stars-in-bncap-crash-tests-441349",
-        "img": "https://asset.autocarindia.com/static/news/images/20261117_064832_b054478c.jpg",
-        "why": "The electric SUV scored 31.15/32 for adult and 45/49 for child occupant protection, across all trims."
+        "url": "https://www.autocarindia.com/car-news/tata-group-draws-interest-from-honda-hyundai-for-vehicle-and-technology-sharing-441364",
+        "img": "https://asset.autocarindia.com/static/news/images/20261118_083504_6b746d16.jpeg",
+        "why": "Stellantis already plans to use Tata Motors tech for vehicles in more than 50 markets."
       },
       {
-        "title": "New Mini Cooper Electric bookings open; launch on November 27",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/new-mini-cooper-electric-bookings-open-ahead-of-november-27-launch-441350",
-        "img": "https://asset.autocarindia.com/static/news/images/20261117_072612_a9d6ac6d.jpg",
-        "why": "The second-gen Cooper SE gets a 54.2kWh battery, 218hp and 402km WLTP range, up from 270km."
+        "title": "Toyota's New Small Truck Is A Corolla Cross With A Bed",
+        "source": "Motor1",
+        "url": "https://www.motor1.com/news/815920/toyota-corolla-deck-pickup-confirmed/",
+        "img": "https://cdn.motor1.com/images/mgl/P3Vmr2/s1/toyota-corolla-deck-apresentada-em-sorocaba-sp.jpg",
+        "why": "A 122hp flex-fuel hybrid pickup built at Toyota's Sorocaba 2 plant in Brazil, with 100,000 units a year of capacity."
       },
       {
-        "title": "Vinfast VF5 facelift revealed",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/vinfast-vf5-facelift-revealed-441345",
-        "img": "https://asset.autocarindia.com/static/news/images/20261117_053820_c413f96b.jpg",
-        "why": "The updated electric SUV grows 20mm longer and 49mm wider, and could launch in India in the coming months."
+        "title": "Waymo Is Banned From California Freeways After A Series Of Incidents",
+        "source": "Motor1",
+        "url": "https://www.motor1.com/news/815824/waymo-freeway-pause-california-ruling/",
+        "img": "https://cdn.motor1.com/images/mgl/xqO2Aw/s1/waymo-jaguar-i-pace-on-freeway.jpg",
+        "why": "California's DMV added a freeway restriction after three Waymos entered an active closure on US Route 101."
+      }
+    ]
+  },
+  {
+    "topic": "Deep tech",
+    "stories": [
+      {
+        "title": "China dominates battery graphite, but this startup could break the monopoly",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/18/china-dominates-battery-graphite-but-this-startup-could-break-the-monopoly/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/GettyImages-1249824774.jpg",
+        "why": "Molten Industries' Oakland plant will make about 300 tons of graphite a year, using three times less electricity."
+      },
+      {
+        "title": "Nvidia is abandoning China after Jensen Huang's ouster",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/17/nvidia-is-abandoning-china-after-jensen-huangs-ouster/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/03/jensen-huang-gtc-getty.jpg",
+        "why": "Jefferies estimates the new rules could cut Nvidia's data center revenue by $44–62 billion next year."
+      },
+      {
+        "title": "Nvidia's startup stakes ballooned to $65B, but Huang's exit puts future deals in doubt",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/17/nvidias-startup-stakes-ballooned-to-65b-but-huangs-exit-puts-future-deals-in-doubt/",
+        "img": "https://techcrunch.com/wp-content/uploads/2024/11/GettyImages-2150167239.jpg",
+        "why": "Its private stakes are worth $65.5 billion, up from $22 billion reported in January."
       }
     ]
   },
@@ -118,70 +144,31 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Isomorphic Labs raises $5B as it looks to take drug candidates to clinical trials",
+        "title": "India's Humyn Labs raises $47M to feed U.S. robotics companies the data they need",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/17/isomorphic-labs-raises-5b-as-it-looks-to-take-drug-candidates-to-clinical-trials/",
-        "img": "https://techcrunch.com/wp-content/uploads/2024/12/GettyImages-2151467531.jpg",
-        "why": "The DeepMind spinout's Series C, co-led by Greenoaks and Sequoia, comes months after a $2.1B Series B in May."
+        "url": "https://techcrunch.com/2026/11/18/accel-backs-indias-humyn-labs-to-supply-training-data-needed-by-u-s-robotics-ai-developers/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/humyn-labs-co-founders_164602.jpg",
+        "why": "A $47M Series A for the Bengaluru team, which already has 12 paying customers including frontier AI labs."
       },
       {
-        "title": "Shree Anandhaas raises Rs 110 Cr, valuation jumps to Rs 1,900 Cr",
+        "title": "Goldman Sachs leads $280M funding round in Payhawk",
+        "source": "Tech.eu",
+        "url": "https://tech.eu/2026/11/18/goldman-sachs-leads-280m-funding-round-in-payhawk/",
+        "img": "https://cdn.tech.eu/uploads/2022/02/payhawk-838.png",
+        "why": "The Series C values the spend-management startup at $2bn, double its 2022 valuation."
+      },
+      {
+        "title": "Circular economy startup Recove Ventures raises Rs 56.25 Cr through equity and debt",
         "source": "Entrackr",
-        "url": "https://entrackr.com/exclusive/exclusive-shree-anandhaas-raises-rs-110-cr-valuation-jumps-to-rs-1900-cr-12817177",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/17/shree-anandhaas-2026-11-17-16-11-35.png",
-        "why": "Ayra Ventures led the round for the Coimbatore sweets chain, at roughly 3.3X its Series A valuation."
-      },
-      {
-        "title": "Xpressbees raises Rs 100 Cr debt from BlackSoil",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/exclusive/exclusive-xpressbees-raises-rs-100-cr-debt-from-blacksoil-12813197",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/16/xpress-2026-11-16-12-27-30.png",
-        "why": "Working-capital debt via NCDs; FY25 revenue was flat at Rs 2,874 Cr while its loss widened to Rs 370 Cr."
-      }
-    ]
-  },
-  {
-    "topic": "Indian business",
-    "stories": [
-      {
-        "title": "Tata Steel eyes 50 MT capacity, to direct 75% capex to India: TV Narendran",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/tata-steel-eyes-50-mt-capacity-to-direct-75-capex-to-india-tv-narendran-126111700284_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2023-08/06/thumb/fitandfill/1200X628/1691307636-7178.jpg",
-        "why": "India capacity would rise from about 27 MT to 50 MT, with Rs 18,000–20,000 crore capex this year."
-      },
-      {
-        "title": "Sebi may limit margin-funded stock purchases as retail leverage hits record",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/sebi-may-limit-margin-funded-stock-purchases-as-retail-leverage-hits-record-126111700421_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/07/thumb/fitandfill/1200X628/1791365134-9817.jpg",
-        "why": "Margin-funded bets hit ₹1.53 trillion, up 29% a year; Sebi weighs curbs above 5–10% of a stock's free float."
-      },
-      {
-        "title": "Signature Global enters Mumbai market with 475-acre land buy in Raigad",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/signature-global-enters-mumbai-market-with-475-acre-land-buy-in-raigad-126111800036_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-07/03/thumb/fitandfill/1200X628/1783094278-3418.jpg",
-        "why": "The Delhi-NCR developer won an auction for 474.66 acres near Navi Mumbai airport with a ₹194.19 crore bid."
+        "url": "https://entrackr.com/snippets/circular-economy-startup-recove-ventures-raises-rs-5625-cr-through-equity-and-debt-12818941",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/18/02-2026-11-18-09-53-38.png",
+        "why": "Rs 36.25 crore equity plus Rs 20 crore debt; its annualised revenue run-rate has crossed Rs 40 crore."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Wed 18 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Thu 19 Nov",
     "items": [
@@ -233,13 +220,26 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Mon 23 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
 const RACING = {
   "items": [
     {
-      "when": "20–22 Nov",
+      "when": "20–22 Nov, race 6:30 PM IST",
       "what": "MotoGP: Portuguese GP, Portimão"
     },
     {
@@ -255,10 +255,10 @@ const RACING = {
       "what": "WorldSBK: Portuguese Round, Portimão (provisional)"
     }
   ],
-  "note": "Marc Marquez leads Martin by 60 points and Bezzecchi by 74 with 74 left: a Sprint win at Portimão, or leaving 37+ clear of Martin, seals the title. Lecuona replaces the injured Bagnaia.",
+  "note": "Match point for Marc Marquez: 60 clear of Martin, he is champion if he leaves Portimão 37+ points ahead. Sprint Sat 8:30 PM IST. Dixon replaces Mir; Alex Marquez returns.",
   "source": {
-    "name": "motogp.com: how Marquez can be crowned in Portugal",
-    "url": "https://www.motogp.com/en/news/2026/11/17/how-can-marc-marquez-be-crowned-world-champion-in-portugal/1185545"
+    "name": "motogp.com: Portuguese GP time schedule",
+    "url": "https://www.motogp.com/en/news/2026/11/16/time-schedule-repsol-grand-prix-of-portugal/1185224"
   }
 };
 
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Looped",
-    "artist": "Kiasmos",
-    "id": "2bB6iDVgm25WkYv0yBz1BD",
-    "why": "From the 2014 debut album by Kiasmos, Ólafur Arnalds and Janus Rasmussen: slow-building melodic minimal techno near the Floating Points and Four Tet you've been playing."
+    "title": "Phantom Ratio",
+    "artist": "Ross from Friends",
+    "id": "0OtNt80MQEMcz11wopMhjk",
+    "why": "Hazy, melodic UK house from Ross from Friends' Epiphany, in the same lane as the Bicep and Four Tet you've had on repeat."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Vibes",
@@ -286,59 +286,64 @@ const MUSIC = {
     "date": "2026-11-16"
   },
   "lately": [
-    "Floating Points",
+    "BICEP",
     "Four Tet",
-    "Aphex Twin",
+    "Floating Points",
     "Fred again..",
-    "Overmono",
-    "Ejeca"
+    "KETTAMA",
+    "Elkka"
   ]
 };
 
 const LEARN = {
-  "term": "Uniform wall thickness and sink marks",
-  "body": "An injection-moulded part freezes from the outside in, so a thick section's core keeps shrinking after its skin has set, pulling the surface into a sink mark or, if the skin is too stiff to follow, leaving an internal void. Designers therefore hold a nominal wall that is as even as possible and blend any change in thickness gradually, commonly over a length about three times the step, instead of stepping it abruptly. Stiffness comes from ribs rather than mass, but a rib behind a cosmetic face is usually kept to roughly 50 to 60 percent of the wall it joins so the junction does not become a hot spot that sinks on the A-side; bosses are cored out and tied in with gussets for the same reason. The rule never vary the wall is overstated: gas-assist moulding, foaming grades, texture and packing pressure can hide some variation, but on a high-gloss Class-A surface even a shallow sink shows up as a distorted reflection.",
+  "term": "Snap-fit cantilever design",
+  "body": "A cantilever snap-fit is a short beam with a hook that bends as it passes a mating lip and springs back behind it, and the design limit is strain at the root, not force. For a constant rectangular section, root strain is roughly ε = 1.5·t·y / L², where t is beam thickness, y the deflection needed to clear the lip and L the beam length, so doubling length cuts strain to a quarter while doubling thickness doubles it. That strain must stay below the material's permissible strain for the intended number of cycles, and a generous root fillet matters because a sharp corner multiplies the local stress; tapering the beam toward the tip also spreads strain more evenly along its length. The return-face angle decides whether the joint is releasable or permanent, and the common claim that snap-fits make fasteners free is overstated: the hook is an undercut that needs a side action, a lifter or a through-hole in the part, and creep and fatigue limit how often it can be opened.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Thick",
-        "note": "Core cools last and keeps shrinking"
+        "label": "Deflect",
+        "note": "Hook bends as it rides over the lip"
       },
       {
-        "label": "Sink",
-        "note": "Surface pulled in over the hot spot",
+        "label": "Strain",
+        "note": "ε ≈ 1.5·t·y / L² at the root",
         "hl": true
       },
       {
-        "label": "Uniform",
-        "note": "Even nominal wall, gradual ~3:1 blends"
+        "label": "Root",
+        "note": "Fillet and taper spread the strain"
       },
       {
-        "label": "Rib",
-        "note": "Base about 50–60% of wall on A-side"
+        "label": "Retain",
+        "note": "Return angle: releasable or permanent"
       }
     ],
-    "caption": "Thin, even walls; stiffness from ribs, not mass."
+    "caption": "Size the beam by root strain, then shape the hook."
   },
   "source": {
-    "name": "Wikipedia: Injection moulding",
-    "url": "https://en.wikipedia.org/wiki/Injection_moulding"
+    "name": "Wikipedia: Snap-fit",
+    "url": "https://en.wikipedia.org/wiki/Snap-fit"
   },
   "past": [
+    "Uniform wall thickness and sink marks",
     "Undercuts, shutoffs and side actions",
     "Le Corbusier's Modulor",
     "Kansei engineering",
-    "The Ulm School (HfG Ulm)",
-    "Product semantics"
+    "The Ulm School (HfG Ulm)"
   ]
 };
 
 const DESIGN = {
-  "name": "Braun T3 pocket radio",
-  "designer": "Dieter Rams",
-  "year": "1958",
-  "why": "A plain rectangular body with a perforated speaker grid and a single round tuning dial turns a transistor radio into a calm, almost diagrammatic object you hold in one hand. Its strict hierarchy of grid, dial and edge became a reference for later personal electronics and shows how much character restraint and proportion can carry."
+  "name": "Mini (Morris Mini-Minor)",
+  "designer": "Alec Issigonis",
+  "year": "1959",
+  "why": "Turning the engine sideways over a front-wheel-drive gearbox and pushing the small wheels to the corners gave about 80 percent of a car only three metres long over to people and luggage. The form follows that package so directly that its short overhangs, upright glasshouse and visible seams became an identity rather than a styling exercise.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Morris_Mini-Minor_1959_(621_AOK).jpg?width=1200",
+  "imgCredit": {
+    "name": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Morris_Mini-Minor_1959_(621_AOK).jpg"
+  }
 };
 
 const FUNDING = {
@@ -410,9 +415,9 @@ const LAUNCHES = {
       "price": "₹19–22 lakh"
     },
     {
-      "model": "JSW Motors Combat",
-      "when": "Dec 2026",
-      "price": "₹38 lakh"
+      "model": "Hyundai Compact EV",
+      "when": "Late 2026",
+      "price": "₹9.8–13 lakh"
     },
     {
       "model": "Hyundai Ioniq P",
