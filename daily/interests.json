@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-19",
+  "updated": "2026-11-20",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
     {
@@ -39,12 +39,6 @@
       "why": "industrial design portfolio, nNode branding work"
     },
     {
-      "topic": "Sneaker and footwear design",
-      "source": "inferred",
-      "weight": 0.4,
-      "why": "portfolio: sketching sneakers, adidas DASH project"
-    },
-    {
       "topic": "Wearable tech and neurotech",
       "source": "inferred",
       "weight": 0.5,
@@ -67,6 +61,12 @@
       "source": "inferred",
       "weight": 0.4,
       "why": "portfolio built to apply to industrial design studios worldwide"
+    },
+    {
+      "topic": "Industry 4.0 and smart manufacturing",
+      "source": "inferred",
+      "weight": 0.5,
+      "why": "recent research on Industry 4.0 adoption in Gujarat's MSME hubs"
     }
   ]
 }
