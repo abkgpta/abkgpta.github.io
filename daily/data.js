@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "20 Nov 2026, 6:55 AM IST";
+const UPDATED = "21 Nov 2026, 6:54 AM IST";
 
 const QUOTE = {
-  "text": "Design depends largely on constraints.",
-  "author": "Charles Eames"
+  "text": "Simplicity is not the goal. It is the by-product of a good idea and modest expectations.",
+  "author": "Paul Rand"
 };
 
 const NOW = [
@@ -37,28 +37,54 @@ const NOW = [
 
 const NEWS = [
   {
+    "topic": "Startups & Indian startups",
+    "stories": [
+      {
+        "title": "Anthropic hits Nasdaq exchanges at $111, 33% above IPO price",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/19/anthropic-hits-nasdaq-exchanges-at-110-27-above-ipo-price",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/anthropic-opening-Getty.jpg",
+        "why": "Shares opened well above the $83 IPO price, which itself was priced above the $70–78 range."
+      },
+      {
+        "title": "Physical AI startup Humyn Labs raises $47 Mn in equity and debt",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/physical-ai-startup-humyn-labs-raises-47-mn-in-equity-and-debt-12820886",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/18/humyn-labs-2026-11-18-18-09-02.png",
+        "why": "Accel-led Series A ($26M equity, $21M debt) for a Bengaluru startup building robotics training data."
+      },
+      {
+        "title": "Disseqt AI raises $8 Mn led by Gresham House Ventures, Rahul Dravid joins round",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/snippets/disseqt-ai-raises-8-mn-led-by-gresham-house-ventures-rahul-dravid-joins-round-12822900",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/19/disseqt-2026-11-19-13-49-33.png",
+        "why": "Pre-Series A for an AI governance startup, with angels from OpenAI, Salesforce and Meta."
+      }
+    ]
+  },
+  {
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "MEDIA DAY DISPATCH: MotoGP match point 2 incoming at Portimao",
+        "title": "Alex Marquez shines to top Practice on return, Martin scrapes into Q2",
         "source": "MotoGP",
-        "url": "https://www.motogp.com/en/news/2026/11/19/media-day-dispatch-motogp-match-point-2-incoming-at-portimao/1186058",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/19/986b4a7c-72f0-4c09-acac-15b9528cacae/LG9_5769-1-.jpg",
-        "why": "Marc Marquez can seal his eighth MotoGP title at Portimão, possibly in the Sprint; Martin and Bezzecchi still in contention."
+        "url": "https://www.motogp.com/en/news/2026/11/20/alex-marquez-shines-to-top-practice-on-return-martin-scrapes-into-q2/1186064",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/20/a15ed872-92c1-498b-8d8c-1aa51180415b/Report-MGP-PR-PT-TOP.jpg",
+        "why": "Back from surgery, Alex Marquez topped Friday at Portimão; title favourite Marc Marquez was sixth."
       },
       {
-        "title": "Honda Rebel 500 launched at Rs 4.50 lakh",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/honda-rebel-500-launched-at-rs-450-lakh-441372",
-        "img": "https://asset.autocarindia.com/static/news/images/20261119_064442_2d6c9318.jpg",
-        "why": "Rs 4.50 lakh Standard, Rs 4.90 lakh E-Clutch; the 471cc twin makes 46hp and is sold via BigWing dealers."
+        "title": "New Bajaj Pulsar RS200 launched at Rs 1.98 lakh with USD forks, TFT and ride modes",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/new-bajaj-pulsar-rs200-launch-price-rs-1-98-lakh-usd-forks-tft-ride-modes-12561710.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-bajaj-pulsar-rs-200-launch-price-usd-forks-tft-display-29.jpg",
+        "why": "The updated RS200 adds USD forks, a 5-inch TFT, ride modes and traction control."
       },
       {
-        "title": "Three made-for-India VinFast e-scooters launching next year",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/bike-news/three-made-for-india-vinfast-e-scooters-launching-next-year-441355",
-        "img": "https://asset.autocarindia.com/static/news/images/20261118_024616_5108c86f.jpg",
-        "why": "Locally made e-scooters based on the Evo, Kyo and Kinet, with India-specific chassis and design changes."
+        "title": "Harley-Davidson Sprint 440 launched in Japan at JPY 900K",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/harley-sprint-440-launch-price-jpy-900k-rs-5-26-l-100-buyback-12561634.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/harley-sprint-440-launch-in-japan-cover.jpg",
+        "why": "Built on the Hero-developed X440 platform; US sales follow in spring 2027, India expected in 2027."
       }
     ]
   },
@@ -66,77 +92,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "BMW's Alpina luxury brand to enter India in 2027",
+        "title": "BYD crosses 20,000-unit sales milestone in India",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/bmws-alpina-luxury-brand-to-enter-india-in-2027-441358",
-        "img": "https://asset.autocarindia.com/static/news/images/20261118_070003_357e5dd1.jpeg",
-        "why": "Alpina arrives as a standalone brand across 10 cities; BMW sold 9,075 cars in India in H1 2026."
+        "url": "https://www.autocarindia.com/car-news/byd-crosses-20000-unit-sales-milestone-in-india-441387",
+        "img": "https://asset.autocarindia.com/static/news/images/20261120_112139_be62fe1d.png",
+        "why": "BYD doubled India sales from 10,000 in just over a year, using only imported cars."
       },
       {
-        "title": "Kia rejigs Seltos, Carens Clavis and Sonet line-up; Seltos iMT dropped",
+        "title": "New Honda Avancier SUV debuts brand's next-gen hybrid system",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/kia-rejigs-seltos-carens-clavis-and-sonet-lineup-drops-seltos-imt-441371",
-        "img": "https://asset.autocarindia.com/static/news/images/20261119_062816_0e843710.jpg",
-        "why": "The Seltos 160hp turbo-petrol is now DCT-only as Kia reshuffles variants; Seltos priced Rs 11.25–21.82 lakh."
+        "url": "https://www.autocarindia.com/car-news/new-honda-avancier-suv-debuts-brands-next-gen-hybrid-system-441389",
+        "img": "https://asset.autocarindia.com/static/news/images/20261120_113714_fadff451.jpg",
+        "why": "The second-gen three-row Avancier is the first Honda on its next-gen hybrid platform, with dual-motor AWD."
       },
       {
-        "title": "Tesla goes all-in on the Cybercab with upcoming €3B Berlin gigafactory expansion",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/16/tesla-goes-all-in-on-the-cybercab-with-upcoming-e3b-berlin-gigafactory-expansion/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/09/Tesla-cybercab-Getty.jpg",
-        "why": "The €3 billion Grünheide expansion could build up to 1 million vehicles a year, with Cybercab production from 2029."
-      }
-    ]
-  },
-  {
-    "topic": "Indian business",
-    "stories": [
-      {
-        "title": "Mahanadi Coalfields raises ₹2,295 crore from investors ahead of IPO",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/mahanadi-coalfields-raises-2-295-crore-from-investors-ahead-of-ipo-126111800582_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-04/01/thumb/fitandfill/1200X628/1775034697-5409.jpg",
-        "why": "ADIA and LIC are in the anchor book; Coal India sells 10% at ₹129–136, seeking a $9.6 billion valuation."
-      },
-      {
-        "title": "Sebi approves transfer of ICICI Securities' PMS biz to ICICI Prudential AMC",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/sebi-approves-transfer-of-icici-securities-pms-biz-to-icici-prudential-amc-126111900710_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/07/thumb/fitandfill/1200X628/1791365134-9817.jpg",
-        "why": "The slump-sale transfer is cleared; ICICI Prudential AMC's Q2 FY27 profit rose 6.1% to ₹889 crore."
-      },
-      {
-        "title": "Boba Bhai raises $18 million in Series B funding to expand store network",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/boba-bhai-raises-18-million-in-series-b-funding-to-expand-store-network-126111901214_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/19/thumb/featurecrop/1200X628/1795098417-4249.png",
-        "why": "Left Lane Capital joins; the bubble-tea chain has 120 stores and serves over 300,000 orders a month."
-      }
-    ]
-  },
-  {
-    "topic": "Startups & Indian startups",
-    "stories": [
-      {
-        "title": "London-based Boltz raises $110M Series A",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/19/london-based-boltz-raises-110m-series-a/",
-        "img": "https://cdn.tech.eu/uploads/2026/11/boltz-807.png",
-        "why": "The MIT spinout building AI drug-discovery models raised a Bessemer-led round; Nvidia also invested."
-      },
-      {
-        "title": "Style Union raises Rs 485 Cr in Series E round led by Elev8 Venture, Venturi Partners",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/style-union-raises-rs-485-cr-in-series-e-round-led-by-elev8-venture-venturi-partners-12821452",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/18/01-2026-11-18-22-07-40.png",
-        "why": "The fashion retailer will expand stores beyond south India into metro markets."
-      },
-      {
-        "title": "InPrime Finserv raises Rs 101 Cr in Series B round led by FMO",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/inprime-finserv-raises-rs-101-cr-in-series-b-round-led-by-fmo-12823682",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/19/inprime-2026-11-18-12-04-09-2026-11-19-17-10-40.webp",
-        "why": "The Bengaluru AI-first NBFC will expand lending and enter micro-mortgages."
+        "title": "Range Rover GT EV debut confirmed for early 2027",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/range-rover-gt-ev-launch-confirmed-for-early-2027-441383",
+        "img": "https://asset.autocarindia.com/static/news/images/20261120_072921_abd928d0.jpg",
+        "why": "JLR's low-slung coupe SUV arrives electric-first, likely on its 800V EMA platform; a hybrid follows."
       }
     ]
   },
@@ -144,44 +118,57 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Wallenberg Investments takes minority stake in Swedish deeptech Algoryx",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/19/wallenberg-investments-takes-minority-stake-in-swedish-deeptech-algoryx/",
-        "img": "https://cdn.tech.eu/uploads/2026/11/smart-2-701.jpg",
-        "why": "Algoryx simulates robots and heavy machinery to generate synthetic data for training autonomous-machine AI."
+        "title": "Daniel Ek backs AI researcher's fusion power startup. Here's what they're building.",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/20/daniel-ek-backs-ai-researchers-fusion-power-startup-heres-what-theyre-building/",
+        "img": "https://techcrunch.com/wp-content/uploads/2023/07/GettyImages-1500013882.jpg",
+        "why": "Europa Fusion, a UK pulsed-power fusion startup led by an ex-DeepMind researcher, gets Ek's backing."
       },
       {
-        "title": "IvyCap Ventures leads $11 Mn Series B round in robotics company Botsync",
+        "title": "Chips can survive the space environment. Can their financing?",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/20/chips-can-survive-the-space-environment-can-their-financing/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/06/SpaceXAIsatrender.jpg",
+        "why": "Lenders balk at chip-backed loans for orbital data centres, since chips in space can't be repossessed."
+      },
+      {
+        "title": "Centre's Antariksh VC Fund leads SatSure's ₹200 Cr Series B round",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/centres-antariksh-vc-fund-leads-satsures-%E2%82%B9200-cr-series-b-round",
+        "img": "https://asset.inc42.com/2025/06/shutterstock_363654452si-satellite-1.jpg",
+        "why": "The state-backed fund leads a ₹60 Cr first tranche for SatSure's optical payloads and geospatial AI."
+      }
+    ]
+  },
+  {
+    "topic": "Indian business",
+    "stories": [
+      {
+        "title": "India's core sector growth hits 31-month high of 10.9% in October",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/economy/news/core-sectors-growth-rises-to-10-9-in-oct-coal-iron-ore-key-drivers-126112000852_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/11/thumb/fitandfill/1200X628/1791736672-9469.jpg",
+        "why": "First double-digit growth in the 2022-23 series; electricity up 21.6% and iron ore up 26.4%."
+      },
+      {
+        "title": "India's forex reserves fall $14.21 bn to $705.34 bn on revaluation",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/economy/news/india-s-forex-reserves-fall-14-21-bn-to-705-34-bn-on-revaluation-126112001283_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2020-02/07/thumb/fitandfill/1200X628/1581091561-2435.png",
+        "why": "Gold holdings dropped $6.18 billion and foreign currency assets $7.90 billion in the week."
+      },
+      {
+        "title": "Paytm, Pine Labs, MobiKwik shares tank over 7% amid reports of further UPI MDR delay",
         "source": "Entrackr",
-        "url": "https://entrackr.com/news/ivycap-ventures-leads-11-mn-series-b-round-in-robotics-company-botsync-12819998",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/18/botsync-2026-11-18-13-26-11.png",
-        "why": "The factory robotics firm, with offices in Singapore and India, is building SyncOS AI and MAG mobile robots."
-      },
-      {
-        "title": "Qluster raises €4.7M to power the next generation of quantum computing",
-        "source": "Tech.eu",
-        "url": "https://tech.eu/2026/11/17/qluster-raises-eur47m-to-power-the-next-generation-of-quantum-computing",
-        "img": "https://cdn.tech.eu/uploads/2026/11/qluster-featured-10.png",
-        "why": "A Paris photonic quantum startup, pre-seed led by Quantonation, targeting a fault-tolerant universal quantum computer by 2036."
+        "url": "https://entrackr.com/all-article/paytm-pine-labs-mobikwik-shares-tank-over-7-amid-reports-of-further-upi-mdr-delay-12823081",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/19/mdr-2026-11-19-14-53-40.png",
+        "why": "Reports say UPI merchant fees may slip past the 2027 assembly elections, hitting fintech stocks."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Fri 20 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Sat 21 Nov",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Wed 25 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -255,10 +255,10 @@ const RACING = {
       "what": "WorldSBK: Portuguese Round, Portimão (provisional)"
     }
   ],
-  "note": "Match point for Marc Marquez: 60 clear of Martin, he is champion if he leaves Portimão 37+ points ahead, and winning Saturday's Sprint (8:30 PM IST) is enough. Lecuona stands in for Bagnaia, Dixon for Mir.",
+  "note": "Portimão is match point for Marc Marquez. Friday: Alex Marquez fastest on his return, Marc sixth, Martin scraped into Q2. Sprint today 8:30 PM IST, race Sunday 6:30 PM IST.",
   "source": {
-    "name": "motogp.com: how Marc Marquez can be crowned in Portugal",
-    "url": "https://www.motogp.com/en/news/2026/11/17/how-can-marc-marquez-be-crowned-world-champion-in-portugal/1185545"
+    "name": "motogp.com: Portuguese GP Friday report",
+    "url": "https://www.motogp.com/en/news/2026/11/20/alex-marquez-shines-to-top-practice-on-return-martin-scrapes-into-q2/1186064"
   }
 };
 
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Emerald Rush",
-    "artist": "Jon Hopkins",
-    "id": "5S3F5GL8LASIjPg2PMiU1Q",
-    "why": "Slow-building, melodic electronica from Jon Hopkins' 2018 album Singularity, close to the Floating Points and Max Cooper in your recent plays."
+    "title": "Drone Logic",
+    "artist": "Daniel Avery",
+    "id": "6cjUtb7XopHEeQKBjj0rER",
+    "why": "Hypnotic, acid-tinged title track from the London producer's 2013 debut, close to the Overmono and Joy Orbison in your plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Vibes",
@@ -296,53 +296,53 @@ const MUSIC = {
 };
 
 const LEARN = {
-  "term": "Form follows function: what Sullivan meant",
-  "body": "Louis Sullivan's line \"form ever follows function\" comes from his 1896 essay \"The Tall Office Building Artistically Considered\", where it described how a skyscraper's outward form should express its distinct internal uses, and it sat beside lavish ornament in his own buildings. Modernists later hardened it into an anti-ornament rule, and the Ulm school pushed it further toward a systematic, method-led functionalism. The popular reading that function alone determines one correct form is overstated: the same function admits many valid forms, and the designer's choices among them carry meaning, brand and emotion. For a product designer the useful version is that form should make function legible, so use, assembly and priorities read from the object itself. frog design's counter-slogan \"form follows emotion\" is best read as an addition to this, not a rejection of it.",
+  "term": "Dieter Rams' ten principles",
+  "body": "In the late 1970s Dieter Rams, then head of design at Braun, asked himself whether his own work was good design and answered with ten principles: good design is innovative, useful, aesthetic, understandable, unobtrusive, honest, long-lasting, thorough down to the last detail, environmentally friendly, and involves as little design as possible. They are ordered by use, not by look: aesthetics sits third, after usefulness, and only counts because objects we use daily shape our wellbeing. The popular reading as a minimalist style guide is overstated, since \"less, but better\" means removing whatever does not serve the user, not making things flat, white or featureless. Many of the principles echo the systematic, function-led thinking of Hans Gugelot and the Ulm school, who shaped Braun's approach before Rams. Rams himself later criticised a throwaway consumer culture, which is why long-lasting and environmentally friendly sit in the list beside the formal virtues.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "1896",
-        "note": "Sullivan: form expresses a building's uses"
-      },
-      {
-        "label": "Modernism",
-        "note": "Hardened into a rule against ornament"
+        "label": "Useful",
+        "note": "The product must serve its purpose first"
       },
       {
         "label": "Legible",
-        "note": "Form makes use and priority readable",
-        "hl": true
+        "note": "Form makes the product self-explanatory"
       },
       {
-        "label": "Emotion",
-        "note": "frog: meaning is part of function too"
+        "label": "Honest",
+        "note": "Promises nothing it cannot deliver"
+      },
+      {
+        "label": "Less",
+        "note": "As little design as possible",
+        "hl": true
       }
     ],
-    "caption": "From a skyscraper essay to a product design principle."
+    "caption": "Restraint in service of use, not a visual style."
   },
   "source": {
-    "name": "Wikipedia: Form follows function",
-    "url": "https://en.wikipedia.org/wiki/Form_follows_function"
+    "name": "Vitsœ: Dieter Rams, ten principles for good design",
+    "url": "https://www.vitsoe.com/gb/about/good-design"
   },
   "past": [
+    "Form follows function: what Sullivan meant",
     "Snap-fit cantilever design",
     "Uniform wall thickness and sink marks",
     "Undercuts, shutoffs and side actions",
-    "Le Corbusier's Modulor",
-    "Kansei engineering"
+    "Le Corbusier's Modulor"
   ]
 };
 
 const DESIGN = {
-  "name": "Juicy Salif citrus squeezer (Alessi)",
-  "designer": "Philippe Starck",
-  "year": "1990",
-  "why": "A cast-aluminium body on three long legs turns a kitchen tool into a sculpture, with the ribbed head dripping juice straight into a glass set beneath it. It is a lasting case study in the tension between object as function and object as symbol, since it is admired as much for what it says as for how well it squeezes.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Philippe_starck_per_alessi_spa.,_spremiagrumi_juicy_salif,_1990.jpg?width=1200",
+  "name": "Olivetti Lettera 22 portable typewriter",
+  "designer": "Marcello Nizzoli",
+  "year": "1950",
+  "why": "Nizzoli wrapped a full typing mechanism in a low, enamelled metal shell with soft radii and a flush keyboard, turning an office machine into a compact, approachable personal tool. It won the first Compasso d'Oro in 1954 and remains a lesson in how a well-proportioned enclosure can make complex mechanics feel simple.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Olivetti_Lettera_22_by_LjL.jpeg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Philippe_starck_per_alessi_spa.,_spremiagrumi_juicy_salif,_1990.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Olivetti_Lettera_22_by_LjL.jpeg"
   }
 };
 
@@ -430,3 +430,4 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
+
