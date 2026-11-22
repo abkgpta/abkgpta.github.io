@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-21",
+  "updated": "2026-11-22",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
     {
@@ -65,8 +65,8 @@
     {
       "topic": "Industry 4.0 and smart manufacturing",
       "source": "inferred",
-      "weight": 0.5,
-      "why": "recent research on Industry 4.0 adoption in Gujarat's MSME hubs"
+      "weight": 0.6,
+      "why": "ongoing white paper and demonstration-unit proposal on Industry 4.0 for Gujarat MSMEs"
     }
   ]
 }

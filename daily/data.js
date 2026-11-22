@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "21 Nov 2026, 6:54 AM IST";
+const UPDATED = "22 Nov 2026, 6:56 AM IST";
 
 const QUOTE = {
-  "text": "Simplicity is not the goal. It is the by-product of a good idea and modest expectations.",
-  "author": "Paul Rand"
+  "text": "Good design is good business.",
+  "author": "Thomas J. Watson Jr."
 };
 
 const NOW = [
@@ -37,54 +37,28 @@ const NOW = [
 
 const NEWS = [
   {
-    "topic": "Startups & Indian startups",
-    "stories": [
-      {
-        "title": "Anthropic hits Nasdaq exchanges at $111, 33% above IPO price",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/19/anthropic-hits-nasdaq-exchanges-at-110-27-above-ipo-price",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/anthropic-opening-Getty.jpg",
-        "why": "Shares opened well above the $83 IPO price, which itself was priced above the $70–78 range."
-      },
-      {
-        "title": "Physical AI startup Humyn Labs raises $47 Mn in equity and debt",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/news/physical-ai-startup-humyn-labs-raises-47-mn-in-equity-and-debt-12820886",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/18/humyn-labs-2026-11-18-18-09-02.png",
-        "why": "Accel-led Series A ($26M equity, $21M debt) for a Bengaluru startup building robotics training data."
-      },
-      {
-        "title": "Disseqt AI raises $8 Mn led by Gresham House Ventures, Rahul Dravid joins round",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/disseqt-ai-raises-8-mn-led-by-gresham-house-ventures-rahul-dravid-joins-round-12822900",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/19/disseqt-2026-11-19-13-49-33.png",
-        "why": "Pre-Series A for an AI governance startup, with angels from OpenAI, Salesforce and Meta."
-      }
-    ]
-  },
-  {
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Alex Marquez shines to top Practice on return, Martin scrapes into Q2",
+        "title": "Bezzecchi victorious as Marc Marquez crashes in dramatic Portugal Sprint",
         "source": "MotoGP",
-        "url": "https://www.motogp.com/en/news/2026/11/20/alex-marquez-shines-to-top-practice-on-return-martin-scrapes-into-q2/1186064",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/20/a15ed872-92c1-498b-8d8c-1aa51180415b/Report-MGP-PR-PT-TOP.jpg",
-        "why": "Back from surgery, Alex Marquez topped Friday at Portimão; title favourite Marc Marquez was sixth."
+        "url": "https://www.motogp.com/en/news/2026/11/21/bezzecchi-victorious-as-marc-marquez-crashes-in-dramatic-portugal-sprint/1186072",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/21/e3b98991-0a85-4a6b-9c06-6d71edc777f9/Report-MGP-SPR-PT-TOP.jpg",
+        "why": "Marquez crashed from third in the wet; Bezzecchi beat Raul Fernandez and Alex Marquez, pushing the title to Sunday."
       },
       {
-        "title": "New Bajaj Pulsar RS200 launched at Rs 1.98 lakh with USD forks, TFT and ride modes",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-bajaj-pulsar-rs200-launch-price-rs-1-98-lakh-usd-forks-tft-ride-modes-12561710.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-bajaj-pulsar-rs-200-launch-price-usd-forks-tft-display-29.jpg",
-        "why": "The updated RS200 adds USD forks, a 5-inch TFT, ride modes and traction control."
+        "title": "TVS expects scooters to account for half of total 2W sales within two years",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/industry/tvs-expects-scooters-to-account-for-half-of-total-2w-sales-within-two-years-441374",
+        "img": "https://asset.autocarindia.com/static/news/images/20261119_101512_a05898ae.jpeg",
+        "why": "Scooters hold 41% of India's two-wheeler market; TVS sees 45% next year and up to 50% in two years."
       },
       {
-        "title": "Harley-Davidson Sprint 440 launched in Japan at JPY 900K",
+        "title": "Royal Enfield 10 Year Warranty For UK At No Extra Cost – Will India Get It?",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/harley-sprint-440-launch-price-jpy-900k-rs-5-26-l-100-buyback-12561634.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/harley-sprint-440-launch-in-japan-cover.jpg",
-        "why": "Built on the Hero-developed X440 platform; US sales follow in spring 2027, India expected in 2027."
+        "url": "https://www.rushlane.com/royal-enfield-10-year-warranty-for-uk-at-no-extra-cost-will-india-get-it-12561758.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/09/new-royal-enfield-classic-350-white-colour-launch-price-6.jpg",
+        "why": "Each annual dealer service extends UK cover up to 10 years or 70,000 miles; India stays at 3 years."
       }
     ]
   },
@@ -92,25 +66,51 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "BYD crosses 20,000-unit sales milestone in India",
+        "title": "Mahindra Scorpio outsells Hyundai Creta between Apr-Oct 2026",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/byd-crosses-20000-unit-sales-milestone-in-india-441387",
-        "img": "https://asset.autocarindia.com/static/news/images/20261120_112139_be62fe1d.png",
-        "why": "BYD doubled India sales from 10,000 in just over a year, using only imported cars."
+        "url": "https://www.autocarindia.com/industry/mahindra-scorpio-outsells-hyundai-creta-between-apr-oct-2026-441367",
+        "img": "https://asset.autocarindia.com/static/news/images/20261118_112558_7abb3533.jpg",
+        "why": "Scorpio sold 1,12,841 units, up 10%, against the Creta's 1,07,682, down 9%."
       },
       {
-        "title": "New Honda Avancier SUV debuts brand's next-gen hybrid system",
+        "title": "Volkswagen ID. Polo GTI Clubsport Concept unveiled",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/new-honda-avancier-suv-debuts-brands-next-gen-hybrid-system-441389",
-        "img": "https://asset.autocarindia.com/static/news/images/20261120_113714_fadff451.jpg",
-        "why": "The second-gen three-row Avancier is the first Honda on its next-gen hybrid platform, with dual-motor AWD."
+        "url": "https://www.autocarindia.com/car-news/volkswagen-id-polo-gti-clubsport-concept-unveiled-441391",
+        "img": "https://asset.autocarindia.com/static/news/images/20261120_132043_53c90b82.jpg",
+        "why": "A two-door electric hot hatch concept with 367hp and 0-100kph in 4.7s; production not confirmed."
       },
       {
-        "title": "Range Rover GT EV debut confirmed for early 2027",
+        "title": "SCOOP: MG Windsor facelift to get larger 61kWh battery pack",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/range-rover-gt-ev-launch-confirmed-for-early-2027-441383",
-        "img": "https://asset.autocarindia.com/static/news/images/20261120_072921_abd928d0.jpg",
-        "why": "JLR's low-slung coupe SUV arrives electric-first, likely on its 800V EMA platform; a hybrid follows."
+        "url": "https://www.autocarindia.com/car-news/scoop-mg-windsor-facelift-to-get-larger-61kwh-battery-pack-441375",
+        "img": "https://asset.autocarindia.com/static/news/images/20261119_112234_9c32ab68.jpg",
+        "why": "MG's best-seller, past 80,000 sales in 2026, is expected to get a 61kWh pack in 2027."
+      }
+    ]
+  },
+  {
+    "topic": "Startups & Indian startups",
+    "stories": [
+      {
+        "title": "Bending Spoons buys Mailchimp for $3.68B",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/20/bending-spoons-buys-mailchimp-for-3-68-billion/",
+        "img": "https://techcrunch.com/wp-content/uploads/2024/11/GettyImages-2150300479.jpg",
+        "why": "Intuit sells Mailchimp for well under the roughly $12B it paid in 2021, to the buyer of Airtable and Miro."
+      },
+      {
+        "title": "Urban Company Raises ₹2,500 Cr Via QIP, Draws Bids Worth Over ₹15,000 Cr",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/urban-company-raises-%e2%82%b92500-cr-via-qip-draws-bids-worth-over-%e2%82%b915000-cr/",
+        "img": "https://asset.inc42.com/2026/07/Urban-company-social-1.jpg",
+        "why": "Bids topped six times the issue at ₹156 a share; ₹600 Cr is earmarked for InstaHelp."
+      },
+      {
+        "title": "From Dreamteam To Boba Bhai — Indian Startups Raised Over $291 Mn This Week",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/from-dreamteam-to-boba-bhai-indian-startups-raised-over-291-mn-this-week/",
+        "img": "https://asset.inc42.com/2026/11/IMG_7682.jpg",
+        "why": "$291.3 Mn across 22 deals, up sharply week on week; AI led with $114 Mn."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Daniel Ek backs AI researcher's fusion power startup. Here's what they're building.",
+        "title": "California AG subpoenas Nvidia over worries about Huang's ties with China",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/20/daniel-ek-backs-ai-researchers-fusion-power-startup-heres-what-theyre-building/",
-        "img": "https://techcrunch.com/wp-content/uploads/2023/07/GettyImages-1500013882.jpg",
-        "why": "Europa Fusion, a UK pulsed-power fusion startup led by an ex-DeepMind researcher, gets Ek's backing."
+        "url": "https://techcrunch.com/2026/11/20/california-ag-subpoenas-nvidia-over-worries-about-huangs-ties-with-china/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/05/nemoclaw.jpg",
+        "why": "The probe asks whether Nvidia GPUs or confidential information reached China and whether investors were misled."
       },
       {
-        "title": "Chips can survive the space environment. Can their financing?",
+        "title": "Elon Musk says SpaceX has a plan to eliminate cell phone dead zones",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/20/chips-can-survive-the-space-environment-can-their-financing/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/06/SpaceXAIsatrender.jpg",
-        "why": "Lenders balk at chip-backed loans for orbital data centres, since chips in space can't be repossessed."
+        "url": "https://techcrunch.com/2026/11/19/elon-musk-says-spacex-has-a-plan-to-eliminate-cell-phone-dead-zones/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/starlink.jpg",
+        "why": "SpaceX has designed a rooftop micro cell tower for 2027; Direct-to-Cell V2 satellites launch next year."
       },
       {
-        "title": "Centre's Antariksh VC Fund leads SatSure's ₹200 Cr Series B round",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/centres-antariksh-vc-fund-leads-satsures-%E2%82%B9200-cr-series-b-round",
-        "img": "https://asset.inc42.com/2025/06/shutterstock_363654452si-satellite-1.jpg",
-        "why": "The state-backed fund leads a ₹60 Cr first tranche for SatSure's optical payloads and geospatial AI."
+        "title": "Indian chip startup Bharat Semi lands $24M seed round as it eyes global AI sensor market",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/15/indian-chip-startup-bharat-semi-lands-24m-seed-round-as-it-eyes-global-ai-sensor-market/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/bharat-semi-co-founders-vinayak-dalmia-vrinda-kapoor.jpg",
+        "why": "Single-chip AI image sensors that could cut system costs by at least 70%."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "India's core sector growth hits 31-month high of 10.9% in October",
+        "title": "Noel Tata's salvo sets stage for stormy Tata Sons board meet next week",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/economy/news/core-sectors-growth-rises-to-10-9-in-oct-coal-iron-ore-key-drivers-126112000852_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/11/thumb/fitandfill/1200X628/1791736672-9469.jpg",
-        "why": "First double-digit growth in the 2022-23 series; electricity up 21.6% and iron ore up 26.4%."
+        "url": "https://www.business-standard.com/companies/news/noel-tata-tata-sons-board-recording-chandrasekaran-reappointment-listing-126112100507_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/18/thumb/fitandfill/1200X628/1789710821-7124.jpg",
+        "why": "Noel Tata seeks board recordings and a pause on listing, and disputes Chandrasekaran's reappointment, before the 26 Nov meet."
       },
       {
-        "title": "India's forex reserves fall $14.21 bn to $705.34 bn on revaluation",
+        "title": "Markets gain 2.6% on FPI inflows, rupee rally and cooling crude oil prices",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/economy/news/india-s-forex-reserves-fall-14-21-bn-to-705-34-bn-on-revaluation-126112001283_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2020-02/07/thumb/fitandfill/1200X628/1581091561-2435.png",
-        "why": "Gold holdings dropped $6.18 billion and foreign currency assets $7.90 billion in the week."
+        "url": "https://www.business-standard.com/markets/news/markets-gain-2-6-on-fpi-inflows-rupee-rally-and-cooling-crude-oil-prices-126112000973_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/20/thumb/fitandfill/1200X628/1795195027-2904.jpg",
+        "why": "Nifty rose 2.61% for the week to 25,800.60 as FIIs net bought Rs 32,647 crore."
       },
       {
-        "title": "Paytm, Pine Labs, MobiKwik shares tank over 7% amid reports of further UPI MDR delay",
-        "source": "Entrackr",
-        "url": "https://entrackr.com/all-article/paytm-pine-labs-mobikwik-shares-tank-over-7-amid-reports-of-further-upi-mdr-delay-12823081",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/19/mdr-2026-11-19-14-53-40.png",
-        "why": "Reports say UPI merchant fees may slip past the 2027 assembly elections, hitting fintech stocks."
+        "title": "CEA cautions against excessive financialisation in India's growth journey",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/economy/news/cea-cautions-against-excessive-financialisation-in-india-s-growth-journey-126112001093_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-02/12/thumb/fitandfill/1200X628/1770920423-6203.jpg",
+        "why": "Nageswaran says markets should fund productive investment; equity market cap is about 130% of GDP."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Sat 21 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Sun 22 Nov",
     "items": [
@@ -233,32 +220,45 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Thu 26 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
 const RACING = {
   "items": [
     {
-      "when": "20–22 Nov, race Sun 6:30 PM IST",
+      "when": "20–22 Nov, race today",
       "what": "MotoGP: Portuguese GP, Portimão"
     },
     {
       "when": "27–29 Nov",
-      "what": "MotoGP: Valencia GP, season finale"
+      "what": "MotoGP: Valencian GP, season finale"
     },
     {
       "when": "19–21 Feb 2027",
       "what": "WorldSBK: Australian Round, Phillip Island (provisional)"
     },
     {
-      "when": "19–21 Mar 2027",
-      "what": "WorldSBK: Portuguese Round, Portimão (provisional)"
+      "when": "5–7 Mar 2027",
+      "what": "MotoGP: Thailand GP, Buriram"
     }
   ],
-  "note": "Portimão is match point for Marc Marquez. Friday: Alex Marquez fastest on his return, Marc sixth, Martin scraped into Q2. Sprint today 8:30 PM IST, race Sunday 6:30 PM IST.",
+  "note": "Saturday: Bezzecchi took pole with a lap record and won the Sprint; Marc Marquez crashed from third. He leads Martin by 55 and Bezzecchi by 62, so the title can still be settled in today's race.",
   "source": {
-    "name": "motogp.com: Portuguese GP Friday report",
-    "url": "https://www.motogp.com/en/news/2026/11/20/alex-marquez-shines-to-top-practice-on-return-martin-scrapes-into-q2/1186064"
+    "name": "motogp.com: Portugal Sprint report",
+    "url": "https://www.motogp.com/en/news/2026/11/21/bezzecchi-victorious-as-marc-marquez-crashes-in-dramatic-portugal-sprint/1186072"
   }
 };
 
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Drone Logic",
-    "artist": "Daniel Avery",
-    "id": "6cjUtb7XopHEeQKBjj0rER",
-    "why": "Hypnotic, acid-tinged title track from the London producer's 2013 debut, close to the Overmono and Joy Orbison in your plays."
+    "title": "Made To Stray",
+    "artist": "Mount Kimbie",
+    "id": "0BVdNCqYq6offkjRGKVRDB",
+    "why": "The London duo's driving 2013 single from Cold Spring Fault Less Youth, a step from the Joy Orbison and Overmono in your plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Vibes",
@@ -286,109 +286,109 @@ const MUSIC = {
     "date": "2026-11-16"
   },
   "lately": [
+    "Aphex Twin",
     "Floating Points",
-    "Fred again..",
-    "Overmono",
-    "Max Cooper",
-    "Pional",
-    "Joy Orbison"
+    "Joy Orbison",
+    "Bladee",
+    "Ecco2k",
+    "Overmono"
   ]
 };
 
 const LEARN = {
-  "term": "Dieter Rams' ten principles",
-  "body": "In the late 1970s Dieter Rams, then head of design at Braun, asked himself whether his own work was good design and answered with ten principles: good design is innovative, useful, aesthetic, understandable, unobtrusive, honest, long-lasting, thorough down to the last detail, environmentally friendly, and involves as little design as possible. They are ordered by use, not by look: aesthetics sits third, after usefulness, and only counts because objects we use daily shape our wellbeing. The popular reading as a minimalist style guide is overstated, since \"less, but better\" means removing whatever does not serve the user, not making things flat, white or featureless. Many of the principles echo the systematic, function-led thinking of Hans Gugelot and the Ulm school, who shaped Braun's approach before Rams. Rams himself later criticised a throwaway consumer culture, which is why long-lasting and environmentally friendly sit in the list beside the formal virtues.",
+  "term": "Wabi-sabi and designing for patina",
+  "body": "Wabi-sabi joins two older Japanese aesthetic ideas: wabi, the quiet beauty of rustic simplicity, and sabi, the beauty that comes with age, wear and patina, both shaped by the tea ceremony tradition associated with Sen no Rikyū. Leonard Koren's 1994 book Wabi-Sabi for Artists, Designers, Poets and Philosophers introduced it to Western designers as a counterpoint to the glossy perfection of modernism. For a product designer its useful lesson is about time: choose materials and finishes that age gracefully, such as brass, leather, oiled wood or bead-blasted metal, rather than high-gloss plastics that look ruined by the first scratch. The popular version is overstated: wabi-sabi is not a rustic style, and factory-applied fake distress contradicts it, because the patina should come honestly from use. It also sits close to repair culture and long product life, which links it to Rams' idea that good design is long-lasting.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Useful",
-        "note": "The product must serve its purpose first"
+        "label": "Wabi",
+        "note": "Quiet, rustic simplicity"
       },
       {
-        "label": "Legible",
-        "note": "Form makes the product self-explanatory"
+        "label": "Sabi",
+        "note": "Beauty that comes with age and wear"
       },
       {
-        "label": "Honest",
-        "note": "Promises nothing it cannot deliver"
-      },
-      {
-        "label": "Less",
-        "note": "As little design as possible",
+        "label": "Material",
+        "note": "Pick finishes that age gracefully",
         "hl": true
+      },
+      {
+        "label": "Use",
+        "note": "Patina earned by use, never faked"
       }
     ],
-    "caption": "Restraint in service of use, not a visual style."
+    "caption": "Design for how it looks in ten years, not on day one."
   },
   "source": {
-    "name": "Vitsœ: Dieter Rams, ten principles for good design",
-    "url": "https://www.vitsoe.com/gb/about/good-design"
+    "name": "Stanford Encyclopedia of Philosophy: Japanese Aesthetics",
+    "url": "https://plato.stanford.edu/entries/japanese-aesthetics/"
   },
   "past": [
+    "Dieter Rams' ten principles",
     "Form follows function: what Sullivan meant",
     "Snap-fit cantilever design",
     "Uniform wall thickness and sink marks",
-    "Undercuts, shutoffs and side actions",
-    "Le Corbusier's Modulor"
+    "Undercuts, shutoffs and side actions"
   ]
 };
 
 const DESIGN = {
-  "name": "Olivetti Lettera 22 portable typewriter",
-  "designer": "Marcello Nizzoli",
-  "year": "1950",
-  "why": "Nizzoli wrapped a full typing mechanism in a low, enamelled metal shell with soft radii and a flush keyboard, turning an office machine into a compact, approachable personal tool. It won the first Compasso d'Oro in 1954 and remains a lesson in how a well-proportioned enclosure can make complex mechanics feel simple.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Olivetti_Lettera_22_by_LjL.jpeg?width=1200",
+  "name": "Thonet No. 14 chair",
+  "designer": "Michael Thonet",
+  "year": "1859",
+  "why": "Steam-bent solid beech reduced the chair to a handful of parts held by screws, so it could be shipped flat and assembled where it was sold. It is an early lesson in designing form, manufacturing process and logistics as one system, and it is still in production.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Thonet_Chair_No._14.JPG?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Olivetti_Lettera_22_by_LjL.jpeg"
+    "url": "https://commons.wikimedia.org/wiki/File:Thonet_Chair_No._14.JPG"
   }
 };
 
 const FUNDING = {
-  "summary": "$31.3M across 12 Indian startups, 9–14 Nov, down nearly 88% from $258.1M the week before.",
+  "summary": "$290M across 23 Indian startup deals, 16–21 Nov, up nearly 826% from $31.3M the week before.",
   "rounds": [
     {
-      "company": "Greenjoules",
-      "amount": "Rs 150 crore",
-      "stage": "Series B",
-      "sector": "Biofuels"
-    },
-    {
-      "company": "Olyv",
-      "amount": "Rs 57.62 crore",
-      "stage": "Series C",
-      "sector": "Lending"
-    },
-    {
-      "company": "Desible.ai",
-      "amount": "Rs 32 crore",
+      "company": "Dreamteam",
+      "amount": "$53 million",
       "stage": "",
-      "sector": "AI"
+      "sector": "AI CRM"
     },
     {
-      "company": "Froncort.AI",
-      "amount": "$2.3 million",
-      "stage": "",
-      "sector": "Health AI"
+      "company": "Nexon Omniverse",
+      "amount": "Rs 485 crore",
+      "stage": "Series E",
+      "sector": "Fashion retail"
     },
     {
-      "company": "mistEO",
-      "amount": "Rs 18 crore",
+      "company": "Humyn Labs",
+      "amount": "$47 million",
+      "stage": "Series A",
+      "sector": "Physical AI"
+    },
+    {
+      "company": "Bharat Semi",
+      "amount": "$24 million",
       "stage": "Seed",
-      "sector": "Climate data"
+      "sector": "Semiconductors"
     },
     {
-      "company": "Rigi",
-      "amount": "Rs 10 crore",
+      "company": "Boba Bhai",
+      "amount": "$18 million",
       "stage": "",
-      "sector": "Creators"
+      "sector": "Food and beverage"
+    },
+    {
+      "company": "Henfruit",
+      "amount": "$15 million",
+      "stage": "Series A",
+      "sector": "Branded eggs"
     }
   ],
   "source": {
     "name": "Entrackr weekly funding report",
-    "url": "https://entrackr.com/report/funding-and-acquisitions-in-indian-startups-this-week-nov-09-nov-14-12808553"
+    "url": "https://entrackr.com/report/weekly-funding-report-weekly-funding-report/funding-and-acquisitions-in-indian-startups-this-week-nov-16-nov-21-12829487"
   }
 };
 
@@ -406,8 +406,8 @@ const LAUNCHES = {
     },
     {
       "model": "Royal Enfield Himalayan 750",
-      "when": "Nov 2026",
-      "price": "₹5.25–6 lakh"
+      "when": "Late Nov 2026",
+      "price": "₹4.5–6 lakh"
     },
     {
       "model": "Ducati DesertX V2",
@@ -420,8 +420,8 @@ const LAUNCHES = {
       "price": "₹10.7–19.2 lakh (current)"
     },
     {
-      "model": "Hyundai Compact EV",
-      "when": "Late 2026",
+      "model": "Hyundai Ioniq P (compact EV)",
+      "when": "Jan 2027",
       "price": "₹9.8–13 lakh"
     }
   ],
