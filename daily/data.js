@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "23 Nov 2026, 6:58 AM IST";
+const UPDATED = "24 Nov 2026, 6:53 AM IST";
 
 const QUOTE = {
-  "text": "Never delegate understanding.",
-  "author": "Charles Eames"
+  "text": "Design is thinking made visual.",
+  "author": "Saul Bass"
 };
 
 const NOW = [
@@ -37,28 +37,54 @@ const NOW = [
 
 const NEWS = [
   {
+    "topic": "Deep tech",
+    "stories": [
+      {
+        "title": "Elon Musk and others rejoice as Jensen Huang is reinstated at Nvidia amid scandal",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/23/elon-musk-and-others-rejoice-as-jensen-huang-is-reinstated-at-nvidia-amid-scandal/",
+        "img": "https://techcrunch.com/wp-content/uploads/2025/08/GettyImages-2227140868.jpg",
+        "why": "Huang is back as Nvidia CEO and president after a 200,000-signature open letter; he testifies to the Senate on 3 Dec."
+      },
+      {
+        "title": "Amazon snaps up Decart's AI optimization tech for $7.5B as it prepares to sell Trainium chips",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/23/amazon-snaps-up-decarts-ai-optimization-tech-for-7-5b-as-it-prepares-to-sell-trainium-chips/",
+        "img": "https://techcrunch.com/wp-content/uploads/2024/12/Decart-Founders-Dean-Leitersdorf-CEO-and-Moshe-Shalev-CPO.jpg",
+        "why": "Amazon is paying $7.5 billion, per Bloomberg, for Decart's optimization stack and team as it readies Trainium chip sales."
+      },
+      {
+        "title": "Megaspeed, the company at the center of the Jensen Huang scandal, appears headed for a U.S. blacklist",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/23/megaspeed-the-company-at-the-center-of-the-jensen-huang-scandal-appears-headed-for-a-u-s-blacklist/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/GettyImages-2303986898.jpg",
+        "why": "Per Semafor, Megaspeed will join the Commerce Entity List after a criminal probe; the company denies wrongdoing."
+      }
+    ]
+  },
+  {
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "MotoGP™ highlights: The key moments from the 2026 Portuguese Grand Prix",
+        "title": "Talking Points: \"This is the best Marc\"",
         "source": "MotoGP",
-        "url": "https://www.motogp.com/en/videos/2026/11/22/motogp-highlights-the-key-moments-from-the-2026-portuguese-grand-prix/1267534",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/22/fa672294-7b98-4ce4-919a-cb484b4e8243/_DS_4337.jpg",
-        "why": "Bezzecchi leads an Aprilia sweep in Portugal; Marc Marquez's eighth place seals his record-equalling eighth premier-class title."
+        "url": "https://www.motogp.com/en/news/2026/11/23/talking-points-this-is-the-best-marc/1267832",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/23/8abc6f53-acdc-4d5d-a66e-b860073094b7/_DS_5086-1-.jpg",
+        "why": "Marquez overturned a 102-point deficit for his eighth crown; Valencia closes the season this weekend."
       },
       {
-        "title": "New Bajaj Pulsar RS200 Launch Price Rs 1.98 Lakh – USD Forks, TFT, Ride Modes",
+        "title": "New Honda Rebel 500 Launch Price Rs 4.5 Lakh, E-Clutch Rs 40k More",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-bajaj-pulsar-rs200-launch-price-rs-1-98-lakh-usd-forks-tft-ride-modes-12561710.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-bajaj-pulsar-rs-200-launch-price-usd-forks-tft-display-29.jpg",
-        "why": "The updated RS200 gets 25.5 PS, ride modes, traction control, USD forks and a 5-inch TFT."
+        "url": "https://www.rushlane.com/new-honda-rebel-500-launch-price-rs-4-5-lakh-e-clutch-rs-40k-more-12561599.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-honda-rebel-500-launch-india-3.jpg",
+        "why": "Down from Rs 5.12 lakh as an import; the 471cc twin makes 46 bhp, with an E-Clutch option at Rs 4.9 lakh."
       },
       {
-        "title": "Harley Sprint 440 Launch Price JPY 900K (Rs 5.25 L), 100% Buyback",
+        "title": "Hero Dispatched 15k Units of Flex Fuel E85 Bikes – Splendor+, HF Deluxe",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/harley-sprint-440-launch-price-jpy-900k-rs-5-26-l-100-buyback-12561634.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/harley-sprint-440-launch-in-japan-cover.jpg",
-        "why": "Harley's 440cc single launches in Japan with a one-year full buyback; a US launch is planned for spring 2027."
+        "url": "https://www.rushlane.com/hero-dispatched-15k-units-of-flex-fuel-e85-bikes-splendor-hf-deluxe-12561591.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/06/hero-splendor-flex-fuel-discount-offer-1.jpeg",
+        "why": "About 15k E85 flex-fuel commuters shipped since June, per Hero's Q2 FY27 call; Splendor+ Flex starts at Rs 82,710."
       }
     ]
   },
@@ -66,25 +92,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "BYD Ti7 Faces EU Ban Over Defender Design – Tata Owned JLR Secures Interim Court Order",
+        "title": "4.5m to 5m SUV Sales Oct 2026 – Scorpio, XUV7XO, XEV 9S, Fortuner, Harrier, Safari, Sorento, VF7, Tomahawk",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/byd-ti7-faces-eu-ban-over-defender-tata-owned-jlr-court-order-12561775.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/byd-jlr-defender-court-case-ti7-2.jpg",
-        "why": "A Hague court bars BYD Ti7 sales in the EU over Defender design infringement; BYD weighs legal options."
+        "url": "https://www.rushlane.com/4-5m-to-5m-suv-sales-oct-2026-scorpio-xuv7xo-xev-9s-fortuner-12561763.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/09/mahindra-xuv-7xo-sales-new-month.jpg",
+        "why": "The segment hit 53,618 units in October, up 24.96%; Scorpio led with 19,353."
       },
       {
-        "title": "BYD India Doubles Deliveries in Just Over a Year",
+        "title": "New Hyundai 7 Seater Hybrid SUV Spied – To Rival Mahindra XUV7XO",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/byd-india-20000-deliveries-sales-12561692.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/BYD-Sealion-7.jpeg",
-        "why": "BYD India passes 20,000 deliveries, up from 10,000 in September 2025; the ATTO 3 tops 9,000 units."
+        "url": "https://www.rushlane.com/new-hyundai-7-seater-hybrid-suv-spied-to-rival-mahindra-xuv7xo-12561746.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/New-Hyundai-7-Seater-Hybrid-SUV-Spied-2.jpg",
+        "why": "Codenamed Ni1i, the hybrid three-row SUV is reported for late 2027 or 2028; Hyundai hasn't confirmed timing."
       },
       {
-        "title": "New JSW Motors Combat SUV First Official Teaser Out Ahead Of Debut",
+        "title": "BYD Ti 9 SUV Launched With Folding Steering Wheel – 1,630 Km Claimed Range",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-jsw-motors-combat-suv-first-official-teaser-out-ahead-of-debut-12561675.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/jsw-combat-teaser-launch-2.jpg",
-        "why": "JSW Motors teases the Combat SUV before its 3 December debut; expected to be a plug-in hybrid."
+        "url": "https://www.rushlane.com/byd-ti-9-suv-launched-with-folding-steering-wheel-12561661.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/byd-suv-foldable-steering-launch-price.jpg",
+        "why": "A 400 kW plug-in hybrid with a folding wheel and 1,630 km claimed range, from 279,900 yuan in China."
       }
     ]
   },
@@ -92,51 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Fintech Stocks Put MDR Dreams On Hold",
+        "title": "Google expands support for Indian startups with AI-focused Momentum push",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/technology/tech-reviews/google-expands-support-for-indian-startups-with-ai-focused-momentum-push-126112301052_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/30/thumb/fitandfill/1200X628/1793331345-4633.jpg",
+        "why": "Momentum bundles AI models, cloud and engineering help; SpotDraft cut latency 70% and costs 80% with Gemini."
+      },
+      {
+        "title": "[Update] WazirX, ZebPay Among Platforms Impacted By MoEngage Data Breach",
         "source": "Inc42",
-        "url": "https://inc42.com/features/fintech-stocks-put-mdr-dreams-on-hold/",
-        "img": "https://asset.inc42.com/2026/11/MDR-on-fintech-stocks_Markets-soc-2.jpg",
-        "why": "A proposed 0.4% UPI MDR may slip past 2027; Paytm fell up to 10.8% and Pine Labs 9.4% in a week."
+        "url": "https://inc42.com/buzz/now-moengage-suffers-cybersecurity-attack-due-to-compromised-third-party-vendor/",
+        "img": "https://asset.inc42.com/2026/11/Cyberattack-social.png",
+        "why": "A compromised vendor hit MoEngage; it says under 1% of accounts were affected, some locked out for nearly a week."
       },
       {
-        "title": "Startup sues Apple in India over tap-to-share contacts feature",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/20/startup-sues-apple-in-india-over-tap-to-share-contacts-feature/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/apple-namedrop.jpg",
-        "why": "GG Technologies seeks ₹15 billion and an injunction in Bombay HC, alleging NameDrop infringes its patent."
-      },
-      {
-        "title": "Atomberg & Voltas Execute JV Agreement To Build AC Compressors",
+        "title": "Scaler Cofounder Anshuman Singh Unveils AI Training Data Venture Arcfront",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/atomberg-voltas-execute-jv-agreement-to-build-ac-compressors/",
-        "img": "https://asset.inc42.com/2026/11/soc-22.jpg",
-        "why": "Voltas takes 50% of Atomberg Airtech; each side commits up to ₹100 crore to make AC compressors."
-      }
-    ]
-  },
-  {
-    "topic": "Deep tech",
-    "stories": [
-      {
-        "title": "Sarvam's Token Factory Raises India's AI Inference Stakes",
-        "source": "Inc42",
-        "url": "https://inc42.com/features/sarvams-token-factory-raises-indias-ai-inference-stakes/",
-        "img": "https://asset.inc42.com/2026/11/Sarvam-social-1.jpg",
-        "why": "Sarvam's rupee-billed inference platform serves over 450 billion tokens a day."
-      },
-      {
-        "title": "A tale of two Nvidias",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/21/a-tale-of-two-nvidias/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/01/GettyImages-2256813240.jpg",
-        "why": "Nvidia beat expectations yet its stock fell; interim CEO Kress says H200 sales to China will stop."
-      },
-      {
-        "title": "TechCrunch Mobility: A/B testing robots vs. humans",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/22/techcrunch-mobility-a-b-testing-robots-vs-humans/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/zoox-las-vegas-Getty.jpg",
-        "why": "Zoox robotaxis join Uber in Las Vegas; Tesla has 1,507 robotaxis registered in Texas to Waymo's 1,345."
+        "url": "https://inc42.com/buzz/scaler-cofounder-anshuman-singh-unveils-ai-training-data-venture-arcfront",
+        "img": "https://asset.inc42.com/2026/11/Untitled-Design-3.png",
+        "why": "Singh says four of the five frontier AI labs became customers in under a year."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Tata Trusts meet 'routine', ahead of likely faceoff at Tata Sons board",
+        "title": "Tata Steel divests tubes biz: Will it unlock value? What analysts say",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/tata-trusts-meet-routine-ahead-of-likely-faceoff-at-tata-sons-board-126112000966_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-12/23/thumb/fitandfill/1200X628/1766503600-7949.jpg",
-        "why": "SDTT skipped the Tata Sons listing question; the 26 Nov Tata Sons board is expected to take it up."
+        "url": "https://business-standard.com/markets/news/tata-steel-share-price-tata-steel-divests-tubes-biz-will-it-unlock-value-what-analysts-say-126112300236_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-04/11/thumb/featurecrop/1200X628/1744395575-361.jpg",
+        "why": "The tubes and Tata Steel Colors sale is worth up to ₹28,000 crore; the stock fell 6.04% to ₹167."
       },
       {
-        "title": "Adani Energy to supply 2,500 MW renewable energy to West Bengal discom",
+        "title": "Stop publishing grey mkt premiums for IPOs: Sebi to market players",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/adani-energy-to-supply-2-500-mw-renewable-energy-to-west-bengal-discom-126112100401_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-05/23/thumb/fitandfill/1200X628/1779551068-7425.jpg",
-        "why": "1,750 MW of round-the-clock renewable supply for 25 years, plus a 750 MW green-shoe option."
+        "url": "https://www.business-standard.com/markets/news/sebi-asks-market-players-to-stop-publishing-grey-market-premiums-for-ipos-126112301145_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/22/thumb/fitandfill/1200X628/1790048651-6838.jpg",
+        "why": "Sebi told all registered intermediaries to stop publishing grey market premium figures for upcoming IPOs."
       },
       {
-        "title": "VinFast To Build Dedicated E-Scooter Assembly Line At TN Plant",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/vinfast-to-build-dedicated-e-scooter-assembly-line-at-tn-plant/",
-        "img": "https://asset.inc42.com/2026/11/Tapan-Ghosh-Vinfast-Asia-CEO-SM.png",
-        "why": "The Thoothukudi line can make up to 1 million e-scooters a year; first units due early next year."
+        "title": "Nasscom seeks AI scheme, easier Esop tax rules in Union Budget 2027-28",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/economy/news/nasscom-seeks-ai-transformation-scheme-esop-tax-relief-in-budget-2027-126112301138_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-01/06/thumb/fitandfill/1200X628/1736146426-3647.jpg",
+        "why": "Nasscom wants the salary cap for job-linked tax incentives raised from ₹25,000 to ₹1 lakh a month."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Mon 23 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Tue 24 Nov",
     "items": [
@@ -223,6 +210,19 @@ const CALENDAR = [
   },
   {
     "day": "Fri 27 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
+  },
+  {
+    "day": "Sat 28 Nov",
     "items": [
       {
         "time": "9:00 PM",
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Halcyon & On - Jon Hopkins Remix",
-    "artist": "Orbital, Jon Hopkins",
-    "id": "3dsnJC7f8lA4NxXsb8LMOr",
-    "why": "Jon Hopkins reworks Orbital's early-90s classic for the 30 Something remix album, between the Global Communication ambience and the techno in your plays."
+    "title": "After The Rain",
+    "artist": "Overmono",
+    "id": "0rclr5nd7iwF4rJTYRLlJq",
+    "why": "From Overmono's Pure Devotion: UK breakbeat-house that sits between the Bicep and Vegyn in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Explorations",
@@ -286,63 +286,59 @@ const MUSIC = {
     "date": "2026-11-23"
   },
   "lately": [
-    "Global Communication",
-    "Aphex Twin",
-    "DjRUM",
+    "Vegyn",
     "Kaikobad",
-    "Alan Fitzpatrick",
-    "Floating Points"
+    "Tom VR",
+    "Placid Angles",
+    "Max Cooper",
+    "Yagya"
   ]
 };
 
 const LEARN = {
-  "term": "The Bauhaus: what it actually taught",
-  "body": "The Bauhaus (1919–1933, in Weimar, Dessau and finally Berlin) was founded by Walter Gropius to reunite art and craft, and from 1923 its slogan became 'art and technology, a new unity'. Every student first took the Vorkurs, a preliminary course begun by Johannes Itten and later run by László Moholy-Nagy and Josef Albers, which trained an eye for material, texture, colour and form through hands-on exercises before any specialisation. Students then worked in workshops such as metal, wood and weaving, each led jointly by a form master and a craft master, and the best pieces were developed as prototypes for industry, such as the Wagenfeld lamp and Marianne Brandt's metalware. The popular idea of a single 'Bauhaus style' of primary colours and sans-serif type is overstated: the work changed a lot under its three directors, Gropius, Hannes Meyer and Mies van der Rohe, and the aim was a teaching method more than a look. For product designers its lasting legacy is learning by making and designing for serial production, which the Ulm school later pushed toward a more systematic, science-based method.",
+  "term": "Poka-yoke: designing out mistakes",
+  "body": "Poka-yoke, Japanese for 'mistake-proofing', was formalised by Shigeo Shingo within the Toyota Production System in the 1960s; he renamed it from baka-yoke ('fool-proofing') because the point is that errors come from the design of the task, not from foolish people. Shingo split devices into control types, which physically stop a wrong action, and warning types, which only signal it, and into contact, fixed-value and motion-step methods depending on what they sense. For a product designer this becomes geometry: keyed or asymmetric connectors, locating pins and datum features that allow only one assembly orientation, a chamfered corner on a SIM tray, a fuel nozzle that will not fit the wrong filler. The strongest move is to remove the decision altogether, as a reversible plug like USB-C does, rather than to key it, and a warning beep or label is the weakest form. The idea is often overstated as making products 'idiot-proof': it targets predictable slips during assembly and use, not misuse or deliberate workarounds, and every added key or interlock has a cost in tooling, parts and user friction.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Vorkurs",
-        "note": "Material, colour and form, by hand"
-      },
-      {
-        "label": "Workshop",
-        "note": "Form master plus craft master"
-      },
-      {
-        "label": "Prototype",
-        "note": "Models developed for industry",
+        "label": "Eliminate",
+        "note": "Remove the choice: a reversible plug",
         "hl": true
       },
       {
-        "label": "Industry",
-        "note": "Art and technology, a new unity"
+        "label": "Control",
+        "note": "Keyed shapes block wrong assembly"
+      },
+      {
+        "label": "Warn",
+        "note": "Click, light or beep flags the slip"
       }
     ],
-    "caption": "Learn by making, then design for the factory."
+    "caption": "Design out the mistake before you warn about it."
   },
   "source": {
-    "name": "Britannica: Bauhaus",
-    "url": "https://www.britannica.com/topic/Bauhaus"
+    "name": "Wikipedia: Poka-yoke",
+    "url": "https://en.wikipedia.org/wiki/Poka-yoke"
   },
   "past": [
+    "The Bauhaus: what it actually taught",
     "Wabi-sabi and designing for patina",
     "Dieter Rams' ten principles",
     "Form follows function: what Sullivan meant",
-    "Snap-fit cantilever design",
-    "Uniform wall thickness and sink marks"
+    "Snap-fit cantilever design"
   ]
 };
 
 const DESIGN = {
-  "name": "Fiat 500 (Nuova 500)",
-  "designer": "Dante Giacosa",
-  "year": "1957",
-  "why": "Giacosa packed four seats into a car under three metres long by putting a small air-cooled twin in the rear and keeping every part as simple and cheap to make as possible. Its friendly, rounded shell came straight from that packaging, and it put postwar Italy on wheels.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Fiat_Nuova_500_prima_serie.jpg?width=1200",
+  "name": "Vitsœ 606 Universal Shelving System",
+  "designer": "Dieter Rams",
+  "year": "1960",
+  "why": "Rams designed it as a system rather than a piece of furniture: slim aluminium E-tracks fixed to the wall carry shelves, cabinets and tables that can be added, moved or taken away as needs change. It is still made by Vitsœ with parts compatible with the originals, a rare case of a product designed to be kept for decades.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/606-Universal-Shelving-System.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Fiat_Nuova_500_prima_serie.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:606-Universal-Shelving-System.jpg"
   }
 };
 
@@ -407,7 +403,7 @@ const LAUNCHES = {
     {
       "model": "Royal Enfield Himalayan 750",
       "when": "Late Nov 2026",
-      "price": "₹4.5–6 lakh"
+      "price": "₹5.25–6 lakh"
     },
     {
       "model": "Ducati DesertX V2",
@@ -430,3 +426,4 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
+
