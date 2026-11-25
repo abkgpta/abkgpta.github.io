@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "24 Nov 2026, 6:53 AM IST";
+const UPDATED = "25 Nov 2026, 6:53 AM IST";
 
 const QUOTE = {
-  "text": "Design is thinking made visual.",
-  "author": "Saul Bass"
+  "text": "Take your pleasure seriously.",
+  "author": "Charles Eames"
 };
 
 const NOW = [
@@ -37,28 +37,28 @@ const NOW = [
 
 const NEWS = [
   {
-    "topic": "Deep tech",
+    "topic": "Automotive",
     "stories": [
       {
-        "title": "Elon Musk and others rejoice as Jensen Huang is reinstated at Nvidia amid scandal",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/23/elon-musk-and-others-rejoice-as-jensen-huang-is-reinstated-at-nvidia-amid-scandal/",
-        "img": "https://techcrunch.com/wp-content/uploads/2025/08/GettyImages-2227140868.jpg",
-        "why": "Huang is back as Nvidia CEO and president after a 200,000-signature open letter; he testifies to the Senate on 3 Dec."
+        "title": "Festive Vehicle Retail 2026 Hits Record 55.25 Lakh – EVs Cross 5 Lakh",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/festive-vehicle-retail-2026-hits-record-55-25-lakh-evs-cross-5-lakh-12561822.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/02/mahindra-xuv-7xo-sales-new.jpeg",
+        "why": "FADA counts 55,25,490 vehicles in the 42-day festive window, up 2.21%; EV retail rose about 52.6% to 5,09,667."
       },
       {
-        "title": "Amazon snaps up Decart's AI optimization tech for $7.5B as it prepares to sell Trainium chips",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/23/amazon-snaps-up-decarts-ai-optimization-tech-for-7-5b-as-it-prepares-to-sell-trainium-chips/",
-        "img": "https://techcrunch.com/wp-content/uploads/2024/12/Decart-Founders-Dean-Leitersdorf-CEO-and-Moshe-Shalev-CPO.jpg",
-        "why": "Amazon is paying $7.5 billion, per Bloomberg, for Decart's optimization stack and team as it readies Trainium chip sales."
+        "title": "Tata Motors, Audi India raise vehicle prices following Maruti Suzuki's move",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/companies/news/tata-motors-audi-india-raise-vehicle-prices-following-maruti-suzuki-s-move-126112400984_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-03/18/thumb/fitandfill/1200X628/1773812380-2073.jpg",
+        "why": "Tata PVs go up an average 0.5% from 1 Dec, ICE and EV; Audi revises prices up to 2% from 1 Jan."
       },
       {
-        "title": "Megaspeed, the company at the center of the Jensen Huang scandal, appears headed for a U.S. blacklist",
+        "title": "Uber and Nuro begin driverless testing of Lucid robotaxis ahead of 2027 launch",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/23/megaspeed-the-company-at-the-center-of-the-jensen-huang-scandal-appears-headed-for-a-u-s-blacklist/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/GettyImages-2303986898.jpg",
-        "why": "Per Semafor, Megaspeed will join the Commerce Entity List after a criminal probe; the company denies wrongdoing."
+        "url": "https://techcrunch.com/2026/11/24/uber-and-nuro-begin-driverless-testing-of-lucid-robotaxis-ahead-of-2027-launch/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/uber-nuro-Driverless-Image-.jpg",
+        "why": "Driverless Lucid Gravity SUVs are now on Bay Area streets; Uber plans to buy at least 20,000 and launch in Q1 2027."
       }
     ]
   },
@@ -66,51 +66,51 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "Talking Points: \"This is the best Marc\"",
-        "source": "MotoGP",
-        "url": "https://www.motogp.com/en/news/2026/11/23/talking-points-this-is-the-best-marc/1267832",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/23/8abc6f53-acdc-4d5d-a66e-b860073094b7/_DS_5086-1-.jpg",
-        "why": "Marquez overturned a 102-point deficit for his eighth crown; Valencia closes the season this weekend."
+        "title": "TVS Jupiter Fastest To Reach 1 Crore Production Milestone – New Record",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/tvs-jupiter-fastest-to-reach-1-crore-production-milestone-new-record-12561919.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/tvs-jupiter-1-crore-production-milestone-2.jpg",
+        "why": "The first 50 lakh took nine years, the next 50 lakh just four; Jupiter led TVS domestic sales in October."
       },
       {
-        "title": "New Honda Rebel 500 Launch Price Rs 4.5 Lakh, E-Clutch Rs 40k More",
+        "title": "Ultraviolette X-47 Venom Deliveries Start – Price Range Rs 2.5 L to Rs 4 L",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-honda-rebel-500-launch-price-rs-4-5-lakh-e-clutch-rs-40k-more-12561599.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/new-honda-rebel-500-launch-india-3.jpg",
-        "why": "Down from Rs 5.12 lakh as an import; the 471cc twin makes 46 bhp, with an E-Clutch option at Rs 4.9 lakh."
+        "url": "https://www.rushlane.com/ultraviolette-x-47-venom-deliveries-start-price-range-rs-rs-2-5-l-to-rs-4-l-12561867.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/Ultraviolette-X-47-Venom-Deliveries-Start.jpg",
+        "why": "Four variants from Rs 2.65 lakh to Rs 4 lakh, with certified IDC range of 227 km or 343 km."
       },
       {
-        "title": "Hero Dispatched 15k Units of Flex Fuel E85 Bikes – Splendor+, HF Deluxe",
+        "title": "Honda CB500 Specs Fully Revealed – 28 PS, 43.3 Nm, TBT Nav",
         "source": "Rushlane",
-        "url": "https://www.rushlane.com/hero-dispatched-15k-units-of-flex-fuel-e85-bikes-splendor-hf-deluxe-12561591.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/06/hero-splendor-flex-fuel-discount-offer-1.jpeg",
-        "why": "About 15k E85 flex-fuel commuters shipped since June, per Hero's Q2 FY27 call; Splendor+ Flex starts at Rs 82,710."
+        "url": "https://www.rushlane.com/honda-cb500-specs-fully-revealed-28-ps-43-3-nm-tbt-nav-12561875.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/07/new-honda-cb500-launch-price-bookings-16.jpeg",
+        "why": "A 501.7 cc single making 28.14 PS and 43.3 Nm, 189 kg kerb weight, from Rs 2.75 lakh."
       }
     ]
   },
   {
-    "topic": "Automotive",
+    "topic": "Deep tech",
     "stories": [
       {
-        "title": "4.5m to 5m SUV Sales Oct 2026 – Scorpio, XUV7XO, XEV 9S, Fortuner, Harrier, Safari, Sorento, VF7, Tomahawk",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/4-5m-to-5m-suv-sales-oct-2026-scorpio-xuv7xo-xev-9s-fortuner-12561763.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/09/mahindra-xuv-7xo-sales-new-month.jpg",
-        "why": "The segment hit 53,618 units in October, up 24.96%; Scorpio led with 19,353."
+        "title": "Anthropic launches Claude Ship, letting AI agents review, fix, and approve code changes",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/23/anthropic-launches-claude-ship-letting-ai-agents-review-fix-and-approve-code-changes/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/GettyImages-2295579000.jpg",
+        "why": "Code Review is generally available; PR Steward and Claude Approvals start in beta for Team and Enterprise on GitHub."
       },
       {
-        "title": "New Hyundai 7 Seater Hybrid SUV Spied – To Rival Mahindra XUV7XO",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/new-hyundai-7-seater-hybrid-suv-spied-to-rival-mahindra-xuv7xo-12561746.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/New-Hyundai-7-Seater-Hybrid-SUV-Spied-2.jpg",
-        "why": "Codenamed Ni1i, the hybrid three-row SUV is reported for late 2027 or 2028; Hyundai hasn't confirmed timing."
+        "title": "Ex-Infosys Executives' CortexSpark Ventures Launches ₹1,000 Cr Deeptech Fund",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/ex-infosys-executives-cortexspark-ventures-launches-%E2%82%B91000-cr-deeptech-fund/",
+        "img": "https://asset.inc42.com/2026/11/Social-2-1.png",
+        "why": "Viksit Bharat Fund-I targets ₹1,000 Cr plus a ₹400 Cr greenshoe, backing about 20 deeptech startups."
       },
       {
-        "title": "BYD Ti 9 SUV Launched With Folding Steering Wheel – 1,630 Km Claimed Range",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/byd-ti-9-suv-launched-with-folding-steering-wheel-12561661.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/byd-suv-foldable-steering-launch-price.jpg",
-        "why": "A 400 kW plug-in hybrid with a folding wheel and 1,630 km claimed range, from 279,900 yuan in China."
+        "title": "AidenAI Nets $32 Mn To Scale Enterprise AI Workflows",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/aidenai-nets-32-mn-to-scale-enterprise-ai-workflows/",
+        "img": "https://asset.inc42.com/2026/11/AidenAI-Founder-SM.png",
+        "why": "An A91-led Series A; it plans to train 1,000+ frontier AI engineers and serves 30+ enterprises in six countries."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Google expands support for Indian startups with AI-focused Momentum push",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/technology/tech-reviews/google-expands-support-for-indian-startups-with-ai-focused-momentum-push-126112301052_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-10/30/thumb/fitandfill/1200X628/1793331345-4633.jpg",
-        "why": "Momentum bundles AI models, cloud and engineering help; SpotDraft cut latency 70% and costs 80% with Gemini."
+        "title": "Shadowfax To Acquire WeFast To Expand Into Intra-City Deliveries",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/shadowfax-to-acquire-wefast-to-expand-into-intra-city-deliveries/",
+        "img": "https://asset.inc42.com/2026/08/shadowfax-cci-featured-1.png",
+        "why": "Shadowfax is buying Borzo's Indian entity for ₹23.3 Cr, adding 32K+ delivery partners across five-plus cities."
       },
       {
-        "title": "[Update] WazirX, ZebPay Among Platforms Impacted By MoEngage Data Breach",
+        "title": "Data Security Startup Matters.AI Nets ₹115 Cr From Tanglin Venture Partners, Others",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/now-moengage-suffers-cybersecurity-attack-due-to-compromised-third-party-vendor/",
-        "img": "https://asset.inc42.com/2026/11/Cyberattack-social.png",
-        "why": "A compromised vendor hit MoEngage; it says under 1% of accounts were affected, some locked out for nearly a week."
+        "url": "https://inc42.com/buzz/data-security-startup-matters-ai-nets-%E2%82%B9115-cr-from-tanglin-venture-partners-others",
+        "img": "https://asset.inc42.com/2026/11/Social.png",
+        "why": "A ₹115 Cr pre-Series A takes its total raised to around ₹175 Cr."
       },
       {
-        "title": "Scaler Cofounder Anshuman Singh Unveils AI Training Data Venture Arcfront",
+        "title": "Ex-Sequoia Investor Sudhanshu Mishra Launches Agentic AI Startup Demi AI",
         "source": "Inc42",
-        "url": "https://inc42.com/buzz/scaler-cofounder-anshuman-singh-unveils-ai-training-data-venture-arcfront",
-        "img": "https://asset.inc42.com/2026/11/Untitled-Design-3.png",
-        "why": "Singh says four of the five frontier AI labs became customers in under a year."
+        "url": "https://inc42.com/buzz/ex-sequoia-investor-sudhanshu-mishra-launches-agentic-ai-startup-demi-ai/",
+        "img": "https://asset.inc42.com/2026/09/Ai-Agents-social.jpg",
+        "why": "A roughly 10-person agentic AI startup set up in June 2025, with paid plans from $25 a month."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Tata Steel divests tubes biz: Will it unlock value? What analysts say",
+        "title": "Tata Sons defers board meeting to Nov 30 as Noel asks for 7-day notice",
         "source": "Business Standard",
-        "url": "https://business-standard.com/markets/news/tata-steel-share-price-tata-steel-divests-tubes-biz-will-it-unlock-value-what-analysts-say-126112300236_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-04/11/thumb/featurecrop/1200X628/1744395575-361.jpg",
-        "why": "The tubes and Tata Steel Colors sale is worth up to ₹28,000 crore; the stock fell 6.04% to ₹167."
+        "url": "https://www.business-standard.com/companies/news/tata-sons-board-meeting-november-26-deferred-noel-tata-listing-dispute-126112300080_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/14/thumb/fitandfill/1200X628/1789409421-3422.jpg",
+        "why": "The meeting moves from 26 to 30 Nov; the RBI has reiterated that Tata Sons must list."
       },
       {
-        "title": "Stop publishing grey mkt premiums for IPOs: Sebi to market players",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/sebi-asks-market-players-to-stop-publishing-grey-market-premiums-for-ipos-126112301145_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/22/thumb/fitandfill/1200X628/1790048651-6838.jpg",
-        "why": "Sebi told all registered intermediaries to stop publishing grey market premium figures for upcoming IPOs."
+        "title": "Steadview Capital Sells Lenskart Shares Worth ₹921 Cr",
+        "source": "Inc42",
+        "url": "https://inc42.com/buzz/steadview-capital-sells-lenskart-shares-worth-%e2%82%b9921-cr/",
+        "img": "https://asset.inc42.com/2026/11/lenskart-funding-01.jpg",
+        "why": "Steadview sold 1.27 Cr shares in block deals at ₹725 each, for ₹920.6 Cr."
       },
       {
-        "title": "Nasscom seeks AI scheme, easier Esop tax rules in Union Budget 2027-28",
+        "title": "FSSAI scrutiny limited to one Goa batch, now out of circulation: Bisleri",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/economy/news/nasscom-seeks-ai-transformation-scheme-esop-tax-relief-in-budget-2027-126112301138_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-01/06/thumb/fitandfill/1200X628/1736146426-3647.jpg",
-        "why": "Nasscom wants the salary cap for job-linked tax incentives raised from ₹25,000 to ₹1 lakh a month."
+        "url": "https://www.business-standard.com/companies/news/fssai-scrutiny-limited-to-one-goa-batch-now-out-of-circulation-bisleri-126112400907_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/23/thumb/fitandfill/1200X628/1795419047-7738.jpg",
+        "why": "Bisleri says only one Goa batch was flagged, out of 50,000+ batches a year from 143 plants."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Tue 24 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Wed 25 Nov",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Sun 29 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -264,8 +264,8 @@ const RACING = {
 
 const STRAVA = {
   "period": "last 30 days",
-  "runs": 5,
-  "km": "20.0",
+  "runs": 4,
+  "km": "18.0",
   "latest": {
     "date": "22 Nov",
     "km": "11.0",
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "After The Rain",
-    "artist": "Overmono",
-    "id": "0rclr5nd7iwF4rJTYRLlJq",
-    "why": "From Overmono's Pure Devotion: UK breakbeat-house that sits between the Bicep and Vegyn in your recent plays."
+    "title": "Can't Do Without You - Tale of Us & Mano Le Tough Remix",
+    "artist": "Caribou",
+    "id": "26JOdLAIiuUHnV3aGf2EeJ",
+    "why": "A long, hypnotic remix from the expanded Our Love, in the same melodic lane as the Four Tet and Floating Points in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Explorations",
@@ -286,59 +286,59 @@ const MUSIC = {
     "date": "2026-11-23"
   },
   "lately": [
-    "Vegyn",
-    "Kaikobad",
-    "Tom VR",
-    "Placid Angles",
-    "Max Cooper",
-    "Yagya"
+    "A.R. Rahman",
+    "Four Tet",
+    "Fred again..",
+    "BICEP",
+    "RÜFÜS DU SOL",
+    "Floating Points"
   ]
 };
 
 const LEARN = {
-  "term": "Poka-yoke: designing out mistakes",
-  "body": "Poka-yoke, Japanese for 'mistake-proofing', was formalised by Shigeo Shingo within the Toyota Production System in the 1960s; he renamed it from baka-yoke ('fool-proofing') because the point is that errors come from the design of the task, not from foolish people. Shingo split devices into control types, which physically stop a wrong action, and warning types, which only signal it, and into contact, fixed-value and motion-step methods depending on what they sense. For a product designer this becomes geometry: keyed or asymmetric connectors, locating pins and datum features that allow only one assembly orientation, a chamfered corner on a SIM tray, a fuel nozzle that will not fit the wrong filler. The strongest move is to remove the decision altogether, as a reversible plug like USB-C does, rather than to key it, and a warning beep or label is the weakest form. The idea is often overstated as making products 'idiot-proof': it targets predictable slips during assembly and use, not misuse or deliberate workarounds, and every added key or interlock has a cost in tooling, parts and user friction.",
+  "term": "Natural mapping: controls that explain themselves",
+  "body": "Don Norman, in The Design of Everyday Things (1988), defines mapping as the relationship between a control and its effect, and a natural mapping as one that borrows a spatial analogy or a convention so the user needs no label. His stock example is the four-burner hob: knobs set in a straight row force people to read labels, while knobs laid out in the same square as the burners make the right one obvious. Mappings work through spatial correspondence (layout mirrors layout), shared convention (up or clockwise means more) and perceptual analogy (a longer bar for a larger quantity), and ergonomists have long measured these as population stereotypes, such as Warrick's principle linking a control's movement to the nearby pointer. The word 'natural' is overstated: many mappings are learned and vary by culture, which is why a light switch's 'on' position differs between the UK and the US. For product designers the practical test is whether the arrangement of controls alone, before any graphics, predicts what each one does.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Eliminate",
-        "note": "Remove the choice: a reversible plug",
+        "label": "Spatial",
+        "note": "Knob layout mirrors the burner layout",
         "hl": true
       },
       {
-        "label": "Control",
-        "note": "Keyed shapes block wrong assembly"
+        "label": "Convention",
+        "note": "Up or clockwise reads as more"
       },
       {
-        "label": "Warn",
-        "note": "Click, light or beep flags the slip"
+        "label": "Analogy",
+        "note": "A longer bar shows a larger value"
       }
     ],
-    "caption": "Design out the mistake before you warn about it."
+    "caption": "If the layout explains it, the label is optional."
   },
   "source": {
-    "name": "Wikipedia: Poka-yoke",
-    "url": "https://en.wikipedia.org/wiki/Poka-yoke"
+    "name": "Wikipedia: Natural mapping (interface design)",
+    "url": "https://en.wikipedia.org/wiki/Natural_mapping_(interface_design)"
   },
   "past": [
+    "Poka-yoke: designing out mistakes",
     "The Bauhaus: what it actually taught",
     "Wabi-sabi and designing for patina",
     "Dieter Rams' ten principles",
-    "Form follows function: what Sullivan meant",
-    "Snap-fit cantilever design"
+    "Form follows function: what Sullivan meant"
   ]
 };
 
 const DESIGN = {
-  "name": "Vitsœ 606 Universal Shelving System",
-  "designer": "Dieter Rams",
-  "year": "1960",
-  "why": "Rams designed it as a system rather than a piece of furniture: slim aluminium E-tracks fixed to the wall carry shelves, cabinets and tables that can be added, moved or taken away as needs change. It is still made by Vitsœ with parts compatible with the originals, a rare case of a product designed to be kept for decades.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/606-Universal-Shelving-System.jpg?width=1200",
+  "name": "Bang & Olufsen Beogram 4000 turntable",
+  "designer": "Jacob Jensen",
+  "year": "1972",
+  "why": "Jensen hid the engineering under a flat, low slab of brushed aluminium: a tangential tonearm tracks the record in a straight line while a parallel sensor arm detects the record, all run from touch controls on the front edge. The result reads as one calm object rather than a machine, the language that defined B&O for decades.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/B%26O_Beogram_4000.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:606-Universal-Shelving-System.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:B%26O_Beogram_4000.jpg"
   }
 };
 
@@ -426,4 +426,3 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
-
