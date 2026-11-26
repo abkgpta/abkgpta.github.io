@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "25 Nov 2026, 6:53 AM IST";
+const UPDATED = "26 Nov 2026, 6:53 AM IST";
 
 const QUOTE = {
-  "text": "Take your pleasure seriously.",
-  "author": "Charles Eames"
+  "text": "The best way to have a good idea is to have lots of ideas.",
+  "author": "Linus Pauling"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Festive Vehicle Retail 2026 Hits Record 55.25 Lakh – EVs Cross 5 Lakh",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/festive-vehicle-retail-2026-hits-record-55-25-lakh-evs-cross-5-lakh-12561822.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/02/mahindra-xuv-7xo-sales-new.jpeg",
-        "why": "FADA counts 55,25,490 vehicles in the 42-day festive window, up 2.21%; EV retail rose about 52.6% to 5,09,667."
+        "title": "Toyota Innova Hycross facelift launched at Rs 19.59 lakh",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/toyota-innova-hycross-facelift-launched-at-rs-1959-lakh-441417",
+        "img": "https://asset.autocarindia.com/static/news/images/20261125_124335_cf08abc7.jpg",
+        "why": "E85 compatibility makes it the only strong-hybrid flex-fuel vehicle on sale; the touchscreen grows to 12.3 inches."
       },
       {
-        "title": "Tata Motors, Audi India raise vehicle prices following Maruti Suzuki's move",
-        "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/tata-motors-audi-india-raise-vehicle-prices-following-maruti-suzuki-s-move-126112400984_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-03/18/thumb/fitandfill/1200X628/1773812380-2073.jpg",
-        "why": "Tata PVs go up an average 0.5% from 1 Dec, ICE and EV; Audi revises prices up to 2% from 1 Jan."
+        "title": "Suzuki revives Ignis nameplate as an EV",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/suzuki-revives-ignis-nameplate-as-an-ev-441416",
+        "img": "https://asset.autocarindia.com/static/news/images/20261125_102934_7cf636c1.png",
+        "why": "A 26kWh LFP pack gives 310km WLTP; European sales start summer 2027, with India not yet confirmed."
       },
       {
-        "title": "Uber and Nuro begin driverless testing of Lucid robotaxis ahead of 2027 launch",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/24/uber-and-nuro-begin-driverless-testing-of-lucid-robotaxis-ahead-of-2027-launch/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/uber-nuro-Driverless-Image-.jpg",
-        "why": "Driverless Lucid Gravity SUVs are now on Bay Area streets; Uber plans to buy at least 20,000 and launch in Q1 2027."
+        "title": "No more factory teams: Stellantis exits motorsport",
+        "source": "electrive",
+        "url": "https://electrive.com/2026/11/24/no-more-factory-teams-stellantis-exits-motorsport",
+        "img": "https://www.electrive.com/media/2026/11/opel-gse-27-fe-formel-e-gen4-2026-2.jpg",
+        "why": "Peugeot skips the 2027 WEC, and Opel and Citroën get one final Formula E season."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "TVS Jupiter Fastest To Reach 1 Crore Production Milestone – New Record",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/tvs-jupiter-fastest-to-reach-1-crore-production-milestone-new-record-12561919.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/tvs-jupiter-1-crore-production-milestone-2.jpg",
-        "why": "The first 50 lakh took nine years, the next 50 lakh just four; Jupiter led TVS domestic sales in October."
+        "title": "HOT HEADLINES: Valencia brings the fireworks for sold-out finale",
+        "source": "motogp.com",
+        "url": "https://www.motogp.com/en/news/2026/11/24/hot-headlines-valencia-brings-the-fireworks-for-sold-out-finale/1268061",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/25/bdba3787-f0a7-4ba2-b6b3-fa3cd6288980/Valencia-GP16x9.png",
+        "why": "Round 22 of 22: Ducati trail Aprilia by 9 points for constructors, and Bezzecchi and Martin are 2 apart for P2."
       },
       {
-        "title": "Ultraviolette X-47 Venom Deliveries Start – Price Range Rs 2.5 L to Rs 4 L",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/ultraviolette-x-47-venom-deliveries-start-price-range-rs-rs-2-5-l-to-rs-4-l-12561867.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/Ultraviolette-X-47-Venom-Deliveries-Start.jpg",
-        "why": "Four variants from Rs 2.65 lakh to Rs 4 lakh, with certified IDC range of 227 km or 343 km."
+        "title": "Harley-Davidson unveils huge 2027 range with new ST baggers, CVOs and Cruisers",
+        "source": "Visordown",
+        "url": "https://visordown.com/news/harley-davidson-unveils-huge-2027-range-new-st-baggers-cvos-and-cruisers",
+        "img": "https://www.visordown.com/sites/default/files/2026-11/cvo-02.jpg",
+        "why": "Three new ST baggers get a 115hp Milwaukee-Eight 117 High Output, alongside five new CVO models."
       },
       {
-        "title": "Honda CB500 Specs Fully Revealed – 28 PS, 43.3 Nm, TBT Nav",
-        "source": "Rushlane",
-        "url": "https://www.rushlane.com/honda-cb500-specs-fully-revealed-28-ps-43-3-nm-tbt-nav-12561875.html",
-        "img": "https://www.rushlane.com/wp-content/uploads/2026/07/new-honda-cb500-launch-price-bookings-16.jpeg",
-        "why": "A 501.7 cc single making 28.14 PS and 43.3 Nm, 189 kg kerb weight, from Rs 2.75 lakh."
+        "title": "MV Agusta could have two potential buyers, but there's a €95m problem",
+        "source": "Visordown",
+        "url": "https://www.visordown.com/news/mv-agusta-could-have-two-potential-buyers-theres-eu95m-problem",
+        "img": "https://www.visordown.com/sites/default/files/2025-10/2026-mv-agusta-brutale-800-3.jpg",
+        "why": "Debts reportedly rose from about €35m to over €130m; improved offers are due by 21 December."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "Anthropic launches Claude Ship, letting AI agents review, fix, and approve code changes",
+        "title": "FCC approves SpaceX plan to put AI data centers in space",
         "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/23/anthropic-launches-claude-ship-letting-ai-agents-review-fix-and-approve-code-changes/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/GettyImages-2295579000.jpg",
-        "why": "Code Review is generally available; PR Steward and Claude Approvals start in beta for Team and Enterprise on GitHub."
+        "url": "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/10/space-tesla-cybertruck.jpg",
+        "why": "Conditional approval for up to 1 million satellites at 500 to 1,002 km, with 14 years to deploy them."
       },
       {
-        "title": "Ex-Infosys Executives' CortexSpark Ventures Launches ₹1,000 Cr Deeptech Fund",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ex-infosys-executives-cortexspark-ventures-launches-%E2%82%B91000-cr-deeptech-fund/",
-        "img": "https://asset.inc42.com/2026/11/Social-2-1.png",
-        "why": "Viksit Bharat Fund-I targets ₹1,000 Cr plus a ₹400 Cr greenshoe, backing about 20 deeptech startups."
+        "title": "S&P considers Nvidia credit downgrade over governance and 'key man' risks",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/25/sp-considers-nvidia-credit-downgrade-over-governance-and-key-man-risks/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/01/GettyImages-2256813240.jpg",
+        "why": "S&P may cut Nvidia from AA to AA-, with its review due to finish within 90 days."
       },
       {
-        "title": "AidenAI Nets $32 Mn To Scale Enterprise AI Workflows",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/aidenai-nets-32-mn-to-scale-enterprise-ai-workflows/",
-        "img": "https://asset.inc42.com/2026/11/AidenAI-Founder-SM.png",
-        "why": "An A91-led Series A; it plans to train 1,000+ frontier AI engineers and serves 30+ enterprises in six countries."
+        "title": "OpenAI says heavy ChatGPT users may hit limits sooner as it merges Chat and Work",
+        "source": "TechCrunch",
+        "url": "https://techcrunch.com/2026/11/25/openai-says-heavy-chatgpt-users-may-hit-limits-sooner-as-it-merges-chat-and-work/",
+        "img": "https://techcrunch.com/wp-content/uploads/2026/11/openai-chatgpt.jpg",
+        "why": "Chat and Work will share one usage meter, rolling out more broadly in December; Instant stays unlimited."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Shadowfax To Acquire WeFast To Expand Into Intra-City Deliveries",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/shadowfax-to-acquire-wefast-to-expand-into-intra-city-deliveries/",
-        "img": "https://asset.inc42.com/2026/08/shadowfax-cci-featured-1.png",
-        "why": "Shadowfax is buying Borzo's Indian entity for ₹23.3 Cr, adding 32K+ delivery partners across five-plus cities."
+        "title": "Flipkart confirms Kalyan Krishnamurthy's exit after 11 years",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/news/flipkart-group-ceo-kalyan-krishnamurthy-to-step-down-report-12839924",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/25/smiling-south-asian-man-in-navy-polo-2026-11-25-13-06-52.png",
+        "why": "The business grew more than fivefold under him; Balaji Thiagarajan leads on an interim basis."
       },
       {
-        "title": "Data Security Startup Matters.AI Nets ₹115 Cr From Tanglin Venture Partners, Others",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/data-security-startup-matters-ai-nets-%E2%82%B9115-cr-from-tanglin-venture-partners-others",
-        "img": "https://asset.inc42.com/2026/11/Social.png",
-        "why": "A ₹115 Cr pre-Series A takes its total raised to around ₹175 Cr."
+        "title": "Cosine Robots raises Rs 22.36 Cr led by Avaana Capital",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/snippets/cosine-robots-raises-rs-2236-cr-led-by-avaana-capital-12836692",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/24/cosine-2026-11-24-13-03-41.png",
+        "why": "A Rs 22.36 Cr robotics round with WEH Ventures joining; its control loop runs at 25 kHz."
       },
       {
-        "title": "Ex-Sequoia Investor Sudhanshu Mishra Launches Agentic AI Startup Demi AI",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/ex-sequoia-investor-sudhanshu-mishra-launches-agentic-ai-startup-demi-ai/",
-        "img": "https://asset.inc42.com/2026/09/Ai-Agents-social.jpg",
-        "why": "A roughly 10-person agentic AI startup set up in June 2025, with paid plans from $25 a month."
+        "title": "Aeravti Ventures launches Rs 300 Cr Fund II, secures over 50% commitments at first close",
+        "source": "Entrackr",
+        "url": "https://entrackr.com/snippets/aeravti-ventures-launches-rs-300-cr-fund-ii-secures-over-50-commitments-at-first-close-12839670",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/24/aeravti-ventures-2026-11-24-16-05-58.png",
+        "why": "It plans 9 to 10 early-stage bets with first cheques of Rs 6 to 10 Cr; Fund I closed at Rs 76 Cr."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "Tata Sons defers board meeting to Nov 30 as Noel asks for 7-day notice",
+        "title": "PhonePe warms up for IPO as investor appetite for Indian equities returns",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/tata-sons-board-meeting-november-26-deferred-noel-tata-listing-dispute-126112300080_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/14/thumb/fitandfill/1200X628/1789409421-3422.jpg",
-        "why": "The meeting moves from 26 to 30 Nov; the RBI has reiterated that Tata Sons must list."
+        "url": "https://www.business-standard.com/markets/ipo/phonepe-prepares-to-restart-ipo-process-amid-improving-market-conditions-126112500725_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-01/22/thumb/fitandfill/1200X628/1769103959-6521.jpg",
+        "why": "Bankers expect a listing valuation of ₹1.2 to 1.5 trillion, with growth of about 40% a year."
       },
       {
-        "title": "Steadview Capital Sells Lenskart Shares Worth ₹921 Cr",
-        "source": "Inc42",
-        "url": "https://inc42.com/buzz/steadview-capital-sells-lenskart-shares-worth-%e2%82%b9921-cr/",
-        "img": "https://asset.inc42.com/2026/11/lenskart-funding-01.jpg",
-        "why": "Steadview sold 1.27 Cr shares in block deals at ₹725 each, for ₹920.6 Cr."
+        "title": "Sensex, Nifty surge nearly 2% to post their best session since November 6",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/markets/news/sensex-nifty-surge-nearly-2-to-post-their-best-session-since-november-6-126112501149_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-04/12/thumb/fitandfill/1200X628/1712885785-0675.jpg",
+        "why": "Nifty closed at 25,819.25 and Sensex at 83,938.28; FPIs bought a net ₹4,479 crore."
       },
       {
-        "title": "FSSAI scrutiny limited to one Goa batch, now out of circulation: Bisleri",
+        "title": "Sebi to ease KYC norms, centralise client details at registration agencies",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/companies/news/fssai-scrutiny-limited-to-one-goa-batch-now-out-of-circulation-bisleri-126112400907_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/23/thumb/fitandfill/1200X628/1795419047-7738.jpg",
-        "why": "Bisleri says only one Goa batch was flagged, out of 50,000+ batches a year from 143 plants."
+        "url": "https://www.business-standard.com/markets/news/sebi-to-ease-kyc-norms-centralise-client-details-at-registration-agencies-126112500950_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/22/thumb/fitandfill/1200X628/1790048651-6838.jpg",
+        "why": "From 24 December, investors won't resubmit supplementary KYC details to each intermediary."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Wed 25 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Thu 26 Nov",
     "items": [
@@ -233,13 +220,26 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Mon 30 Nov",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
 const RACING = {
   "items": [
     {
-      "when": "27–29 Nov",
+      "when": "27–29 Nov (race Sun 6:30 PM IST)",
       "what": "MotoGP: Valencian GP, Ricardo Tormo (season finale)"
     },
     {
@@ -255,10 +255,10 @@ const RACING = {
       "what": "WorldSBK: Portuguese Round, Portimão (provisional)"
     }
   ],
-  "note": "Sunday in Portugal: Bezzecchi won ahead of Martin and Raul Fernandez for an Aprilia podium sweep. Marc Marquez finished eighth to clinch the 2026 title, his eighth in the premier class, tying Agostini's record.",
+  "note": "Season finale this weekend: Marquez is already champion, Bezzecchi and Martin are 2 points apart for P2, and Ducati trail Aprilia by 9 in the constructors' race.",
   "source": {
-    "name": "motogp.com: Portuguese GP highlights",
-    "url": "https://www.motogp.com/en/videos/2026/11/22/motogp-highlights-the-key-moments-from-the-2026-portuguese-grand-prix/1267534"
+    "name": "motogp.com: Valencia time schedule",
+    "url": "https://www.motogp.com/en/news/2026/11/25/time-schedule-motul-grand-prix-of-valencia/1268060"
   }
 };
 
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "Can't Do Without You - Tale of Us & Mano Le Tough Remix",
-    "artist": "Caribou",
-    "id": "26JOdLAIiuUHnV3aGf2EeJ",
-    "why": "A long, hypnotic remix from the expanded Our Love, in the same melodic lane as the Four Tet and Floating Points in your recent plays."
+    "title": "For An Angel - PvD's E-Werk Club Mix",
+    "artist": "Paul van Dyk",
+    "id": "2g2ObG4CPkpOSKLqffImGn",
+    "why": "A Berlin trance classic in its long club mix, in the same euphoric lane as the Robert Miles, Energy 52 and Agnelli & Nelson in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Explorations",
@@ -286,59 +286,55 @@ const MUSIC = {
     "date": "2026-11-23"
   },
   "lately": [
-    "A.R. Rahman",
-    "Four Tet",
-    "Fred again..",
-    "BICEP",
-    "RÜFÜS DU SOL",
-    "Floating Points"
+    "The Prodigy",
+    "Nalin & Kane",
+    "Robert Miles",
+    "Energy 52",
+    "Agnelli & Nelson",
+    "YORK"
   ]
 };
 
 const LEARN = {
-  "term": "Natural mapping: controls that explain themselves",
-  "body": "Don Norman, in The Design of Everyday Things (1988), defines mapping as the relationship between a control and its effect, and a natural mapping as one that borrows a spatial analogy or a convention so the user needs no label. His stock example is the four-burner hob: knobs set in a straight row force people to read labels, while knobs laid out in the same square as the burners make the right one obvious. Mappings work through spatial correspondence (layout mirrors layout), shared convention (up or clockwise means more) and perceptual analogy (a longer bar for a larger quantity), and ergonomists have long measured these as population stereotypes, such as Warrick's principle linking a control's movement to the nearby pointer. The word 'natural' is overstated: many mappings are learned and vary by culture, which is why a light switch's 'on' position differs between the UK and the US. For product designers the practical test is whether the arrangement of controls alone, before any graphics, predicts what each one does.",
+  "term": "Form hierarchy: primary, secondary, tertiary",
+  "body": "Industrial designers read a product at three levels: the primary form is the overall volume, silhouette and stance; secondary forms are the major features cut into or added to it, such as handles, screens, intakes or lamp graphics; tertiary elements are the small details like buttons, vents, textures, fillets and logos. The working rule is to resolve them in that order and keep each level subordinate to the one above, so the mass still reads clearly when the details are stripped away. Car designers test this by squinting at a side view or viewing a model from across the studio: if the gesture survives at that distance, the hierarchy is working. A common failure is detail-led design, where tertiary features pile up to compensate for a weak primary form and make the product look busy rather than rich. The three-tier split is a studio teaching heuristic, not a formal standard, and strong designs sometimes let one secondary feature, such as a grille or a single control, deliberately dominate.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Spatial",
-        "note": "Knob layout mirrors the burner layout",
+        "label": "Primary",
+        "note": "Overall volume, silhouette and stance",
         "hl": true
       },
       {
-        "label": "Convention",
-        "note": "Up or clockwise reads as more"
+        "label": "Secondary",
+        "note": "Major features: handles, screens, intakes"
       },
       {
-        "label": "Analogy",
-        "note": "A longer bar shows a larger value"
+        "label": "Tertiary",
+        "note": "Buttons, vents, texture, fillets, logos"
       }
     ],
-    "caption": "If the layout explains it, the label is optional."
-  },
-  "source": {
-    "name": "Wikipedia: Natural mapping (interface design)",
-    "url": "https://en.wikipedia.org/wiki/Natural_mapping_(interface_design)"
+    "caption": "Resolve big to small; details never outshout the mass."
   },
   "past": [
+    "Natural mapping: controls that explain themselves",
     "Poka-yoke: designing out mistakes",
     "The Bauhaus: what it actually taught",
     "Wabi-sabi and designing for patina",
-    "Dieter Rams' ten principles",
-    "Form follows function: what Sullivan meant"
+    "Dieter Rams' ten principles"
   ]
 };
 
 const DESIGN = {
-  "name": "Bang & Olufsen Beogram 4000 turntable",
-  "designer": "Jacob Jensen",
-  "year": "1972",
-  "why": "Jensen hid the engineering under a flat, low slab of brushed aluminium: a tangential tonearm tracks the record in a straight line while a parallel sensor arm detects the record, all run from touch controls on the front edge. The result reads as one calm object rather than a machine, the language that defined B&O for decades.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/B%26O_Beogram_4000.jpg?width=1200",
+  "name": "Braun KM 3 kitchen machine",
+  "designer": "Gerd Alfred Müller",
+  "year": "1957",
+  "why": "Müller housed the motor and drive in one calm, white upright body, so the mixing bowl, blender and slicer attachments read as parts of a single coherent object rather than a pile of gadgets. It was so resolved that Braun kept producing it with little change for decades, an early proof of the systematic, Ulm-influenced approach that came to define Braun.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Braun_KM_3_K%C3%BCchenmaschine_mit_R%C3%BChrsch%C3%BCssel_-5435.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:B%26O_Beogram_4000.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:Braun_KM_3_K%C3%BCchenmaschine_mit_R%C3%BChrsch%C3%BCssel_-5435.jpg"
   }
 };
 
@@ -391,11 +387,6 @@ const FUNDING = {
 const LAUNCHES = {
   "items": [
     {
-      "model": "Toyota Innova Hycross facelift",
-      "when": "25 Nov 2026",
-      "price": "₹19.5–27.5 lakh"
-    },
-    {
       "model": "Mini Cooper SE (2nd gen)",
       "when": "27 Nov 2026",
       "price": "₹50 lakh"
@@ -426,3 +417,4 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
+
