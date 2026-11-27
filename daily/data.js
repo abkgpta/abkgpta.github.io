@@ -1,9 +1,9 @@
 // Daily data for abkgpta.github.io/daily. Rewritten every morning.
-const UPDATED = "26 Nov 2026, 6:53 AM IST";
+const UPDATED = "27 Nov 2026, 6:55 AM IST";
 
 const QUOTE = {
-  "text": "The best way to have a good idea is to have lots of ideas.",
-  "author": "Linus Pauling"
+  "text": "Imagination is more important than knowledge.",
+  "author": "Albert Einstein"
 };
 
 const NOW = [
@@ -40,25 +40,25 @@ const NEWS = [
     "topic": "Automotive",
     "stories": [
       {
-        "title": "Toyota Innova Hycross facelift launched at Rs 19.59 lakh",
-        "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/toyota-innova-hycross-facelift-launched-at-rs-1959-lakh-441417",
-        "img": "https://asset.autocarindia.com/static/news/images/20261125_124335_cf08abc7.jpg",
-        "why": "E85 compatibility makes it the only strong-hybrid flex-fuel vehicle on sale; the touchscreen grows to 12.3 inches."
+        "title": "JLR wins EU ban on BYD's alleged copycat Land Rover Defender",
+        "source": "WardsAuto",
+        "url": "https://www.wardsauto.com/news/jlr-wins-eu-ban-on-byds-alleged-copycat-land-rover-defender/875438/",
+        "img": "https://imgproxy.divecdn.com/aulrsaI1BPI3iHDIhS4Oh_GoXL-uo9LW2yDaCBM8XaI/g:ce/rs:fit:770:435/Z3M6Ly9kaXZlc2l0ZS1zdG9yYWdlL2RpdmVpbWFnZS9CWURUaTdTVVYyMDI2LmpwZw==.webp",
+        "why": "A Hague court ruled BYD's Ti7 copies the Defender and barred it from the EU; BYD will appeal."
       },
       {
-        "title": "Suzuki revives Ignis nameplate as an EV",
+        "title": "New Honda Alpha EV teaser previews front-end design",
         "source": "Autocar India",
-        "url": "https://www.autocarindia.com/car-news/suzuki-revives-ignis-nameplate-as-an-ev-441416",
-        "img": "https://asset.autocarindia.com/static/news/images/20261125_102934_7cf636c1.png",
-        "why": "A 26kWh LFP pack gives 310km WLTP; European sales start summer 2027, with India not yet confirmed."
+        "url": "https://www.autocarindia.com/car-news/new-honda-alpha-ev-teaser-previews-front-end-design-441424",
+        "img": "https://asset.autocarindia.com/static/news/images/20261126_113404_75586764.png",
+        "why": "Honda's first midsize electric SUV for India, based on the 0 Alpha prototype, debuts on December 2."
       },
       {
-        "title": "No more factory teams: Stellantis exits motorsport",
-        "source": "electrive",
-        "url": "https://electrive.com/2026/11/24/no-more-factory-teams-stellantis-exits-motorsport",
-        "img": "https://www.electrive.com/media/2026/11/opel-gse-27-fe-formel-e-gen4-2026-2.jpg",
-        "why": "Peugeot skips the 2027 WEC, and Opel and Citroën get one final Formula E season."
+        "title": "Hyundai Ioniq P EV to debut on January 16",
+        "source": "Autocar India",
+        "url": "https://www.autocarindia.com/car-news/hyundai-ioniq-p-ev-to-debut-on-january-16-441421",
+        "img": "https://asset.autocarindia.com/static/news/images/20261126_075440_dc5c7e99.jpg",
+        "why": "Hyundai's first compact EV for India gets a firm date; prices may come at Auto Expo 2027."
       }
     ]
   },
@@ -66,25 +66,25 @@ const NEWS = [
     "topic": "Motorcycles",
     "stories": [
       {
-        "title": "HOT HEADLINES: Valencia brings the fireworks for sold-out finale",
+        "title": "BMW M 1000 RR launched in India at Rs 59.90 lakh",
+        "source": "Rushlane",
+        "url": "https://www.rushlane.com/bmw-m-1000-rr-india-launch-price-rs-59-90-lakh-218-hp-300-kmph-12562122.html",
+        "img": "https://www.rushlane.com/wp-content/uploads/2026/11/BMW-M-1000-RR-india-launch-price-4.jpg",
+        "why": "The WorldSBK-derived superbike arrives as a CBU with 218 hp, M Winglets 3.0 and the M Competition Package standard."
+      },
+      {
+        "title": "Honda is betting big on Brazil: vast factory targets capacity for 2.3 million bikes a year",
+        "source": "Visordown",
+        "url": "https://www.visordown.com/news/honda-betting-big-brazil-vast-factory-targets-capacity-23-million-bikes-year",
+        "img": "https://www.visordown.com/sites/default/files/2026-11/honda-brazil-01.jpg",
+        "why": "A R$3.3bn investment lifts Manaus capacity from 1.6 to 2.3 million bikes a year by 2029."
+      },
+      {
+        "title": "Bagnaia sidelined from Valencia, Lecuona to stand in",
         "source": "motogp.com",
-        "url": "https://www.motogp.com/en/news/2026/11/24/hot-headlines-valencia-brings-the-fireworks-for-sold-out-finale/1268061",
-        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/25/bdba3787-f0a7-4ba2-b6b3-fa3cd6288980/Valencia-GP16x9.png",
-        "why": "Round 22 of 22: Ducati trail Aprilia by 9 points for constructors, and Bezzecchi and Martin are 2 apart for P2."
-      },
-      {
-        "title": "Harley-Davidson unveils huge 2027 range with new ST baggers, CVOs and Cruisers",
-        "source": "Visordown",
-        "url": "https://visordown.com/news/harley-davidson-unveils-huge-2027-range-new-st-baggers-cvos-and-cruisers",
-        "img": "https://www.visordown.com/sites/default/files/2026-11/cvo-02.jpg",
-        "why": "Three new ST baggers get a 115hp Milwaukee-Eight 117 High Output, alongside five new CVO models."
-      },
-      {
-        "title": "MV Agusta could have two potential buyers, but there's a €95m problem",
-        "source": "Visordown",
-        "url": "https://www.visordown.com/news/mv-agusta-could-have-two-potential-buyers-theres-eu95m-problem",
-        "img": "https://www.visordown.com/sites/default/files/2025-10/2026-mv-agusta-brutale-800-3.jpg",
-        "why": "Debts reportedly rose from about €35m to over €130m; improved offers are due by 21 December."
+        "url": "https://www.motogp.com/en/news/2026/11/25/bagnaia-sidelined-from-valencia-lecuona-to-stand-in/1268169",
+        "img": "https://resources.motogp.pulselive.com/photo-resources/2026/11/25/d910fb66-77ec-4b1a-9873-86bbc8dfa625/_DS_2127.jpg",
+        "why": "A foot injury from Qatar means Bagnaia misses his final Ducati race before joining Aprilia."
       }
     ]
   },
@@ -92,25 +92,25 @@ const NEWS = [
     "topic": "Deep tech",
     "stories": [
       {
-        "title": "FCC approves SpaceX plan to put AI data centers in space",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/25/fcc-approves-spacex-plan-to-put-ai-data-centers-in-space/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/10/space-tesla-cybertruck.jpg",
-        "why": "Conditional approval for up to 1 million satellites at 500 to 1,002 km, with 14 years to deploy them."
+        "title": "Nvidia halts shipments of AI servers to four Southeast Asian countries",
+        "source": "Business Standard",
+        "url": "https://www.business-standard.com/world-news/nvidia-halts-shipments-of-ai-servers-to-four-southeast-asian-countries-126112601562_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/26/thumb/fitandfill/1200X628/1795712939-0843.jpg",
+        "why": "New US export curbs halt servers to Malaysia, Singapore, Thailand and Indonesia, aiming to close routes to China."
       },
       {
-        "title": "S&P considers Nvidia credit downgrade over governance and 'key man' risks",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/25/sp-considers-nvidia-credit-downgrade-over-governance-and-key-man-risks/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/01/GettyImages-2256813240.jpg",
-        "why": "S&P may cut Nvidia from AA to AA-, with its review due to finish within 90 days."
+        "title": "IQM to deploy 54-qubit quantum computer at South Korean data centre",
+        "source": "The Quantum Insider",
+        "url": "https://thequantuminsider.com/2026/11/25/iqm-deploy-54-qubit-quantum-computer-south-korea-data-centre",
+        "img": "https://thequantuminsider.com/wp-content/uploads/2026/11/2026-11-25_23-06.png",
+        "why": "IQM's first system in a private Asian data centre will run alongside GPUs as quantum-as-a-service."
       },
       {
-        "title": "OpenAI says heavy ChatGPT users may hit limits sooner as it merges Chat and Work",
-        "source": "TechCrunch",
-        "url": "https://techcrunch.com/2026/11/25/openai-says-heavy-chatgpt-users-may-hit-limits-sooner-as-it-merges-chat-and-work/",
-        "img": "https://techcrunch.com/wp-content/uploads/2026/11/openai-chatgpt.jpg",
-        "why": "Chat and Work will share one usage meter, rolling out more broadly in December; Instant stays unlimited."
+        "title": "Agnit aims to wrap up chip pilots soon, says CEO Hareesh Chandrasekar",
+        "source": "Business Standard",
+        "url": "https://business-standard.com/companies/people/agnit-semiconductors-expects-2-3-gan-chip-projects-to-scale-up-soon-126112601500_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/26/thumb/fitandfill/1200X628/1795709743-6216.jpg",
+        "why": "The IISc-incubated GaN chip startup has seven strategic-sector pilots; two or three may scale to volume within months."
       }
     ]
   },
@@ -118,25 +118,25 @@ const NEWS = [
     "topic": "Startups & Indian startups",
     "stories": [
       {
-        "title": "Flipkart confirms Kalyan Krishnamurthy's exit after 11 years",
+        "title": "Green Aero raises $14 Mn led by Crane Ventures",
         "source": "Entrackr",
-        "url": "https://entrackr.com/news/flipkart-group-ceo-kalyan-krishnamurthy-to-step-down-report-12839924",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/25/smiling-south-asian-man-in-navy-polo-2026-11-25-13-06-52.png",
-        "why": "The business grew more than fivefold under him; Balaji Thiagarajan leads on an interim basis."
+        "url": "https://entrackr.com/snippets/green-aero-raises-14-mn-led-by-crane-ventures-12842280",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2025/07/09/green-aero-2025-07-09-11-43-25.png",
+        "why": "A Series A for jet engines for high-speed drones and combat aircraft, after 100+ ground-fire tests."
       },
       {
-        "title": "Cosine Robots raises Rs 22.36 Cr led by Avaana Capital",
+        "title": "GIVA raises Rs 90 Cr from BlackSoil for retail expansion",
         "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/cosine-robots-raises-rs-2236-cr-led-by-avaana-capital-12836692",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/24/cosine-2026-11-24-13-03-41.png",
-        "why": "A Rs 22.36 Cr robotics round with WEH Ventures joining; its control loop runs at 25 kHz."
+        "url": "https://entrackr.com/news/giva-raises-rs-90-cr-from-blacksoil-for-retail-expansion-12842327",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/03/giva-2026-11-03-16-14-04.png",
+        "why": "Its second raise in November, this time debt, to fund store capex across 400+ stores."
       },
       {
-        "title": "Aeravti Ventures launches Rs 300 Cr Fund II, secures over 50% commitments at first close",
+        "title": "Exclusive: Univest to raise Rs 75 Cr at Rs 1,500 Cr valuation",
         "source": "Entrackr",
-        "url": "https://entrackr.com/snippets/aeravti-ventures-launches-rs-300-cr-fund-ii-secures-over-50-commitments-at-first-close-12839670",
-        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/24/aeravti-ventures-2026-11-24-16-05-58.png",
-        "why": "It plans 9 to 10 early-stage bets with first cheques of Rs 6 to 10 Cr; Fund I closed at Rs 76 Cr."
+        "url": "https://entrackr.com/exclusive/exclusive-univest-to-raise-rs-75-cr-at-rs-1500-cr-valuation-12840305",
+        "img": "https://img-cdn.publive.online/fit-in/1200x675/entrackr/media/media_files/2026/11/25/univest-financial-team-portrait-2026-11-25-16-00-05.png",
+        "why": "Sources say the valuation is about 2.4x its last, with ARR near Rs 230 crore."
       }
     ]
   },
@@ -144,44 +144,31 @@ const NEWS = [
     "topic": "Indian business",
     "stories": [
       {
-        "title": "PhonePe warms up for IPO as investor appetite for Indian equities returns",
+        "title": "APL Apollo deal: working on stakeholders' concerns, says Tata Steel CEO",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/ipo/phonepe-prepares-to-restart-ipo-process-amid-improving-market-conditions-126112500725_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-01/22/thumb/fitandfill/1200X628/1769103959-6521.jpg",
-        "why": "Bankers expect a listing valuation of ₹1.2 to 1.5 trillion, with growth of about 40% a year."
+        "url": "https://www.business-standard.com/companies/news/working-on-issues-raised-by-both-stakeholders-says-tata-steel-ceo-126112501216_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/18/thumb/fitandfill/1200X628/1795013578-5319.jpg",
+        "why": "Tata Steel weighs shareholder concerns over its ₹28,000-crore tubes deal after sharp share falls on both sides."
       },
       {
-        "title": "Sensex, Nifty surge nearly 2% to post their best session since November 6",
+        "title": "NSE share price rallies 9% in two days; market capitalisation nears ₹6 trn",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/sensex-nifty-surge-nearly-2-to-post-their-best-session-since-november-6-126112501149_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2024-04/12/thumb/fitandfill/1200X628/1712885785-0675.jpg",
-        "why": "Nifty closed at 25,819.25 and Sensex at 83,938.28; FPIs bought a net ₹4,479 crore."
+        "url": "https://www.business-standard.com/markets/news/nse-share-price-rallies-9-in-two-days-market-capitalisation-nears-6-trn-126112600195_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2025-07/06/thumb/fitandfill/1200X628/1751820375-8099.jpg",
+        "why": "NSE hit a record ₹2,400, passing L&T in market value, 34% above its ₹1,785 IPO price."
       },
       {
-        "title": "Sebi to ease KYC norms, centralise client details at registration agencies",
+        "title": "Govt picks BSNL, MTNL assets worth ₹1,300 crore for monetisation",
         "source": "Business Standard",
-        "url": "https://www.business-standard.com/markets/news/sebi-to-ease-kyc-norms-centralise-client-details-at-registration-agencies-126112500950_1.html",
-        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-09/22/thumb/fitandfill/1200X628/1790048651-6838.jpg",
-        "why": "From 24 December, investors won't resubmit supplementary KYC details to each intermediary."
+        "url": "https://www.business-standard.com/economy/news/govt-picks-bsnl-mtnl-assets-worth-1-300-crore-for-monetisation-126112601034_1.html",
+        "img": "https://bsmedia.business-standard.com/_media/bs/img/article/2026-11/26/thumb/fitandfill/1200X628/1795694905-5259.jpg",
+        "why": "NLMC targets ₹15,000 crore of CPSE asset sales this fiscal year to cut debt."
       }
     ]
   }
 ];
 
 const CALENDAR = [
-  {
-    "day": "Thu 26 Nov",
-    "items": [
-      {
-        "time": "9:00 PM",
-        "title": "Leave office"
-      },
-      {
-        "time": "10:00 PM",
-        "title": "Bedtime: be in bed"
-      }
-    ]
-  },
   {
     "day": "Fri 27 Nov",
     "items": [
@@ -233,6 +220,19 @@ const CALENDAR = [
         "title": "Bedtime: be in bed"
       }
     ]
+  },
+  {
+    "day": "Tue 1 Dec",
+    "items": [
+      {
+        "time": "9:00 PM",
+        "title": "Leave office"
+      },
+      {
+        "time": "10:00 PM",
+        "title": "Bedtime: be in bed"
+      }
+    ]
   }
 ];
 
@@ -248,17 +248,17 @@ const RACING = {
     },
     {
       "when": "5–7 Mar 2027",
-      "what": "MotoGP: Thailand GP, Buriram"
+      "what": "MotoGP: Thailand GP, Buriram (season opener)"
     },
     {
-      "when": "19–21 Mar 2027",
-      "what": "WorldSBK: Portuguese Round, Portimão (provisional)"
+      "when": "12–14 Mar 2027",
+      "what": "MotoGP: Qatar GP, Lusail"
     }
   ],
-  "note": "Season finale this weekend: Marquez is already champion, Bezzecchi and Martin are 2 points apart for P2, and Ducati trail Aprilia by 9 in the constructors' race.",
+  "note": "Finale weekend starts today. Marquez is already champion; Martin and Bezzecchi are 2 points apart for P2, and Ducati trail Aprilia by 9 for constructors. Bagnaia is out injured, Lecuona stands in.",
   "source": {
-    "name": "motogp.com: Valencia time schedule",
-    "url": "https://www.motogp.com/en/news/2026/11/25/time-schedule-motul-grand-prix-of-valencia/1268060"
+    "name": "motogp.com: Valencia preview",
+    "url": "https://www.motogp.com/en/news/2026/11/25/hot-headlines-valencia-brings-the-fireworks-for-sold-out-finale/1268061"
   }
 };
 
@@ -275,10 +275,10 @@ const STRAVA = {
 
 const MUSIC = {
   "song": {
-    "title": "For An Angel - PvD's E-Werk Club Mix",
-    "artist": "Paul van Dyk",
-    "id": "2g2ObG4CPkpOSKLqffImGn",
-    "why": "A Berlin trance classic in its long club mix, in the same euphoric lane as the Robert Miles, Energy 52 and Agnelli & Nelson in your recent plays."
+    "title": "Offshore",
+    "artist": "Chicane",
+    "id": "3HofSXf406PxfUu1p3IUWV",
+    "why": "Chicane's 1996 Balearic trance debut, the same sunset-euphoric lane as the Energy 52 and Three Drives in your recent plays."
   },
   "playlist": {
     "name": "Weekly Discovery: Electronic Explorations",
@@ -286,55 +286,63 @@ const MUSIC = {
     "date": "2026-11-23"
   },
   "lately": [
-    "The Prodigy",
+    "Joey Valence & Brae",
+    "Three Drives On A Vinyl",
+    "Daft Punk",
+    "Paul van Dyk",
     "Nalin & Kane",
-    "Robert Miles",
-    "Energy 52",
-    "Agnelli & Nelson",
-    "YORK"
+    "Energy 52"
   ]
 };
 
 const LEARN = {
-  "term": "Form hierarchy: primary, secondary, tertiary",
-  "body": "Industrial designers read a product at three levels: the primary form is the overall volume, silhouette and stance; secondary forms are the major features cut into or added to it, such as handles, screens, intakes or lamp graphics; tertiary elements are the small details like buttons, vents, textures, fillets and logos. The working rule is to resolve them in that order and keep each level subordinate to the one above, so the mass still reads clearly when the details are stripped away. Car designers test this by squinting at a side view or viewing a model from across the studio: if the gesture survives at that distance, the hierarchy is working. A common failure is detail-led design, where tertiary features pile up to compensate for a weak primary form and make the product look busy rather than rich. The three-tier split is a studio teaching heuristic, not a formal standard, and strong designs sometimes let one secondary feature, such as a grille or a single control, deliberately dominate.",
+  "term": "Fitts's law for physical controls",
+  "body": "Fitts's law (Paul Fitts, 1954) predicts the time to hit a target as MT = a + b·log2(D/W + 1) in the Shannon form popularised by MacKenzie, where D is the distance to the target and W its width along the line of motion. The log term is the index of difficulty in bits: doubling distance or halving width adds about one bit, so time grows slowly with distance but punishes small targets hard. For product designers this argues for large, close primary controls, such as a big start button or a wide trigger, and for placing frequent controls near the hand's resting position. The constants a and b are empirical and change with limb, device and user, so the law ranks layouts rather than giving absolute timings. It is often over-applied: it models aimed pointing only, not choice time (Hick's law), gloves, vibration or eyes-free use, and the 'infinite edge' trick applies to screens bounded by a cursor, not to physical panels.",
   "diagram": {
     "type": "flow",
     "steps": [
       {
-        "label": "Primary",
-        "note": "Overall volume, silhouette and stance",
+        "label": "D",
+        "note": "Distance from start to target centre"
+      },
+      {
+        "label": "W",
+        "note": "Target width along the line of motion"
+      },
+      {
+        "label": "ID",
+        "note": "log2(D/W + 1): difficulty in bits"
+      },
+      {
+        "label": "MT",
+        "note": "a + b·ID: predicted movement time",
         "hl": true
-      },
-      {
-        "label": "Secondary",
-        "note": "Major features: handles, screens, intakes"
-      },
-      {
-        "label": "Tertiary",
-        "note": "Buttons, vents, texture, fillets, logos"
       }
     ],
-    "caption": "Resolve big to small; details never outshout the mass."
+    "caption": "Bigger and closer beats small and far, logarithmically."
+  },
+  "source": {
+    "name": "Wikipedia: Fitts's law",
+    "url": "https://en.wikipedia.org/wiki/Fitts%27s_law"
   },
   "past": [
+    "Form hierarchy: primary, secondary, tertiary",
     "Natural mapping: controls that explain themselves",
     "Poka-yoke: designing out mistakes",
     "The Bauhaus: what it actually taught",
-    "Wabi-sabi and designing for patina",
-    "Dieter Rams' ten principles"
+    "Wabi-sabi and designing for patina"
   ]
 };
 
 const DESIGN = {
-  "name": "Braun KM 3 kitchen machine",
-  "designer": "Gerd Alfred Müller",
-  "year": "1957",
-  "why": "Müller housed the motor and drive in one calm, white upright body, so the mixing bowl, blender and slicer attachments read as parts of a single coherent object rather than a pile of gadgets. It was so resolved that Braun kept producing it with little change for decades, an early proof of the systematic, Ulm-influenced approach that came to define Braun.",
-  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/Braun_KM_3_K%C3%BCchenmaschine_mit_R%C3%BChrsch%C3%BCssel_-5435.jpg?width=1200",
+  "name": "Citroën 2CV",
+  "designer": "André Lefèbvre and Flaminio Bertoni",
+  "year": "1948",
+  "why": "Built to a brief of carrying four people and a basket of eggs across a ploughed field, it reduced a car to a light steel body, soft long-travel suspension and a canvas roof that rolls back. Every surface follows cost and function, yet Bertoni's simple curved panels gave it a character so strong it stayed in production until 1990.",
+  "img": "https://commons.wikimedia.org/wiki/Special:FilePath/1955_Citroen_2CV.jpg?width=1200",
   "imgCredit": {
     "name": "Wikimedia Commons",
-    "url": "https://commons.wikimedia.org/wiki/File:Braun_KM_3_K%C3%BCchenmaschine_mit_R%C3%BChrsch%C3%BCssel_-5435.jpg"
+    "url": "https://commons.wikimedia.org/wiki/File:1955_Citroen_2CV.jpg"
   }
 };
 
@@ -387,28 +395,33 @@ const FUNDING = {
 const LAUNCHES = {
   "items": [
     {
-      "model": "Mini Cooper SE (2nd gen)",
-      "when": "27 Nov 2026",
-      "price": "₹50 lakh"
-    },
-    {
       "model": "Royal Enfield Himalayan 750",
-      "when": "Late Nov 2026",
-      "price": "₹5.25–6 lakh"
+      "when": "27–29 Nov 2026 (Motoverse)",
+      "price": "₹3.8–6 lakh (est.)"
     },
     {
       "model": "Ducati DesertX V2",
-      "when": "Nov 2026",
+      "when": "Nov–Dec 2026",
       "price": "₹19–22 lakh"
+    },
+    {
+      "model": "Honda Alpha EV (India debut)",
+      "when": "2 Dec 2026",
+      "price": "~₹16 lakh (expected)"
     },
     {
       "model": "Volkswagen Virtus facelift",
       "when": "11 Dec 2026",
-      "price": "₹10.7–19.2 lakh (current)"
+      "price": "₹10.75–19.5 lakh"
     },
     {
-      "model": "Hyundai Ioniq P (compact EV)",
-      "when": "Jan 2027",
+      "model": "JSW Combat SUV",
+      "when": "Dec 2026 (debut)",
+      "price": "Not stated"
+    },
+    {
+      "model": "Hyundai Ioniq P",
+      "when": "16 Jan 2027",
       "price": "₹9.8–13 lakh"
     }
   ],
@@ -417,4 +430,3 @@ const LAUNCHES = {
     "url": "https://www.autocarindia.com/upcoming-cars"
   }
 };
-
