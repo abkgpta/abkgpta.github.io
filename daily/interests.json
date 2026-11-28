@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-27",
+  "updated": "2026-11-28",
   "note": "Topics that drive the daily news. 'stated' came from Abhik directly; 'inferred' were picked up from his notes and chats and can be removed anytime.",
   "interests": [
     {
@@ -45,12 +45,6 @@
       "why": "portfolio: EEG/fNIRS athlete project, Dash MP3 player for runners, recent cortX coach app work"
     },
     {
-      "topic": "Brand identity design",
-      "source": "inferred",
-      "weight": 0.4,
-      "why": "nNode branding and Ideakicks brand system work"
-    },
-    {
       "topic": "3D and CAD tools for designers",
       "source": "inferred",
       "weight": 0.5,
@@ -67,6 +61,12 @@
       "source": "inferred",
       "weight": 0.7,
       "why": "ongoing white paper, booklet chapters and demonstration-unit proposal on Industry 4.0 for Gujarat MSMEs"
+    },
+    {
+      "topic": "Handheld device ergonomics",
+      "source": "inferred",
+      "weight": 0.5,
+      "why": "recent grip-atlas and palmable-device research"
     }
   ]
 }
